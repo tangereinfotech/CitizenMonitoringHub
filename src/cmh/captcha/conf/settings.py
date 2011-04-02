@@ -1,7 +1,7 @@
 import os
 from django.conf import settings
 
-CAPTCHA_FONT_PATH = getattr(settings,'CAPTCHA_FONT_PATH', os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'fonts/Vera.ttf'))) 
+CAPTCHA_FONT_PATH = getattr(settings,'CAPTCHA_FONT_PATH', os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'fonts/Vera.ttf')))
 CAPTCHA_FONT_SIZE = getattr(settings,'CAPTCHA_FONT_SIZE', 23)
 CAPTCHA_LETTER_ROTATION = getattr(settings, 'CAPTCHA_LETTER_ROTATION', (-25,25))
 CAPTCHA_BACKGROUND_COLOR = getattr(settings,'CAPTCHA_BACKGROUND_COLOR', '#ffffff')
@@ -32,7 +32,7 @@ def _callable_from_string(string_or_callable):
         return string_or_callable
     else:
         return getattr(__import__( '.'.join(string_or_callable.split('.')[:-1]), {}, {}, ['']), string_or_callable.split('.')[-1])
-    
+
 def get_challenge():
     return _callable_from_string(CAPTCHA_CHALLENGE_FUNCT)
 
