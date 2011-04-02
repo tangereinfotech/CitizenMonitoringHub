@@ -1,0 +1,17 @@
+{% extends "basewithmenu.html" %}
+{% block page_content %}
+<form action="/user/register/" method="post" class="registerform">
+    {% csrf_token %}
+    <table>
+    {{form.as_table}}
+    <tr bgcolor="#e1e1e1">
+      <td>&nbsp;</td>
+      <td colspan="2">
+        <input type="hidden" name="next" value="{{ next_url }}" />
+        <input tabindex="3" type="submit" value="Register" />
+        &nbsp;&nbsp;&nbsp;
+      </td>
+    </tr>
+    </table>
+</form>
+{% endblock %}

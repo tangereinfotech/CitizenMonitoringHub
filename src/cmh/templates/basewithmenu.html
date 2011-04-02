@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block base_content %}
+<div class="top_panel">
+  <div class="system_panel">
+    {% block system_panel %} {% endblock %}
+  </div>
+  <div class="logo-top-menu">
+    <div class="logo">
+      Citizen Monitoring Hub
+    </div>
+    <div class="top-menu">
+      <ul class="top-menu">
+        <li> <a href="/">Home</a> </li>
+        <li> <a href="/complaint/">Submit&nbsp;Complaint</a> </li>
+        <li> <a href="/reports/"> Reports</a> </li>
+        <li> <a href="/register_alert/">Register&nbsp;for&nbsp;Alerts</a> </li>
+        <li> <a href="/contact_us/">Contact&nbsp;Us</a> </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="page-content">
+  {% block page_content %}{% endblock %}
+</div>
+<div class="footer">
+  This is the footer
+</div>
+{% endblock %}

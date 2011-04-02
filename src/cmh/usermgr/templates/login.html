@@ -1,0 +1,19 @@
+{% extends "basewithmenu.html" %}
+{% block page_content %}
+<form action="/user/login/" method="post" class="loginform">
+    {% csrf_token %}
+    <table>
+    {{form.as_table}}
+    <tr bgcolor="#e1e1e1">
+      <td>&nbsp;</td>
+      <td colspan="2">
+        <input type="hidden" name="next" value="{{ next_url }}" />
+        <input tabindex="3" type="submit" value="Login" />
+        &nbsp;&nbsp;&nbsp;
+        <a id="ref-link" href="/user/forgot/" tabindex="4">&raquo; Forgot Password</a>
+        <a id="ref-link" href="/user/register/" tabindex="4">&raquo; Register</a>
+      </td>
+    </tr>
+    </table>
+</form>
+{% endblock %}

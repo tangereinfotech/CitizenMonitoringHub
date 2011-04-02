@@ -1,0 +1,7 @@
+[
+{"pk": 1, "model": "ComplaintMgr.complaintstate", "fields": {"state": "New"}},
+{"pk": 2, "model": "ComplaintMgr.complaintstate", "fields": {"state": "Acknowledged"}},
+{"pk": 3, "model": "ComplaintMgr.complaintstate", "fields": {"state": "Open"}},
+{"pk": 4, "model": "ComplaintMgr.complaintstate", "fields": {"state": "Resolved"}},
+{"pk": 5, "model": "ComplaintMgr.complaintstate", "fields": {"state": "Closed"}}
+]
