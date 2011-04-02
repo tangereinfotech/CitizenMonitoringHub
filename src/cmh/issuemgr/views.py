@@ -14,6 +14,13 @@
 # limitations under the License.
 
 from django.shortcuts import render_to_response
+from cmh.common.utils import get_complaint_types
 
 def index (request):
-    return render_to_response ('complaint.html')
+    # complaint_types = get_complaint_types ()
+    complaint_types = []
+    return render_to_response ('complaint.html', {'complaint_types' : complaint_types} )
+
+def submit (request):
+    print request.POST
+    return render_to_response ('complaint_submitted.html')

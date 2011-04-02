@@ -17,9 +17,9 @@ import os
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
-from cmh.Common.utils import check_email, check_phone, check_mobile
-from cmh.PeopleMgr.form import UserLoginForm, UserRegisterForm
-from cmh.PeopleMgr.models import createuser
+from cmh.common.utils import check_email, check_phone, check_mobile
+from cmh.usermgr.form import UserLoginForm, UserRegisterForm
+from cmh.usermgr.models import createuser
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.conf import settings

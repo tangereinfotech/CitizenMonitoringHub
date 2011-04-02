@@ -15,6 +15,7 @@
 
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns ('cmh.ComplaintMgr.views',
+urlpatterns = patterns ('cmh.issuemgr.views',
                         (r'^$', 'index'),
+                        (r'submit/$', 'submit'),
                         )

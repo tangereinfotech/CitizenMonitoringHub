@@ -18,7 +18,7 @@ from cmh.usermgr.models import Location, Citizen, Official
 from cmh.common.models import Category, Attribute
 
 class ComplaintState (models.Model):
-    state = models.CharField(max_length=20)
+    state = models.CharField (max_length=100)
 
     def __unicode__(self):
         return self.state
@@ -27,7 +27,7 @@ class Complaint(models.Model):
     origindate  = models.DateField ()
     description = models.CharField (max_length=200)
     filedby     = models.ForeignKey (Citizen)
-    assignto    = models.ForeignKey (Official)
+    assignto    = models.ForeignKey (Official, blank = True, null = True)
     location    = models.ForeignKey (Location)
     curstate    = models.ForeignKey (ComplaintState)
     complaintno = models.IntegerField()

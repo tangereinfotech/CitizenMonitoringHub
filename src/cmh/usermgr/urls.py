@@ -15,7 +15,7 @@
 
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns ('cmh.PeopleMgr.views',
+urlpatterns = patterns ('cmh.usermgr.views',
                         (r'^login/$',             'dologin'),
                         (r'^logout/$',            'dologout'),
                         (r'^register/$',           'doregister'),

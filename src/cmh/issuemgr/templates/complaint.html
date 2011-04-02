@@ -13,21 +13,44 @@
 {# limitations under the License.                                               #}
 
 {% extends "signinbase.html" %}
+
 {% block gmap_viewport_block%}
 <meta name="viewport" content="initial-scale=0.1, user-scalable=no" />
 {% endblock %}
-{% block onload_block %}
-onload="initialize ();"
-{% endblock %}
-{% block page_content %}
-<div class="category-list">
-  <form action="/complaint/submit/" method="post">
-    {% csrf_token %}
-    Summary:<br/>
-    <input type="text" name="headline"/>
-    {% for cat in category %}
 
+{% block page_content %}
+<div class="complaint-location">
+  <form action="/complaint/submit/" method="post">
+    {# {% csrf_token %} #}
+    <div class="left-section">
+      <div id="complaint-location"></div>
+    </div>
+    <div class="right-section">
+      <label for="report-location">Location</label><br/>
+      <select class="complaint-place" name="report-location">
+        <option value="None">---</option>
+        {% for location in locations %}
+        <option value="{{location.name}}">{{location.name}}</option>
     {% endfor %}
+      </select><br/>
+      <label for="report_date">Date:</label><br/>
+      <input id="report_date" type="text" class="vDateField" name="date_logged" /><br/>
+      <label for="report_title">Report Title:</label><br/>
+      <input type="text" name="report_title" id="report_title"/><br/>
+      <label for="report_desc">Description:</label><br/>
+      <textarea name="report_description" id="report_desc"></textarea> <br/>
+      {% for complaint_type in complaint_types %}
+      <input type="checkbox" value="cbval_{{complaint_type.name}}" name="cbname_{{complaint_type.id}}_{{complaint_type.name}}"/>{{complaint_type.name}}<br/>
+      {% endfor %}
+      <input type="submit" value="Submit Complaint" />
+    </div>
   </form>
 </div>
+<script type="text/javascript" src="/static/js/MapHandler.js"></script>
+<script type="text/javascript" src="/static/js/DateTimeHandler.js"></script>
+<script type="text/javascript">
+  (function($) { var field = null;})(django.jQuery);
+  addEvent (window, 'load', (function () {MapHandler.init ('complaint-location')}));
+  addEvent (window, 'load', (function () {DateTimeHandler.init ("vDateField", "vTimeField")}));
+</script>
 {% endblock %}

@@ -99,7 +99,7 @@ ROOT_URLCONF = 'cmh.urls'
 
 TEMPLATE_DIRS = (
     os.path.join (CMH_APP_DIR, "templates"),
-    os.path.join (CMH_APP_DIR, "PeopleMgr", "templates"),
+    os.path.join (CMH_APP_DIR, "usermgr", "templates"),
 )
 
 INSTALLED_APPS = (
