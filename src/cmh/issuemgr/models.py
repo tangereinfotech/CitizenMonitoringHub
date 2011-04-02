@@ -14,8 +14,8 @@
 # limitations under the License.
 
 from django.db import models
-from cmh.PeopleMgr.models import Location, Citizen, Official
-from cmh.Common.models import Category, Attribute
+from cmh.usermgr.models import Location, Citizen, Official
+from cmh.common.models import Category, Attribute
 
 class ComplaintState (models.Model):
     state = models.CharField(max_length=20)

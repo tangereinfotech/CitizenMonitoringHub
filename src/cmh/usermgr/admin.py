@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from django.contrib import admin
-from cmh.PeopleMgr.models import Citizen,Location,Official
+from cmh.usermgr.models import Citizen, Location, Official
 
 admin.site.register(Citizen)
 admin.site.register(Location)

@@ -15,7 +15,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
-from cmh.Common.models import Attribute, Category
+from cmh.common.models import Attribute, Category
 import sys, traceback
 
 # Create your models here.

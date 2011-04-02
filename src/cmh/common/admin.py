@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from django.contrib import admin
-from cmh.Common.models import Category, Attribute
+from cmh.common.models import Category, Attribute
 
 admin.site.register(Category)
 admin.site.register(Attribute)
