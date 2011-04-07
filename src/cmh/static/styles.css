@@ -4,6 +4,10 @@ body {
    width: 900px;
 }
 
+fieldset {
+   padding: 10px;
+}
+
 .content-wrapper {
    padding: 20px 10px;
    background-color: #99c0ec;
@@ -39,6 +43,7 @@ div.logo {
    height: 120px;
    font-weight: bold;
    font-size: 36px;
+   padding-bottom: 10px;
 }
 
 div.top-menu {
@@ -50,13 +55,14 @@ div.top-menu {
    vertical-align: bottom;
    border-spacing: 0;
    border-collapse: collapse;
+   padding-bottom:10px;
 }
 
 div.top-menu table.top-menu {
    padding: 20px 0px;
    background-color: #044a98;
    position: absolute;
-   bottom: 0px;
+   bottom: 10px;
    width: 100%;
 }
 
@@ -115,8 +121,12 @@ div.complaint-location {
 }
 
 #complaint-location {
-   height: 480px;
+   height: 420px;
    width: 480px;
+}
+
+select.complaint-box {
+   width: 355px;
 }
 
 div.left-section {
@@ -128,3 +138,8 @@ div.right-section {
    float: left;
    width: 380px;
 }
+
+label.report-date {
+   padding-top: 10px;
+}
+

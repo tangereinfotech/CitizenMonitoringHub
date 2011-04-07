@@ -26,23 +26,84 @@
       <div id="complaint-location"></div>
     </div>
     <div class="right-section">
-      <label for="report-location">Location</label><br/>
-      <select class="complaint-place" name="report-location">
-        <option value="None">---</option>
-        {% for location in locations %}
-        <option value="{{location.name}}">{{location.name}}</option>
-    {% endfor %}
-      </select><br/>
-      <label for="report_date">Date:</label><br/>
-      <input id="report_date" type="text" class="vDateField" name="date_logged" /><br/>
-      <label for="report_title">Report Title:</label><br/>
-      <input type="text" name="report_title" id="report_title"/><br/>
-      <label for="report_desc">Description:</label><br/>
-      <textarea name="report_description" id="report_desc"></textarea> <br/>
-      {% for complaint_type in complaint_types %}
-      <input type="checkbox" value="cbval_{{complaint_type.name}}" name="cbname_{{complaint_type.id}}_{{complaint_type.name}}"/>{{complaint_type.name}}<br/>
-      {% endfor %}
-      <input type="submit" value="Submit Complaint" />
+      <fieldset>
+        <legend>Location</legend>
+        <select class="complaint-box" name="complaint-state">
+          <option value="------">-- State --</option>
+          {% for state in states %}
+          <option value="{{state.code}}">{{state.name}}</option>
+          {% endfor %}
+        </select><br/>
+        <select class="complaint-box" name="complaint-distt">
+          <option value="------">-- District --</option>
+          {% for district in districts %}
+          <option value="{{district.code}}">{{district.name}}</option>
+          {% endfor %}
+        </select><br/>
+        <select class="complaint-box" name="complaint-block">
+          <option value="------">-- Block --</option>
+          {% for block in blocks %}
+          <option value="{{block.code}}">{{block.name}}</option>
+          {% endfor %}
+        </select><br/>
+        <select class="complaint-box" name="complaint-gp">
+          <option value="------">-- Gram Panchayat --</option>
+          {% for gp in gps %}
+          <option value="{{gp.code}}">{{gp.name}}</option>
+          {% endfor %}
+        </select><br/>
+        <select class="complaint-box" name="complaint-village">
+          <option value="------">-- Village --</option>
+          {% for village in villages %}
+          <option value="{{village.code}}">{{village.name}}</option>
+          {% endfor %}
+        </select><br/>
+      </fieldset>
+      <fieldset>
+        <legend>Complaint</legend>
+        <label for="complaint-date" class="complaint-date">Date:</label>
+        <br/>
+        <input id="complaint-date" type="text" class="date-field" name="complaint-date" />
+        <br/>
+        <label for="complaint-department">Complaint Department:</label>
+        <br/>
+        <select class="complaint-box" name="complaint-department">
+          <option value="----">-- Department --</option>
+          {% for department in departments %}
+          <option value="{{department.code}}">{{department.name}}</option>
+          {% endfor %}
+        </select>
+        <br/>
+        <select class="complaint-box" name="complaint-summary">
+          <option value="----">-- Summary --</option>
+          {% for summary in summarys %}
+          <option value="{{summary.code}}">{{summary.name}}</option>
+          {% endfor %}
+        </select>
+        <br/>
+        <label for="complaint-description">Description:</label>
+        <br/>
+        <textarea name="complaint-description"
+                  id="complaint-description"
+                  class="complaint-description"
+                  style="width:348px" rows="5"></textarea>
+        <br/>
+        {% for complaint_type in complaint_types %}
+        <input type="checkbox" value="cbval_{{complaint_type.name}}" name="cbname_{{complaint_type.id}}_{{complaint_type.name}}"/>{{complaint_type.name}}<br/>
+        {% endfor %}
+      </fieldset>
+    </div>
+    <div style="float:left;clear:both;padding:10px 0px;width:100%">
+      <fieldset>
+        <legend> Complainant Details </legend>
+        <label for="your-name">Name:</label>
+        <input id="your-name" class="your-name" type="text" style="width:300px;" maxlength="100" />
+        <label for="your-mobile" style="padding-left:40px;">Mobile Number:</label>
+        <input id="your-mobile" class="your-mobile" type="text" style="width:300px;" maxlength="15" />
+      </fieldset>
+      <div style="text-align:center;width:100%;">
+        <input type="submit" value="Submit Complaint" />
+      </div>
     </div>
   </form>
 </div>
@@ -51,6 +112,6 @@
 <script type="text/javascript">
   (function($) { var field = null;})(django.jQuery);
   addEvent (window, 'load', (function () {MapHandler.init ('complaint-location')}));
-  addEvent (window, 'load', (function () {DateTimeHandler.init ("vDateField", "vTimeField")}));
+  addEvent (window, 'load', (function () {DateTimeHandler.init ("date-field", "time-field")}));
 </script>
 {% endblock %}
