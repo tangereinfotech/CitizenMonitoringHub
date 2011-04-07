@@ -113,3 +113,18 @@ div.footer {
 div.complaint-location {
    height: 480px;
 }
+
+#complaint-location {
+   height: 480px;
+   width: 480px;
+}
+
+div.left-section {
+   float: left;
+   width: 500px;
+}
+
+div.right-section {
+   float: left;
+   width: 380px;
+}

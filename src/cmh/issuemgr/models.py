@@ -15,7 +15,25 @@
 
 from django.db import models
 from cmh.usermgr.models import Location, Citizen, Official
-from cmh.common.models import Category, Attribute
+from cmh.common.models import CodeName
+
+
+class State (CodeName):
+    pass
+
+class District (CodeName):
+    state = models.ForeignKey (State)
+
+class Block (CodeName):
+    distt = models.ForeignKey (District)
+
+class GramPanchayat (CodeName):
+    block = models.ForeignKey (Block)
+
+class Village (CodeName):
+    gp = models.ForeignKey (GramPanchayat)
+    latitude = models.FloatField ()
+    longitude = models.FloatField ()
 
 class ComplaintState (models.Model):
     state = models.CharField (max_length=100)
@@ -23,31 +41,23 @@ class ComplaintState (models.Model):
     def __unicode__(self):
         return self.state
 
+class Department (CodeName):
+    pass
+
+class ComplaintItem (CodeName):
+    desc    = models.CharField (max_length = 5000)
+    department = models.ForeignKey (Department)
+
 class Complaint(models.Model):
-    origindate  = models.DateField ()
+    base        = models.ForeignKey (ComplaintItem, blank = True, null = True)
+    complaintno = models.CharField (max_length = 50, blank = True, null = True)
     description = models.CharField (max_length=200)
+    department  = models.ForeignKey (Department, blank = True, null = True)
+    curstate    = models.ForeignKey (ComplaintState)
     filedby     = models.ForeignKey (Citizen)
     assignto    = models.ForeignKey (Official, blank = True, null = True)
-    location    = models.ForeignKey (Location)
-    curstate    = models.ForeignKey (ComplaintState)
-    complaintno = models.IntegerField()
-    complainttype = models.ForeignKey (Attribute, blank = True, null = True, related_name = "complainttype")
-    department    = models.ForeignKey (Attribute, blank = True, null = True, related_name = "department")
+    location    = models.ForeignKey (Village, blank = True, null = True)
+    original    = models.ForeignKey ('Complaint', blank = True, null = True)
+    created     = models.DateTimeField (auto_now_add = True)
 
-    def __unicode__(self):
-        return u'%d, %s' % (self.complaintno, self.curstate)
-
-    class Meta:
-        ordering =['curstate']
-
-
-class ComplaintHistory(models.Model):
-    statefrom       = models.ForeignKey(ComplaintState, related_name='complainthistorystatefrom')
-    stateto         = models.ForeignKey(ComplaintState, related_name='complainthistorystateto')
-    description     = models.CharField(max_length=200)
-    changedate      = models.DateField()
-    complaint       = models.ForeignKey(Complaint)
-
-    class Meta:
-        ordering = ['-changedate']
 

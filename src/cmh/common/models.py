@@ -15,11 +15,20 @@
 from django.db import models
 
 class Category(models.Model):
-    name   = models.CharField (max_length = 1000)
-    parent = models.ForeignKey ('Category')
+    key   = models.CharField (max_length = 1000)
+    parent = models.ForeignKey ('Category', blank = True, null = True)
 
 class Attribute (models.Model):
-    value      = models.CharField (max_length = 1000)
-    parents    = models.ManyToManyField ('Attribute')
-    categories = models.ManyToManyField ('Category')
+    value    = models.CharField (max_length = 1000)
+    parents  = models.ManyToManyField ('Attribute')
+    category = models.ForeignKey ('Category')
+
+class CodeName (models.Model):
+    code = models.CharField (max_length = 100)
+    name = models.CharField (max_length = 500)
+
+    class Meta:
+        abstract = True
+
+
 
