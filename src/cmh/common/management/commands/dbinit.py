@@ -6,6 +6,7 @@ from optparse import make_option, OptionParser
 from django.core.management.base import BaseCommand, CommandError
 from cmh.common.models import Category, Attribute
 from cmh.issuemgr.models import Department, ComplaintItem
+from cmh.issuemgr.models import State, District, Block, GramPanchayat, Village
 
 
 class ExcelFormatError (Exception):
@@ -76,10 +77,8 @@ provided at:
 
             try:
                 dept = Department.objects.get (code = dept_code, name = dept_name)
-                print "Found department : %s, %s" % (dept_code, dept_name)
             except Department.DoesNotExist:
                 dept = Department.objects.create (code = dept_code, name = dept_name)
-                print "Created department: %s, %s" % (dept_code, dept_name)
 
             try:
                 issue = ComplaintItem.objects.get (code = issue_code,
@@ -87,13 +86,11 @@ provided at:
                                                    desc = issue_desc)
                 issue.department = dept
                 issue.save ()
-                print "Found issue type: %s, %s" % (issue_code, issue_sum)
             except ComplaintItem.DoesNotExist:
                 issue = ComplaintItem.objects.create (code = issue_code,
                                                       name = issue_sum,
                                                       desc = issue_desc,
                                                       department = dept)
-                print "Created issue type: %s, %s" % (issue_code, issue_sum)
 
 
     def update_location_models (self, worksheet):
@@ -132,17 +129,17 @@ provided at:
 
             try:
                 gp = GramPanchayat.objects.get (name = gp_name, code = gp_code, block = block)
-            except Gp.DoesNotExist:
+            except GramPanchayat.DoesNotExist:
                 gp = GramPanchayat.objects.create (name = gp_name,
                                                    code = gp_code,
                                                    block = block)
 
             try:
-                vill = Village.objects.get (name = vill_name, code = vill_code, block = block)
+                vill = Village.objects.get (name = vill_name, code = vill_code, gp = gp)
             except Village.DoesNotExist:
                 vill = Village.objects.create (name = vill_name,
                                                code = vill_code,
-                                               block = block,
+                                               gp = gp,
                                                latitude = latitude,
                                                longitude = longitude)
 

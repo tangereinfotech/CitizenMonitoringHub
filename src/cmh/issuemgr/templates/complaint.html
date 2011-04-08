@@ -28,32 +28,32 @@
     <div class="right-section">
       <fieldset>
         <legend>Location</legend>
-        <select class="complaint-box" name="complaint-state">
-          <option value="------">-- State --</option>
+        <select class="complaint-box" name="complaint-state" id="complaint-state">
+          <option value="----">-- State --</option>
           {% for state in states %}
           <option value="{{state.code}}">{{state.name}}</option>
           {% endfor %}
         </select><br/>
-        <select class="complaint-box" name="complaint-distt">
-          <option value="------">-- District --</option>
+        <select class="complaint-box" name="complaint-distt" id="complaint-distt">
+          <option value="----">-- District --</option>
           {% for district in districts %}
           <option value="{{district.code}}">{{district.name}}</option>
           {% endfor %}
         </select><br/>
         <select class="complaint-box" name="complaint-block">
-          <option value="------">-- Block --</option>
+          <option value="----">-- Block --</option>
           {% for block in blocks %}
           <option value="{{block.code}}">{{block.name}}</option>
           {% endfor %}
         </select><br/>
         <select class="complaint-box" name="complaint-gp">
-          <option value="------">-- Gram Panchayat --</option>
+          <option value="----">-- Gram Panchayat --</option>
           {% for gp in gps %}
           <option value="{{gp.code}}">{{gp.name}}</option>
           {% endfor %}
         </select><br/>
         <select class="complaint-box" name="complaint-village">
-          <option value="------">-- Village --</option>
+          <option value="----">-- Village --</option>
           {% for village in villages %}
           <option value="{{village.code}}">{{village.name}}</option>
           {% endfor %}
@@ -109,9 +109,15 @@
 </div>
 <script type="text/javascript" src="/static/js/MapHandler.js"></script>
 <script type="text/javascript" src="/static/js/DateTimeHandler.js"></script>
+<script type="text/javascript" src="/static/js/complainthandler.js"></script>
 <script type="text/javascript">
   (function($) { var field = null;})(django.jQuery);
+  $ = django.jQuery;
+
   addEvent (window, 'load', (function () {MapHandler.init ('complaint-location')}));
   addEvent (window, 'load', (function () {DateTimeHandler.init ("date-field", "time-field")}));
+
+  $("#complaint-state").change (populate_sub_select ("#complaint-state", "#complaint-distt", "District", "/complaint/select_region/"));
+
 </script>
 {% endblock %}

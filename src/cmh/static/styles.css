@@ -47,7 +47,7 @@ div.logo {
 }
 
 div.top-menu {
-   float: left;
+   float: right;
    text-align: center;
    width: 600px;
    height: 120px;
@@ -103,7 +103,7 @@ ul.category li.category-item {
 }
 
 #base_map {
-   float: left;
+   float: right;
    height: 400px;
    width: 600px;
 }

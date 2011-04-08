@@ -42,7 +42,7 @@ class ComplaintState (models.Model):
         return self.state
 
 class Department (CodeName):
-    pass
+    state = models.ForeignKey (State, blank = True, null = True)
 
 class ComplaintItem (CodeName):
     desc    = models.CharField (max_length = 5000)

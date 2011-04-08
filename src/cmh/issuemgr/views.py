@@ -13,13 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.http import HttpResponse
+from django.core import serializers
 from django.shortcuts import render_to_response
-from cmh.common.utils import get_complaint_types
+
+from cmh.issuemgr.models import State, District, Block, GramPanchayat, Village
+from cmh.issuemgr.models import Department, ComplaintItem
+
 
 def index (request):
-    # complaint_types = get_complaint_types ()
-    complaint_types = []
-    return render_to_response ('complaint.html', {'complaint_types' : complaint_types} )
+    return render_to_response ('complaint.html', {'states' : State.objects.all ()} )
+
+def select_region (request):
+    state_code = request.POST ['code']
+    ds = District.objects.filter (state__code = state_code)
+    return HttpResponse (serializers.serialize ('json', ds, fields = ['code', 'name']))
 
 def submit (request):
     print request.POST
