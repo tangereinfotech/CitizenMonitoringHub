@@ -31,32 +31,20 @@
         <select class="complaint-box" name="complaint-state" id="complaint-state">
           <option value="----">-- State --</option>
           {% for state in states %}
-          <option value="{{state.code}}">{{state.name}}</option>
+          <option value="{{state.optval}}">{{state.name}}</option>
           {% endfor %}
         </select><br/>
         <select class="complaint-box" name="complaint-distt" id="complaint-distt">
           <option value="----">-- District --</option>
-          {% for district in districts %}
-          <option value="{{district.code}}">{{district.name}}</option>
-          {% endfor %}
         </select><br/>
-        <select class="complaint-box" name="complaint-block">
+        <select class="complaint-box" name="complaint-block" id="complaint-block">
           <option value="----">-- Block --</option>
-          {% for block in blocks %}
-          <option value="{{block.code}}">{{block.name}}</option>
-          {% endfor %}
         </select><br/>
-        <select class="complaint-box" name="complaint-gp">
+        <select class="complaint-box" name="complaint-gp" id="complaint-gp">
           <option value="----">-- Gram Panchayat --</option>
-          {% for gp in gps %}
-          <option value="{{gp.code}}">{{gp.name}}</option>
-          {% endfor %}
         </select><br/>
-        <select class="complaint-box" name="complaint-village">
+        <select class="complaint-box" name="complaint-village" id="complaint-village">
           <option value="----">-- Village --</option>
-          {% for village in villages %}
-          <option value="{{village.code}}">{{village.name}}</option>
-          {% endfor %}
         </select><br/>
       </fieldset>
       <fieldset>
@@ -118,6 +106,12 @@
   addEvent (window, 'load', (function () {DateTimeHandler.init ("date-field", "time-field")}));
 
   $("#complaint-state").change (populate_sub_select ("#complaint-state", "#complaint-distt", "District", "/complaint/select_region/"));
+
+  $("#complaint-distt").change (populate_sub_select ("#complaint-distt", "#complaint-block", "Block", "/complaint/select_region/"));
+
+  $("#complaint-block").change (populate_sub_select ("#complaint-block", "#complaint-gp", "Gram Panchayat", "/complaint/select_region/"));
+
+  $("#complaint-gp").change (populate_sub_select ("#complaint-gp", "#complaint-village", "Village", "/complaint/select_region/"));
 
 </script>
 {% endblock %}

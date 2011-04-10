@@ -16,19 +16,48 @@
 from django.http import HttpResponse
 from django.core import serializers
 from django.shortcuts import render_to_response
+from django.utils import simplejson as json
 
-from cmh.issuemgr.models import State, District, Block, GramPanchayat, Village
+from cmh.common.models import Category, Attribute, CodeName, LatLong
+from cmh.common.models import get_code2name, get_child_attributes
 from cmh.issuemgr.models import Department, ComplaintItem
 
 
+country = Attribute.objects.get (category__key = 'Country')
+
 def index (request):
-    return render_to_response ('complaint.html', {'states' : State.objects.all ()} )
+    states = country.attribute_set.all ()
+    return render_to_response ('complaint.html', {'states' : _prepare_select_element (states)})
 
 def select_region (request):
-    state_code = request.POST ['code']
-    ds = District.objects.filter (state__code = state_code)
-    return HttpResponse (serializers.serialize ('json', ds, fields = ['code', 'name']))
+    try:
+        str_cat, str_attr = _parse_selection (request.POST ['select'])
+        l2_regions = get_child_attributes (str_cat, str_attr)
+        l2_values = _prepare_select_element (l2_regions)
+        print l2_values
+        return HttpResponse (json.dumps (l2_values))
+    except:
+        return HttpResponse ('')
 
 def submit (request):
     print request.POST
     return render_to_response ('complaint_submitted.html')
+
+
+
+def _parse_selection (select_val):
+    try:
+        cat, attr = select_val.split (',')
+        cat_name, str_cat = cat.split (':')
+        attr_name, str_attr = attr.split (':')
+        if cat_name == 'cat' and attr_name == 'val':
+            return (str_cat, str_attr)
+        else:
+            return None
+    except:
+        return None
+
+def _prepare_select_element (values):
+    return [{'optval' : ('cat:' + value.category.key + ',val:' + value.value),
+             'name' : get_code2name (value.value)}
+            for value in values]

@@ -13,26 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys, traceback
 from django.db import models
 from django.contrib.auth.models import User
-from cmh.common.models import Attribute, Category
-import sys, traceback
-
-class Location(models.Model):
-    address     = models.OneToOneField (Attribute, blank = True, null = True, related_name='address')
-    town        = models.OneToOneField (Attribute, blank = True, null = True, related_name='town')
-    district    = models.OneToOneField (Attribute, blank = True, null = True, related_name='district')
-    state       = models.OneToOneField (Attribute, blank = True, null = True, related_name='state')
-    country     = models.OneToOneField (Attribute, related_name = 'country')
-    pincode     = models.IntegerField()
-    latitude    = models.CharField (max_length = 20, blank = True, null = True)
-    longitude   = models.CharField (max_length = 20, blank = True, null = True)
-
-    def __unicode__(self):
-        return self.town
-
-    class Meta:
-        ordering = ['pincode']
+from cmh.common.models import Attribute, Category, CodeName
 
 class Citizen(models.Model):
     user        = models.OneToOneField(User,blank=True,null=True)
@@ -41,13 +25,16 @@ class Citizen(models.Model):
     def __unicode__(self):
         return "Citizen: " + self.user.username
 
+class Department (CodeName):
+    pass
+
 class Official(models.Model):
     user        = models.OneToOneField (User)
     designation = models.CharField (max_length = 200, blank = True, null = True)
     supervisor  = models.ForeignKey ('Official', blank=True, null=True)
-    location    = models.ForeignKey (Location)
+    location    = models.ForeignKey (Attribute, related_name = 'location')
     mobile      = models.CharField (max_length=15, blank=True,null=True)
-    department  = models.ManyToManyField (Attribute)
+    department  = models.ManyToManyField (Department)
 
     def __unicode__(self):
         return u'Official: ' + self.user.username

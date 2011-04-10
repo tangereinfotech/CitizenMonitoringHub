@@ -23,12 +23,31 @@ class Attribute (models.Model):
     parents  = models.ManyToManyField ('Attribute')
     category = models.ForeignKey ('Category')
 
+    def __unicode__ (self):
+        return "%s [%s]" % (self.value, self.category.key)
+
 class CodeName (models.Model):
-    code = models.CharField (max_length = 100)
+    code = models.CharField (max_length = 100, unique = True)
     name = models.CharField (max_length = 500)
 
-    class Meta:
-        abstract = True
+codenames = CodeName.objects.all ()
+def get_code2name (code):
+    try:
+        return codenames.get (code = code).name
+    except CodeName.DoesNotExist:
+        return '----'
+
+def get_child_attributes (str_category, str_attribute):
+    try:
+        parent_attribute = Attribute.objects.get (category__key = str_category,
+                                                  value = str_attribute)
+        return parent_attribute.attribute_set.all ()
+    except Attribute.DoesNotExist:
+        return models.Q ()
 
 
+class LatLong (models.Model):
+    location = models.ForeignKey (Attribute)
+    latitude = models.FloatField ()
+    longitude = models.FloatField ()
 

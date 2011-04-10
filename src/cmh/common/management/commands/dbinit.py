@@ -4,9 +4,8 @@ import os
 
 from optparse import make_option, OptionParser
 from django.core.management.base import BaseCommand, CommandError
-from cmh.common.models import Category, Attribute
+from cmh.common.models import Category, Attribute, LatLong, CodeName
 from cmh.issuemgr.models import Department, ComplaintItem
-from cmh.issuemgr.models import State, District, Block, GramPanchayat, Village
 
 
 class ExcelFormatError (Exception):
@@ -94,6 +93,50 @@ provided at:
 
 
     def update_location_models (self, worksheet):
+        categories = ['Country', 'State', 'District', 'Block', 'Gram Panchayat', 'Village']
+        try:
+            cat_country = Category.objects.get (key = 'Country')
+        except Category.DoesNotExist:
+            cat_country = Category.objects.create (key = 'Country')
+
+        try:
+            cat_state = Category.objects.get (key = 'State')
+        except Category.DoesNotExist:
+            cat_state = Category.objects.create (key = 'State', parent = cat_country)
+
+        try:
+            cat_district = Category.objects.get (key = 'District')
+        except Category.DoesNotExist:
+            cat_district = Category.objects.create (key = 'District', parent = cat_state)
+
+        try:
+            cat_block = Category.objects.get (key = 'Block')
+        except Category.DoesNotExist:
+            cat_block = Category.objects.create (key = 'Block', parent = cat_district)
+
+        try:
+            cat_grampanchayat = Category.objects.get (key = 'Gram Panchayat')
+        except Category.DoesNotExist:
+            cat_grampanchayat = Category.objects.create (key = 'Gram Panchayat', parent = cat_block)
+
+        try:
+            cat_village = Category.objects.get (key = 'Village')
+        except Category.DoesNotExist:
+            cat_village = Category.objects.create (key = 'Village', parent = cat_grampanchayat)
+
+        try:
+            attr_india = Attribute.objects.get (value = 'IN', category = cat_country)
+        except Attribute.DoesNotExist:
+            attr_india = Attribute.objects.create (value = 'IN', category = cat_country)
+
+        try:
+            codename = CodeName.objects.get (code = 'IN')
+            codename.name = 'India'
+            codename.save ()
+        except CodeName.DoesNotExist:
+            codename = CodeName.objects.create (code = 'IN', name = 'India')
+
+
         for row in range (1, worksheet.nrows):
             state_name = worksheet.cell_value (row, 0).strip ()
             state_code = worksheet.cell_value (row, 1).strip ()
@@ -108,42 +151,88 @@ provided at:
             latitude   = worksheet.cell_value (row, 10)
             longitude  = worksheet.cell_value (row, 11)
 
-            try:
-                state = State.objects.get (name = state_name, code = state_code)
-            except State.DoesNotExist:
-                state = State.objects.create (name = state_name, code = state_code)
+            state_code = '.'.join (['IN', state_code])
+            distt_code = '.'.join ([state_code, distt_code])
+            block_code = '.'.join ([distt_code, block_code])
+            gp_code    = '.'.join ([block_code, gp_code])
+            vill_code  = '.'.join ([gp_code, vill_code])
 
             try:
-                distt = District.objects.get (name = distt_name, code = distt_code, state = state)
-            except District.DoesNotExist:
-                distt = District.objects.create (name = distt_name,
-                                                 code = distt_code,
-                                                 state = state)
+                attr_state = Attribute.objects.get (value = state_code, category = cat_state)
+            except Attribute.DoesNotExist:
+                attr_state = Attribute.objects.create (value = state_code, category = cat_state)
+            attr_state.parents.add (attr_india)
 
             try:
-                block = Block.objects.get (name = block_name, code = block_code, distt = distt)
-            except Block.DoesNotExist:
-                block = Block.objects.create (name = block_name,
-                                              code = block_code,
-                                              distt = distt)
+                attr_distt = Attribute.objects.get (value = distt_code, category = cat_district)
+            except Attribute.DoesNotExist:
+                attr_distt = Attribute.objects.create (value = distt_code, category = cat_district)
+            attr_distt.parents.add (attr_state)
 
             try:
-                gp = GramPanchayat.objects.get (name = gp_name, code = gp_code, block = block)
-            except GramPanchayat.DoesNotExist:
-                gp = GramPanchayat.objects.create (name = gp_name,
-                                                   code = gp_code,
-                                                   block = block)
+                attr_block = Attribute.objects.get (value = block_code, category = cat_block)
+            except Attribute.DoesNotExist:
+                attr_block = Attribute.objects.create (value = block_code, category = cat_block)
+            attr_block.parents.add (attr_distt)
 
             try:
-                vill = Village.objects.get (name = vill_name, code = vill_code, gp = gp)
-            except Village.DoesNotExist:
-                vill = Village.objects.create (name = vill_name,
-                                               code = vill_code,
-                                               gp = gp,
-                                               latitude = latitude,
-                                               longitude = longitude)
+                attr_grampanchayat = Attribute.objects.get (value = gp_code,
+                                                            category = cat_grampanchayat)
+            except Attribute.DoesNotExist:
+                attr_grampanchayat = Attribute.objects.create (value = gp_code,
+                                                               category = cat_grampanchayat)
+            attr_grampanchayat.parents.add (attr_block)
 
+            try:
+                attr_village = Attribute.objects.get (value = vill_code, category = cat_village)
+            except Attribute.DoesNotExist:
+                attr_village = Attribute.objects.create (value = vill_code, category = cat_village)
+            attr_village.parents.add (attr_grampanchayat)
 
+            try:
+                codename = CodeName.objects.get (code = state_code)
+                codename.name = state_name
+                codename.save ()
+            except CodeName.DoesNotExist:
+                codename = CodeName.objects.create (code = state_code, name = state_name)
+
+            try:
+                codename = CodeName.objects.get (code = distt_code)
+                codename.name = distt_name
+                codename.save ()
+            except CodeName.DoesNotExist:
+                codename = CodeName.objects.create (code = distt_code, name = distt_name)
+
+            try:
+                codename = CodeName.objects.get (code = block_code)
+                codename.name = block_name
+                codename.save ()
+            except CodeName.DoesNotExist:
+                codename = CodeName.objects.create (code = block_code, name = block_name)
+
+            try:
+                codename = CodeName.objects.get (code = gp_code)
+                codename.name = gp_name
+                codename.save ()
+            except CodeName.DoesNotExist:
+                codename = CodeName.objects.create (code = gp_code, name = gp_name)
+
+            try:
+                codename = CodeName.objects.get (code = vill_code)
+                codename.name = vill_name
+                codename.save ()
+            except CodeName.DoesNotExist:
+                codename = CodeName.objects.create (code = vill_code, name = vill_name)
+
+            try:
+                latlong = LatLong.objects.get (location = attr_village)
+                latlong.latitude = latitude
+                latlong.langitude = longitude
+                latlong.save ()
+            except LatLong.DoesNotExist:
+                latlong = LatLong.objects.create (location = attr_village,
+                                                  latitude = latitude,
+                                                  longitude = longitude)
 
 
     def confirm_worksheets (self, workbook):

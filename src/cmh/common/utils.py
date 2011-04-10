@@ -19,12 +19,6 @@ from datetime import datetime, date, timedelta
 from cmh.common.models import Category, Attribute
 from django.db.models import Q
 
-
-def get_complaint_types ():
-    complaint_type = Category.objects.get (name = 'Complaint')
-    all_types = complaint_type.get_attribute_child_closure ()
-    return [{'id' : attr.id, 'name' : attr.name} for attr in all_types ]
-
 def check_email (email):
     at_count = re.findall ('@', email)
     at_idx  = email.rfind ('@')

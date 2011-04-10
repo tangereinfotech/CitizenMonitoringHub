@@ -14,35 +14,14 @@
 # limitations under the License.
 
 from django.db import models
-from cmh.usermgr.models import Location, Citizen, Official
-from cmh.common.models import CodeName
-
-
-class State (CodeName):
-    pass
-
-class District (CodeName):
-    state = models.ForeignKey (State)
-
-class Block (CodeName):
-    distt = models.ForeignKey (District)
-
-class GramPanchayat (CodeName):
-    block = models.ForeignKey (Block)
-
-class Village (CodeName):
-    gp = models.ForeignKey (GramPanchayat)
-    latitude = models.FloatField ()
-    longitude = models.FloatField ()
+from cmh.usermgr.models import Citizen, Official, Citizen, Department
+from cmh.common.models import CodeName, Category, Attribute
 
 class ComplaintState (models.Model):
     state = models.CharField (max_length=100)
 
     def __unicode__(self):
         return self.state
-
-class Department (CodeName):
-    state = models.ForeignKey (State, blank = True, null = True)
 
 class ComplaintItem (CodeName):
     desc    = models.CharField (max_length = 5000)
@@ -56,7 +35,7 @@ class Complaint(models.Model):
     curstate    = models.ForeignKey (ComplaintState)
     filedby     = models.ForeignKey (Citizen)
     assignto    = models.ForeignKey (Official, blank = True, null = True)
-    location    = models.ForeignKey (Village, blank = True, null = True)
+    location    = models.ForeignKey (Attribute, blank = True, null = True)
     original    = models.ForeignKey ('Complaint', blank = True, null = True)
     created     = models.DateTimeField (auto_now_add = True)
 
