@@ -8,7 +8,7 @@ fieldset {
    padding: 10px;
 }
 
-.content-wrapper {
+.content_wrapper {
    padding: 20px 10px;
    background-color: #99c0ec;
    height: 100%;
@@ -34,7 +34,7 @@ div.userpanel {
    padding-right: 10px;
 }
 
-div.logo-top-menu {
+div.logo_top_menu {
 }
 
 div.logo {
@@ -46,7 +46,7 @@ div.logo {
    padding-bottom: 10px;
 }
 
-div.top-menu {
+div.top_menu {
    float: right;
    text-align: center;
    width: 600px;
@@ -58,7 +58,7 @@ div.top-menu {
    padding-bottom:10px;
 }
 
-div.top-menu table.top-menu {
+div.top_menu table.top_menu {
    padding: 20px 0px;
    background-color: #044a98;
    position: absolute;
@@ -66,24 +66,24 @@ div.top-menu table.top-menu {
    width: 100%;
 }
 
-div.top-menu table.top-menu tr td {
+div.top_menu table.top_menu tr td {
    border: 0px;
    height: 40px;
    vertical-align: middle;
 }
 
-div.top-menu table.top-menu tr td a {
+div.top_menu table.top_menu tr td a {
    font-size: 14px;
    color: white;
    text-decoration: none;
    font-weight: bold;
 }
 
-div.page-content {
+div.page_content {
    clear: both;
 }
 
-div.category-filter {
+div.category_filter {
    float: left;
    width: 260px;
    height: 400px;
@@ -94,7 +94,7 @@ ul.category {
    padding-left: 5px;
 }
 
-ul.category li.category-item {
+ul.category li.category_item {
    font-weight: bold;
    font-size: 20px;
    padding: 5px;
@@ -116,30 +116,30 @@ div.footer {
    padding-bottom: 20px;
 }
 
-div.complaint-location {
+div.complaint_location {
    height: 480px;
 }
 
-#complaint-location {
+#complaint_location {
    height: 420px;
    width: 480px;
 }
 
-select.complaint-box {
+select.complaint_box {
    width: 355px;
 }
 
-div.left-section {
+div.left_section {
    float: left;
    width: 500px;
 }
 
-div.right-section {
+div.right_section {
    float: left;
    width: 380px;
 }
 
-label.report-date {
+label.report_date {
    padding-top: 10px;
 }
 

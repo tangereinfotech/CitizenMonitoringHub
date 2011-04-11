@@ -20,3 +20,18 @@ function populate_sub_select (parent_sel_id, child_sel_id, child_empty_text, url
     };
     return retfn;
 }
+
+
+function populate_default_complaint_description (select_elem_id, child_elem_id, url) {
+    var retfn = function () {
+        var select_elem_val = $(select_elem_id).val ();
+        $.post (url,
+                { select : select_elem_val },
+                function (data, status, jqXHR) {
+                    var json = $.parseJSON (data);
+                    $(child_elem_id).val (json.description);
+                });
+    };
+
+    return retfn;
+}

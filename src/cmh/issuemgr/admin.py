@@ -1,5 +1,4 @@
 from django.contrib import admin
-from cmh.issuemgr.models import ComplaintState, Complaint
+from cmh.issuemgr.models import Complaint
 
-admin.site.register(ComplaintState)
 admin.site.register(Complaint)

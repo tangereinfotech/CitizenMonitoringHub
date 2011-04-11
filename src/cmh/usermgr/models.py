@@ -19,22 +19,19 @@ from django.contrib.auth.models import User
 from cmh.common.models import Attribute, Category, CodeName
 
 class Citizen(models.Model):
-    user        = models.OneToOneField(User,blank=True,null=True)
-    mobile      = models.IntegerField(blank=True,null=True)
+    name   = models.CharField (max_length = 500, blank = True, null = True)
+    mobile = models.CharField (max_length = 15, blank=True,null=True)
 
     def __unicode__(self):
-        return "Citizen: " + self.user.username
-
-class Department (CodeName):
-    pass
+        return "Citizen: " + self.name
 
 class Official(models.Model):
     user        = models.OneToOneField (User)
     designation = models.CharField (max_length = 200, blank = True, null = True)
     supervisor  = models.ForeignKey ('Official', blank=True, null=True)
-    location    = models.ForeignKey (Attribute, related_name = 'location')
+    location    = models.ForeignKey (Attribute, related_name = 'location_official')
     mobile      = models.CharField (max_length=15, blank=True,null=True)
-    department  = models.ManyToManyField (Department)
+    department  = models.ManyToManyField (Attribute, related_name = 'department_official')
 
     def __unicode__(self):
         return u'Official: ' + self.user.username

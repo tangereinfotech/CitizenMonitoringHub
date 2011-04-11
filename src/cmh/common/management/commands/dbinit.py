@@ -5,7 +5,7 @@ import os
 from optparse import make_option, OptionParser
 from django.core.management.base import BaseCommand, CommandError
 from cmh.common.models import Category, Attribute, LatLong, CodeName
-from cmh.issuemgr.models import Department, ComplaintItem
+from cmh.issuemgr.models import ComplaintItem
 
 
 class ExcelFormatError (Exception):
@@ -35,6 +35,7 @@ provided at:
             print self.help
             sys.exit (0)
         self.parse_update_db (workbook)
+        self.populate_complaint_status ()
 
     def parse_update_db (self, filename):
         try:
@@ -67,6 +68,19 @@ provided at:
 
 
     def update_complaint_models (self, worksheet):
+        categories = ['Complaint Department', 'Complaint Type']
+        try:
+            cat_cpldepartment = Category.objects.get (key = 'Complaint Department')
+        except Category.DoesNotExist:
+            cat_cpldepartment = Category.objects.create (key = 'Complaint Department')
+
+        try:
+            cat_cpltype = Category.objects.get (key = 'Complaint Type')
+        except Category.DoesNotExist:
+            cat_cpltype = Category.objects.create (key = 'Complaint Type',
+                                                   parent = cat_cpldepartment)
+
+
         for row  in range (1, worksheet.nrows):
             dept_name = worksheet.cell_value (row, 0).strip ()
             dept_code = worksheet.cell_value (row, 1).strip ()
@@ -74,26 +88,44 @@ provided at:
             issue_sum  = worksheet.cell_value (row, 3).strip ()
             issue_desc = worksheet.cell_value (row, 4).strip ()
 
-            try:
-                dept = Department.objects.get (code = dept_code, name = dept_name)
-            except Department.DoesNotExist:
-                dept = Department.objects.create (code = dept_code, name = dept_name)
+            dept_code  = '.'.join (['Complaint', dept_code])
+            issue_code = '.'.join ([dept_code, issue_code])
 
             try:
-                issue = ComplaintItem.objects.get (code = issue_code,
+                attr_dept = Attribute.objects.get (value = dept_code,
+                                                   category = cat_cpldepartment)
+            except Attribute.DoesNotExist:
+                attr_dept = Attribute.objects.create (value = dept_code,
+                                                      category = cat_cpldepartment)
+
+            try:
+                attr_cplitem = Attribute.objects.get (value = issue_code,
+                                                      category = cat_cpltype)
+            except Attribute.DoesNotExist:
+                attr_cplitem = Attribute.objects.create (value = issue_code,
+                                                      category = cat_cpltype)
+            attr_cplitem.parents.add (attr_dept)
+
+            try:
+                codename = CodeName.objects.get (code = dept_code)
+                codename.name = dept_name
+                codename.save ()
+            except CodeName.DoesNotExist:
+                codename = CodeName.objects.create (code = dept_code, name = dept_name)
+
+            try:
+                ci = ComplaintItem.objects.get (code = issue_code)
+                ci.name = issue_sum
+                ci.desc = issue_desc
+                ci.save ()
+            except CodeName.DoesNotExist:
+                ci = ComplaintItem.objects.create (code = issue_code,
                                                    name = issue_sum,
                                                    desc = issue_desc)
-                issue.department = dept
-                issue.save ()
-            except ComplaintItem.DoesNotExist:
-                issue = ComplaintItem.objects.create (code = issue_code,
-                                                      name = issue_sum,
-                                                      desc = issue_desc,
-                                                      department = dept)
+
 
 
     def update_location_models (self, worksheet):
-        categories = ['Country', 'State', 'District', 'Block', 'Gram Panchayat', 'Village']
         try:
             cat_country = Category.objects.get (key = 'Country')
         except Category.DoesNotExist:
@@ -294,3 +326,16 @@ provided at:
                             {'id' : 11, 'name' : 'Longitude'},]}]
 
 
+
+    def populate_complaint_status (self):
+        try:
+            cat_complaintstatus = Category.objects.get (key = 'Status')
+        except Category.DoesNotExist:
+            cat_complaintstatus = Category.objects.create (key = 'Status')
+
+        statuses = ['New', 'Reopened', 'Acknowledged', 'Open', 'Resolved', 'Closed']
+        for status in statuses:
+            try:
+                s = Attribute.objects.get (value = status)
+            except Attribute.DoesNotExist:
+                s = Attribute.objects.create (value = status, category = cat_complaintstatus)

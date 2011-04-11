@@ -14,28 +14,24 @@
 # limitations under the License.
 
 from django.db import models
-from cmh.usermgr.models import Citizen, Official, Citizen, Department
+from cmh.usermgr.models import Citizen, Official, Citizen
 from cmh.common.models import CodeName, Category, Attribute
-
-class ComplaintState (models.Model):
-    state = models.CharField (max_length=100)
-
-    def __unicode__(self):
-        return self.state
 
 class ComplaintItem (CodeName):
     desc    = models.CharField (max_length = 5000)
-    department = models.ForeignKey (Department)
 
 class Complaint(models.Model):
     base        = models.ForeignKey (ComplaintItem, blank = True, null = True)
     complaintno = models.CharField (max_length = 50, blank = True, null = True)
     description = models.CharField (max_length=200)
-    department  = models.ForeignKey (Department, blank = True, null = True)
-    curstate    = models.ForeignKey (ComplaintState)
+    department  = models.ForeignKey (Attribute, blank = True, null = True,
+                                     related_name = 'complaintdepartment')
+    curstate    = models.ForeignKey (Attribute, blank = True, null = True,
+                                     related_name = 'complnaintstate')
     filedby     = models.ForeignKey (Citizen)
     assignto    = models.ForeignKey (Official, blank = True, null = True)
-    location    = models.ForeignKey (Attribute, blank = True, null = True)
+    location    = models.ForeignKey (Attribute, blank = True, null = True,
+                                     related_name = 'complaintlocation')
     original    = models.ForeignKey ('Complaint', blank = True, null = True)
     created     = models.DateTimeField (auto_now_add = True)
 
