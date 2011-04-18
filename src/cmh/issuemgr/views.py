@@ -68,7 +68,39 @@ def get_complaint_description (request):
         return HttpResponse ('')
 
 def submit (request):
-    print request.POST
-    return HttpResponse ('') # render_to_response ('complaint_submitted.html')
+    complaint_form = ComplaintForm (request.POST)
+    if complaint_form.is_valid ():
+        errors = []
+        try:
+            (str_state, str_state) = _parse_selection (complaint_form.cleaned_data ['complaint_state'])
+            attr_state = Attribute.objects.get (value = str_state, category__key = str_state)
+            print attr_state.value
+        except Attribute.DoesNotExist:
+            errors.append ('Incorrect Selection for State')
+
+        try:
+            (str_distt, str_distt) = _parse_selection (complaint_form.cleaned_data ['complaint_distt'])
+            attr_distt = Attribute.objects.get (value = str_distt, category__key = str_distt)
+            print attr_distt.value
+        except Attribute.DoesNotExist:
+            errors.append ('Incorrect Selection for District')
+
+        try:
+            (str_block, str_block) = _parse_selection (complaint_form.cleaned_data ['complaint_block'])
+            attr_block = Attribute.objects.get (value = str_block, category__key = str_block)
+            print attr_block.value
+        except Attribute.DoesNotExist:
+            errors.append ('Incorrect Selection for Block')
+
+        print errors
+
+        return render_to_response ('complaint_submitted.html')
+    else:
+        states = country.attribute_set.all ()
+        depts  = Attribute.objects.filter (category__key = 'Complaint Department')
+        return render_to_response ('complaint.html',
+                                   {'states' : _prepare_select_element (states),
+                                    'departments' : _prepare_select_element (depts),
+                                    'errors' : complaint_form.errors})
 
 
