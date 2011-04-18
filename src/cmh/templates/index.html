@@ -32,6 +32,8 @@
 </div>
 <script type="text/javascript" src="/static/js/MapHandler.js"></script>
 <script type="text/javascript">
-  addEvent (window, 'load', (function () {MapHandler.init ('base_map');}));
+  $(document).ready (function () {
+    MapHandler.init ('base_map');
+  });
 </script>
 {% endblock %}
