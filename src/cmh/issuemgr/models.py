@@ -21,7 +21,8 @@ class ComplaintItem (CodeName):
     desc    = models.CharField (max_length = 5000)
 
 class Complaint(models.Model):
-    base        = models.ForeignKey (ComplaintItem, blank = True, null = True)
+    base        = models.ForeignKey (Attribute, blank = True, null = True,
+                                     related_name = 'complaintbase')
     complaintno = models.CharField (max_length = 50, blank = True, null = True)
     description = models.CharField (max_length=200)
     department  = models.ForeignKey (Attribute, blank = True, null = True,
@@ -36,3 +37,5 @@ class Complaint(models.Model):
     created     = models.DateTimeField (auto_now_add = True)
 
 
+    def __unicode__ (self):
+        return self.complaintno

@@ -22,17 +22,17 @@ from django.utils import simplejson as json
 
 from cmh.common.models import Category, Attribute, CodeName, LatLong
 from cmh.common.models import get_code2name, get_child_attributes
+
+from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES
 from cmh.issuemgr.models import ComplaintItem
-from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, LOCATION_REGEX
+from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox, LOCATION_REGEX
 
-
-country = Attribute.objects.get (category__key = 'Country')
 
 def index (request):
-    states = country.attribute_set.all ()
-    depts  = Attribute.objects.filter (category__key = 'Complaint Department')
-    return render_to_response ('complaint.html', {'states' : _prepare_select_element (states),
-                                                  'departments' : _prepare_select_element (depts)})
+    if request.method == 'GET':
+        return render_to_response ('complaint.html')
+    else:
+        return _handle_complaint_submission (request)
 
 def locations (request):
     try:
@@ -42,91 +42,60 @@ def locations (request):
             matches = re.search (LOCATION_REGEX, term)
             g = matches.groups ()
             names = []
-            for village in country.get_category_descendents ('Village'):
-                vill_codename = CodeName.objects.get (code = village.value)
-                if term.lower () in vill_codename.name.lower ():
-                    names.append ("%s [%s, %s]" % (vill_codename.name,
-                                                   CodeName.objects.get (code = village.parent.value).name,
-                                                   CodeName.objects.get (code = village.parent.parent.value).name))
+            for village in VILLAGES:
+                vill_code = village.value
+                vill_name = CodeName.objects.get (code = vill_code).name
 
+                if term.lower () in vill_name.lower ():
+                    gp_code = village.parent.value
+                    block_code = village.parent.parent.value
 
+                    gp_name = CodeName.objects.get (code = gp_code).name
+                    block_name = CodeName.objects.get (code = block_code).name
+
+                    names.append ({'display' : vill_name,
+                                   'detail' : ('Gram Panchayat: %s<br/>Block: %s' %
+                                               (gp_name, block_name)),
+                                   'id' : village.id})
             return HttpResponse (json.dumps (names))
-        else:
-            print form.errors
     except:
         import traceback
         traceback.print_exc ()
     return HttpResponse (json.dumps ([]))
 
-def select_children (request):
+
+def categories (request):
     try:
-        str_cat, str_attr = _parse_selection (request.POST ['select'])
-        l2_regions = get_child_attributes (str_cat, str_attr)
-        l2_values = _prepare_select_element (l2_regions)
-        return HttpResponse (json.dumps (l2_values))
+        form = ComplaintTypeBox (request.GET)
+        if form.is_valid ():
+            retvals = []
+            words = set ([x.lower () for x in form.cleaned_data ['term'].split ()])
+
+            for cpl_type in COMPLAINT_TYPES:
+                cpl_code = cpl_type.value
+                cpl_item = ComplaintItem.objects.get (code = cpl_code)
+                cpl_words = set ([x.lower () for x in cpl_item.name.split ()])
+                if len (cpl_words & words) != 0:
+                    cpl_dept = CodeName.objects.get (code = cpl_type.parent.value).name
+                    retvals.append ({'display' : cpl_item.name,
+                                     'detail' : '%s<br/>Department: %s' % (cpl_item.desc, cpl_dept),
+                                     'id' : cpl_type.id})
+            return HttpResponse (json.dumps (retvals))
     except:
-        return HttpResponse ('')
+        import traceback
+        traceback.print_exc ()
+    return HttpResponse (json.dumps ([]))
 
 
-def _parse_selection (select_val):
-    try:
-        cat, attr = select_val.split (',')
-        cat_name, str_cat = cat.split (':')
-        attr_name, str_attr = attr.split (':')
-        if cat_name == 'cat' and attr_name == 'val':
-            return (str_cat, str_attr)
-        else:
-            return None
-    except:
-        return None
-
-def _prepare_select_element (values):
-    return [{'optval' : ('cat:' + value.category.key + ',val:' + value.value),
-             'name' : get_code2name (value.value)}
-            for value in values]
-
-def get_complaint_description (request):
-    str_cat, str_attr = _parse_selection (request.POST ['select'])
-    try:
-        attr_complaintitem = ComplaintItem.objects.get (code = str_attr)
-        return HttpResponse (json.dumps ({'description' : attr_complaintitem.desc}))
-    except ComplaintItem.DoesNotExist:
-        return HttpResponse ('')
-
-def submit (request):
-    complaint_form = ComplaintForm (request.POST)
-    if complaint_form.is_valid ():
-        errors = []
-        try:
-            (str_state, str_state) = _parse_selection (complaint_form.cleaned_data ['complaint_state'])
-            attr_state = Attribute.objects.get (value = str_state, category__key = str_state)
-            print attr_state.value
-        except Attribute.DoesNotExist:
-            errors.append ('Incorrect Selection for State')
-
-        try:
-            (str_distt, str_distt) = _parse_selection (complaint_form.cleaned_data ['complaint_distt'])
-            attr_distt = Attribute.objects.get (value = str_distt, category__key = str_distt)
-            print attr_distt.value
-        except Attribute.DoesNotExist:
-            errors.append ('Incorrect Selection for District')
-
-        try:
-            (str_block, str_block) = _parse_selection (complaint_form.cleaned_data ['complaint_block'])
-            attr_block = Attribute.objects.get (value = str_block, category__key = str_block)
-            print attr_block.value
-        except Attribute.DoesNotExist:
-            errors.append ('Incorrect Selection for Block')
-
-        print errors
-
+def _handle_complaint_submission (request):
+    form = ComplaintForm (request.POST)
+    if form.is_valid ():
+        form.save ()
         return render_to_response ('complaint_submitted.html')
     else:
-        states = country.attribute_set.all ()
-        depts  = Attribute.objects.filter (category__key = 'Complaint Department')
+        print request.POST
+        print form.errors
         return render_to_response ('complaint.html',
-                                   {'states' : _prepare_select_element (states),
-                                    'departments' : _prepare_select_element (depts),
-                                    'errors' : complaint_form.errors})
+                                   {'errors' : form.errors})
 
 

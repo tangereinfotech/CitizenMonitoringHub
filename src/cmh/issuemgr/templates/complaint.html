@@ -20,7 +20,7 @@
 
 {% block page_content %}
 <div class="complaint_location">
-  <form action="/complaint/submit/" method="post">
+  <form action="/complaint/" method="post">
     {# {% csrf_token %} #}
     <div class="left_section">
       <div id="complaint_location"></div>
@@ -30,33 +30,35 @@
         <legend>File Your Issue</legend>
         <label for="id_date" class="id_date">Date:</label>
         <br/>
-        <input id="id_date" type="text" name="id_date" />
+        <input id="id_date" type="text" name="logdate" />
         <br/>
         <label for="id_description">Description:</label>
         <br/>
-        <textarea name="id_description"
+        <textarea name="description"
                   id="id_description"
                   class="id_description"
                   style="width:348px" rows="5"></textarea>
         <br/>
         <label for="id_location">Location:</label>
         <br/>
+        <input type="hidden" id="id_location_id" name="locationid" />
         <input type="text" id="id_location" name="id_location" style="width:348px" />
-        <br/>
+        <div id="id_location_detail"></div>
         <label for="your_name">Your Name:</label>
         <br/>
-        <input id="your_name" name="your_name" class="your_name" type="text" style="width:348px;"
+        <input id="your_name" name="yourname" class="your_name" type="text" style="width:348px;"
                maxlength="100" />
         <br/>
         <label for="your_mobile">Your Mobile Number:</label>
         <br/>
-        <input id="your_mobile" name="your_mobile" class="your_mobile" type="text"
+        <input id="your_mobile" name="yourmobile" class="your_mobile" type="text"
                style="width:348px;" maxlength="15" />
-
         <br/>
         <label for="id_category">Categorize Your Complaint</label>
+        <br/>
+        <input type="hidden" id="id_category_id" name="categoryid" />
         <input type="text" id="id_category" name="id_category" style="width:348px" />
-
+        <div id="id_category_detail" style="margin:0"></div>
         <div style="text-align:center;width:100%;">
           <input type="submit" value="Submit Complaint" />
         </div>
@@ -70,8 +72,9 @@
 <script type="text/javascript">
   $(document).ready (function () {
     MapHandler.init ('complaint_location');
-    $("#id_date").datepicker ();
-    field_autocomplete ("#id_location", "/complaint/locations/");
+    $("#id_date").datepicker ({dateFormat : 'dd/mm/yy'});
+    field_autocomplete ("#id_location", "#id_location_id", "#id_location_detail", "/complaint/locations/");
+    field_autocomplete ("#id_category", "#id_category_id", "#id_category_detail", "/complaint/categories/");
   });
 </script>
 {% endblock %}

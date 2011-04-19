@@ -68,17 +68,29 @@ provided at:
 
 
     def update_complaint_models (self, worksheet):
-        categories = ['Complaint Department', 'Complaint Type']
         try:
-            cat_cpldepartment = Category.objects.get (key = 'Complaint Department')
+            cat_cpl = Category.objects.get (key = 'Complaint')
         except Category.DoesNotExist:
-            cat_cpldepartment = Category.objects.create (key = 'Complaint Department')
+            cat_cpl = Category.objects.create (key = 'Complaint')
 
         try:
-            cat_cpltype = Category.objects.get (key = 'Complaint Type')
+            cat_cpldepartment = Category.objects.get (key = 'Complaint Department',
+                                                      parent = cat_cpl)
+        except Category.DoesNotExist:
+            cat_cpldepartment = Category.objects.create (key = 'Complaint Department',
+                                                         parent = cat_cpl)
+
+        try:
+            cat_cpltype = Category.objects.get (key = 'Complaint Type',
+                                                parent = cat_cpldepartment)
         except Category.DoesNotExist:
             cat_cpltype = Category.objects.create (key = 'Complaint Type',
                                                    parent = cat_cpldepartment)
+
+        try:
+            attr_cpl = Attribute.objects.get (value = 'Complaint', category = cat_cpl)
+        except Attribute.DoesNotExist:
+            attr_cpl = Attribute.objects.create (value = 'Complaint', category = cat_cpl)
 
 
         for row  in range (1, worksheet.nrows):
@@ -93,10 +105,12 @@ provided at:
 
             try:
                 attr_dept = Attribute.objects.get (value = dept_code,
-                                                   category = cat_cpldepartment)
+                                                   category = cat_cpldepartment,
+                                                   parent = attr_cpl)
             except Attribute.DoesNotExist:
                 attr_dept = Attribute.objects.create (value = dept_code,
-                                                      category = cat_cpldepartment)
+                                                      category = cat_cpldepartment,
+                                                      parent = attr_cpl)
 
             try:
                 attr_cplitem = Attribute.objects.get (value = issue_code,
@@ -120,7 +134,7 @@ provided at:
                 ci.name = issue_sum
                 ci.desc = issue_desc
                 ci.save ()
-            except CodeName.DoesNotExist:
+            except ComplaintItem.DoesNotExist:
                 ci = ComplaintItem.objects.create (code = issue_code,
                                                    name = issue_sum,
                                                    desc = issue_desc)
@@ -351,6 +365,6 @@ provided at:
         statuses = ['New', 'Reopened', 'Acknowledged', 'Open', 'Resolved', 'Closed']
         for status in statuses:
             try:
-                s = Attribute.objects.get (value = status)
+                s = Attribute.objects.get (value = status, category = cat_complaintstatus)
             except Attribute.DoesNotExist:
                 s = Attribute.objects.create (value = status, category = cat_complaintstatus)
