@@ -101,10 +101,12 @@ provided at:
             try:
                 attr_cplitem = Attribute.objects.get (value = issue_code,
                                                       category = cat_cpltype)
+                attr_cplitem.parent = attr_dept
+                attr_cplitem.save ()
             except Attribute.DoesNotExist:
                 attr_cplitem = Attribute.objects.create (value = issue_code,
-                                                      category = cat_cpltype)
-            attr_cplitem.parents.add (attr_dept)
+                                                         category = cat_cpltype,
+                                                         parent = attr_dept)
 
             try:
                 codename = CodeName.objects.get (code = dept_code)
@@ -190,36 +192,49 @@ provided at:
             vill_code  = '.'.join ([gp_code, vill_code])
 
             try:
-                attr_state = Attribute.objects.get (value = state_code, category = cat_state)
+                attr_state = Attribute.objects.get (value = state_code,
+                                                    category = cat_state,
+                                                    parent = attr_india)
             except Attribute.DoesNotExist:
-                attr_state = Attribute.objects.create (value = state_code, category = cat_state)
-            attr_state.parents.add (attr_india)
+                attr_state = Attribute.objects.create (value = state_code,
+                                                       category = cat_state,
+                                                       parent = attr_india)
 
             try:
-                attr_distt = Attribute.objects.get (value = distt_code, category = cat_district)
+                attr_distt = Attribute.objects.get (value = distt_code,
+                                                    category = cat_district,
+                                                    parent = attr_state)
             except Attribute.DoesNotExist:
-                attr_distt = Attribute.objects.create (value = distt_code, category = cat_district)
-            attr_distt.parents.add (attr_state)
+                attr_distt = Attribute.objects.create (value = distt_code,
+                                                       category = cat_district,
+                                                       parent = attr_state)
 
             try:
-                attr_block = Attribute.objects.get (value = block_code, category = cat_block)
+                attr_block = Attribute.objects.get (value = block_code,
+                                                    category = cat_block,
+                                                    parent = attr_distt)
             except Attribute.DoesNotExist:
-                attr_block = Attribute.objects.create (value = block_code, category = cat_block)
-            attr_block.parents.add (attr_distt)
+                attr_block = Attribute.objects.create (value = block_code,
+                                                       category = cat_block,
+                                                       parent = attr_distt)
 
             try:
                 attr_grampanchayat = Attribute.objects.get (value = gp_code,
-                                                            category = cat_grampanchayat)
+                                                            category = cat_grampanchayat,
+                                                            parent = attr_block)
             except Attribute.DoesNotExist:
                 attr_grampanchayat = Attribute.objects.create (value = gp_code,
-                                                               category = cat_grampanchayat)
-            attr_grampanchayat.parents.add (attr_block)
+                                                               category = cat_grampanchayat,
+                                                               parent = attr_block)
 
             try:
-                attr_village = Attribute.objects.get (value = vill_code, category = cat_village)
+                attr_village = Attribute.objects.get (value = vill_code,
+                                                      category = cat_village,
+                                                      parent = attr_grampanchayat)
             except Attribute.DoesNotExist:
-                attr_village = Attribute.objects.create (value = vill_code, category = cat_village)
-            attr_village.parents.add (attr_grampanchayat)
+                attr_village = Attribute.objects.create (value = vill_code,
+                                                         category = cat_village,
+                                                         parent = attr_grampanchayat)
 
             try:
                 codename = CodeName.objects.get (code = state_code)

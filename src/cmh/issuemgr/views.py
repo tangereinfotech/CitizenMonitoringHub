@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import re
+
 from django.http import HttpResponse
 from django.core import serializers
 from django.shortcuts import render_to_response
@@ -21,7 +23,7 @@ from django.utils import simplejson as json
 from cmh.common.models import Category, Attribute, CodeName, LatLong
 from cmh.common.models import get_code2name, get_child_attributes
 from cmh.issuemgr.models import ComplaintItem
-from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox
+from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, LOCATION_REGEX
 
 
 country = Attribute.objects.get (category__key = 'Country')
@@ -37,6 +39,8 @@ def locations (request):
         form = ComplaintLocationBox (request.GET)
         if form.is_valid ():
             term = form.cleaned_data ['term']
+            matches = re.search (LOCATION_REGEX, term)
+            g = matches.groups ()
             names = []
             for village in country.get_category_descendents ('Village'):
                 vill_codename = CodeName.objects.get (code = village.value)
@@ -47,6 +51,8 @@ def locations (request):
 
 
             return HttpResponse (json.dumps (names))
+        else:
+            print form.errors
     except:
         import traceback
         traceback.print_exc ()

@@ -20,7 +20,7 @@ class Category(models.Model):
 
 class Attribute (models.Model):
     value    = models.CharField (max_length = 1000)
-    parent   = models.ForeignKey ('Attribute')
+    parent   = models.ForeignKey ('Attribute', blank = True, null = True)
     category = models.ForeignKey ('Category')
 
     def __unicode__ (self):

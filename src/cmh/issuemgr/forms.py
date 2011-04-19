@@ -15,6 +15,8 @@
 
 from django import forms
 
+LOCATION_REGEX = r'^ *(?P<village>\w+) *\[(?P<gp>\w+), *(?P<block>\w+)\] *$|^ *(?P<full>\w+) *$'
+
 class ComplaintForm (forms.Form):
     complaint_state       = forms.CharField ()
     complaint_distt       = forms.CharField ()
@@ -30,4 +32,4 @@ class ComplaintForm (forms.Form):
 
 
 class ComplaintLocationBox (forms.Form):
-    term = forms.CharField ()
+    term = forms.RegexField (regex = LOCATION_REGEX)
