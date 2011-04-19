@@ -33,6 +33,7 @@ class Complaint(models.Model):
     assignto    = models.ForeignKey (Official, blank = True, null = True)
     location    = models.ForeignKey (Attribute, blank = True, null = True,
                                      related_name = 'complaintlocation')
+    logdate     = models.DateField (blank = True, null = True)
     original    = models.ForeignKey ('Complaint', blank = True, null = True)
     created     = models.DateTimeField (auto_now_add = True)
 

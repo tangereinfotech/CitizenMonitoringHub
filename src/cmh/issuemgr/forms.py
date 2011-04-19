@@ -21,7 +21,7 @@ from datetime import datetime
 
 from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES, STATUS_NEW
 from cmh.issuemgr.models import Complaint, ComplaintItem
-from cmh.issuemgr.utils import get_complaint_sequence
+from cmh.issuemgr.utils import update_complaint_sequence
 from cmh.usermgr.utils import get_or_create_citizen
 
 class ComplaintForm (forms.Form):
@@ -50,36 +50,19 @@ class ComplaintForm (forms.Form):
         location       = VILLAGES.get (id = self.cleaned_data ['locationid'])
         complaint_base = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
 
-        complaint_seq = get_complaint_sequence (complaint_base,
-                                                location,
-                                                self.cleaned_data ['logdate'])
-
         citizen = get_or_create_citizen (self.cleaned_data ['yourmobile'],
                                          self.cleaned_data ['yourname'])
 
         cpl = Complaint.objects.create (base = complaint_base,
-                                        complaintno = complaint_seq,
+                                        complaintno = None,
                                         description = self.cleaned_data ['description'],
                                         department  = complaint_base.parent,
                                         curstate = STATUS_NEW,
                                         filedby = citizen,
+                                        logdate = self.cleaned_data ['logdate'],
                                         location = location,
                                         original = None)
-
-        now_time = datetime.now ()
-        todays_cpls = Complaint.objects.filter (created__year = now_time.year,
-                                                created__month = now_time.month,
-                                                created__day   = now_time.day)
-        todays_cpls = todays_cpls.order_by ('created')
-        if todays_cpls.count () != 0:
-            print "count", todays_cpls.count ()
-            first_cpl = todays_cpls [0]
-            this_cpl_index = cpl.id - first_cpl.id
-            cpl.complaintno = cpl.complaintno.replace ('#', "%05d" % (this_cpl_index))
-        else:
-            cpl.complaintno = cpl.complaintno.replace ('#', 'NOTFO')
-        cpl.save ()
-
+        update_complaint_sequence (cpl)
         return cpl
 
 class ComplaintLocationBox (forms.Form):

@@ -32,7 +32,15 @@ def index (request):
     if request.method == 'GET':
         return render_to_response ('complaint.html')
     else:
-        return _handle_complaint_submission (request)
+        form = ComplaintForm (request.POST)
+        if form.is_valid ():
+            form.save ()
+            return render_to_response ('complaint_submitted.html')
+        else:
+            print request.POST
+            print form.errors
+            return render_to_response ('complaint.html', {'errors' : form.errors})
+
 
 def locations (request):
     try:
@@ -85,17 +93,3 @@ def categories (request):
         import traceback
         traceback.print_exc ()
     return HttpResponse (json.dumps ([]))
-
-
-def _handle_complaint_submission (request):
-    form = ComplaintForm (request.POST)
-    if form.is_valid ():
-        form.save ()
-        return render_to_response ('complaint_submitted.html')
-    else:
-        print request.POST
-        print form.errors
-        return render_to_response ('complaint.html',
-                                   {'errors' : form.errors})
-
-
