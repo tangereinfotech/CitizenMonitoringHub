@@ -28,3 +28,6 @@ class ComplaintForm (forms.Form):
     your_name             = forms.CharField ()
     your_mobile           = forms.CharField ()
 
+
+class ComplaintLocationBox (forms.Form):
+    term = forms.CharField ()

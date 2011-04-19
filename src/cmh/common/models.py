@@ -20,11 +20,30 @@ class Category(models.Model):
 
 class Attribute (models.Model):
     value    = models.CharField (max_length = 1000)
-    parents  = models.ManyToManyField ('Attribute')
+    parent   = models.ForeignKey ('Attribute')
     category = models.ForeignKey ('Category')
 
     def __unicode__ (self):
         return "%s [%s]" % (self.value, self.category.key)
+
+    def _get_descendents (self):
+        children = self.attribute_set.all ()
+        if children.count () == 0:
+            return children
+        else:
+            retchildren = children
+            for child in children:
+                retchildren = retchildren | child._get_descendents ()
+            return retchildren
+
+    def get_descendents (self):
+        return self._get_descendents ()
+
+    def get_children (self):
+        return self.attribute_set.all ()
+
+    def get_category_descendents (self, category):
+        return self.get_descendents ().filter (category__key = category)
 
 class CodeName (models.Model):
     code = models.CharField (max_length = 100, unique = True)

@@ -1,3 +1,25 @@
+var field_autocomplete = function (field_tag, url) {
+    var cache = {}, lastXhr;
+
+    $(field_tag).autocomplete ({minLength : 1,
+                                source : function (request, response) {
+                                    var term = request.term;
+                                    if (term in cache) {
+                                        response (cache [term]);
+                                        return;
+                                    } else {
+                                        lastXhr = $.getJSON (url, 
+                                                             request, 
+                                                             function (data, status, xhr) {
+                                                                 cache [term] = data;
+                                                                 if (xhr === lastXhr) {
+                                                                     response (data);
+                                                                 }
+                                                             });
+                                    }
+                                }
+                               });
+};
 
 function populate_sub_select (parent_sel_id, child_sel_id, child_empty_text, url) {
     var retfn = function () {

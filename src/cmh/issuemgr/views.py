@@ -21,7 +21,7 @@ from django.utils import simplejson as json
 from cmh.common.models import Category, Attribute, CodeName, LatLong
 from cmh.common.models import get_code2name, get_child_attributes
 from cmh.issuemgr.models import ComplaintItem
-from cmh.issuemgr.forms import ComplaintForm
+from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox
 
 
 country = Attribute.objects.get (category__key = 'Country')
@@ -31,6 +31,26 @@ def index (request):
     depts  = Attribute.objects.filter (category__key = 'Complaint Department')
     return render_to_response ('complaint.html', {'states' : _prepare_select_element (states),
                                                   'departments' : _prepare_select_element (depts)})
+
+def locations (request):
+    try:
+        form = ComplaintLocationBox (request.GET)
+        if form.is_valid ():
+            term = form.cleaned_data ['term']
+            names = []
+            for village in country.get_category_descendents ('Village'):
+                vill_codename = CodeName.objects.get (code = village.value)
+                if term.lower () in vill_codename.name.lower ():
+                    names.append ("%s [%s, %s]" % (vill_codename.name,
+                                                   CodeName.objects.get (code = village.parent.value).name,
+                                                   CodeName.objects.get (code = village.parent.parent.value).name))
+
+
+            return HttpResponse (json.dumps (names))
+    except:
+        import traceback
+        traceback.print_exc ()
+    return HttpResponse (json.dumps ([]))
 
 def select_children (request):
     try:

@@ -68,10 +68,10 @@
 <script type="text/javascript" src="/static/js/DateTimeHandler.js"></script>
 <script type="text/javascript" src="/static/js/complainthandler.js"></script>
 <script type="text/javascript">
-  $("#id_date").datepicker ();
-  $("#id_location").autocomplete ("/issuemgr/locations/");
   $(document).ready (function () {
-      MapHandler.init ('complaint_location');
+    MapHandler.init ('complaint_location');
+    $("#id_date").datepicker ();
+    field_autocomplete ("#id_location", "/complaint/locations/");
   });
 </script>
 {% endblock %}
