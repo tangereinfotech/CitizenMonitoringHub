@@ -16,5 +16,3 @@ def update_complaint_sequence (complaint):
                                               complaint.location.value)
     complaint.save ()
 
-
-

@@ -32,7 +32,9 @@ urlpatterns = patterns('',
 
 if settings.DEBUG:
     urlpatterns += patterns ('',
-                             (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root' : settings.CMH_APP_DIR + '/static/'}),
+                             (r'^static/(?P<path>.*)$',
+                              'django.views.static.serve',
+                              {'document_root' : settings.CMH_APP_DIR + '/static/'}),
                              )
 
 urlpatterns += patterns ("", (r'^$', 'cmh.views.index'))

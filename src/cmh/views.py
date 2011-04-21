@@ -16,7 +16,9 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 
+from cmh.usermgr.utils import get_user_menus
+
 def index (request):
-    request.session.set_expiry (0) # FIXME: Change this to a reasonable timeout
+    menus = get_user_menus (request.user)
     return render_to_response ('index.html')
 

@@ -25,6 +25,7 @@ class Citizen(models.Model):
     def __unicode__(self):
         return "Citizen: " + self.name
 
+
 class Official(models.Model):
     user        = models.OneToOneField (User)
     designation = models.CharField (max_length = 200, blank = True, null = True)
@@ -37,27 +38,16 @@ class Official(models.Model):
         return u'Official: ' + self.user.username
 
 
-def createuser(request, username, fname, lname, password, email, phone, mobile, superivor, street, town,district, state, pincode):
-    try:
-        user = User.objects.get(username = username)
-        sys.stderr.write ("User already exists: " + username + "\n")
-    except User.DoesNotExist:
-        user = User.objects.create (username=username, password=password, is_active = False)
-        loc = Location.objects.create(address=street,town=town,district=district,state=state,pincode=pincode)
-        Official.objects.create(fname=fname, lname=lname,email=email,mobile=mobile, phone=phone,superivor=superivor,user=user, location=loc)
-
-    return (user)
+class AppRole (models.Model):
+    role  = models.IntegerField ()
+    users = models.ManyToManyField (User)
 
 
-def createlocation(request, street, town,district, state, pincode):
+class MenuItem (models.Model):
+    name   = models.CharField (max_length = 500)
+    url    = models.CharField (max_length = 500)
+    role   = models.ForeignKey (AppRole)
+    serial = models.IntegerField ()
 
-    try:
-        loc = Location.objects.create(address=street,town=town,district=district,state=state,pincode=pincode)
-
-    except Exception:
-        sys.stderr.write("Unable to create location")
-
-    return (loc)
-
-
-
+    class Meta:
+        unique_together = (('role', 'serial'),)

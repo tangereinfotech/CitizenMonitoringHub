@@ -71,3 +71,4 @@ class ComplaintLocationBox (forms.Form):
 
 class ComplaintTypeBox (forms.Form):
     term = forms.CharField ()
+

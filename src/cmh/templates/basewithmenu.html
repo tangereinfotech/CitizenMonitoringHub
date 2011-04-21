@@ -26,11 +26,9 @@
     <div class="top_menu">
       <table class="top_menu">
         <tr>
-          <td> <a href="/">Home</a> </td>
-          <td> <a href="/complaint/">Submit&nbsp;Complaint</a> </td>
-          <td> <a href="/reports/"> Reports</a> </td>
-          <td> <a href="/register_alert/">Register&nbsp;for&nbsp;Alerts</a> </td>
-          <td> <a href="/contact_us/">Contact&nbsp;Us</a> </td>
+          {% for menuitem in menus %}
+          <td> <a href="{{menuitem.url}}">{{menuitem.text}}</a></td>
+          {% endfor %}
         </tr>
       </table>
     </div>
