@@ -40,7 +40,11 @@ class Official(models.Model):
 
 class AppRole (models.Model):
     role  = models.IntegerField ()
+    name  = models.CharField (max_length = 50)
     users = models.ManyToManyField (User)
+
+    def __unicode__ (self):
+        return self.name
 
 
 class MenuItem (models.Model):

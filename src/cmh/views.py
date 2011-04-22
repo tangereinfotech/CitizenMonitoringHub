@@ -19,6 +19,6 @@ from django.shortcuts import render_to_response
 from cmh.usermgr.utils import get_user_menus
 
 def index (request):
-    menus = get_user_menus (request.user)
-    return render_to_response ('index.html')
+    return render_to_response ('index.html', {'menus' : get_user_menus (request.user),
+                                              'user' : request.user })
 

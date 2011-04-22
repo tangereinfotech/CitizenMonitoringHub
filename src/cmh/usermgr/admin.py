@@ -15,6 +15,8 @@
 
 from django.contrib import admin
 from cmh.usermgr.models import Citizen, Official
+from cmh.usermgr.models import AppRole
 
 admin.site.register(Citizen)
 admin.site.register(Official)
+admin.site.register(AppRole)

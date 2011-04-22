@@ -5,5 +5,5 @@ class SMSTransferReqFormat (forms.Form):
 
 class SMSReceivedFormat (forms.Form):
     secret  = forms.CharField ()
-    from    = forms.CharField ()
+    fromu   = forms.CharField ()
     message = forms.CharField ()

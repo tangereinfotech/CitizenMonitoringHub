@@ -16,7 +16,13 @@
 {% block base_content %}
 <div class="top_panel">
   <div class="system_panel">
-    {% block system_panel %} {% endblock %}
+    <div class="userpanel">
+      {% if user.is_authenticated %}
+      Hello {{ user.username }} | <a href="/user/logout/"> Sign out </a>
+      {% else %}
+      <a href="/user/login"> Sign in </a>
+      {% endif %}
+    </div>
   </div>
   <div class="logo_top_menu">
     <div class="logo">
@@ -27,7 +33,7 @@
       <table class="top_menu">
         <tr>
           {% for menuitem in menus %}
-          <td> <a href="{{menuitem.url}}">{{menuitem.text}}</a></td>
+          <td> <a href="{{menuitem.url}}">{{menuitem.name}}</a></td>
           {% endfor %}
         </tr>
       </table>

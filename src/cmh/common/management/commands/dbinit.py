@@ -1,11 +1,30 @@
+# encoding: utf-8
+#
+# Copyright 2011, Tangere Infotech Pvt Ltd [http://tangere.in]
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import xlrd
 import sys
 import os
+import re
 
 from optparse import make_option, OptionParser
 from django.core.management.base import BaseCommand, CommandError
 from cmh.common.models import Category, Attribute, LatLong, CodeName
 from cmh.issuemgr.models import ComplaintItem
+from cmh.usermgr.constants import UserRoles
+from cmh.usermgr.models import AppRole, MenuItem
 
 
 class ExcelFormatError (Exception):
@@ -36,6 +55,7 @@ provided at:
             sys.exit (0)
         self.parse_update_db (workbook)
         self.populate_complaint_status ()
+        self.populate_role_menus ()
 
     def parse_update_db (self, filename):
         try:
@@ -368,3 +388,74 @@ provided at:
                 s = Attribute.objects.get (value = status, category = cat_complaintstatus)
             except Attribute.DoesNotExist:
                 s = Attribute.objects.create (value = status, category = cat_complaintstatus)
+
+    def populate_role_menus (self):
+
+        try:
+            anonymous = AppRole.objects.get (role = UserRoles.ANONYMOUS)
+            anonymous.name = 'Anonymous'
+            anonymous.save ()
+        except AppRole.DoesNotExist:
+            anonymous = AppRole.objects.create (role = UserRoles.ANONYMOUS, name = 'Anonymous')
+
+        try:
+            cso = AppRole.objects.get (role = UserRoles.CSO)
+            cso.name = 'CSO Member'
+            cso.save ()
+        except AppRole.DoesNotExist:
+            cso = AppRole.objects.create (role = UserRoles.CSO, name = 'CSO Member')
+
+        try:
+            delegate = AppRole.objects.get (role = UserRoles.DELEGATE)
+            delegate.name = 'Delegate'
+            delegate.save ()
+        except AppRole.DoesNotExist:
+            delegate = AppRole.objects.create (role = UserRoles.DELEGATE, name = 'Delegate')
+
+        try:
+            official = AppRole.objects.get (role = UserRoles.OFFICIAL)
+            official.name = 'Official'
+            official.save ()
+        except AppRole.DoesNotExist:
+            official = AppRole.objects.create (role = UserRoles.OFFICIAL, name = 'Official')
+
+        try:
+            dm = AppRole.objects.get (role = UserRoles.DM)
+            dm.name = 'District Magistrate'
+            dm.save ()
+        except AppRole.DoesNotExist:
+            dm = AppRole.objects.create (role = UserRoles.DM, name = 'District Magistrate')
+
+        anonymous_menu = [{'name' : 'Home',
+                           'url' : '/'},
+                          {'name' : 'Submit Complaint',
+                           'url' : '/complaint/'},
+                          {'name' : 'Track Complaint',
+                           'url' : '/complaint/track/'},
+                          ]
+
+        cso_menu = [{'name' : 'Home',
+                     'url' : '/'},
+                    {'name' : 'Log Complaint',
+                     'url' : '/complaint/accept/'},
+                    {'name' : 'View Complaints',
+                     'url' : '/complaint/view_complaints_cso/'},
+                    {'name' : 'Manage Masters',
+                     'url' : '/masters/'},
+                    ]
+
+        self._ensure_menu (anonymous, anonymous_menu)
+        self._ensure_menu (cso, cso_menu)
+
+    def _ensure_menu (self, role, menus):
+        serial = 1
+        for md in menus:
+            try:
+                mi = MenuItem.objects.get (name = md ['name'], role = role)
+                mi.url = md ['url']
+                mi.serial = serial
+                mi.save ()
+            except MenuItem.DoesNotExist:
+                mi = MenuItem.objects.create (name = md ['name'], url = md ['url'],
+                                              serial = serial, role = role)
+            serial += 1
