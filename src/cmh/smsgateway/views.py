@@ -16,8 +16,38 @@
 import sys
 
 from django.utils import simplejson as json
+from django.http import HttpResponse, HttpResponseForbidden
+
+from cmh.smsgateway.forms import SMSTransferReqFormat, SMSReceivedFormat
+
 
 def gateway (request):
-    sys.stderr.write (str (request.GET))
-    sys.stderr.write (str (request.POST))
-    return HttpResponse (json.dumps ({ 'payload' : { 'success' : 'true'}}))
+    sys.stderr.write ("Received request\n")
+    sys.stderr.write ("GET: " + str (request.GET) + "\n")
+    sys.stderr.write ("POST: " + str (request.POST) + "\n")
+    if request.method == 'GET':
+        transferreq = SMSTransferReqFormat (request.GET)
+        if transferreq.is_valid () == True:
+            # Find any pending SMSes to be transferred
+            # Send them as show in the payload section below
+            return HttpResponse (json.dumps ({"payload":
+                                              {"task": "send",
+                                               "secret": "0123456789",
+                                               "messages": [{"to": "0000000000", # 10-dig phone number
+                                                             "message": "the message goes here" },]
+                                               }
+                                              }))
+        else:
+            return HttpResponse (json.dumps ({}))
+    elif request.method == 'POST':
+        receivedform = SMSReceivedFormat (request.POST)
+        if receivedform.is_valid ():
+            # Parse the message
+            # Log the complaint
+            pass
+            return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
+        else:
+            return HttpResponse (json.dumps ({'payload' : {'success' : 'false'}}))
+    else:
+        return HttpResponseForbidden
+
