@@ -38,7 +38,7 @@ def dologin (request):
                     if user.is_active:
                         login (request, user)
                         request.session.set_expiry (0)
-                        return render_to_response ('loggedinbase.html', {'user' : user})
+                        return HttpResponseRedirect (settings.LOGIN_REDIRECT_URL)
             except Exception, e:
                 pass
 
@@ -50,7 +50,7 @@ def dologin (request):
 
 def dologout (request):
     logout (request)
-    return HttpResponseRedirect (settings.LOGIN_URL)
+    return HttpResponseRedirect (settings.LOGIN_REDIRECT_URL)
 
 
 # def doregister (request,form_class=UserLoginForm):
