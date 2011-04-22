@@ -30,10 +30,8 @@ def get_or_create_citizen (mobile, name):
 def get_user_menus (user):
     if user.is_authenticated ():
         role = get_user_role (user)
-        print "Fetching authenticated menu", role
         return MenuItem.objects.filter (role = role).order_by ('serial')
     else:
-        print "Fetching anonymous menu"
         return MenuItem.objects.filter (role__role = UserRoles.ANONYMOUS).order_by ('serial')
 
 cso_role       = AppRole.objects.get (role = UserRoles.CSO)
