@@ -1,5 +1,9 @@
+from cmh.usermgr.models import MenuItem
+from cmh.usermgr.constants import UserRoles
+
+from cmh.usermgr.models import Citizen
+
 def get_or_create_citizen (mobile, name):
-    from cmh.usermgr.models import Citizen
 
     try:
         citizen = Citizen.objects.get (mobile = mobile)
@@ -9,11 +13,11 @@ def get_or_create_citizen (mobile, name):
     return citizen
 
 def get_user_menus (user):
-    from cmh.usermgr.models import MenuItem
-    from cmh.usermgr.constants import UserRoles
     if user.is_authenticated ():
-        roles = get_user_roles (user)
-        return MenusItem.objects.filter (role = role)
+        role = get_user_role (user)
+        return MenuItem.objects.filter (role = role)
     else:
-        return MenusItem.objects.filter (role = UserRoles.ANONYMOUS)
+        return MenuItem.objects.filter (role = UserRoles.ANONYMOUS)
 
+def get_user_role (user):
+    return UserRoles.ANONYMOUS

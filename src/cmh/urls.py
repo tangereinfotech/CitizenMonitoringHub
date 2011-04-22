@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 from django.conf.urls.defaults import *
 from django.conf import settings
 
@@ -34,7 +36,9 @@ if settings.DEBUG:
     urlpatterns += patterns ('',
                              (r'^static/(?P<path>.*)$',
                               'django.views.static.serve',
-                              {'document_root' : settings.CMH_APP_DIR + '/static/'}),
+                              {'document_root' : os.path.join (settings.CMH_APP_DIR,
+                                                               'cmh',
+                                                               'static')}),
                              )
 
 urlpatterns += patterns ("", (r'^$', 'cmh.views.index'))
