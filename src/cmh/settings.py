@@ -114,7 +114,7 @@ INSTALLED_APPS = (
     'cmh.usermgr',
     'cmh.issuemgr',
     'cmh.common',
-    # 'cmh.captcha',
+    'cmh.captcha',
     'cmh.smsgateway',
     'south',
 )
