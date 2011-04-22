@@ -28,6 +28,7 @@ urlpatterns = patterns('',
                        (r'^admin/doc/', include('django.contrib.admindocs.urls')),
                        (r'^admin/', include(admin.site.urls)),
                        (r'^complaint/', include ('cmh.issuemgr.urls')),
+                       (r'^smsg/', include ('cmh.smsgateway.urls')),
                        url(r'^captcha/', include('cmh.captcha.urls')),
 
                        )
