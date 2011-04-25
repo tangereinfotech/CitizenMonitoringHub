@@ -17,7 +17,7 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns ('cmh.issuemgr.views',
                         (r'^$', 'index'),
-                        (r'^acceptissue/$', 'acceptissue'),
+                        (r'^accept/$', 'accept'),
                         (r'^locations/$', 'locations'),
                         (r'^categories/$', 'categories'),
                         )

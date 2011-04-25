@@ -169,3 +169,19 @@ label.report_date {
 }
 
 
+.form-field ul.errorlist {
+   float: right;
+   text-align: right;
+   padding: 0px;
+   margin: 0px;
+}
+
+.form-field ul.errorlist li {
+   padding: 0px;
+   margin: 0px;
+   text-align: right;
+   color: red;
+   display: inline;
+   list-style-type: none;
+   text-align: right;
+}

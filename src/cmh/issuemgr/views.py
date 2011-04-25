@@ -17,6 +17,7 @@ import re
 
 from django.http import HttpResponse
 from django.core import serializers
+from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.utils import simplejson as json
 
@@ -32,8 +33,11 @@ from cmh.usermgr.utils import get_user_menus
 
 def index (request):
     if request.method == 'GET':
-        return render_to_response ('complaint.html', {'menus' : get_user_menus (request.user),
-                                                      'user' : request.user})
+        form = ComplaintForm ()
+        return render_to_response ('complaint.html', {'form' : form,
+                                                      'menus' : get_user_menus (request.user),
+                                                      'user' : request.user,
+                                                      'post_url' : reverse (index)})
     elif request.method == 'POST':
         form = ComplaintForm (request.POST)
         if form.is_valid ():
@@ -42,21 +46,35 @@ def index (request):
                                        {'menus' : get_user_menus (request.user),
                                         'user' : request.user})
         else:
-            print form.errors
-            return render_to_response ('complaint.html', {'errors' : form.errors,
+            return render_to_response ('complaint.html', {'form': form,
+                                                          'errors' : form.errors,
                                                           'menus' : get_user_menus (request.user),
-                                                          'user' : request.user})
+                                                          'user' : request.user,
+                                                          'post_url' : reverse (index)})
     else:
         pass
 
 
 
-def acceptissue (request):
+def accept (request):
     if request.method == 'GET':
-        return render_to_response ('complaint.html', {'menus' : get_user_menus (request.user),
-                                                      'user' : request.user})
+        form = ComplaintForm ()
+        return render_to_response ('complaint.html', {'form' : form,
+                                                      'menus' : get_user_menus (request.user),
+                                                      'user' : request.user,
+                                                      'post_url' : reverse (accept)})
     elif request.method == 'POST':
-        pass
+        form = ComplaintForm (request.POST)
+        if form.is_valid ():
+            form.save ()
+            return render_to_response ('complaint_submitted.html',
+                                       {'menus' : get_user_menus (request.user),
+                                        'user' : request.user})
+        else:
+            return render_to_response ('complaint.html', {'form': form,
+                                                          'menus' : get_user_menus (request.user),
+                                                          'user' : request.user,
+                                                          'post_url' : reverse (accept)})
     else:
         pass
 

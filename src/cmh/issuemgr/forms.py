@@ -30,7 +30,7 @@ class ComplaintForm (forms.Form):
     locationid    = forms.IntegerField ()
     yourname      = forms.CharField ()
     yourmobile    = forms.IntegerField ()
-    categoryid    = forms.IntegerField ()
+    categoryid    = forms.IntegerField (required = False)
 
     def clean_locationid (self):
         try:
@@ -40,23 +40,29 @@ class ComplaintForm (forms.Form):
         return self.cleaned_data ['locationid']
 
     def clean_categoryid (self):
-        try:
-            category = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
-        except:
-            raise forms.ValidationError ("Complaint Type is not correct")
+        if self.cleaned_data ['categoryid'] != None and len (self.cleaned_data ['categoryid']) != 0:
+            try:
+                category = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
+            except:
+                raise forms.ValidationError ("Complaint Type is not correct")
         return self.cleaned_data ['categoryid']
 
-    def save (self):
+    def save (self, need_category = False):
         location       = VILLAGES.get (id = self.cleaned_data ['locationid'])
-        complaint_base = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
-
         citizen = get_or_create_citizen (self.cleaned_data ['yourmobile'],
                                          self.cleaned_data ['yourname'])
+
+        if len (self.cleaned_data ['categoryid']) != 0:
+            complaint_base = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
+            department = complaint_base.parent
+        else:
+            complaint_base = None
+            department = None
 
         cpl = Complaint.objects.create (base = complaint_base,
                                         complaintno = None,
                                         description = self.cleaned_data ['description'],
-                                        department  = complaint_base.parent,
+                                        department  = department,
                                         curstate = STATUS_NEW,
                                         filedby = citizen,
                                         logdate = self.cleaned_data ['logdate'],
