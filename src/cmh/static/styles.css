@@ -185,3 +185,8 @@ label.report_date {
    list-style-type: none;
    text-align: right;
 }
+
+#id_logdate {
+   margin: 0px;
+   padding: 0px;
+}

@@ -31,39 +31,40 @@
         <div class="form-field">
           <label for="id_date" class="id_date">Date:</label>{{ form.logdate.errors }}
         </div>
-        <input style="margin:0px;" id="id_date" type="text" name="logdate" />
+        {{ form.logdate }}
         <br/>
+
         <div class="form-field">
           <label for="id_description">Description:</label>{{ form.description.errors }}
         </div>
-        <textarea name="description"
-                  id="id_description"
-                  class="id_description"
-                  style="width:348px;border-style:inset;" rows="5"></textarea>
+        {{ form.description }}
         <br/>
+
         <div class="form-field">
-          <label  for="id_location">Location:</label>{{ form.locationid.errors }}
+          <label  for="id_location">Location:</label>{{ form.locationdesc.errors }}
         </div>
-        <input type="hidden" id="id_location_id" name="locationid" />
-        <input type="text" id="id_location" name="id_location" style="width:348px" />
+        <input type="hidden" id="id_locationid" name="locationid" />
+        {{ form.locationid }}
+        {{ form.locationdesc }}
         <div id="id_location_detail"></div>
+
         <div class="form-field">
           <label for="your_name">Your Name:</label>{{ form.yourname.errors }}
         </div>
-        <input id="your_name" name="yourname" class="your_name" type="text" style="width:348px;"
-               maxlength="100" />
+        {{ form.yourname }}
         <br/>
+
         <div class="form-field">
           <label for="your_mobile">Your Mobile Number:</label>{{ form.yourmobile.errors }}
         </div>
-        <input id="your_mobile" name="yourmobile" class="your_mobile" type="text"
-               style="width:348px;" maxlength="15" />
+        {{ form.yourmobile }}
         <br/>
+
         <div class="form-field">
           <label for="id_category">Categorize Your Complaint</label>{{ form.categoryid.errors }}
         </div>
-        <input type="hidden" id="id_category_id" name="categoryid" />
-        <input type="text" id="id_category" name="id_category" style="width:348px" />
+        <input type="hidden" id="id_categoryid" name="categoryid" />
+        {{ form.categorydesc }}
         <div id="id_category_detail" style="margin:0"></div>
         <div style="text-align:center;width:100%;">
           <input type="submit" value="Submit Complaint" />
@@ -78,9 +79,9 @@
 <script type="text/javascript">
   $(document).ready (function () {
     MapHandler.init ('complaint_location');
-    $("#id_date").datepicker ({dateFormat : 'dd/mm/yy'});
-    field_autocomplete ("#id_location", "#id_location_id", "#id_location_detail", "/complaint/locations/");
-    field_autocomplete ("#id_category", "#id_category_id", "#id_category_detail", "/complaint/categories/");
+    $("#id_logdate").datepicker ({dateFormat : 'dd/mm/yy'});
+    field_autocomplete ("#id_locationdesc", "#id_locationid", "#id_location_detail", "/complaint/locations/");
+    field_autocomplete ("#id_categorydesc", "#id_categoryid", "#id_category_detail", "/complaint/categories/");
   });
 </script>
 {% endblock %}

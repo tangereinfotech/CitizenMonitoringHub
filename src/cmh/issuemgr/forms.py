@@ -19,18 +19,25 @@ LOCATION_REGEX = r'^ *(?P<village>\w+) *\[(?P<gp>\w+), *(?P<block>\w+)\] *$|^ *(
 
 from datetime import datetime
 
-from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES, STATUS_NEW
+from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES, STATUS_NEW, STATUS_ACK
 from cmh.issuemgr.models import Complaint, ComplaintItem
 from cmh.issuemgr.utils import update_complaint_sequence
 from cmh.usermgr.utils import get_or_create_citizen
 
 class ComplaintForm (forms.Form):
-    logdate       = forms.DateField (input_formats = ('%d/%m/%Y',))
-    description   = forms.CharField ()
-    locationid    = forms.IntegerField ()
-    yourname      = forms.CharField ()
-    yourmobile    = forms.IntegerField ()
-    categoryid    = forms.IntegerField (required = False)
+    logdate     = forms.DateField (input_formats = ('%d/%m/%Y',))
+    description = forms.CharField (widget=forms.Textarea ( attrs = {'style' :
+                                                                    "width:348px;border-style:inset;",
+                                                                    "rows" : "6"}))
+    locationid  = forms.HiddenInput ()
+    locationdesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px'}))
+    yourname    = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
+                                                                      'maxlength' : '100'}))
+    yourmobile  = forms.IntegerField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
+                                                                         'maxlenght' : '15'}))
+    categoryid  = forms.IntegerField (required = False)
+    categorydesc = forms.CharField (required = False,
+                                    widget = forms.TextInput (attrs = {'style' : 'width:348px'}))
 
     def clean_locationid (self):
         try:
@@ -70,6 +77,64 @@ class ComplaintForm (forms.Form):
                                         original = None)
         update_complaint_sequence (cpl)
         return cpl
+
+class AcceptComplaintForm (forms.Form):
+    logdate     = forms.DateField (input_formats = ('%d/%m/%Y',))
+    description = forms.CharField (widget=forms.Textarea ( attrs = {'style' :
+                                                                    "width:348px;border-style:inset;",
+                                                                    "rows" : "6"}))
+    locationid  = forms.HiddenInput ()
+    locationdesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px'}))
+    yourname    = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
+                                                                      'maxlength' : '100'}))
+    yourmobile  = forms.IntegerField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
+                                                                         'maxlenght' : '15'}))
+    categoryid  = forms.IntegerField ()
+    categorydesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px'}))
+
+    def clean_locationid (self):
+        try:
+            village = VILLAGES.get (id = self.cleaned_data ['locationid'])
+        except:
+            raise forms.ValidationError ("Location code is not correct")
+        return self.cleaned_data ['locationid']
+
+    def clean_categoryid (self):
+        try:
+            category = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
+        except:
+            raise forms.ValidationError ("Complaint Type is not correct")
+        return self.cleaned_data ['categoryid']
+
+    def save (self, need_category = False):
+        location       = VILLAGES.get (id = self.cleaned_data ['locationid'])
+        citizen = get_or_create_citizen (self.cleaned_data ['yourmobile'],
+                                         self.cleaned_data ['yourname'])
+
+        if len (self.cleaned_data ['categoryid']) != 0:
+            complaint_base = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
+            department = complaint_base.parent
+        else:
+            complaint_base = None
+            department = None
+
+        cpl = Complaint.objects.create (base = complaint_base,
+                                        complaintno = None,
+                                        description = self.cleaned_data ['description'],
+                                        department  = department,
+                                        curstate = STATUS_NEW,
+                                        filedby = citizen,
+                                        logdate = self.cleaned_data ['logdate'],
+                                        location = location,
+                                        original = None)
+        update_complaint_sequence (cpl)
+
+        accept_cpl = cpl.clone ()
+        accept_cpl.curstate = STATUS_ACK
+        accept_cpl.save ()
+
+        return accept_cpl
+
 
 class ComplaintLocationBox (forms.Form):
     term = forms.RegexField (regex = LOCATION_REGEX)

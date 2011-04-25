@@ -26,7 +26,8 @@ from cmh.common.models import get_code2name, get_child_attributes
 
 from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES
 from cmh.issuemgr.models import ComplaintItem
-from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox, LOCATION_REGEX
+from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
+from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX
 
 from cmh.usermgr.utils import get_user_menus
 
@@ -58,13 +59,13 @@ def index (request):
 
 def accept (request):
     if request.method == 'GET':
-        form = ComplaintForm ()
+        form = AcceptComplaintForm ()
         return render_to_response ('complaint.html', {'form' : form,
                                                       'menus' : get_user_menus (request.user),
                                                       'user' : request.user,
                                                       'post_url' : reverse (accept)})
     elif request.method == 'POST':
-        form = ComplaintForm (request.POST)
+        form = AcceptComplaintForm (request.POST)
         if form.is_valid ():
             form.save ()
             return render_to_response ('complaint_submitted.html',

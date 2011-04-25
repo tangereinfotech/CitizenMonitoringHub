@@ -37,6 +37,18 @@ class Complaint(models.Model):
     original    = models.ForeignKey ('Complaint', blank = True, null = True)
     created     = models.DateTimeField (auto_now_add = True)
 
+    def clone (self):
+        return Complaint.objects.create (base = self.base,
+                                         complaintno = self.complaintno,
+                                         description = self.description,
+                                         department = self.department,
+                                         cutstate = self.curstate,
+                                         filedby = self.filedby,
+                                         assignto = self.assignto,
+                                         location = self.location,
+                                         logdate = self.logdate,
+                                         original = self)
+
 
     def __unicode__ (self):
         return self.complaintno
