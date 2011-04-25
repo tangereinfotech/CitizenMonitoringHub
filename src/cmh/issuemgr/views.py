@@ -27,19 +27,39 @@ from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES
 from cmh.issuemgr.models import ComplaintItem
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox, LOCATION_REGEX
 
+from cmh.usermgr.utils import get_user_menus
+
 
 def index (request):
     if request.method == 'GET':
-        return render_to_response ('complaint.html')
-    else:
+        return render_to_response ('complaint.html', {'menus' : get_user_menus (request.user),
+                                                      'user' : request.user})
+    elif request.method == 'POST':
         form = ComplaintForm (request.POST)
         if form.is_valid ():
             form.save ()
-            return render_to_response ('complaint_submitted.html')
+            return render_to_response ('complaint_submitted.html',
+                                       {'menus' : get_user_menus (request.user),
+                                        'user' : request.user})
         else:
-            print request.POST
             print form.errors
-            return render_to_response ('complaint.html', {'errors' : form.errors})
+            return render_to_response ('complaint.html', {'errors' : form.errors,
+                                                          'menus' : get_user_menus (request.user),
+                                                          'user' : request.user})
+    else:
+        pass
+
+
+
+def acceptissue (request):
+    if request.method == 'GET':
+        return render_to_response ('complaint.html', {'menus' : get_user_menus (request.user),
+                                                      'user' : request.user})
+    elif request.method == 'POST':
+        pass
+    else:
+        pass
+
 
 
 def locations (request):

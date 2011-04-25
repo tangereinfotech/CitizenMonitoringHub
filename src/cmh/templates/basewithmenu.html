@@ -33,7 +33,17 @@
       <table class="top_menu">
         <tr>
           {% for menuitem in menus %}
-          <td> <a href="{{menuitem.url}}">{{menuitem.name}}</a></td>
+            {% if forloop.last %}
+          <td style="text-align:right;padding-right:10px;">
+            {% else %}
+              {% if forloop.first %}
+          <td style="text-align:left;padding-left:10px;">
+              {% else %}
+          <td style="text-align:right;">
+              {% endif %}
+            {% endif %}
+            <a href="{{menuitem.url}}">{{menuitem.name}}</a>
+          </td>
           {% endfor %}
         </tr>
       </table>
