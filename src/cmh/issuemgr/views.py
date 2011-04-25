@@ -20,12 +20,13 @@ from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.utils import simplejson as json
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 from cmh.common.models import Category, Attribute, CodeName, LatLong
 from cmh.common.models import get_code2name, get_child_attributes
 
 from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES
-from cmh.issuemgr.models import ComplaintItem
+from cmh.issuemgr.models import ComplaintItem, Complaint
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX
 
@@ -135,3 +136,23 @@ def categories (request):
         import traceback
         traceback.print_exc ()
     return HttpResponse (json.dumps ([]))
+
+
+def view_complaints_cso (request, page):
+    issues = Complaint.objects.all ()
+    paginator = Paginator (issues, 10)
+
+    try:
+        page = int (request.GET.get ('page', '1'))
+    except ValueError:
+        page = 1
+
+    try:
+        issues = paginator.page (page)
+    except (EmptyPage, InvalidPage):
+        issues = paginator.page (paginator.num_pages)
+
+    return render_to_response ('view_complaints_cso.html',
+                               {'issues' : issues,
+                                'menus' : get_user_menus (request.user),
+                                'user' : request.user})

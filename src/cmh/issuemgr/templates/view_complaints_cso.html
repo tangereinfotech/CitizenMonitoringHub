@@ -1,0 +1,51 @@
+{# Copyright 2011, Tangere Infotech Pvt Ltd [http://tangere.in]                 #}
+{#                                                                              #}
+{# Licensed under the Apache License, Version 2.0 (the "License");              #}
+{# you may not use this file except in compliance with the License.             #}
+{# You may obtain a copy of the License at                                      #}
+{#                                                                              #}
+{#       http://www.apache.org/licenses/LICENSE-2.0                             #}
+{#                                                                              #}
+{# Unless required by applicable law or agreed to in writing, software          #}
+{# distributed under the License is distributed on an "AS IS" BASIS,            #}
+{# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     #}
+{# See the License for the specific language governing permissions and          #}
+{# limitations under the License.                                               #}
+
+{% extends "basewithmenu.html" %}
+
+{% block page_content %}
+<div class="pagination">
+    <span class="step-links">
+        {% if issues.has_previous %}
+            <a href="?page={{ issues.previous_page_number }}">&lt;</a>
+        {% endif %}
+
+        <span class="current">
+            {{ issues.number }} of {{ issues.paginator.num_pages }}
+        </span>
+
+        {% if issues.has_next %}
+            <a href="?page={{ issues.next_page_number }}">&gt;</a>
+        {% endif %}
+    </span>
+</div>
+<table class="complaintlist">
+  <tr>
+    <th style="width:22%">Complaint #</th>
+    <th style="width:15%">Last Updated</th>
+    <th style="width:37%">Description</th>
+    <th style="width:6%">Status</th>
+    <th style="width:10%"></th>
+  </tr>
+{% for issue in issues.object_list %}
+  <tr>
+    <td>{{ issue.complaintno }} </td>
+    <td>{{ issue.logdate }}</td>
+    <td>{{ issue.description }}</td>
+    <td>{{ issue.curstate.get_value }}</td>
+    <td><a href="/complaint/modify_cso/{{ issue.complaintno }}/">Update</a></td>
+  </tr>
+{% endfor %}
+</table>
+{% endblock %}

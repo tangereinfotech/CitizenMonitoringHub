@@ -45,6 +45,9 @@ class Attribute (models.Model):
     def get_category_descendents (self, category):
         return self.get_descendents ().filter (category__key = category)
 
+    def get_value (self):
+        return self.value
+
 class CodeName (models.Model):
     code = models.CharField (max_length = 100, unique = True)
     name = models.CharField (max_length = 500)

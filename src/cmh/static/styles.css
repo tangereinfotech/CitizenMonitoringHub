@@ -190,3 +190,24 @@ label.report_date {
    margin: 0px;
    padding: 0px;
 }
+
+.complaintlist {
+   width: 100%;
+}
+
+.complaintlist th {
+   font-weight: normal;
+   background: #B9C9FE;
+   border-top: 4px solid #AABCFE;
+   border-bottom: 1px solid white;
+   color: #039;
+   padding: 8px;
+}
+
+.complaintlist td {
+   background: #E8EDFF;
+   border-bottom: 1px solid white;
+   color: #669;
+   border-top: 1px solid transparent;
+   padding: 8px;
+}
