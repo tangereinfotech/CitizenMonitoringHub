@@ -11,7 +11,7 @@ fieldset {
 
 .content_wrapper {
    padding: 20px 10px;
-   background-color: #99c0ec;
+   background-color: #dce8e8; // #99c0ec;
    height: 100%;
 }
 
@@ -196,18 +196,26 @@ label.report_date {
 }
 
 .complaintlist th {
-   font-weight: normal;
+   font-weight: bold;
    background: #B9C9FE;
    border-top: 4px solid #AABCFE;
    border-bottom: 1px solid white;
-   color: #039;
+   color: #669;
    padding: 8px;
 }
 
 .complaintlist td {
    background: #E8EDFF;
    border-bottom: 1px solid white;
-   color: #669;
+   color: #336;
    border-top: 1px solid transparent;
    padding: 8px;
+}
+
+.inlineform {
+   display: inline;
+}
+
+.pagination {
+   text-align: right;
 }
