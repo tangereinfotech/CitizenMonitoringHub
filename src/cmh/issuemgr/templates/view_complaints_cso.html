@@ -23,6 +23,8 @@
     <span class="step-links">
         {% if issues.has_previous %}
             <a href="?page={{ issues.previous_page_number }}">&lt;</a>
+        {% else %}
+            <span style="text-decoration:none">&lt;</span>
         {% endif %}
 
         <span class="current">
@@ -36,6 +38,8 @@
         </span>
         {% if issues.has_next %}
             <a href="?page={{ issues.next_page_number }}">&gt;</a>
+        {% else %}
+            <span style="text-decoration:none">&gt;</span>
         {% endif %}
     </span>
 </div>
@@ -43,9 +47,8 @@
   <tr>
     <th style="width:22%">Complaint #</th>
     <th style="width:15%">Last Updated</th>
-    <th style="width:33%">Description</th>
+    <th style="width:40%">Description</th>
     <th style="width:13%">Status</th>
-    <th style="width:7%"></th>
   </tr>
 {% for issue in issues.object_list %}
   <tr>
@@ -53,7 +56,6 @@
     <td>{{ issue.logdate }}</td>
     <td>{{ issue.description }}</td>
     <td>{{ issue.curstate.get_value }}</td>
-    <td><a href="/complaint/modify_cso/{{ issue.complaintno }}/">Update</a></td>
   </tr>
 {% endfor %}
 </table>
