@@ -43,7 +43,6 @@
         <div class="form-field">
           <label  for="id_location">Location:</label>{{ form.locationdesc.errors }}
         </div>
-        <input type="hidden" id="id_locationid" name="locationid" />
         {{ form.locationid }}
         {{ form.locationdesc }}
         <div id="id_location_detail"></div>
@@ -63,7 +62,7 @@
         <div class="form-field">
           <label for="id_category">Categorize Your Complaint</label>{{ form.categoryid.errors }}
         </div>
-        <input type="hidden" id="id_categoryid" name="categoryid" />
+        {{ form.categoryid }}
         {{ form.categorydesc }}
         <div id="id_category_detail" style="margin:0"></div>
         <div style="text-align:center;width:100%;">

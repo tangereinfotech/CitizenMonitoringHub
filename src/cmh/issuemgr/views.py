@@ -40,6 +40,7 @@ def index (request):
                                                       'user' : request.user,
                                                       'post_url' : reverse (index)})
     elif request.method == 'POST':
+        print request.POST
         form = ComplaintForm (request.POST)
         if form.is_valid ():
             form.save ()
@@ -47,6 +48,8 @@ def index (request):
                                        {'menus' : get_user_menus (request.user),
                                         'user' : request.user})
         else:
+            print "form is not valid"
+            print form.errors
             return render_to_response ('complaint.html', {'form': form,
                                                           'errors' : form.errors,
                                                           'menus' : get_user_menus (request.user),

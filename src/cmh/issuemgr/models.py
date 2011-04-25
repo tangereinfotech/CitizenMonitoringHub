@@ -42,7 +42,7 @@ class Complaint(models.Model):
                                          complaintno = self.complaintno,
                                          description = self.description,
                                          department = self.department,
-                                         cutstate = self.curstate,
+                                         curstate = self.curstate,
                                          filedby = self.filedby,
                                          assignto = self.assignto,
                                          location = self.location,

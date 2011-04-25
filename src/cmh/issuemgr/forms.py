@@ -29,13 +29,13 @@ class ComplaintForm (forms.Form):
     description = forms.CharField (widget=forms.Textarea ( attrs = {'style' :
                                                                     "width:348px;border-style:inset;",
                                                                     "rows" : "6"}))
-    locationid  = forms.HiddenInput ()
+    locationid  = forms.IntegerField (widget = forms.HiddenInput ())
     locationdesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px'}))
     yourname    = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                       'maxlength' : '100'}))
     yourmobile  = forms.IntegerField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                          'maxlenght' : '15'}))
-    categoryid  = forms.IntegerField (required = False)
+    categoryid  = forms.IntegerField (required = False, widget = forms.HiddenInput ())
     categorydesc = forms.CharField (required = False,
                                     widget = forms.TextInput (attrs = {'style' : 'width:348px'}))
 
@@ -47,7 +47,7 @@ class ComplaintForm (forms.Form):
         return self.cleaned_data ['locationid']
 
     def clean_categoryid (self):
-        if self.cleaned_data ['categoryid'] != None and len (self.cleaned_data ['categoryid']) != 0:
+        if self.cleaned_data ['categoryid'] != None:
             try:
                 category = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
             except:
@@ -55,11 +55,11 @@ class ComplaintForm (forms.Form):
         return self.cleaned_data ['categoryid']
 
     def save (self, need_category = False):
-        location       = VILLAGES.get (id = self.cleaned_data ['locationid'])
+        location = VILLAGES.get (id = self.cleaned_data ['locationid'])
         citizen = get_or_create_citizen (self.cleaned_data ['yourmobile'],
                                          self.cleaned_data ['yourname'])
 
-        if len (self.cleaned_data ['categoryid']) != 0:
+        if self.cleaned_data ['categoryid'] != None:
             complaint_base = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
             department = complaint_base.parent
         else:
@@ -83,13 +83,13 @@ class AcceptComplaintForm (forms.Form):
     description = forms.CharField (widget=forms.Textarea ( attrs = {'style' :
                                                                     "width:348px;border-style:inset;",
                                                                     "rows" : "6"}))
-    locationid  = forms.HiddenInput ()
+    locationid  = forms.IntegerField (widget = forms.HiddenInput ())
     locationdesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px'}))
     yourname    = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                       'maxlength' : '100'}))
     yourmobile  = forms.IntegerField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                          'maxlenght' : '15'}))
-    categoryid  = forms.IntegerField ()
+    categoryid  = forms.IntegerField (widget = forms.HiddenInput ())
     categorydesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px'}))
 
     def clean_locationid (self):
@@ -111,12 +111,8 @@ class AcceptComplaintForm (forms.Form):
         citizen = get_or_create_citizen (self.cleaned_data ['yourmobile'],
                                          self.cleaned_data ['yourname'])
 
-        if len (self.cleaned_data ['categoryid']) != 0:
-            complaint_base = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
-            department = complaint_base.parent
-        else:
-            complaint_base = None
-            department = None
+        complaint_base = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
+        department = complaint_base.parent
 
         cpl = Complaint.objects.create (base = complaint_base,
                                         complaintno = None,
