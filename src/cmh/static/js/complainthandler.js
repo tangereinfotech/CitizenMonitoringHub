@@ -52,7 +52,7 @@ function doTableAction (table_elem_id, offset_y, column) {
 
 var showContextMenu = function (elem_id, menu_id) {
   $(elem_id).contextMenu ({'menu' : menu_id},
-                      function (action, el, pos) {
-                          doTableAction (elem_id, pos.y, action);
-                      });
+                          function (action, el, pos) {
+                              doTableAction (elem_id, pos.y, action);
+                          });
 };

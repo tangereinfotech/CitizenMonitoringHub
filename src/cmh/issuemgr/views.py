@@ -165,8 +165,12 @@ def update_cso (request, complaintno, complaintid):
                                                    'user' : request.user})
 
 def track_cso (request, complaintno, complaintid):
-    complaint = Complaint.objects.get (id = complaintid)
-    return render_to_response ('track_cso.html', {'complaint' : complaint,
-                                                  'menus' : get_user_menus (request.user),
-                                                  'user' : request.user})
+    complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('created')
+    base = complaints.get (original = None)
+
+    return render_to_response ('track_cso.html',
+                               {'base' : base,
+                                'complaints' : complaints,
+                                'menus' : get_user_menus (request.user),
+                                'user' : request.user})
 

@@ -15,5 +15,41 @@
 {% extends "basewithmenu.html" %}
 
 {% block page_content %}
+<table>
+  <tr>
+    <td>
+      <label for="id_complaintno">Complaint Number: </label>
+    </td>
+    <td>
+      <input id="id_complaintno"
+             name="complaintno"
+             value="{{ base.complaintno }}"
+             disabled="disabled">
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <label for="id_filedby">Filed By:</label>
+    </td>
+    <td>
+      <input id="id_filedby"
+             name="filedby"
+             value="{{ base.filedby.name }} &lt;{{ base.filedby.mobile }}&gt;"
+             disabled="disabled">
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <label for="id_loggedon">Filed On:</label>
+    </td>
+    <td>
+      <input id="id_loggedon"
+             name="loggedon"
+             value="{{ base.logdate|date:'d/M/Y' }}"
+             disabled="disabled">
+    </td>
+  </tr>
+</table>.
+
 
 {% endblock %}
