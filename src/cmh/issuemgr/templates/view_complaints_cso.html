@@ -45,17 +45,27 @@
 </div>
 <table class="complaintlist" id="complaintlist">
   <tr>
-    <th style="width:22%">Complaint #</th>
-    <th style="width:15%">Last Updated</th>
-    <th style="width:40%">Description</th>
-    <th style="width:13%">Status</th>
+    <th style="width:16%">Complaint #</th>
+    <th style="width:12%">Logged on</th>
+    <th style="width:42%">Description</th>
+    <th style="width:15%;text-align:center;">Status</th>
+    <th style="width:15%">Updated On</th>
+    <th style="display:none;"/>
+    <th style="display:none"/>
   </tr>
 {% for issue in issues.object_list %}
   <tr>
-    <td>{{ issue.complaintno }} </td>
-    <td>{{ issue.logdate }}</td>
-    <td>{{ issue.description }}</td>
-    <td>{{ issue.curstate.get_value }}</td>
+    <td style="text-align:center;">{{ issue.complaintno }}</td>
+    <td style="text-align:center;">{{ issue.logdate|date:'d/M/Y' }}</td>
+    <td style="text-align:left;">{{ issue.description }}</td>
+    <td style="text-align:center;">{{ issue.curstate.get_value }}</td>
+    <td style="text-align:center;">{{ issue.created|date:'f A, d/M/Y' }}</td>
+    <td class="track" style="display:none">
+      <form method="POST" action="/complaint/track_cso/{{issue.complaintno}}/{{issue.id}}/"></form>
+    </td>
+    <td class="update" style="display:none">
+      <form method="POST" action="/complaint/update_cso/{{issue.complaintno}}/{{issue.id}}/"></form>
+    </td>
   </tr>
 {% endfor %}
 </table>

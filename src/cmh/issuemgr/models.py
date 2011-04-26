@@ -20,6 +20,10 @@ from cmh.common.models import CodeName, Category, Attribute
 class ComplaintItem (CodeName):
     desc    = models.CharField (max_length = 5000)
 
+class ComplaintManager (models.Manager):
+    def get_latest (self):
+        return Complaint.objects.filter (latest = True)
+
 class Complaint(models.Model):
     base        = models.ForeignKey (Attribute, blank = True, null = True,
                                      related_name = 'complaintbase')
@@ -36,8 +40,13 @@ class Complaint(models.Model):
     logdate     = models.DateField (blank = True, null = True)
     original    = models.ForeignKey ('Complaint', blank = True, null = True)
     created     = models.DateTimeField (auto_now_add = True)
+    latest      = models.BooleanField (default = True)
+
+    objects = ComplaintManager ()
 
     def clone (self):
+        self.latest = False
+        self.save ()
         return Complaint.objects.create (base = self.base,
                                          complaintno = self.complaintno,
                                          description = self.description,

@@ -37,22 +37,22 @@ var field_autocomplete = function (field_tag, db_id_tag, detail_id_tag, url) {
         };
 };
 
-function getTableRow (table_elem_id, offset_y) {
+function doTableAction (table_elem_id, offset_y, column) {
     var height = 0;
-    var rownum = 0;
-    $.each ($(table_elem_id + " tr").get (), function (index) {
+    $.each ($(table_elem_id + " tr").get (), 
+            function (index) {
                 height += $(this).height ();
                 if (height > offset_y) {
-                    rownum = index;
+                    var form = $(this).find ("." + column + " form");
+                    form.submit ();
                     return false;
                 }
             });
-    return rownum;
 };
 
-var showContextMenu = function (elem_id, menu_id, url) {
+var showContextMenu = function (elem_id, menu_id) {
   $(elem_id).contextMenu ({'menu' : menu_id},
                       function (action, el, pos) {
-                          alert (getTableRow (elem_id, pos.y));
+                          doTableAction (elem_id, pos.y, action);
                       });
 };

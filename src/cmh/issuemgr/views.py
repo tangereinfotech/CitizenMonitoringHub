@@ -21,6 +21,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.utils import simplejson as json
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.db.models import Avg, Max, Min, Count
 
 from cmh.common.models import Category, Attribute, CodeName, LatLong
 from cmh.common.models import get_code2name, get_child_attributes
@@ -138,8 +139,8 @@ def categories (request):
     return HttpResponse (json.dumps ([]))
 
 
-def view_complaints_cso (request, page):
-    issues = Complaint.objects.all ()
+def view_complaints_cso (request):
+    issues = Complaint.objects.get_latest ().order_by ('-created')
     paginator = Paginator (issues, 10)
 
     try:
@@ -156,3 +157,16 @@ def view_complaints_cso (request, page):
                                {'issues' : issues,
                                 'menus' : get_user_menus (request.user),
                                 'user' : request.user})
+
+def update_cso (request, complaintno, complaintid):
+    complaint = Complaint.objects.get (id = complaintid)
+    return render_to_response ('update_cso.html', {'complaint' : complaint,
+                                                   'menus' : get_user_menus (request.user),
+                                                   'user' : request.user})
+
+def track_cso (request, complaintno, complaintid):
+    complaint = Complaint.objects.get (id = complaintid)
+    return render_to_response ('track_cso.html', {'complaint' : complaint,
+                                                  'menus' : get_user_menus (request.user),
+                                                  'user' : request.user})
+
