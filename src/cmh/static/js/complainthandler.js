@@ -37,40 +37,22 @@ var field_autocomplete = function (field_tag, db_id_tag, detail_id_tag, url) {
         };
 };
 
-function populate_sub_select (parent_sel_id, child_sel_id, child_empty_text, url) {
-    var retfn = function () {
-        var parent_sel_val = $(parent_sel_id).val ();
-        $.post (url,
-                { select : parent_sel_val},
-                function (data, status, jqXHR) {
-                    $(child_sel_id).children ()
-                        .remove ()
-                        .end ()
-                        .append ("<option value='----'>-- " + child_empty_text + " --</option>");
-                    var json = $.parseJSON (data);
-                    $.each (json, function (key, val) {
-                                $(child_sel_id).children ().end ().append ("<option value='"
-                                                                           + val.optval
-                                                                           + "'>"
-                                                                           + val.name
-                                                                           + "</option>");
-                            });
-                });
-    };
-    return retfn;
-}
+function getTableRow (table_elem_id, offset_y) {
+    var height = 0;
+    var rownum = 0;
+    $.each ($(table_elem_id + " tr").get (), function (index) {
+                height += $(this).height ();
+                if (height > offset_y) {
+                    rownum = index;
+                    return false;
+                }
+            });
+    return rownum;
+};
 
-
-function populate_default_complaint_description (select_elem_id, child_elem_id, url) {
-    var retfn = function () {
-        var select_elem_val = $(select_elem_id).val ();
-        $.post (url,
-                { select : select_elem_val },
-                function (data, status, jqXHR) {
-                    var json = $.parseJSON (data);
-                    $(child_elem_id).val (json.description);
-                });
-    };
-
-    return retfn;
-}
+var showContextMenu = function (elem_id, menu_id, url) {
+  $(elem_id).contextMenu ({'menu' : menu_id},
+                      function (action, el, pos) {
+                          alert (getTableRow (elem_id, pos.y));
+                      });
+};

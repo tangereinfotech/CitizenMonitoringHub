@@ -62,6 +62,7 @@
 
 <script type="text/javascript" src="/static/jquery/js/jquery.simplemodal-1.1.1.js"></script>
 <script type="text/javascript" src="/static/jquery/js/jquery.contextMenu.js"></script>
+<script type="text/javascript" src="/static/js/complainthandler.js"></script>
 
 <ul id="myMenu" class="contextMenu">
   <li><a href="#update">Update</a></li>
@@ -69,12 +70,6 @@
 </ul>
 
 <script type="text/javascript">
-  $(document).ready (function() {
-     $("#complaintlist").contextMenu({
-         menu: "myMenu"
-       }, function(action, el, pos) {
-            alert ("Context menu clicked");
-     });
-  });
+  $(document).ready (function() {showContextMenu ("#complaintlist", "myMenu")});
 </script>
 {% endblock %}
