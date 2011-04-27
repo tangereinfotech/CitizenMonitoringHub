@@ -140,7 +140,7 @@ def categories (request):
 
 
 def view_complaints_cso (request):
-    issues = Complaint.objects.get_latest ().order_by ('-created')
+    issues = Complaint.objects.get_latest_complaints ().order_by ('-created')
     paginator = Paginator (issues, 10)
 
     try:
@@ -165,11 +165,13 @@ def update_cso (request, complaintno, complaintid):
                                                    'user' : request.user})
 
 def track_cso (request, complaintno, complaintid):
-    complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('created')
+    complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
     base = complaints.get (original = None)
+    current = complaints.get (latest = True)
 
     return render_to_response ('track_cso.html',
                                {'base' : base,
+                                'current' : current,
                                 'complaints' : complaints,
                                 'menus' : get_user_menus (request.user),
                                 'user' : request.user})

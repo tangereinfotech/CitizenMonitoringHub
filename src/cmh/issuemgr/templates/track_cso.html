@@ -15,41 +15,83 @@
 {% extends "basewithmenu.html" %}
 
 {% block page_content %}
-<table>
+<table width="100%">
   <tr>
-    <td>
-      <label for="id_complaintno">Complaint Number: </label>
-    </td>
+    <td> Complaint Number: </td>
     <td>
       <input id="id_complaintno"
              name="complaintno"
              value="{{ base.complaintno }}"
-             disabled="disabled">
+             disabled="disabled"
+             size="35">
+    </td>
+    <td> Current Status </td>
+    <td>
+      <input id="id_curstate"
+             name="curstate"
+             value="{{ current.curstate.get_value }}"
+             disabled="disabled"
+             size="35">
     </td>
   </tr>
   <tr>
-    <td>
-      <label for="id_filedby">Filed By:</label>
-    </td>
+    <td> Filed By: </td>
     <td>
       <input id="id_filedby"
              name="filedby"
              value="{{ base.filedby.name }} &lt;{{ base.filedby.mobile }}&gt;"
-             disabled="disabled">
+             disabled="disabled"
+             size="35">
+    </td>
+    <td>Location: </td>
+    <td>
+      <input id="id_location"
+             name="location"
+             value="{{ base.get_location_name }}"
+             disabled="disabled"
+             size="35">
     </td>
   </tr>
   <tr>
-    <td>
-      <label for="id_loggedon">Filed On:</label>
-    </td>
+    <td> Issue Date: </td>
     <td>
       <input id="id_loggedon"
              name="loggedon"
              value="{{ base.logdate|date:'d/M/Y' }}"
-             disabled="disabled">
+             disabled="disabled"
+             size="35">
+    </td>
+    <td> Filed On: </td>
+    <td>
+      <input id="id_created"
+             name="created"
+             value="{{ base.created|date:'f A, d/M/Y' }}"
+             disabled="disabled"
+             size="35">
     </td>
   </tr>
-</table>.
+</table>
+<div class="complaint-history-banner">
+  History for Complaint No. {{ base.complaintno }}
+</div>
+<table class="complaintlist">
+  <tr>
+    <th> Changed On </th>
+    <th> Department </th>
+    <th> Status </th>
+    <th> Comment </th>
+    <th> Changed by </th>
+  </tr>
+  {% for complaint in complaints %}
+  <tr>
+    <td> {{ complaint.created|date:'f A, d/M/Y' }}</td>
+    <td> {{ complaint.get_department_name }} </td>
+    <td> {{ complaint.curstate.get_value }} </td>
+    <td> {{ complaint.comment }} </td>
+    <td> {{ complaint.creator.username }} </td>
+  </tr>
+  {% endfor %}
+</table>
 
 
 {% endblock %}

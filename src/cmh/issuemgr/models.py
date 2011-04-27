@@ -14,6 +14,8 @@
 # limitations under the License.
 
 from django.db import models
+from django.contrib.auth.models import User
+
 from cmh.usermgr.models import Citizen, Official, Citizen
 from cmh.common.models import CodeName, Category, Attribute
 
@@ -21,14 +23,14 @@ class ComplaintItem (CodeName):
     desc    = models.CharField (max_length = 5000)
 
 class ComplaintManager (models.Manager):
-    def get_latest (self):
+    def get_latest_complaints (self):
         return Complaint.objects.filter (latest = True)
 
 class Complaint(models.Model):
     base        = models.ForeignKey (Attribute, blank = True, null = True,
                                      related_name = 'complaintbase')
     complaintno = models.CharField (max_length = 50, blank = True, null = True)
-    description = models.CharField (max_length=200)
+    description = models.CharField (max_length=1000)
     department  = models.ForeignKey (Attribute, blank = True, null = True,
                                      related_name = 'complaintdepartment')
     curstate    = models.ForeignKey (Attribute, blank = True, null = True,
@@ -41,6 +43,8 @@ class Complaint(models.Model):
     original    = models.ForeignKey ('Complaint', blank = True, null = True)
     created     = models.DateTimeField (auto_now_add = True)
     latest      = models.BooleanField (default = True)
+    creator     = models.ForeignKey (User, blank = True, null = True)
+    comment     = models.CharField (max_length = 1000, blank = True, null = True)
 
     objects = ComplaintManager ()
 
@@ -58,6 +62,21 @@ class Complaint(models.Model):
                                          logdate = self.logdate,
                                          original = self)
 
+    def get_location_name (self):
+        vill_code = self.location.value
+        gp_code = self.location.parent.value
+        block_code = self.location.parent.parent.value
+        vill_name = CodeName.objects.get (code = vill_code).name
+        gp_name = CodeName.objects.get (code = gp_code).name
+        block_name = CodeName.objects.get (code = block_code).name
+
+        return "%s [%s, %s]" % (vill_name, gp_name, block_name)
+
+
+    def get_department_name (self):
+        dept_code = self.department.value
+        dept_name = CodeName.objects.get (code = dept_code).name
+        return dept_name
 
     def __unicode__ (self):
         return self.complaintno
