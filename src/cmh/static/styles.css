@@ -210,6 +210,8 @@ label.report_date {
 
 .complaintlist {
    width: 100%;
+   border-collapse: separate;
+   border-spacing: 2px 2px;
 }
 
 .complaintlist th {
@@ -238,12 +240,19 @@ label.report_date {
 }
 
 .complaint-history-banner {
-   margin: 20px 0px;
+   margin: 20px 0px 10px;
    width: 100%;
    text-align: center;
    font-size: 130%;
-   background-color: #7489a0;
-   padding: 20px 0px 10px;
+   background-color: #aabcfe;
+   padding: 20px 0px 15px;
    font-weight: bold;
-   color: #f8fafd;
+   color: #336;
+   border-width: 2px;
+   border-style: none;
+}
+
+input[disabled='disabled'] {
+   background: 0xbbbbbb;
+   color: black;
 }

@@ -73,14 +73,17 @@
 </table>
 <div class="complaint-history-banner">
   History for Complaint No. {{ base.complaintno }}
+  <div style="float:right;padding-right:20px;">
+    <a href="/complaint/update_cso/{{current.complaintno}}/{{current.id}}/">Update</a>
+  </div>
 </div>
 <table class="complaintlist">
   <tr>
-    <th> Changed On </th>
-    <th> Department </th>
-    <th> Status </th>
-    <th> Comment </th>
-    <th> Changed by </th>
+    <th style="width:12%"> Changed On </th>
+    <th style="width:12%"> Department </th>
+    <th style="width:12%"> Status </th>
+    <th style="width:40%"> Comment </th>
+    <th style="width:24%"> Changed by </th>
   </tr>
   {% for complaint in complaints %}
   <tr>
