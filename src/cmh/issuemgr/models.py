@@ -63,20 +63,32 @@ class Complaint(models.Model):
                                          original = self)
 
     def get_location_name (self):
-        vill_code = self.location.value
-        gp_code = self.location.parent.value
-        block_code = self.location.parent.parent.value
-        vill_name = CodeName.objects.get (code = vill_code).name
-        gp_name = CodeName.objects.get (code = gp_code).name
-        block_name = CodeName.objects.get (code = block_code).name
+        if self.location != None:
+            vill_code = self.location.value
+            gp_code = self.location.parent.value
+            block_code = self.location.parent.parent.value
+            vill_name = CodeName.objects.get (code = vill_code).name
+            gp_name = CodeName.objects.get (code = gp_code).name
+            block_name = CodeName.objects.get (code = block_code).name
 
-        return "%s [%s, %s]" % (vill_name, gp_name, block_name)
+            return "%s [%s, %s]" % (vill_name, gp_name, block_name)
+        else:
+            return "----"
 
 
     def get_department_name (self):
-        dept_code = self.department.value
-        dept_name = CodeName.objects.get (code = dept_code).name
+        if self.department != None:
+            dept_code = self.department.value
+            dept_name = CodeName.objects.get (code = dept_code).name
+        else:
+            dept_name = "----"
         return dept_name
+
+    def get_official_name (self):
+        if self.assignto != None:
+            return self.assignto.user.username
+        else:
+            return "----"
 
     def __unicode__ (self):
         return self.complaintno

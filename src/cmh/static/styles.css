@@ -251,8 +251,3 @@ label.report_date {
    border-width: 2px;
    border-style: none;
 }
-
-input[disabled='disabled'] {
-   background: 0xbbbbbb;
-   color: black;
-}

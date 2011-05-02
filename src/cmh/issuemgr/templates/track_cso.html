@@ -22,7 +22,7 @@
       <input id="id_complaintno"
              name="complaintno"
              value="{{ base.complaintno }}"
-             disabled="disabled"
+             readonly="readonly"
              size="35">
     </td>
     <td> Current Status </td>
@@ -30,7 +30,7 @@
       <input id="id_curstate"
              name="curstate"
              value="{{ current.curstate.get_value }}"
-             disabled="disabled"
+             readonly="readonly"
              size="35">
     </td>
   </tr>
@@ -40,7 +40,7 @@
       <input id="id_filedby"
              name="filedby"
              value="{{ base.filedby.name }} &lt;{{ base.filedby.mobile }}&gt;"
-             disabled="disabled"
+             readonly="readonly"
              size="35">
     </td>
     <td>Location: </td>
@@ -48,26 +48,55 @@
       <input id="id_location"
              name="location"
              value="{{ base.get_location_name }}"
-             disabled="disabled"
+             readonly="readonly"
              size="35">
     </td>
   </tr>
   <tr>
-    <td> Issue Date: </td>
-    <td>
-      <input id="id_loggedon"
-             name="loggedon"
-             value="{{ base.logdate|date:'d/M/Y' }}"
-             disabled="disabled"
-             size="35">
-    </td>
     <td> Filed On: </td>
     <td>
       <input id="id_created"
              name="created"
              value="{{ base.created|date:'f A, d/M/Y' }}"
-             disabled="disabled"
+             readonly="readonly"
              size="35">
+    </td>
+    <td> Issue Date: </td>
+    <td>
+      <input id="id_loggedon"
+             name="loggedon"
+             value="{{ base.logdate|date:'d/M/Y' }}"
+             readonly="readonly"
+             size="35">
+    </td>
+  </tr>
+  <tr>
+    <td> Assigned To: </td>
+    <td>
+      <input id="id_assignto"
+             name="assignto"
+             value="{{ current.get_official_name }}"
+             readonly="readonly"
+             size="35">
+    </td>
+    <td> Department: </td>
+    <td>
+      <input id="id_department"
+             name="department"
+             value="{{ current.get_department_name }}"
+             readonly="readonly"
+             size="35">
+    </td>
+  </tr>
+  <tr>
+    <td>Description</td>
+    <td colspan="3">
+      <textarea name="description"
+                cols="40"
+                rows="6"
+                style="width:725px;"
+                id="id_description"
+                readonly="readonly">{{ base.description }}</textarea>
     </td>
   </tr>
 </table>
