@@ -158,6 +158,7 @@ def view_complaints_cso (request):
                                 'menus' : get_user_menus (request.user),
                                 'user' : request.user})
 
+
 def update_cso (request, complaintno, complaintid):
     if request.method == 'GET':
         complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
@@ -174,6 +175,7 @@ def update_cso (request, complaintno, complaintid):
         pass
     else:
         pass
+
 
 def track_cso (request, complaintno, complaintid):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')

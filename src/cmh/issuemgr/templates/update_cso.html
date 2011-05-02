@@ -15,96 +15,142 @@
 {% extends "basewithmenu.html" %}
 
 {% block page_content %}
-<table width="100%">
-  <tr>
-    <td> Complaint Number: </td>
-    <td>
-      <input id="id_complaintno"
-             name="complaintno"
-             value="{{ base.complaintno }}"
-             readonly="readonly"
-             size="35">
-    </td>
-    <td> Current Status </td>
-    <td>
-      <input id="id_curstate"
-             name="curstate"
-             value="{{ current.curstate.get_value }}"
-             readonly="readonly"
-             size="35">
-    </td>
-  </tr>
-  <tr>
-    <td> Filed By: </td>
-    <td>
-      <input id="id_filedby"
-             name="filedby"
-             value="{{ base.filedby.name }} &lt;{{ base.filedby.mobile }}&gt;"
-             readonly="readonly"
-             size="35">
-    </td>
-    <td>Location: </td>
-    <td>
-      <input id="id_location"
-             name="location"
-             value="{{ base.get_location_name }}"
-             readonly="readonly"
-             size="35">
-    </td>
-  </tr>
-  <tr>
-    <td> Filed On: </td>
-    <td>
-      <input id="id_created"
-             name="created"
-             value="{{ base.created|date:'f A, d/M/Y' }}"
-             readonly="readonly"
-             size="35">
-    </td>
-    <td> Issue Date: </td>
-    <td>
-      <input id="id_loggedon"
-             name="loggedon"
-             value="{{ base.logdate|date:'d/M/Y' }}"
-             readonly="readonly"
-             size="35">
-    </td>
-  </tr>
-  <tr>
-    <td> Assigned To: </td>
-    <td>
-      <input id="id_assignto"
-             name="assignto"
-             value="{{ current.get_official_name }}"
-             readonly="readonly"
-             size="35">
-    </td>
-    <td> Department: </td>
-    <td>
-      <input id="id_department"
-             name="department"
-             value="{{ current.get_department_name }}"
-             readonly="readonly"
-             size="35">
-    </td>
-  </tr>
-  <tr>
-    <td>Description</td>
-    <td colspan="3">
-      <textarea name="description"
-                cols="40"
-                rows="6"
-                style="width:725px;"
-                id="id_description"
-                readonly="readonly">{{ base.description }}</textarea>
-    </td>
-  </tr>
-</table>
+<form action="." method="post">
+  <table width="100%">
+    <tr>
+      <td> Complaint Number: </td>
+      <td>
+        <input id="id_complaintno"
+               name="complaintno"
+               value="{{ base.complaintno }}"
+               readonly="readonly"
+               style="width:100%">
+      </td>
+      <td style="width:25px"></td>
+      <td> Current Status </td>
+      <td>
+        <input id="id_curstate"
+               name="curstate"
+               value="{{ current.curstate.get_value }}"
+               readonly="readonly"
+               style="width:100%">
+      </td>
+    </tr>
+    <tr>
+      <td> Filed By: </td>
+      <td>
+        <input id="id_filedby"
+               name="filedby"
+               value="{{ base.filedby.name }} &lt;{{ base.filedby.mobile }}&gt;"
+               readonly="readonly"
+               style="width:100%">
+      </td>
+      <td/>
+      <td>Location: </td>
+      <td>
+        <input id="id_location"
+               name="location"
+               value="{{ base.get_location_name }}"
+               readonly="readonly"
+               style="width:100%">
+      </td>
+    </tr>
+    <tr>
+      <td> Filed On: </td>
+      <td>
+        <input id="id_created"
+               name="created"
+               value="{{ base.created|date:'f A, d/M/Y' }}"
+               readonly="readonly"
+               style="width:100%">
+      </td>
+      <td/>
+      <td> Issue Date: </td>
+      <td>
+        <input id="id_loggedon"
+               name="loggedon"
+               value="{{ base.logdate|date:'d/M/Y' }}"
+               readonly="readonly"
+               style="width:100%">
+      </td>
+    </tr>
+    <tr>
+      <td> Assigned To: </td>
+      <td>
+        <input id="id_assignto"
+               name="assignto"
+               value="{{ current.get_official_name }}"
+               readonly="readonly"
+               style="width:100%">
+      </td>
+      <td/>
+      <td> Department: </td>
+      <td>
+        <input id="id_department"
+               name="department"
+               value="{{ current.get_department_name }}"
+               readonly="readonly"
+               style="width:100%">
+      </td>
+    </tr>
+    <tr>
+      <td>Description:</td>
+      <td colspan="4">
+        <textarea name="description"
+                  cols="40"
+                  rows="6"
+                  style="width:100%;"
+                  id="id_description"
+                  readonly="readonly">{{ base.description }}</textarea>
+      </td>
+    </tr>
+    <tr>
+      <td> New Status </td>
+      <td>
+        <select style="width:100%">
+          {% for newstatus in newstatuses %}
+          <option>{{ newstatus }}</option>
+          {% endfor %}
+        </select>
+      </td>
+    </tr>
+    {% if current.curstate.get_value == 'New' %}
+    <tr>
+      <td> Location (Revised) </td>
+      <td>
+        <input id="id_revlocation"
+               name="revlocation"
+               style="width:100%">
+      </td>
+      <td/>
+      <td> Department (Revised) </td>
+      <td>
+        <input id="id_revdepartment"
+               name="revdepartment"
+               style="width:100%">
+      </td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td>Comment:</td>
+      <td colspan="4">
+        <textarea name="comment"
+                  cols="40"
+                  rows="6"
+                  style="width:100%;"
+                  id="id_comment"></textarea>
+      </td>
+    </tr>
+    <tr>
+      <td/>
+      <td style="text-align:right"> <input type="submit" value="Save" style="width:100px"> </td>
+      <td/>
+      <td style="text-align:left"> <input type="submit" value="Cancel" style="width:100px"> </td>
+    </tr>
+  </table>
+</form>
 <div class="complaint-history-banner">
   History for Complaint No. {{ base.complaintno }}
-  <div style="float:right;padding-right:20px;">
-    <a href="/complaint/update_cso/{{current.complaintno}}/{{current.id}}/">Update</a>
-  </div>
 </div>
 <table class="complaintlist">
   <tr>
@@ -124,6 +170,4 @@
   </tr>
   {% endfor %}
 </table>
-
-
 {% endblock %}
