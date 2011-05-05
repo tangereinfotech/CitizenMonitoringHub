@@ -61,10 +61,10 @@
     <td style="text-align:center;">{{ issue.curstate.get_value }}</td>
     <td style="text-align:center;">{{ issue.created|date:'f A, d/M/Y' }}</td>
     <td class="track" style="display:none">
-      <form method="POST" action="/complaint/track_cso/{{issue.complaintno}}/{{issue.id}}/"></form>
+      <form method="GET" action="/complaint/track_cso/{{issue.complaintno}}/{{issue.id}}/"></form>
     </td>
     <td class="update" style="display:none">
-      <form method="POST" action="/complaint/update_cso/{{issue.complaintno}}/{{issue.id}}/"></form>
+      <form method="GET" action="/complaint/update_cso/{{issue.complaintno}}/{{issue.id}}/"></form>
     </td>
   </tr>
 {% endfor %}

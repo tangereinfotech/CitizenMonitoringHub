@@ -16,6 +16,7 @@
 
 {% block page_content %}
 <form action="." method="post">
+  <input type="hidden" name="prev" value="{{ prev }}">
   <table width="100%">
     <tr>
       <td> Complaint Number: </td>
@@ -107,45 +108,41 @@
     <tr>
       <td> New Status </td>
       <td>
-        <select style="width:100%">
-          {% for newstatus in newstatuses %}
-          <option>{{ newstatus }}</option>
-          {% endfor %}
-        </select>
+        {{ form.newstatus.errors }}
+        {{ form.newstatus }}
       </td>
     </tr>
     {% if current.curstate.get_value == 'New' %}
     <tr>
       <td> Location (Revised) </td>
       <td>
-        <input id="id_revlocation"
-               name="revlocation"
-               style="width:100%">
+        {{ form.revlocationid.errors }}
+        {{ form.revlocationid }}
+        {{ form.revlocationdesc }}
+        <div id="id_revlocation_detail"></div>
       </td>
       <td/>
       <td> Department (Revised) </td>
       <td>
-        <input id="id_revdepartment"
-               name="revdepartment"
-               style="width:100%">
+        {{ form.revdepartmentid.errors }}
+        {{ form.revdepartmentid }}
+        {{ form.revdepartmentdesc }}
+        <div id="id_revdepartment_detail"></div>
       </td>
     </tr>
     {% endif %}
     <tr>
       <td>Comment:</td>
       <td colspan="4">
-        <textarea name="comment"
-                  cols="40"
-                  rows="6"
-                  style="width:100%;"
-                  id="id_comment"></textarea>
+        {{ form.comment.errors }}
+        {{ form.comment }}
       </td>
     </tr>
     <tr>
       <td/>
-      <td style="text-align:right"> <input type="submit" value="Save" style="width:100px"> </td>
+      <td style="text-align:right"> <input type="submit" name="save" value="Save" style="width:100px"> </td>
       <td/>
-      <td style="text-align:left"> <input type="submit" value="Cancel" style="width:100px"> </td>
+      <td style="text-align:left"> <input type="submit" name="cancel" value="Cancel" style="width:100px"> </td>
     </tr>
   </table>
 </form>
@@ -170,4 +167,13 @@
   </tr>
   {% endfor %}
 </table>
+<script type="text/javascript" src="/static/js/complainthandler.js"></script>
+<script type="text/javascript">
+  $(document).ready (function () {
+    field_autocomplete ("#id_revlocationdesc", "#id_revlocationid", "#id_revlocation_detail",
+                        "/complaint/locations/");
+    field_autocomplete ("#id_revdepartmentdesc", "#id_revdepartmentid", "#id_revdepartment_detail",
+                        "/complaint/departments/");
+  });
+</script>
 {% endblock %}

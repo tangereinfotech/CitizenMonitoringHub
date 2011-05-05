@@ -178,6 +178,7 @@ label.report_date {
    /* add padding to account for vertical scrollbar */
    padding-right: 20px;
 }
+
 /* IE 6 doesn't support max-height
  * we use height instead, but this forces the menu to always be this tall
  */
@@ -185,6 +186,20 @@ label.report_date {
    height: 100px;
 }
 
+ul.errorlist {
+   text-align: left;
+   padding: 0px;
+   margin: 0px;
+}
+
+ul.errorlist li {
+   padding: 0px;
+   margin: 0px;
+   text-align: left;
+   color: red;
+   display: inline;
+   list-style-type: none;
+}
 
 .form-field ul.errorlist {
    float: right;

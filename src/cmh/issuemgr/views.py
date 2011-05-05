@@ -15,20 +15,22 @@
 
 import re
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.utils import simplejson as json
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Avg, Max, Min, Count
+from django.contrib.auth.decorators import login_required
 
 from cmh.common.models import Category, Attribute, CodeName, LatLong
 from cmh.common.models import get_code2name, get_child_attributes
 
-from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES
-from cmh.issuemgr.models import ComplaintItem, Complaint
+from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES, DEPARTMENTS
+from cmh.issuemgr.models import ComplaintItem, Complaint, StatusTransition
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
+from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX
 
 from cmh.usermgr.utils import get_user_menus
@@ -42,7 +44,6 @@ def index (request):
                                                       'user' : request.user,
                                                       'post_url' : reverse (index)})
     elif request.method == 'POST':
-        print request.POST
         form = ComplaintForm (request.POST)
         if form.is_valid ():
             form.save ()
@@ -50,40 +51,13 @@ def index (request):
                                        {'menus' : get_user_menus (request.user),
                                         'user' : request.user})
         else:
-            print "form is not valid"
-            print form.errors
             return render_to_response ('complaint.html', {'form': form,
                                                           'errors' : form.errors,
                                                           'menus' : get_user_menus (request.user),
                                                           'user' : request.user,
                                                           'post_url' : reverse (index)})
     else:
-        pass
-
-
-
-def accept (request):
-    if request.method == 'GET':
-        form = AcceptComplaintForm ()
-        return render_to_response ('complaint.html', {'form' : form,
-                                                      'menus' : get_user_menus (request.user),
-                                                      'user' : request.user,
-                                                      'post_url' : reverse (accept)})
-    elif request.method == 'POST':
-        form = AcceptComplaintForm (request.POST)
-        if form.is_valid ():
-            form.save ()
-            return render_to_response ('complaint_submitted.html',
-                                       {'menus' : get_user_menus (request.user),
-                                        'user' : request.user})
-        else:
-            return render_to_response ('complaint.html', {'form': form,
-                                                          'menus' : get_user_menus (request.user),
-                                                          'user' : request.user,
-                                                          'post_url' : reverse (accept)})
-    else:
-        pass
-
+        return HttpResponse ()
 
 
 def locations (request):
@@ -139,6 +113,53 @@ def categories (request):
     return HttpResponse (json.dumps ([]))
 
 
+def departments (request):
+    try:
+        form = ComplaintDepartmentBox (request.GET)
+        if form.is_valid ():
+            retvals = []
+            term = form.cleaned_data ['term']
+            for department in DEPARTMENTS:
+                dept_code = department.value
+                dept_name = CodeName.objects.get (code = dept_code).name
+
+                if term.lower () in dept_name.lower ():
+                    retvals.append ({'display' : dept_name,
+                                     'id' : department.id,
+                                     'detail' : ''})
+            return HttpResponse (json.dumps (retvals))
+
+    except:
+        import traceback
+        traceback.print_exc ()
+    return HttpResponse (json.dumps ([]))
+
+
+@login_required
+def accept (request):
+    if request.method == 'GET':
+        form = AcceptComplaintForm ()
+        return render_to_response ('complaint.html', {'form' : form,
+                                                      'menus' : get_user_menus (request.user),
+                                                      'user' : request.user,
+                                                      'post_url' : reverse (accept)})
+    elif request.method == 'POST':
+        form = AcceptComplaintForm (request.POST)
+        if form.is_valid ():
+            form.save ()
+            return render_to_response ('complaint_submitted.html',
+                                       {'menus' : get_user_menus (request.user),
+                                        'user' : request.user})
+        else:
+            return render_to_response ('complaint.html', {'form': form,
+                                                          'menus' : get_user_menus (request.user),
+                                                          'user' : request.user,
+                                                          'post_url' : reverse (accept)})
+    else:
+        pass
+
+
+@login_required
 def view_complaints_cso (request):
     issues = Complaint.objects.get_latest_complaints ().order_by ('-created')
     paginator = Paginator (issues, 10)
@@ -159,24 +180,60 @@ def view_complaints_cso (request):
                                 'user' : request.user})
 
 
+@login_required
 def update_cso (request, complaintno, complaintid):
+    complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
+    base = complaints.get (original = None)
+    current = complaints.get (latest = True)
+    newstatuses = StatusTransition.objects.get (curstate = current.curstate).newstates.all ()
+
     if request.method == 'GET':
-        complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
-        base = complaints.get (original = None)
-        current = complaints.get (latest = True)
+        if request.META.has_key ('HTTP_REFERER'):
+            prev_page = request.META ['HTTP_REFERER']
+        else:
+            prev_page = reverse (track_cso, args = [complaintno,current.id])
 
         return render_to_response ('update_cso.html',
-                                   {'base' : base,
+                                   {'form' : ComplaintUpdateForm (current),
+                                    'base' : base,
                                     'current' : current,
                                     'complaints' : complaints,
+                                    'newstatuses' : newstatuses,
                                     'menus' : get_user_menus (request.user),
-                                    'user' : request.user})
+                                    'user' : request.user,
+                                    'prev' : prev_page})
     elif request.method == 'POST':
-        pass
+        if request.POST.has_key ('prev'):
+            prev_page = request.POST ['prev']
+        elif request.META.has_key ('HTTP_REFERER'):
+            prev_page = request.META ['HTTP_REFERER']
+        else:
+            prev_page = reverse (track_cso, args = [complaintno,current.id])
+
+        if request.POST.has_key ('save'):
+            form = ComplaintUpdateForm (current, request.POST)
+            if form.is_valid ():
+                print "saving updated form"
+                form.save ()
+                return HttpResponseRedirect (prev_page)
+            else:
+                return render_to_response ('update_cso.html',
+                                           {'form' : form,
+                                            'base' : base,
+                                            'current' : current,
+                                            'complaints' : complaints,
+                                            'newstatuses' : newstatuses,
+                                            'menus' : get_user_menus (request.user),
+                                            'user' : request.user,
+                                            'prev' : prev_page})
+        elif request.POST.has_key ('cancel'):
+            return HttpResponseRedirect (prev_page)
+        else:
+            return HttpResponseRedirect ("/")
     else:
         pass
 
-
+@login_required
 def track_cso (request, complaintno, complaintid):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
     base = complaints.get (original = None)

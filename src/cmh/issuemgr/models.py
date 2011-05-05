@@ -92,3 +92,8 @@ class Complaint(models.Model):
 
     def __unicode__ (self):
         return self.complaintno
+
+
+class StatusTransition (models.Model):
+    curstate = models.ForeignKey (Attribute, related_name = 'curstate')
+    newstates = models.ManyToManyField (Attribute, related_name = 'newstates', blank = True, null = True)

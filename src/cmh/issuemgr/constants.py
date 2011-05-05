@@ -12,3 +12,7 @@ STATUS_ACK      = Attribute.objects.get (category__key = 'Status', value = 'Ackn
 STATUS_OPEN     = Attribute.objects.get (category__key = 'Status', value = 'Open')
 STATUS_RESOLVED = Attribute.objects.get (category__key = 'Status', value = 'Resolved')
 STATUS_CLOSED   = Attribute.objects.get (category__key = 'Status', value = 'Closed')
+
+DEPARTMENTS = COMPLAINT.get_category_descendents ('Complaint Department')
+
+STATUSES = Attribute.objects.filter (category__key = 'Status')
