@@ -37,11 +37,24 @@ class Official(models.Model):
     def __unicode__(self):
         return u'Official: ' + self.user.username
 
+class RoleException (Exception):
+    pass
+
+class AppRoleManager (models.Manager):
+    def get_user_role (self, user):
+        try:
+            return AppRole.objects.get (users = user)
+        except AppRole.MultipleObjectsReturned:
+            raise RoleException ("Multiple Roles for user: " + user.username)
+        except AppRole.DoesNotExist:
+            raise RoleException ("User %s has no defined role" % (user.username))
 
 class AppRole (models.Model):
     role  = models.IntegerField ()
     name  = models.CharField (max_length = 50)
     users = models.ManyToManyField (User)
+
+    objects = AppRoleManager ()
 
     def __unicode__ (self):
         return self.name

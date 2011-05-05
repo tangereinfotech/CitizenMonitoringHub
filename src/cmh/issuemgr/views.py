@@ -239,11 +239,18 @@ def track_cso (request, complaintno, complaintid):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
     base = complaints.get (original = None)
     current = complaints.get (latest = True)
+    newstatuses = StatusTransition.objects.get_allowed_statuses (ROLE_CSO, current.curstate)
+
+    if newstatuses.count () == 0:
+        updatable = False
+    else:
+        updatable = True
 
     return render_to_response ('track_cso.html',
                                {'base' : base,
                                 'current' : current,
                                 'complaints' : complaints,
                                 'menus' : get_user_menus (request.user),
-                                'user' : request.user})
+                                'user' : request.user,
+                                'updatable' : updatable})
 

@@ -102,9 +102,11 @@
 </table>
 <div class="complaint-history-banner">
   History for Complaint No. {{ base.complaintno }}
+  {% if updatable %}
   <div style="float:right;padding-right:20px;">
     <a href="/complaint/update_cso/{{current.complaintno}}/{{current.id}}/">Update</a>
   </div>
+  {% endif %}
 </div>
 <table class="complaintlist">
   <tr>
