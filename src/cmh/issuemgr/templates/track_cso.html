@@ -121,7 +121,7 @@
     <td> {{ complaint.created|date:'f A, d/M/Y' }}</td>
     <td> {{ complaint.get_department_name }} </td>
     <td> {{ complaint.curstate.get_value }} </td>
-    <td> {{ complaint.comment }} </td>
+    <td> {{ complaint.description }} </td>
     <td> {{ complaint.creator.username }} </td>
   </tr>
   {% endfor %}

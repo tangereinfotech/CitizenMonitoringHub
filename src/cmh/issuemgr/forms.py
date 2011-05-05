@@ -59,7 +59,7 @@ class ComplaintForm (forms.Form):
                 raise forms.ValidationError ("Complaint Type is not correct")
         return self.cleaned_data ['categoryid']
 
-    def save (self, need_category = False):
+    def save (self):
         location = VILLAGES.get (id = self.cleaned_data ['locationid'])
         citizen = get_or_create_citizen (self.cleaned_data ['yourmobile'],
                                          self.cleaned_data ['yourname'])
@@ -79,7 +79,8 @@ class ComplaintForm (forms.Form):
                                         filedby = citizen,
                                         logdate = self.cleaned_data ['logdate'],
                                         location = location,
-                                        original = None)
+                                        original = None,
+                                        creator = user)
         update_complaint_sequence (cpl)
         return cpl
 
@@ -111,7 +112,7 @@ class AcceptComplaintForm (forms.Form):
             raise forms.ValidationError ("Complaint Type is not correct")
         return self.cleaned_data ['categoryid']
 
-    def save (self, need_category = False):
+    def save (self):
         location       = VILLAGES.get (id = self.cleaned_data ['locationid'])
         citizen = get_or_create_citizen (self.cleaned_data ['yourmobile'],
                                          self.cleaned_data ['yourname'])
@@ -127,7 +128,8 @@ class AcceptComplaintForm (forms.Form):
                                         filedby = citizen,
                                         logdate = self.cleaned_data ['logdate'],
                                         location = location,
-                                        original = None)
+                                        original = None,
+                                        creator = user)
         update_complaint_sequence (cpl)
 
         accept_cpl = cpl.clone ()

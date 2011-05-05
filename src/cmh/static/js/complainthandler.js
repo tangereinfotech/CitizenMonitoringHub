@@ -37,22 +37,10 @@ var field_autocomplete = function (field_tag, db_id_tag, detail_id_tag, url) {
         };
 };
 
-function doTableAction (table_elem_id, offset_y, column) {
-    var height = 0;
-    $.each ($(table_elem_id + " tr").get (), 
-            function (index) {
-                height += $(this).height ();
-                if (height > offset_y) {
-                    var form = $(this).find ("." + column + " form");
-                    form.submit ();
-                    return false;
-                }
-            });
-};
-
-var showContextMenu = function (elem_id, menu_id) {
-  $(elem_id).contextMenu ({'menu' : menu_id},
-                          function (action, el, pos) {
-                              doTableAction (elem_id, pos.y, action);
-                          });
+var showContextMenu = function (row_class, menu_id) {
+  $("tr" + row_class).contextMenu ({'menu' : menu_id},
+                                   function (action, el, pos) {
+                                       var form = el.find ("." + action + " form");
+                                       form.submit ();
+                                   });
 };
