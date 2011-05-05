@@ -16,7 +16,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from cmh.usermgr.models import Citizen, Official, Citizen
+from cmh.usermgr.models import Citizen, Official, Citizen, AppRole
 from cmh.common.models import CodeName, Category, Attribute
 
 class ComplaintItem (CodeName):
@@ -93,7 +93,13 @@ class Complaint(models.Model):
     def __unicode__ (self):
         return self.complaintno
 
+class StatusTransitionManager (models.Manager):
+    def get_allowed_statuses (self, role, curstate):
+        return Attribute.objects.filter (newstate__curstate = curstate, newstate__role = role)
 
 class StatusTransition (models.Model):
-    curstate = models.ForeignKey (Attribute, related_name = 'curstate')
-    newstates = models.ManyToManyField (Attribute, related_name = 'newstates', blank = True, null = True)
+    role     = models.ForeignKey (AppRole, blank = True, null = True,)
+    curstate = models.ForeignKey (Attribute, related_name = 'curstate', blank = True, null = True)
+    newstate = models.ForeignKey (Attribute, related_name = 'newstate', blank = True, null = True)
+
+    objects = StatusTransitionManager ()

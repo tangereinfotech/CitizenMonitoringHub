@@ -33,6 +33,7 @@ from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTyp
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX
 
+from cmh.usermgr.constants import ROLE_ANONYMOUS, ROLE_CSO, ROLE_DELEGATE, ROLE_OFFICIAL, ROLE_DM
 from cmh.usermgr.utils import get_user_menus
 
 
@@ -185,7 +186,7 @@ def update_cso (request, complaintno, complaintid):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
     base = complaints.get (original = None)
     current = complaints.get (latest = True)
-    newstatuses = StatusTransition.objects.get (curstate = current.curstate).newstates.all ()
+    newstatuses = StatusTransition.objects.get_allowed_statuses (ROLE_CSO, current.curstate)
 
     if request.method == 'GET':
         if request.META.has_key ('HTTP_REFERER'):

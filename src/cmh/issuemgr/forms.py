@@ -23,7 +23,10 @@ from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES, STATUS_NEW, STATUS
 from cmh.issuemgr.constants import STATUSES, DEPARTMENTS
 from cmh.issuemgr.models import Complaint, ComplaintItem, StatusTransition
 from cmh.issuemgr.utils import update_complaint_sequence
+
 from cmh.usermgr.utils import get_or_create_citizen
+from cmh.usermgr.constants import ROLE_CSO, ROLE_ANONYMOUS, ROLE_DM, ROLE_DELEGATE, ROLE_OFFICIAL
+
 from cmh.common.models import Category, Attribute
 
 class ComplaintForm (forms.Form):
@@ -162,8 +165,7 @@ class ComplaintUpdateForm (forms.Form):
 
     def __init__ (self, complaint, *args, **kwargs):
         super (ComplaintUpdateForm, self).__init__ (*args, **kwargs)
-        st = StatusTransition.objects.get (curstate = complaint.curstate)
-        newstates = st.newstates.all ()
+        newstates = StatusTransition.objects.get_allowed_statuses (ROLE_CSO, complaint.curstate)
 
         self.fields ['newstatus'] = \
                     forms.ChoiceField (required = True,
@@ -207,8 +209,9 @@ class ComplaintUpdateForm (forms.Form):
         if self.cleaned_data ['newstatus'] != "-1":
             try:
                 checkstatus = STATUSES.get (id = self.cleaned_data ['newstatus'])
-                st = StatusTransition.objects.get (curstate = complaint.curstate)
-                is_valid = st.newstates.get (id = checkstatus.id)
+                newstates = StatusTransition.objects.get_allowed_statuses (ROLE_CSO,
+                                                                           complaint.curstate)
+                is_valid = newstates.get (id = checkstatus.id)
             except Attribute.DoesNotExist:
                 raise forms.ValidationError ("New status is not a valid status code")
             except StatusTransition.DoesNotExist:

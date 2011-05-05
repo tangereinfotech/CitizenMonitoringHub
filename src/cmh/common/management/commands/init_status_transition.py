@@ -26,7 +26,6 @@ class Command (NoArgsCommand):
     def handle (self, *args, **kwargs):
         self.populate_role_menus ()
         self.populate_complaint_status ()
-        self.populate_status_transition ()
 
     def populate_role_menus (self):
         try:
@@ -84,6 +83,7 @@ class Command (NoArgsCommand):
 
         self._ensure_menu (anonymous, anonymous_menu)
         self._ensure_menu (cso, cso_menu)
+        self._populate_status_transitions (cso, delegate, official, dm, anonymous)
 
     def _ensure_menu (self, role, menus):
         serial = 1
@@ -112,26 +112,42 @@ class Command (NoArgsCommand):
             except Attribute.DoesNotExist:
                 s = Attribute.objects.create (value = status, category = cat_complaintstatus)
 
-    def populate_status_transition (self):
-        matrix = [{'cur' : STATUS_NEW,
-                   'new' : [STATUS_ACK]},
-                  {'cur' : STATUS_ACK,
-                   'new' : [STATUS_OPEN, STATUS_RESOLVED]},
-                  {'cur' : STATUS_OPEN,
-                   'new' : [STATUS_RESOLVED]},
-                  {'cur' : STATUS_RESOLVED,
-                   'new' : [STATUS_REOPEN, STATUS_CLOSED]},
-                  {'cur' : STATUS_REOPEN,
-                   'new' : [STATUS_ACK, STATUS_RESOLVED]}]
 
-        for transition in matrix:
-            print "Processing status transition for: " + transition ['cur'].get_value ()
-            try:
-                cur = StatusTransition.objects.get (curstate = transition ['cur'])
-            except StatusTransition.DoesNotExist:
-                cur = StatusTransition.objects.create (curstate = transition ['cur'])
+    def _populate_status_transitions (self, cso, delegate, official, dm, anonymous):
+        matrix = [{'role' : cso,
+                   'trans' : [{'cur' : STATUS_NEW,
+                               'new' : [STATUS_ACK]},
+                              {'cur' : STATUS_ACK,
+                               'new' : [STATUS_OPEN, STATUS_RESOLVED]},
+                              {'cur' : STATUS_OPEN,
+                               'new' : [STATUS_RESOLVED]},
+                              {'cur' : STATUS_RESOLVED,
+                               'new' : [STATUS_REOPEN, STATUS_CLOSED]},
+                              {'cur' : STATUS_REOPEN,
+                               'new' : [STATUS_ACK, STATUS_RESOLVED]}]},
+                  {'role' : delegate,
+                   'trans' : [{'cur' : STATUS_OPEN,
+                               'new' : [STATUS_RESOLVED]}]},
+                  {'role' : official,
+                   'trans' : [{'cur' : STATUS_OPEN,
+                               'new' : [STATUS_RESOLVED]}]},
+                  {'role' : dm,
+                   'trans' : [{'cur' : STATUS_OPEN,
+                               'new' : [STATUS_RESOLVED]}]},
+                  {'role' : anonymous,
+                   'trans' : [{'cur' : STATUS_RESOLVED,
+                               'new' : [STATUS_REOPEN, STATUS_CLOSED]}]}]
 
-            for newstate in transition ['new']:
-                cur.newstates.add (newstate)
-            cur.save ()
+        for rt in matrix:
+            print "Processing transitions for: " + rt ['role'].name
+            for trans in rt ['trans']:
+                for newstate in trans ['new']:
+                    try:
+                        cur = StatusTransition.objects.get (role = rt ['role'],
+                                                            curstate = trans ['cur'],
+                                                            newstate = newstate)
+                    except StatusTransition.DoesNotExist:
+                        cur = StatusTransition.objects.create (role = rt ['role'],
+                                                               curstate = trans ['cur'],
+                                                               newstate = newstate)
 
