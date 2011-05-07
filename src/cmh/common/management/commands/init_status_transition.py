@@ -73,10 +73,10 @@ class Command (NoArgsCommand):
 
         cso_menu = [{'name' : 'Home',
                      'url' : '/'},
-                    {'name' : 'Log Complaint',
+                    {'name' : 'Accept',
                      'url' : '/complaint/accept/'},
-                    {'name' : 'View Complaints',
-                     'url' : '/complaint/view_complaints_cso/'},
+                    {'name' : 'My Issues',
+                     'url' : '/complaint/my_issues/'},
                     {'name' : 'Manage Masters',
                      'url' : '/masters/'},
                     ]

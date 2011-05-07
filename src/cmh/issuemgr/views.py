@@ -33,6 +33,7 @@ from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTyp
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX
 
+from cmh.usermgr.models import AppRole
 from cmh.usermgr.constants import ROLE_ANONYMOUS, ROLE_CSO, ROLE_DELEGATE, ROLE_OFFICIAL, ROLE_DM
 from cmh.usermgr.utils import get_user_menus
 
@@ -161,8 +162,10 @@ def accept (request):
 
 
 @login_required
-def view_complaints_cso (request):
-    issues = Complaint.objects.get_latest_complaints ().order_by ('-created')
+def my_issues (request):
+    role = AppRole.objects.get_user_role (request.user)
+    statuses = StatusTransition.objects.get_changeable_statuses (role)
+    issues = Complaint.objects.get_latest_complaints ().filter (curstate__in = statuses).order_by ('-created')
     paginator = Paginator (issues, 10)
 
     try:
@@ -175,7 +178,7 @@ def view_complaints_cso (request):
     except (EmptyPage, InvalidPage):
         issues = paginator.page (paginator.num_pages)
 
-    return render_to_response ('view_complaints_cso.html',
+    return render_to_response ('my_issues.html',
                                {'issues' : issues,
                                 'menus' : get_user_menus (request.user),
                                 'user' : request.user})

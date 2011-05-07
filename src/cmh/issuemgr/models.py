@@ -97,6 +97,9 @@ class StatusTransitionManager (models.Manager):
     def get_allowed_statuses (self, role, curstate):
         return Attribute.objects.filter (newstate__curstate = curstate, newstate__role = role)
 
+    def get_changeable_statuses (self, role):
+        return Attribute.objects.filter (curstate__role = role, category__key = 'Status')
+
 class StatusTransition (models.Model):
     role     = models.ForeignKey (AppRole, blank = True, null = True,)
     curstate = models.ForeignKey (Attribute, related_name = 'curstate', blank = True, null = True)
