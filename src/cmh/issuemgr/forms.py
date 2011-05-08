@@ -59,7 +59,7 @@ class ComplaintForm (forms.Form):
                 raise forms.ValidationError ("Complaint Type is not correct")
         return self.cleaned_data ['categoryid']
 
-    def save (self):
+    def save (self, user):
         location = VILLAGES.get (id = self.cleaned_data ['locationid'])
         citizen = get_or_create_citizen (self.cleaned_data ['yourmobile'],
                                          self.cleaned_data ['yourname'])
@@ -112,7 +112,7 @@ class AcceptComplaintForm (forms.Form):
             raise forms.ValidationError ("Complaint Type is not correct")
         return self.cleaned_data ['categoryid']
 
-    def save (self):
+    def save (self, user):
         location       = VILLAGES.get (id = self.cleaned_data ['locationid'])
         citizen = get_or_create_citizen (self.cleaned_data ['yourmobile'],
                                          self.cleaned_data ['yourname'])

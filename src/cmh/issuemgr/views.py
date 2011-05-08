@@ -51,7 +51,7 @@ def index (request):
     elif request.method == 'POST':
         form = ComplaintForm (request.POST)
         if form.is_valid ():
-            form.save ()
+            form.save (None)
             return render_to_response ('complaint_submitted.html',
                                        {'menus' : get_user_menus (request.user),
                                         'user' : request.user})
@@ -169,11 +169,14 @@ def accept (request):
         return render_to_response ('complaint.html', {'form' : form,
                                                       'menus' : get_user_menus (request.user),
                                                       'user' : request.user,
-                                                      'post_url' : reverse (accept)})
+                                                      'post_url' : reverse (accept),
+                                                      'map' : {'center_lat' : 23.20119,
+                                                               'center_long' : 77.081795,
+                                                               'zoom_level' : 13}})
     elif request.method == 'POST':
         form = AcceptComplaintForm (request.POST)
         if form.is_valid ():
-            form.save ()
+            form.save (request.user)
             return render_to_response ('complaint_submitted.html',
                                        {'menus' : get_user_menus (request.user),
                                         'user' : request.user})
@@ -181,7 +184,10 @@ def accept (request):
             return render_to_response ('complaint.html', {'form': form,
                                                           'menus' : get_user_menus (request.user),
                                                           'user' : request.user,
-                                                          'post_url' : reverse (accept)})
+                                                          'post_url' : reverse (accept),
+                                                          'map' : {'center_lat' : 23.20119,
+                                                                   'center_long' : 77.081795,
+                                                                   'zoom_level' : 13}})
     else:
         pass
 
