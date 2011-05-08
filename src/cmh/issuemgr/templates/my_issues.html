@@ -56,23 +56,17 @@
     <th style="display:none"/>
   </tr>
 {% for issue in issues.object_list %}
-  {% if issue|is_updatable:user %}
   <tr class="updateMenu">
-  {% else %}
-  <tr class="trackMenu">
-  {% endif %}
     <td style="text-align:center;">{{ issue.complaintno }}</td>
     <td style="text-align:center;">{{ issue.logdate|date:'d/M/Y' }}</td>
     <td style="text-align:left;">{{ issue.description }}</td>
     <td style="text-align:center;">{{ issue.curstate.get_value }}</td>
     <td style="text-align:center;">{{ issue.created|date:'f A, d/M/Y' }}</td>
     <td class="track" style="display:none">
-      <form method="GET" action="/complaint/track_cso/{{issue.complaintno}}/{{issue.id}}/"></form>
+      <form method="GET" action="/complaint/track/{{issue.complaintno}}/{{issue.id}}/"></form>
     </td>
     <td class="update" style="display:none">
-      {% if issue|is_updatable:user %}
-      <form method="GET" action="/complaint/update_cso/{{issue.complaintno}}/{{issue.id}}/"></form>
-      {% endif %}
+      <form method="GET" action="/complaint/update/{{issue.complaintno}}/{{issue.id}}/"></form>
     </td>
   </tr>
 {% endfor %}
@@ -87,14 +81,9 @@
   <li><a href="#track">Track</a></li>
 </ul>
 
-<ul id="trackMenu" class="contextMenu">
-  <li><a href="#track">Track</a></li>
-</ul>
-
 <script type="text/javascript">
   $(document).ready (function() {
     showContextMenu (".updateMenu", "updateMenu");
-    showContextMenu (".trackMenu", "trackMenu");
   });
 </script>
 {% endblock %}

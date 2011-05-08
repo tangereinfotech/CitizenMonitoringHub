@@ -18,22 +18,54 @@
 {% endblock %}
 
 {% block page_content %}
-<div class="category_filter">
-  <ul class="category">
-    <li class="category_item">All Categories</li>
-    <li class="category_item">Education</li>
-    <li class="category_item">Governance</li>
-    <li class="category_item">Health</li>
-    <li class="category_item">Infrastructure</li>
-    <li class="category_item">Water</li>
+<div id="base_map"></div>
+<div id="trending-issues-section">
+  <ul class="period-right">
+    <li>Last:</li>
+    <li><a href="/complaint/trend/week/">Week</a></li>
+    <li><a href="/complaint/trend/month/">Month</a></li>
+    <li><a href="/complaint/trend/year/">Year</a></li>
   </ul>
+  <div id="trending-issues-chart"></div>
 </div>
-<div id="base_map">
+<div class="resolution-metrics">Complaint Resolution Metrics</div>
+<div id="trending-open-section">
+  <ul class="period-left">
+    <li>Last:</li>
+    <li><a href="/complaint/trend/week/">Week</a></li>
+    <li><a href="/complaint/trend/month/">Month</a></li>
+    <li><a href="/complaint/trend/year/">Year</a></li>
+  </ul>
+  <div id="trending-open-chart"></div>
+</div>
+<div id="trending-resolution-section">
+  <ul class="period-right">
+    <li>Last:</li>
+    <li><a href="/complaint/trend/week/">Week</a></li>
+    <li><a href="/complaint/trend/month/">Month</a></li>
+    <li><a href="/complaint/trend/year/">Year</a></li>
+  </ul>
+  <div id="trending-resolution-chart"></div>
 </div>
 <script type="text/javascript" src="/static/js/MapHandler.js"></script>
 <script type="text/javascript">
   $(document).ready (function () {
     MapHandler.init ('base_map');
+    $.jqplot ("trending-issues-chart",
+              [[[1, 20],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]]],
+              { title : "Hot Issues",
+                axes: {yaxis : {min : 0, max: 240}},
+                series: [{color: '#5fab78'}]});
+    $.jqplot ("trending-open-chart",
+              [[[1, 20],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]]],
+              { title : "Hot Issues",
+                axes: {yaxis : {min : 0, max: 240}},
+                series: [{color: '#5fab78'}]});
+    $.jqplot ("trending-resolution-chart",
+              [[[1, 20],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]]],
+              { title : "Hot Issues",
+                axes: {yaxis : {min : 0, max: 240}},
+                series: [{color: '#5fab78'}]});
   });
 </script>
 {% endblock %}

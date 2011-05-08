@@ -65,19 +65,19 @@ class Command (NoArgsCommand):
 
         anonymous_menu = [{'name' : 'Home',
                            'url' : '/'},
-                          {'name' : 'Submit Complaint',
+                          {'name' : 'Submit Issue',
                            'url' : '/complaint/'},
-                          {'name' : 'Track Complaint',
+                          {'name' : 'Track Issue',
                            'url' : '/complaint/track/'},
                           ]
 
         cso_menu = [{'name' : 'Home',
                      'url' : '/'},
-                    {'name' : 'Accept',
-                     'url' : '/complaint/accept/'},
                     {'name' : 'My Issues',
                      'url' : '/complaint/my_issues/'},
-                    {'name' : 'Manage Masters',
+                    {'name' : 'Accept',
+                     'url' : '/complaint/accept/'},
+                    {'name' : 'Masters',
                      'url' : '/masters/'},
                     ]
 

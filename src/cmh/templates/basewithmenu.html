@@ -34,13 +34,13 @@
         <tr>
           {% for menuitem in menus %}
             {% if forloop.last %}
-          <td style="text-align:right;padding-right:10px;">
+          <td style="text-align:right;padding-right:10px;width:{% widthratio 100 menus|length 1 %}%">
             {% else %}
-              {% if forloop.first %}
-          <td style="text-align:left;padding-left:10px;">
-              {% else %}
-          <td style="text-align:right;">
-              {% endif %}
+            {% if forloop.first %}
+          <td style="text-align:left;padding-left:10px;width:{% widthratio 100 menus|length 1 %}%">
+            {% else %}
+          <td style="text-align:center;width:{% widthratio 100 menus|length 1 %}%">
+            {% endif %}
             {% endif %}
             <a href="{{menuitem.url}}">{{menuitem.name}}</a>
           </td>

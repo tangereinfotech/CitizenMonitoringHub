@@ -22,6 +22,6 @@ urlpatterns = patterns ('cmh.issuemgr.views',
                         (r'^categories/$', 'categories'),
                         (r'^departments/$', 'departments'),
                         (r'^my_issues/', 'my_issues'),
-                        (r'^update_cso/(?P<complaintno>[\d\.]+)/(?P<complaintid>\d+)/$', 'update_cso'),
-                        (r'^track_cso/(?P<complaintno>[\d\.]+)/(?P<complaintid>\d+)/$', 'track_cso'),
+                        (r'^update/(?P<complaintno>[\d\.]+)/(?P<complaintid>\d+)/$', 'update'),
+                        (r'^track/(?P<complaintno>[\d\.]+)/(?P<complaintid>\d+)/$', 'track'),
                         )

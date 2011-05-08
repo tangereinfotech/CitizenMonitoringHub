@@ -101,13 +101,6 @@ div.page_content {
    clear: both;
 }
 
-div.category_filter {
-   float: left;
-   width: 260px;
-   height: 400px;
-   padding-top: 20px;
-}
-
 ul.category {
    padding-left: 5px;
 }
@@ -121,10 +114,78 @@ ul.category li.category_item {
 }
 
 #base_map {
-   float: right;
+   float: left;
    height: 400px;
-   width: 600px;
+   width: 450px;
 }
+
+#trending-issues-section {
+   float: right;
+   width: 400px;
+}
+
+#trending-issues-chart {
+   float: right;
+   width: 380px;
+   height: 400px;
+}
+
+#trending-open-chart {
+   float: left;
+   width: 420px;
+   height: 400px;
+}
+
+#trending-resolution-chart {
+   float: right;
+   width: 420px;
+   height: 400px;
+}
+
+#trending-open-section {
+   float: left;
+   width: 400px;
+}
+
+#trending-resolution-section {
+   float: right;
+   width: 400px;
+}
+
+ul.period-right {
+   float: right;
+   list-style-type: none;
+   display: inline;
+   margin: 0px;
+   padding: 0px;
+}
+
+ul.period-right li {
+   display: inline;
+   padding: 0px 10px;
+}
+
+ul.period-left {
+   float: left;
+   list-style-type: none;
+   display: inline;
+   margin: 0px;
+   padding: 0px;
+}
+
+ul.period-left li {
+   display: inline;
+   padding: 0px 10px;
+}
+
+div.resolution-metrics {
+   padding-top: 20px;
+   border-top: 2px dotted #044a98;
+   clear: both;
+   font-size: 20px;
+   text-align: center;
+}
+
 
 div.footer {
    clear: both;

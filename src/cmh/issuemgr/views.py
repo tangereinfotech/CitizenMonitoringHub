@@ -185,7 +185,7 @@ def my_issues (request):
 
 
 @login_required
-def update_cso (request, complaintno, complaintid):
+def update (request, complaintno, complaintid):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
     base = complaints.get (original = None)
     current = complaints.get (latest = True)
@@ -195,9 +195,9 @@ def update_cso (request, complaintno, complaintid):
         if request.META.has_key ('HTTP_REFERER'):
             prev_page = request.META ['HTTP_REFERER']
         else:
-            prev_page = reverse (track_cso, args = [complaintno,current.id])
+            prev_page = reverse (track, args = [complaintno,current.id])
 
-        return render_to_response ('update_cso.html',
+        return render_to_response ('update.html',
                                    {'form' : ComplaintUpdateForm (current),
                                     'base' : base,
                                     'current' : current,
@@ -212,7 +212,7 @@ def update_cso (request, complaintno, complaintid):
         elif request.META.has_key ('HTTP_REFERER'):
             prev_page = request.META ['HTTP_REFERER']
         else:
-            prev_page = reverse (track_cso, args = [complaintno,current.id])
+            prev_page = reverse (track, args = [complaintno,current.id])
 
         if request.POST.has_key ('save'):
             form = ComplaintUpdateForm (current, request.POST)
@@ -221,7 +221,7 @@ def update_cso (request, complaintno, complaintid):
                 form.save ()
                 return HttpResponseRedirect (prev_page)
             else:
-                return render_to_response ('update_cso.html',
+                return render_to_response ('update.html',
                                            {'form' : form,
                                             'base' : base,
                                             'current' : current,
@@ -238,7 +238,7 @@ def update_cso (request, complaintno, complaintid):
         pass
 
 @login_required
-def track_cso (request, complaintno, complaintid):
+def track (request, complaintno, complaintid):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
     base = complaints.get (original = None)
     current = complaints.get (latest = True)
@@ -249,7 +249,7 @@ def track_cso (request, complaintno, complaintid):
     else:
         updatable = True
 
-    return render_to_response ('track_cso.html',
+    return render_to_response ('track.html',
                                {'base' : base,
                                 'current' : current,
                                 'complaints' : complaints,
