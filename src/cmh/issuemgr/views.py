@@ -44,7 +44,10 @@ def index (request):
         return render_to_response ('complaint.html', {'form' : form,
                                                       'menus' : get_user_menus (request.user),
                                                       'user' : request.user,
-                                                      'post_url' : reverse (index)})
+                                                      'post_url' : reverse (index),
+                                                      'map' : {'center_lat' : 23.20119,
+                                                               'center_long' : 77.081795,
+                                                               'zoom_level' : 13}})
     elif request.method == 'POST':
         form = ComplaintForm (request.POST)
         if form.is_valid ():
@@ -57,9 +60,31 @@ def index (request):
                                                           'errors' : form.errors,
                                                           'menus' : get_user_menus (request.user),
                                                           'user' : request.user,
-                                                          'post_url' : reverse (index)})
+                                                          'post_url' : reverse (index),
+                                                          'map' : {'center_lat' : 23.20119,
+                                                                   'center_long' : 77.081795,
+                                                                   'zoom_level' : 13}})
     else:
         return HttpResponse ()
+
+def get_category_map_update (request, category):
+    if category == 'all':
+        complaints = Complaint.objects.all ().order_by ('location')
+        retval = {}
+        for complaint in complaints:
+            if retval.has_key (complaint.location.id):
+                retval [complaint.location.id]['count'] += 1
+            else:
+                try:
+                    latlong = LatLong.objects.get (location__id = complaint.location.id)
+                    retval [complaint.location.id] = {'count' : 1,
+                                                      'latitude': latlong.latitude,
+                                                      'longitude' : latlong.longitude}
+                except:
+                    pass
+        return HttpResponse (json.dumps (retval))
+    else:
+        return HttpResponse (json.dumps ([]))
 
 
 def locations (request):

@@ -77,7 +77,10 @@
 <script type="text/javascript" src="/static/js/complainthandler.js"></script>
 <script type="text/javascript">
   $(document).ready (function () {
-    MapHandler.init ('complaint_location');
+    MapHandler.init ('complaint_location',
+                     {{ map.center_lat }},
+                     {{ map.center_long }},
+                     {{map.zoom_level }});
     $("#id_logdate").datepicker ({dateFormat : 'dd/mm/yy'});
     field_autocomplete ("#id_locationdesc", "#id_locationid", "#id_location_detail", "/complaint/locations/");
     field_autocomplete ("#id_categorydesc", "#id_categoryid", "#id_category_detail", "/complaint/categories/");

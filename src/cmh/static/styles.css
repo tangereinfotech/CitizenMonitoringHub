@@ -179,10 +179,10 @@ ul.period-left li {
 }
 
 div.resolution-metrics {
-   padding-top: 20px;
+   padding: 20px 0px;
    border-top: 2px dotted #044a98;
    clear: both;
-   font-size: 20px;
+   font-size: 24px;
    text-align: center;
 }
 
@@ -326,4 +326,10 @@ ul.errorlist li {
    color: #336;
    border-width: 2px;
    border-style: none;
+}
+
+.section-title {
+   font-size: 18px;
+   text-align: center;
+   width: 100%;
 }

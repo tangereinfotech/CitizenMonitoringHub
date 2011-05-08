@@ -20,51 +20,52 @@
 {% block page_content %}
 <div id="base_map"></div>
 <div id="trending-issues-section">
+  <div class="section-title">Hot Issues</div>
   <ul class="period-right">
     <li>Last:</li>
-    <li><a href="/complaint/trend/week/">Week</a></li>
-    <li><a href="/complaint/trend/month/">Month</a></li>
-    <li><a href="/complaint/trend/year/">Year</a></li>
+    <li><a href="/complaint/trend-issue/week/">Week</a></li>
+    <li><a href="/complaint/trend-issue/month/">Month</a></li>
+    <li><a href="/complaint/trend-issue/year/">Year</a></li>
   </ul>
   <div id="trending-issues-chart"></div>
 </div>
 <div class="resolution-metrics">Complaint Resolution Metrics</div>
 <div id="trending-open-section">
+  <div class="section-title">Opening Trend</div>
   <ul class="period-left">
     <li>Last:</li>
-    <li><a href="/complaint/trend/week/">Week</a></li>
-    <li><a href="/complaint/trend/month/">Month</a></li>
-    <li><a href="/complaint/trend/year/">Year</a></li>
+    <li><a href="/complaint/trend-open/week/">Week</a></li>
+    <li><a href="/complaint/trend-open/month/">Month</a></li>
+    <li><a href="/complaint/trend-open/year/">Year</a></li>
   </ul>
   <div id="trending-open-chart"></div>
 </div>
 <div id="trending-resolution-section">
+  <div class="section-title">Resolution Trend</div>
   <ul class="period-right">
     <li>Last:</li>
-    <li><a href="/complaint/trend/week/">Week</a></li>
-    <li><a href="/complaint/trend/month/">Month</a></li>
-    <li><a href="/complaint/trend/year/">Year</a></li>
+    <li><a href="/complaint/trend-resolve/week/">Week</a></li>
+    <li><a href="/complaint/trend-resolve/month/">Month</a></li>
+    <li><a href="/complaint/trend-resolve/year/">Year</a></li>
   </ul>
   <div id="trending-resolution-chart"></div>
 </div>
 <script type="text/javascript" src="/static/js/MapHandler.js"></script>
 <script type="text/javascript">
   $(document).ready (function () {
-    MapHandler.init ('base_map');
+    MapHandler.init ('base_map', {{ map.center_lat }}, {{ map.center_long }} , {{ map.zoom_level }});
+    MapHandler.update_with_stats ('/complaint/get_category_map_update/');
     $.jqplot ("trending-issues-chart",
               [[[1, 20],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]]],
-              { title : "Hot Issues",
-                axes: {yaxis : {min : 0, max: 240}},
+              { axes: {yaxis : {min : 0, max: 240}},
                 series: [{color: '#5fab78'}]});
     $.jqplot ("trending-open-chart",
               [[[1, 20],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]]],
-              { title : "Hot Issues",
-                axes: {yaxis : {min : 0, max: 240}},
+              { axes: {yaxis : {min : 0, max: 240}},
                 series: [{color: '#5fab78'}]});
     $.jqplot ("trending-resolution-chart",
               [[[1, 20],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]]],
-              { title : "Hot Issues",
-                axes: {yaxis : {min : 0, max: 240}},
+              { axes: {yaxis : {min : 0, max: 240}},
                 series: [{color: '#5fab78'}]});
   });
 </script>

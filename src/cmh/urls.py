@@ -30,7 +30,6 @@ urlpatterns = patterns('',
                        (r'^complaint/', include ('cmh.issuemgr.urls')),
                        (r'^smsg/', include ('cmh.smsgateway.urls')),
                        url(r'^captcha/', include('cmh.captcha.urls')),
-
                        )
 
 if settings.DEBUG:
