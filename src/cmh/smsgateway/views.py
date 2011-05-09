@@ -21,6 +21,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 
 from cmh.smsgateway.forms import SMSTransferReqFormat, SMSReceivedFormat
 
+from cmh.issuemgr.utils import update_complaint_sequence
 from cmh.issuemgr.utils import get_location_attr
 from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.constants import STATUS_NEW
@@ -69,6 +70,7 @@ def gateway (request):
                                                   location = location,
                                                   original = None,
                                                   creator = None)
+                update_complaint_sequence (compl)
                 return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
             else:
                 return HttpResponse (json.dumps ({'payload' : {'success' : 'false'}}))

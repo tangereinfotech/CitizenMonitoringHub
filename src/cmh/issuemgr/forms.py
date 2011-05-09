@@ -30,19 +30,22 @@ from cmh.usermgr.constants import ROLE_CSO, ROLE_ANONYMOUS, ROLE_DM, ROLE_DELEGA
 from cmh.common.models import Category, Attribute
 
 class ComplaintForm (forms.Form):
-    logdate     = forms.DateField (input_formats = ('%d/%m/%Y',))
+    logdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
+                                   widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
     description = forms.CharField (widget=forms.Textarea ( attrs = {'style' :
                                                                     "width:348px;border-style:inset;",
                                                                     "rows" : "6"}))
     locationid  = forms.IntegerField (widget = forms.HiddenInput ())
-    locationdesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px'}))
+    locationdesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
+                                                                       'autocomplete' : 'off'}))
     yourname    = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                       'maxlength' : '100'}))
     yourmobile  = forms.IntegerField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                          'maxlenght' : '15'}))
     categoryid  = forms.IntegerField (required = False, widget = forms.HiddenInput ())
     categorydesc = forms.CharField (required = False,
-                                    widget = forms.TextInput (attrs = {'style' : 'width:348px'}))
+                                    widget = forms.TextInput (attrs = {'style' : 'width:348px',
+                                                                       'autocomplete' : 'off'}))
 
     def clean_locationid (self):
         try:
@@ -85,18 +88,21 @@ class ComplaintForm (forms.Form):
         return cpl
 
 class AcceptComplaintForm (forms.Form):
-    logdate     = forms.DateField (input_formats = ('%d/%m/%Y',))
+    logdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
+                                   widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
     description = forms.CharField (widget=forms.Textarea ( attrs = {'style' :
                                                                     "width:348px;border-style:inset;",
                                                                     "rows" : "6"}))
     locationid  = forms.IntegerField (widget = forms.HiddenInput ())
-    locationdesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px'}))
+    locationdesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
+                                                                       'autocomplete' : 'off'}))
     yourname    = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                       'maxlength' : '100'}))
     yourmobile  = forms.IntegerField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                          'maxlenght' : '15'}))
     categoryid  = forms.IntegerField (widget = forms.HiddenInput ())
-    categorydesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px'}))
+    categorydesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
+                                                                       'autocomplete' : 'off'}))
 
     def clean_locationid (self):
         try:
