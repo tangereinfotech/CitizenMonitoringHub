@@ -14,11 +14,16 @@
 # limitations under the License.
 
 import sys
+from datetime import datetime
 
 from django.utils import simplejson as json
 from django.http import HttpResponse, HttpResponseForbidden
 
 from cmh.smsgateway.forms import SMSTransferReqFormat, SMSReceivedFormat
+
+from cmh.issuemgr.utils import get_location_attr
+
+from cmh.usermgr.utils import get_or_create_citizen
 
 
 def gateway (request):
@@ -42,9 +47,23 @@ def gateway (request):
     elif request.method == 'POST':
         receivedform = SMSReceivedFormat (request.POST)
         if receivedform.is_valid ():
-            # Parse the message
-            # Log the complaint
-            pass
+            sender_phone = receivedfrom.cleaned_data ['from']
+            message      = receivedfrom.cleaned_data ['message']
+            (location, sender_name, issue_desc) = message.split ()
+            (block_no, gp_no, vill_no) = location.split ('-')
+            compl = Complaint.objects.create (base = None,
+                                              complaintno = None,
+                                              description = issue_desc,
+                                              department = None,
+                                              curstate = STATUS_NEW,
+                                              filedby = get_or_create_citizen (sender_phone,
+                                                                               sender_name),
+                                              logdate = datetime.today ().date (),
+                                              location = get_location_attr (block_no,
+                                                                            gp_no,
+                                                                            vill_no),
+                                              original = None,
+                                              creator = None)
             return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
         else:
             return HttpResponse (json.dumps ({'payload' : {'success' : 'false'}}))

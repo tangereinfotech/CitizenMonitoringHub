@@ -15,3 +15,16 @@ def update_complaint_sequence (complaint):
                                          (complaint.id - first_complaint.id + 1))
     complaint.save ()
 
+
+
+def get_location_attr (block_no, gp_no, vill_no):
+    from django.conf import settings
+
+    loc_code = "%s.%03d.%03d.%03d" % (settings.DEPLOY_DISTT_CODE,
+                                      int (block_no),
+                                      int (gp_no),
+                                      int (vill_no))
+
+    return VILLAGES.objects.get (value = loc_code)
+
+
