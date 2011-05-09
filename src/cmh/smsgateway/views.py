@@ -22,14 +22,13 @@ from django.http import HttpResponse, HttpResponseForbidden
 from cmh.smsgateway.forms import SMSTransferReqFormat, SMSReceivedFormat
 
 from cmh.issuemgr.utils import get_location_attr
+from cmh.issuemgr.models import Complaint
+from cmh.issuemgr.constants import STATUS_NEW
 
 from cmh.usermgr.utils import get_or_create_citizen
 
 
 def gateway (request):
-    sys.stderr.write ("Received request\n")
-    sys.stderr.write ("GET: " + str (request.GET) + "\n")
-    sys.stderr.write ("POST: " + str (request.POST) + "\n")
     if request.method == 'GET':
         transferreq = SMSTransferReqFormat (request.GET)
         if transferreq.is_valid () == True:
@@ -45,28 +44,37 @@ def gateway (request):
         else:
             return HttpResponse (json.dumps ({}))
     elif request.method == 'POST':
-        receivedform = SMSReceivedFormat (request.POST)
-        if receivedform.is_valid ():
-            sender_phone = receivedfrom.cleaned_data ['from']
-            message      = receivedfrom.cleaned_data ['message']
-            (location, sender_name, issue_desc) = message.split ()
-            (block_no, gp_no, vill_no) = location.split ('-')
-            compl = Complaint.objects.create (base = None,
-                                              complaintno = None,
-                                              description = issue_desc,
-                                              department = None,
-                                              curstate = STATUS_NEW,
-                                              filedby = get_or_create_citizen (sender_phone,
-                                                                               sender_name),
-                                              logdate = datetime.today ().date (),
-                                              location = get_location_attr (block_no,
-                                                                            gp_no,
-                                                                            vill_no),
-                                              original = None,
-                                              creator = None)
-            return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
-        else:
-            return HttpResponse (json.dumps ({'payload' : {'success' : 'false'}}))
+        try:
+            receivedform = SMSReceivedFormat (request.POST)
+            if receivedform.is_valid ():
+                sender_phone = receivedform.cleaned_data ['from']
+                message      = receivedform.cleaned_data ['message']
+                message_fields = message.split ()
+                location = message_fields [0]
+                sender_name = message_fields [1]
+                issue_desc = ' '.join (message_fields [2:])
+                (block_no, gp_no, vill_no) = location.split ('-')
+
+                citizen = get_or_create_citizen (sender_phone, sender_name)
+
+                location = get_location_attr (block_no, gp_no, vill_no)
+
+                compl = Complaint.objects.create (base = None,
+                                                  complaintno = None,
+                                                  description = issue_desc,
+                                                  department = None,
+                                                  curstate = STATUS_NEW,
+                                                  filedby = citizen,
+                                                  logdate = datetime.today ().date (),
+                                                  location = location,
+                                                  original = None,
+                                                  creator = None)
+                return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
+            else:
+                return HttpResponse (json.dumps ({'payload' : {'success' : 'false'}}))
+        except:
+            import traceback
+            traceback.print_exc ()
     else:
         return HttpResponseForbidden
 

@@ -6,6 +6,7 @@ class SMSTransferReqFormat (forms.Form):
 class SMSReceivedFormat (forms.Form):
     secret  = forms.CharField ()
     message = forms.CharField ()
-    def __init__(self, *args, **kwargs):
-        super(SMSReceivedFormat,self).__init__(*args,**kwargs)
-        self.fields["from"]=fields.CharField()
+
+    def __init__ (self, *args, **kwargs):
+        super (SMSReceivedFormat, self).__init__ (*args, **kwargs)
+        self.fields ['from'] = forms.CharField ()

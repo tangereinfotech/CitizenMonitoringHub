@@ -1,5 +1,7 @@
 from datetime import datetime
+from django.conf import settings
 
+from cmh.issuemgr.constants import VILLAGES
 
 def update_complaint_sequence (complaint):
     from cmh.issuemgr.models import Complaint
@@ -18,13 +20,11 @@ def update_complaint_sequence (complaint):
 
 
 def get_location_attr (block_no, gp_no, vill_no):
-    from django.conf import settings
-
     loc_code = "%s.%03d.%03d.%03d" % (settings.DEPLOY_DISTT_CODE,
                                       int (block_no),
                                       int (gp_no),
                                       int (vill_no))
 
-    return VILLAGES.objects.get (value = loc_code)
+    return VILLAGES.get (value = loc_code)
 
 
