@@ -51,10 +51,11 @@ def index (request):
     elif request.method == 'POST':
         form = ComplaintForm (request.POST)
         if form.is_valid ():
-            form.save (None)
+            complaint = form.save (None)
             return render_to_response ('complaint_submitted.html',
                                        {'menus' : get_user_menus (request.user),
-                                        'user' : request.user})
+                                        'user' : request.user,
+                                        'complaint' : complaint})
         else:
             return render_to_response ('complaint.html', {'form': form,
                                                           'errors' : form.errors,
@@ -176,10 +177,11 @@ def accept (request):
     elif request.method == 'POST':
         form = AcceptComplaintForm (request.POST)
         if form.is_valid ():
-            form.save (request.user)
+            complaint = form.save (request.user)
             return render_to_response ('complaint_submitted.html',
                                        {'menus' : get_user_menus (request.user),
-                                        'user' : request.user})
+                                        'user' : request.user,
+                                        'complaint' : complaint})
         else:
             return render_to_response ('complaint.html', {'form': form,
                                                           'menus' : get_user_menus (request.user),
