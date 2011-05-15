@@ -275,7 +275,7 @@ ul.errorlist li {
 
 .tabularlist th {
    font-weight: bold;
-   background: #B9C9FE;
+   background-color: #B9C9FE;
    border-top: 4px solid #AABCFE;
    border-bottom: 1px solid white;
    color: #669;
@@ -390,4 +390,16 @@ ul.errorlist li {
 
 .paginate_disabled_next {
    background-image: url('/static/images/forward_disabled.jpg');
+}
+
+.sorting {
+   background: url('/static/images/sort_both.png') no-repeat center right;
+}
+
+.sorting_asc {
+   background: url('/static/images/sort_asc.png') no-repeat center right;
+}
+
+.sorting_desc {
+   background: url('/static/images/sort_desc.png') no-repeat center right;
 }
