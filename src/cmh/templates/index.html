@@ -29,29 +29,42 @@
   </ul>
   <div id="trending-issues-chart"></div>
 </div>
-<div class="resolution-metrics">Complaint Resolution Metrics</div>
-<div id="trending-open-section">
-  <div class="section-title">Opening Trend</div>
-  <ul class="period-left">
-    <li>Last:</li>
-    <li><a href="/complaint/trend-open/week/">Week</a></li>
-    <li><a href="/complaint/trend-open/month/">Month</a></li>
-    <li><a href="/complaint/trend-open/year/">Year</a></li>
-  </ul>
-  <div id="trending-open-chart"></div>
-</div>
-<div id="trending-resolution-section">
-  <div class="section-title">Resolution Trend</div>
-  <ul class="period-right">
-    <li>Last:</li>
-    <li><a href="/complaint/trend-resolve/week/">Week</a></li>
-    <li><a href="/complaint/trend-resolve/month/">Month</a></li>
-    <li><a href="/complaint/trend-resolve/year/">Year</a></li>
-  </ul>
-  <div id="trending-resolution-chart"></div>
+<div class="resolution-metrics">Complaint Metrics</div>
+<ul class="period-right">
+  <li>Last:</li>
+  <li><a href="#">Week</a></li>
+  <li><a href="#">Month</a></li>
+  <li><a href="#">3 Months</a></li>
+</ul>
+<div id="issue-type-summary">
+  <table id="metrics" class="tabularlist">
+    <thead>
+      <tr>
+        <th style="width:35%">Complaint Type</th>
+        <th style="width:13%">New / Reopened </th>
+        <th style="width:13%">Acknowledged </th>
+        <th style="width:13%">Opened (In&nbsp;Progress) </th>
+        <th style="width:13%">Resolved </th>
+        <th style="width:13%">Closed </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for issue_type in issue_types %}
+      <tr>
+        <td> {{ issue_type.name }} </td>
+        <td> {{ issue_type.new_reopened }} </td>
+        <td> {{ issue_type.acknowledged }} </td>
+        <td> {{ issue_type.opened }} </td>
+        <td> {{ issue_type.resolved }} </td>
+        <td> {{ issue_type.closed }} </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 <script type="text/javascript" src="/static/jquery/js/jqplot.dateAxisRenderer.js"></script>
 <script type="text/javascript" src="/static/jquery/js/jqplot.pointLabels.min.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="/static/js/MapHandler.js"></script>
 <script type="text/javascript" src="/static/js/complainthandler.js"></script>
 <script type="text/javascript">
@@ -64,16 +77,9 @@
                        MapHandler.update_with_stats ('/complaint/get_category_map_update/');
                      });
     update_issues_trend (1);
-    $.jqplot ("trending-open-chart",
-              [[[1, 20],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]],
-               [[1, 30],[3,15.12],[5,23.1],[7,43.6],[9,95.9],[11,229.9]]],
-              { axes: {yaxis : {min : 0, max: 240}},
-                series: [{color: '#5fab78'}, {color : 'red'}]});
-    $.jqplot ("trending-resolution-chart",
-              [[[1, 20],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]]],
-              { axes: {yaxis : {min : 0, max: 240}},
-                series: [{color: '#5fab78'}]});
+    $('#metrics').dataTable ({bSortable: true});
   });
+
   function update_issues_trend (period) {
     show_hot_complaints ("trending-issues-chart", "/complaint/hot_complaints/", period);
   }
