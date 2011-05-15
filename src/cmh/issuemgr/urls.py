@@ -25,4 +25,5 @@ urlpatterns = patterns ('cmh.issuemgr.views',
                         (r'^get_category_map_update/(?P<category>.*)/$', 'get_category_map_update'),
                         (r'^update/(?P<complaintno>[\d\.]+)/(?P<complaintid>\d+)/$', 'update'),
                         (r'^track/(?P<complaintno>[\d\.]+)/(?P<complaintid>\d+)/$', 'track'),
+                        (r'^hot_complaints/', 'hot_complaints'),
                         )

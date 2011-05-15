@@ -116,6 +116,7 @@ INSTALLED_APPS = (
     'cmh.common',
     'cmh.captcha',
     'cmh.smsgateway',
+    'cmh.masters',
     'south',
 )
 

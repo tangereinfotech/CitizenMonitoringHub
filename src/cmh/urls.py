@@ -29,6 +29,7 @@ urlpatterns = patterns('',
                        (r'^admin/', include(admin.site.urls)),
                        (r'^complaint/', include ('cmh.issuemgr.urls')),
                        (r'^smsg/', include ('cmh.smsgateway.urls')),
+                       (r'^masters/', include ('cmh.masters.urls')),
                        url(r'^captcha/', include('cmh.captcha.urls')),
                        )
 

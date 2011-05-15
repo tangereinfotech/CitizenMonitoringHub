@@ -115,7 +115,7 @@ ul.category li.category_item {
 
 #base_map {
    float: left;
-   height: 400px;
+   height: 440px;
    width: 450px;
 }
 
@@ -284,13 +284,13 @@ ul.errorlist li {
    padding: 0px;
 }
 
-.complaintlist {
+.tabularlist {
    width: 100%;
    border-collapse: separate;
    border-spacing: 2px 2px;
 }
 
-.complaintlist th {
+.tabularlist th {
    font-weight: bold;
    background: #B9C9FE;
    border-top: 4px solid #AABCFE;
@@ -299,7 +299,7 @@ ul.errorlist li {
    padding: 8px;
 }
 
-.complaintlist td {
+.tabularlist td {
    background: #E8EDFF;
    border-bottom: 1px solid white;
    color: #336;
@@ -332,4 +332,36 @@ ul.errorlist li {
    font-size: 18px;
    text-align: center;
    width: 100%;
+}
+
+.master-menu {
+   float: left;
+   width: 275px;
+}
+
+.master-menu ul {
+   margin: 0px;
+   padding: 0px;
+   list-style-type: none;
+}
+
+.master-menu ul li {
+   margin: 0px;
+   padding: 5px 0px;
+}
+
+.master-menu ul li a {
+   font-size: 20px;
+   font-weight: bold;
+   text-decoration: none;
+   color: normal;
+}
+
+.master-content {
+   float: right;
+   width: 600px;
+}
+
+.step-links {
+   padding-right: 30px;
 }

@@ -5,7 +5,7 @@ var MapHandler = {
         var myOptions = {
             zoom: zoom_level,
             center: latlng,
-            mapTypeId: google.maps.MapTypeId.HYBRID
+            mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         this.map = new google.maps.Map(document.getElementById(map_canvas), myOptions);
         callback ();
@@ -28,8 +28,8 @@ var MapHandler = {
                                    
                                    var circleOpts = {
                                        strokeColor: "#FF0000",
-                                       strokeOpacity: 0.7,
-                                       strokeWeight: 2,
+                                       strokeOpacity: 0.35,
+                                       strokeWeight: 0,
                                        fillColor: "#FF0000",
                                        fillOpacity: 0.35,
                                        map: MapHandler.map,

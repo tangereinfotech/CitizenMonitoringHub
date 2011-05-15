@@ -24,28 +24,28 @@
 <div class="pagination">
     <span class="step-links">
         {% if issues.has_previous %}
-            <a href="?page={{ issues.previous_page_number }}">&lt;</a>
+        <a href="?page={{ issues.previous_page_number }}">&lt;</a>
         {% else %}
-            <span style="text-decoration:none">&lt;</span>
+        <span style="text-decoration:none">&lt;</span>
         {% endif %}
 
         <span class="current">
-            <form class="inlineform" action="{{ page_url}}" method="GET">
-              <input type="text"
-                     name="page"
-                     value="{{ issues.number }}"
-                     style="width:25px; text-align:center;">
-              of {{ issues.paginator.num_pages }}
-            </form>
+          <form class="inlineform" action="{{ page_url}}" method="GET">
+            <input type="text"
+                   name="page"
+                   value="{{ issues.number }}"
+                   style="width:25px; text-align:center;">
+            of {{ issues.paginator.num_pages }}
+          </form>
         </span>
         {% if issues.has_next %}
-            <a href="?page={{ issues.next_page_number }}">&gt;</a>
+        <a href="?page={{ issues.next_page_number }}">&gt;</a>
         {% else %}
-            <span style="text-decoration:none">&gt;</span>
+        <span style="text-decoration:none">&gt;</span>
         {% endif %}
     </span>
 </div>
-<table class="complaintlist" id="complaintlist">
+<table class="tabularlist">
   <tr>
     <th style="width:16%">Complaint #</th>
     <th style="width:12%">Filed On</th>
@@ -55,7 +55,7 @@
     <th style="display:none;"/>
     <th style="display:none"/>
   </tr>
-{% for issue in issues.object_list %}
+  {% for issue in issues.object_list %}
   <tr class="updateMenu">
     <td style="text-align:center;">{{ issue.complaintno }}</td>
     <td style="text-align:center;">{{ issue.logdate|date:'d/M/Y' }}</td>
@@ -69,7 +69,7 @@
       <form method="GET" action="/complaint/update/{{issue.complaintno}}/{{issue.id}}/"></form>
     </td>
   </tr>
-{% endfor %}
+  {% endfor %}
 </table>
 
 <script type="text/javascript" src="/static/jquery/js/jquery.simplemodal-1.1.1.js"></script>

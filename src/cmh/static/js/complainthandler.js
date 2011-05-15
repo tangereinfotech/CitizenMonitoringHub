@@ -44,3 +44,43 @@ var showContextMenu = function (row_class, menu_id) {
                                        form.submit ();
                                    });
 };
+
+var plots = {};
+
+var show_hot_complaints = function (chart_id, url, period) {
+    $.getJSON (url, 
+               {period: period},
+               function (data, status, xhr) {
+                   if (chart_id in plots) {
+                       $('#' + chart_id).empty ();
+                   }
+                   plots [chart_id] = $.jqplot(chart_id, data.datapoints, 
+                                               {
+                                                   seriesDefaults : { 
+                                                       showMarker : false,
+                                                       pointLabels: { 
+                                                           show:true, 
+                                                           ypadding: 3,
+                                                           edgeTolerance: 4
+                                                       } 
+                                                   },
+                                                   axes:{
+                                                       xaxis : {
+                                                           renderer:$.jqplot.DateAxisRenderer,
+                                                           tickOptions: {formatString: '%b %#d'},
+                                                           tickInterval: data.x_interval
+                                                       },
+                                                       yaxis : {
+                                                           min: 0,
+                                                           tickOptions: {formatString: '%d'}
+                                                       }
+                                                   },
+                                                   series : data.issuetypes,
+                                                   legend : {
+                                                       show : true,
+                                                       placement: 'outsideGrid',
+                                                       location: 's'
+                                                   }
+                                               });
+               });
+};

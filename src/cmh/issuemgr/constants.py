@@ -17,3 +17,9 @@ STATUS_CLOSED   = Attribute.objects.get (category__key = 'Status', value = 'Clos
 DEPARTMENTS = COMPLAINT.get_category_descendents ('Complaint Department')
 
 STATUSES = Attribute.objects.filter (category__key = 'Status')
+
+class HotComplaintPeriod:
+    WEEK    = 1
+    MONTH   = 2
+    QUARTER = 3
+

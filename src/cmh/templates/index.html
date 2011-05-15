@@ -23,9 +23,9 @@
   <div class="section-title">Hot Issues</div>
   <ul class="period-right">
     <li>Last:</li>
-    <li><a href="/complaint/trend-issue/week/">Week</a></li>
-    <li><a href="/complaint/trend-issue/month/">Month</a></li>
-    <li><a href="/complaint/trend-issue/year/">Year</a></li>
+    <li><a href="javascript:update_issues_trend (1);">Week</a></li>
+    <li><a href="javascript:update_issues_trend (2);">Month</a></li>
+    <li><a href="javascript:update_issues_trend (3);">3 Months</a></li>
   </ul>
   <div id="trending-issues-chart"></div>
 </div>
@@ -50,7 +50,10 @@
   </ul>
   <div id="trending-resolution-chart"></div>
 </div>
+<script type="text/javascript" src="/static/jquery/js/jqplot.dateAxisRenderer.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jqplot.pointLabels.min.js"></script>
 <script type="text/javascript" src="/static/js/MapHandler.js"></script>
+<script type="text/javascript" src="/static/js/complainthandler.js"></script>
 <script type="text/javascript">
   $(document).ready (function () {
     MapHandler.init ('base_map',
@@ -60,18 +63,19 @@
                      function () {
                        MapHandler.update_with_stats ('/complaint/get_category_map_update/');
                      });
-    $.jqplot ("trending-issues-chart",
-              [[[1, 20],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]]],
-              { axes: {yaxis : {min : 0, max: 240}},
-                series: [{color: '#5fab78'}]});
+    update_issues_trend (1);
     $.jqplot ("trending-open-chart",
-              [[[1, 20],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]]],
+              [[[1, 20],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]],
+               [[1, 30],[3,15.12],[5,23.1],[7,43.6],[9,95.9],[11,229.9]]],
               { axes: {yaxis : {min : 0, max: 240}},
-                series: [{color: '#5fab78'}]});
+                series: [{color: '#5fab78'}, {color : 'red'}]});
     $.jqplot ("trending-resolution-chart",
               [[[1, 20],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]]],
               { axes: {yaxis : {min : 0, max: 240}},
                 series: [{color: '#5fab78'}]});
   });
+  function update_issues_trend (period) {
+    show_hot_complaints ("trending-issues-chart", "/complaint/hot_complaints/", period);
+  }
 </script>
 {% endblock %}

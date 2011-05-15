@@ -1,0 +1,61 @@
+{# Copyright 2011, Tangere Infotech Pvt Ltd [http://tangere.in]                 #}
+{#                                                                              #}
+{# Licensed under the Apache License, Version 2.0 (the "License");              #}
+{# you may not use this file except in compliance with the License.             #}
+{# You may obtain a copy of the License at                                      #}
+{#                                                                              #}
+{#       http://www.apache.org/licenses/LICENSE-2.0                             #}
+{#                                                                              #}
+{# Unless required by applicable law or agreed to in writing, software          #}
+{# distributed under the License is distributed on an "AS IS" BASIS,            #}
+{# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     #}
+{# See the License for the specific language governing permissions and          #}
+{# limitations under the License.                                               #}
+
+{% extends "masters.html" %}
+
+{% block master_section %}
+
+<div class="pagination">
+  <span class="step-links">
+    {% if users.has_previous %}
+    <a href="?page={{ users.previous_page_number }}">&lt;</a>
+    {% else %}
+    <span style="text-decoration: none">&lt;</span>
+    {% endif %}
+
+    <span class="current">
+      <form class="inlineform" action="{{ page_url}}" method="GET">
+        <input type="text"
+               name="page"
+               value="{{ issues.number }}"
+               style="width:25px; text-align:center;">
+        of {{ issues.paginator.num_pages }}
+      </form>
+    </span>
+    {% if users.has_next %}
+    <a href="?page={{ users.next_page_number }}">&gt;</a>
+    {% else %}
+    <span style="text-decoration:none">&gt;</span>
+    {% endif %}
+  </span>
+  <a href="/masters/add_cso_user/">Add New</a>
+</div>
+<table class="tabularlist">
+  <tr>
+    <th>Name</th>
+    <th>Phone</th>
+    <th>Email</th>
+    <th>Organization</th>
+  </tr>
+  {% for user in users.object_list %}
+  <tr>
+    <td>{{ user.get_full_name }}</td>
+    <td>{{ user.personalprofile.phone }}</td>
+    <td>{{ user.email }}</td>
+    <td>{{ user.personalprofile.org_name }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

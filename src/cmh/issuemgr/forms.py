@@ -239,6 +239,7 @@ class ComplaintUpdateForm (forms.Form):
         if self.cleaned_data ['revlocationid'] != None:
             newver.location = VILLAGES.get (id = self.cleaned_data ['revlocationid'])
 
+        ## FIXME - this should not be department. Instead it should be issue type ('base')
         if self.cleaned_data ['revdepartmentid'] != None:
             newver.department = DEPARTMENTS.get (id = self.cleaned_data ['revdepartmentid'])
 
@@ -246,4 +247,5 @@ class ComplaintUpdateForm (forms.Form):
         return newver
 
 
-
+class HotComplaintForm (forms.Form):
+    period = forms.IntegerField ()

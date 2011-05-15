@@ -15,6 +15,9 @@
 
 import re
 
+from datetime import datetime, date
+from dateutil.relativedelta import relativedelta
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
 from django.core.urlresolvers import reverse
@@ -30,7 +33,8 @@ from cmh.common.models import get_code2name, get_child_attributes
 from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES, DEPARTMENTS
 from cmh.issuemgr.models import ComplaintItem, Complaint, StatusTransition
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
-from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm
+from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
+from cmh.issuemgr.constants import HotComplaintPeriod
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX
 
 from cmh.usermgr.models import AppRole
@@ -290,3 +294,62 @@ def track (request, complaintno, complaintid):
                                 'user' : request.user,
                                 'updatable' : updatable})
 
+
+
+def hot_complaints (request):
+    form = HotComplaintForm (request.GET)
+    if form.is_valid ():
+        reqperiod = form.cleaned_data ['period']
+        if reqperiod == HotComplaintPeriod.WEEK:
+            x_interval = '1 week'
+            reldelta = relativedelta (weeks = +1)
+        elif reqperiod == HotComplaintPeriod.MONTH:
+            x_interval = '1 month'
+            reldelta = relativedelta (months = +1)
+        elif reqperiod == HotComplaintPeriod.QUARTER:
+            x_interval = '3 month'
+            reldelta = relativedelta (months = +3)
+        else:
+            x_interval = '1 week'
+            reldelta = relativedelta (weeks = +1)
+
+        try:
+            now = date.today ()
+            period1 = now - reldelta
+            period2 = period1 - reldelta
+            period3 = period2 - reldelta
+            period4 = period3 - reldelta
+
+            # FIXME: remove 'exclude (base = None)' once the form to "update"
+            # a new issue to acked issue is fixed to update the issuetype ('base')
+            # instead of just the department.
+            period_issues = Complaint.objects.filter (created__lte = now, created__gt = period4, original = None).exclude (base = None)
+
+            issue_codes = set ([issue.base.id for issue in period_issues])
+
+            issue_table = []
+            for issue_code in issue_codes:
+                issue_table.append ((issue_code, period_issues.filter (base__id = issue_code).count ()))
+            issue_table = sorted (issue_table, key = (lambda x: x[1]), reverse = True)
+            issue_table = issue_table [:5]
+
+            periods = [(now, period1), (period1, period2), (period2, period3), (period3, period4)]
+
+            datapoints = []
+            issuetypes = []
+            for issue_entry in issue_table:
+                datapoints.append ([[te.strftime ("%Y-%m-%d 12:01AM"),
+                                     period_issues.filter (base__id = issue_entry [0],
+                                                           created__lte = te,
+                                                           created__gte = ts).count ()]
+                                    for te, ts in periods])
+                issueattr = COMPLAINT_TYPES.get (id = issue_entry [0])
+                issuetypes.append ({'label': CodeName.objects.get (code = issueattr.value).name,
+                                    'showLabel': True})
+        except:
+            import traceback
+            traceback.print_exc ()
+
+    return HttpResponse (json.dumps ({'datapoints' : datapoints,
+                                      'x_interval' : x_interval,
+                                      'issuetypes' : issuetypes}))
