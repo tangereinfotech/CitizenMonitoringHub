@@ -16,6 +16,7 @@
 import sys, traceback
 from django.db import models
 from django.contrib.auth.models import User
+
 from cmh.common.models import Attribute, Category, CodeName
 
 class Citizen(models.Model):
@@ -43,7 +44,10 @@ class RoleException (Exception):
 class AppRoleManager (models.Manager):
     def get_user_role (self, user):
         try:
-            return AppRole.objects.get (users = user)
+            if user.is_authenticated ():
+                return AppRole.objects.get (users = user)
+            else:
+                return ROLE_ANONYMOUS
         except AppRole.MultipleObjectsReturned:
             raise RoleException ("Multiple Roles for user: " + user.username)
         except AppRole.DoesNotExist:
@@ -60,6 +64,14 @@ class AppRole (models.Model):
         return self.name
 
 
+from usermgr.constants import UserRoles
+ROLE_ANONYMOUS = AppRole.objects.get (role = UserRoles.ANONYMOUS)
+ROLE_CSO       = AppRole.objects.get (role = UserRoles.CSO)
+ROLE_DELEGATE  = AppRole.objects.get (role = UserRoles.DELEGATE)
+ROLE_OFFICIAL  = AppRole.objects.get (role = UserRoles.OFFICIAL)
+ROLE_DM        = AppRole.objects.get (role = UserRoles.DM)
+
+
 class MenuItem (models.Model):
     name   = models.CharField (max_length = 500)
     url    = models.CharField (max_length = 500)
@@ -67,4 +79,4 @@ class MenuItem (models.Model):
     serial = models.IntegerField ()
 
     class Meta:
-        unique_together = (('role', 'serial'),)
+        unique_together = (('role', 'serial', 'url'),)

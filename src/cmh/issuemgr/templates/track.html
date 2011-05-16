@@ -15,117 +15,31 @@
 {% extends "basewithmenu.html" %}
 
 {% block page_content %}
-<table width="100%">
-  <tr>
-    <td> Complaint Number: </td>
-    <td>
-      <input id="id_complaintno"
-             name="complaintno"
-             value="{{ base.complaintno }}"
-             readonly="readonly"
-             size="35">
-    </td>
-    <td> Current Status </td>
-    <td>
-      <input id="id_curstate"
-             name="curstate"
-             value="{{ current.curstate.get_value }}"
-             readonly="readonly"
-             size="35">
-    </td>
-  </tr>
-  <tr>
-    <td> Filed By: </td>
-    <td>
-      <input id="id_filedby"
-             name="filedby"
-             value="{{ base.filedby.name }} &lt;{{ base.filedby.mobile }}&gt;"
-             readonly="readonly"
-             size="35">
-    </td>
-    <td>Location: </td>
-    <td>
-      <input id="id_location"
-             name="location"
-             value="{{ base.get_location_name }}"
-             readonly="readonly"
-             size="35">
-    </td>
-  </tr>
-  <tr>
-    <td> Filed On: </td>
-    <td>
-      <input id="id_created"
-             name="created"
-             value="{{ base.created|date:'f A, d/M/Y' }}"
-             readonly="readonly"
-             size="35">
-    </td>
-    <td> Issue Date: </td>
-    <td>
-      <input id="id_loggedon"
-             name="loggedon"
-             value="{{ base.logdate|date:'d/M/Y' }}"
-             readonly="readonly"
-             size="35">
-    </td>
-  </tr>
-  <tr>
-    <td> Assigned To: </td>
-    <td>
-      <input id="id_assignto"
-             name="assignto"
-             value="{{ current.get_official_name }}"
-             readonly="readonly"
-             size="35">
-    </td>
-    <td> Department: </td>
-    <td>
-      <input id="id_department"
-             name="department"
-             value="{{ current.get_department_name }}"
-             readonly="readonly"
-             size="35">
-    </td>
-  </tr>
-  <tr>
-    <td>Description</td>
-    <td colspan="3">
-      <textarea name="description"
-                cols="40"
-                rows="6"
-                style="width:725px;"
-                id="id_description"
-                readonly="readonly">{{ base.description }}</textarea>
-    </td>
-  </tr>
-</table>
-<div class="complaint-history-banner">
-  History for Complaint No. {{ base.complaintno }}
-  {% if updatable %}
-  <div style="float:right;padding-right:20px;">
-    <a href="/complaint/update/{{current.complaintno}}/{{current.id}}/">Update</a>
+<div style="display: table;height:400px; #position: relative; overflow: hidden; width:100%">
+  <div style="#position:absolute;#top:50%;display:table-cell; vertical-align: middle">
+    <div style="#position: relative; #top: -50%; text-align:center">
+      <form action="." method="post">
+        <table style="width:100%">
+          <tbody>
+            {% if form.complaintno.errors %}
+            <tr>
+              <td/>
+              <td style="width:60%;text-align:left;">
+                {{ form.complaintno.errors }}
+              </td>
+            </tr>
+            {% endif %}
+            <tr>
+              <td style="width:40%; text-align:right"> {{ form.complaintno.label }}:</td>
+              <td style="width:60%; text-align:left;"> {{ form.complaintno }} </td>
+            </tr>
+          </tbody>
+        </table>
+        <div>
+          <input type="submit" value="Track">
+        </div>
+      </form>
+    </div>
   </div>
-  {% endif %}
 </div>
-<table class="complaintlist">
-  <tr>
-    <th style="width:12%"> Changed On </th>
-    <th style="width:12%"> Department </th>
-    <th style="width:12%"> Status </th>
-    <th style="width:40%"> Comment </th>
-    <th style="width:24%"> Changed by </th>
-  </tr>
-  {% for complaint in complaints %}
-  <tr>
-    <td> {{ complaint.created|date:'f A, d/M/Y' }}</td>
-    <td> {{ complaint.get_department_name }} </td>
-    <td> {{ complaint.curstate.get_value }} </td>
-    <td> {{ complaint.description }} </td>
-    <td> {{ complaint.creator.username }} </td>
-  </tr>
-  {% endfor %}
-</table>
-
-
 {% endblock %}

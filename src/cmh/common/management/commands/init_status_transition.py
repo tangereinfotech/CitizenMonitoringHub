@@ -77,6 +77,8 @@ class Command (NoArgsCommand):
                      'url' : '/complaint/my_issues/'},
                     {'name' : 'Accept',
                      'url' : '/complaint/accept/'},
+                    {'name' : 'Track',
+                     'url' : '/complaint/track/'},
                     {'name' : 'Masters',
                      'url' : '/masters/'},
                     ]

@@ -25,7 +25,7 @@ from cmh.issuemgr.models import Complaint, ComplaintItem, StatusTransition
 from cmh.issuemgr.utils import update_complaint_sequence
 
 from cmh.usermgr.utils import get_or_create_citizen
-from cmh.usermgr.constants import ROLE_CSO, ROLE_ANONYMOUS, ROLE_DM, ROLE_DELEGATE, ROLE_OFFICIAL
+from cmh.usermgr.models import ROLE_CSO, ROLE_ANONYMOUS, ROLE_DM, ROLE_DELEGATE, ROLE_OFFICIAL
 
 from cmh.common.models import Category, Attribute
 
@@ -249,3 +249,11 @@ class ComplaintUpdateForm (forms.Form):
 
 class HotComplaintForm (forms.Form):
     period = forms.IntegerField ()
+
+
+class ComplaintTrackForm (forms.Form):
+    complaintno = forms.CharField (label="Complaint No.",
+                                   widget = forms.TextInput (attrs = {'size': '50',
+                                                                      'autocomplete' : 'off'}))
+
+

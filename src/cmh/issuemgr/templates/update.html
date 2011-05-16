@@ -149,23 +149,27 @@
 <div class="complaint-history-banner">
   History for Complaint No. {{ base.complaintno }}
 </div>
-<table class="complaintlist">
-  <tr>
-    <th style="width:12%"> Changed On </th>
-    <th style="width:12%"> Department </th>
-    <th style="width:12%"> Status </th>
-    <th style="width:40%"> Comment </th>
-    <th style="width:24%"> Changed by </th>
-  </tr>
-  {% for complaint in complaints %}
-  <tr>
-    <td> {{ complaint.created|date:'f A, d/M/Y' }}</td>
-    <td> {{ complaint.get_department_name }} </td>
-    <td> {{ complaint.curstate.get_value }} </td>
-    <td> {{ complaint.description }} </td>
-    <td> {{ complaint.creator.username }} </td>
-  </tr>
-  {% endfor %}
+<table class="tabularlist">
+  <thead>
+    <tr>
+      <th style="width:12%"> Changed On </th>
+      <th style="width:12%"> Department </th>
+      <th style="width:12%"> Status </th>
+      <th style="width:40%"> Comment </th>
+      <th style="width:24%"> Changed by </th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for complaint in complaints %}
+    <tr>
+      <td> {{ complaint.created|date:'f A, d/M/Y' }}</td>
+      <td> {{ complaint.get_department_name }} </td>
+      <td> {{ complaint.curstate.get_value }} </td>
+      <td> {{ complaint.description }} </td>
+      <td> {{ complaint.creator.username }} </td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 <script type="text/javascript" src="/static/js/complainthandler.js"></script>
 <script type="text/javascript">

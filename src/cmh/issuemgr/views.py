@@ -33,12 +33,13 @@ from cmh.common.models import get_code2name, get_child_attributes
 from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES, DEPARTMENTS
 from cmh.issuemgr.models import ComplaintItem, Complaint, StatusTransition
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
+from cmh.issuemgr.forms import ComplaintTrackForm
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
 from cmh.issuemgr.constants import HotComplaintPeriod
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX
 
 from cmh.usermgr.models import AppRole
-from cmh.usermgr.constants import ROLE_ANONYMOUS, ROLE_CSO, ROLE_DELEGATE, ROLE_OFFICIAL, ROLE_DM
+from cmh.usermgr.models import ROLE_ANONYMOUS, ROLE_CSO, ROLE_DELEGATE, ROLE_OFFICIAL, ROLE_DM
 from cmh.usermgr.utils import get_user_menus
 
 
@@ -221,18 +222,18 @@ def my_issues (request):
                                 'user' : request.user})
 
 
-@login_required
 def update (request, complaintno, complaintid):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
     base = complaints.get (original = None)
     current = complaints.get (latest = True)
-    newstatuses = StatusTransition.objects.get_allowed_statuses (ROLE_CSO, current.curstate)
+    user_role = AppRole.objects.get_user_role (request.user)
+    newstatuses = StatusTransition.objects.get_allowed_statuses (user_role, current.curstate)
 
     if request.method == 'GET':
         if request.META.has_key ('HTTP_REFERER'):
             prev_page = request.META ['HTTP_REFERER']
         else:
-            prev_page = reverse (track, args = [complaintno,current.id])
+            prev_page = reverse (track_issues, args = [complaintno,current.id])
 
         return render_to_response ('update.html',
                                    {'form' : ComplaintUpdateForm (current),
@@ -244,12 +245,13 @@ def update (request, complaintno, complaintid):
                                     'user' : request.user,
                                     'prev' : prev_page})
     elif request.method == 'POST':
+        #FIXME: Ensure that the isue state transition complies to the desginated role permissions
         if request.POST.has_key ('prev'):
             prev_page = request.POST ['prev']
         elif request.META.has_key ('HTTP_REFERER'):
             prev_page = request.META ['HTTP_REFERER']
         else:
-            prev_page = reverse (track, args = [complaintno,current.id])
+            prev_page = reverse (track_issues, args = [complaintno,current.id])
 
         if request.POST.has_key ('save'):
             form = ComplaintUpdateForm (current, request.POST)
@@ -274,19 +276,19 @@ def update (request, complaintno, complaintid):
     else:
         pass
 
-@login_required
-def track (request, complaintno, complaintid):
+def track_issues (request, complaintno, complaintid):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
     base = complaints.get (original = None)
     current = complaints.get (latest = True)
-    newstatuses = StatusTransition.objects.get_allowed_statuses (ROLE_CSO, current.curstate)
+    user_role = AppRole.objects.get_user_role (request.user)
+    newstatuses = StatusTransition.objects.get_allowed_statuses (user_role, current.curstate)
 
     if newstatuses.count () == 0:
         updatable = False
     else:
         updatable = True
 
-    return render_to_response ('track.html',
+    return render_to_response ('track_issues.html',
                                {'base' : base,
                                 'current' : current,
                                 'complaints' : complaints,
@@ -294,6 +296,25 @@ def track (request, complaintno, complaintid):
                                 'user' : request.user,
                                 'updatable' : updatable})
 
+def track (request):
+    if request.method == "GET":
+        return render_to_response ('track.html',
+                                   {'user' : request.user,
+                                    'menus' : get_user_menus (request.user),
+                                    'form' : ComplaintTrackForm ()})
+    else:
+        form = ComplaintTrackForm (request.POST)
+        if form.is_valid ():
+            complaintno = form.cleaned_data ['complaintno']
+            current = Complaint.objects.get (complaintno = complaintno, latest = True)
+            return HttpResponseRedirect (reverse (track_issues,
+                                                  args = [form.cleaned_data ['complaintno'],
+                                                          current.id]))
+        else:
+            return render_to_response ('track.html',
+                                       {'user' : request.user,
+                                        'menus' : get_user_menus (request.user),
+                                        'form' : form})
 
 
 def hot_complaints (request):
