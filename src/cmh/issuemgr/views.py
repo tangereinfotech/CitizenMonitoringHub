@@ -46,13 +46,14 @@ from cmh.usermgr.utils import get_user_menus
 def index (request):
     if request.method == 'GET':
         form = ComplaintForm ()
-        return render_to_response ('complaint.html', {'form' : form,
-                                                      'menus' : get_user_menus (request.user),
-                                                      'user' : request.user,
-                                                      'post_url' : reverse (index),
-                                                      'map' : {'center_lat' : 23.20119,
-                                                               'center_long' : 77.081795,
-                                                               'zoom_level' : 13}})
+        return render_to_response ('complaint.html',
+                                   {'form' : form,
+                                    'menus' : get_user_menus (request.user),
+                                    'user' : request.user,
+                                    'post_url' : reverse (index),
+                                    'map' : {'center_lat' : 23.20119,
+                                             'center_long' : 77.081795,
+                                             'zoom_level' : 13}})
     elif request.method == 'POST':
         form = ComplaintForm (request.POST)
         if form.is_valid ():
@@ -62,15 +63,16 @@ def index (request):
                                         'user' : request.user,
                                         'complaint' : complaint})
         else:
-            return render_to_response ('complaint.html', {'form': form,
-                                                          'errors' : form.errors,
-                                                          'menus' : get_user_menus (request.user),
-                                                          'user' : request.user,
-                                                          'post_url' : reverse (index),
-                                                          'map' : {'center_lat' : 23.20119,
-                                                                   'center_long' : 77.081795,
-                                                                   'zoom_level' : 13}})
-    else:
+            return render_to_response ('complaint.html',
+                                       {'form': form,
+                                        'errors' : form.errors,
+                                        'menus' : get_user_menus (request.user),
+                                        'user' : request.user,
+                                        'post_url' : reverse (index),
+                                        'map' : {'center_lat' : 23.20119,
+                                                 'center_long' : 77.081795,
+                                                 'zoom_level' : 13}})
+        else:
         return HttpResponse ()
 
 def get_category_map_update (request, category):
@@ -227,7 +229,8 @@ def update (request, complaintno, complaintid):
     base = complaints.get (original = None)
     current = complaints.get (latest = True)
     user_role = AppRole.objects.get_user_role (request.user)
-    newstatuses = StatusTransition.objects.get_allowed_statuses (user_role, current.curstate)
+    newstatuses = StatusTransition.objects.get_allowed_statuses (user_role,
+                                                                 current.curstate)
 
     if newstatuses.count () == 0:
         return render_to_response ('update-cannot-do.html',
@@ -250,7 +253,8 @@ def update (request, complaintno, complaintid):
                                         'user' : request.user,
                                         'prev' : prev_page})
         elif request.method == 'POST':
-            #FIXME: Ensure that the isue state transition complies to the desginated role permissions
+            # FIXME: Ensure that the isue state transition complies to
+            # the desginated role permissions
             if request.POST.has_key ('prev'):
                 prev_page = request.POST ['prev']
             elif request.META.has_key ('HTTP_REFERER'):
