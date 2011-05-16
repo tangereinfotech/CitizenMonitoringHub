@@ -236,7 +236,7 @@ def update (request, complaintno, complaintid):
             prev_page = reverse (track_issues, args = [complaintno,current.id])
 
         return render_to_response ('update.html',
-                                   {'form' : ComplaintUpdateForm (current),
+                                   {'form' : ComplaintUpdateForm (current, newstatuses),
                                     'base' : base,
                                     'current' : current,
                                     'complaints' : complaints,
@@ -254,9 +254,8 @@ def update (request, complaintno, complaintid):
             prev_page = reverse (track_issues, args = [complaintno,current.id])
 
         if request.POST.has_key ('save'):
-            form = ComplaintUpdateForm (current, request.POST)
+            form = ComplaintUpdateForm (current, newstatuses, request.POST)
             if form.is_valid ():
-                print "saving updated form"
                 form.save ()
                 return HttpResponseRedirect (prev_page)
             else:

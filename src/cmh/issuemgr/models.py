@@ -95,7 +95,21 @@ class Complaint(models.Model):
 
 class StatusTransitionManager (models.Manager):
     def get_allowed_statuses (self, role, curstate):
-        return Attribute.objects.filter (newstate__curstate = curstate, newstate__role = role)
+        newstates = Attribute.objects.filter (newstate__curstate = curstate).distinct ()
+        toexclude = []
+        for newstate in newstates:
+            try:
+                st = StatusTransition.objects.get (role = role,
+                                                   curstate = curstate,
+                                                   newstate = newstate)
+            except StatusTransition.DoesNotExist:
+                toexclude.append (newstate)
+
+        for te in toexclude:
+            newstates = newstates.exclude (id = newstate.id)
+
+        return newstates
+
 
     def get_changeable_statuses (self, role):
         return Attribute.objects.filter (curstate__role = role, category__key = 'Status')

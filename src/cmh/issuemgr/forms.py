@@ -171,9 +171,8 @@ class ComplaintUpdateForm (forms.Form):
                                                                  'rows' : '6'}),
                                required = True)
 
-    def __init__ (self, complaint, *args, **kwargs):
+    def __init__ (self, complaint, newstates, *args, **kwargs):
         super (ComplaintUpdateForm, self).__init__ (*args, **kwargs)
-        newstates = StatusTransition.objects.get_allowed_statuses (ROLE_CSO, complaint.curstate)
 
         self.fields ['newstatus'] = \
                     forms.ChoiceField (required = True,
