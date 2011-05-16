@@ -229,51 +229,56 @@ def update (request, complaintno, complaintid):
     user_role = AppRole.objects.get_user_role (request.user)
     newstatuses = StatusTransition.objects.get_allowed_statuses (user_role, current.curstate)
 
-    if request.method == 'GET':
-        if request.META.has_key ('HTTP_REFERER'):
-            prev_page = request.META ['HTTP_REFERER']
-        else:
-            prev_page = reverse (track_issues, args = [complaintno,current.id])
+    if newstatuses.count () == 0:
+        return render_to_response ('update-cannot-do.html',
+                                   {'menus' : get_user_menus (request.user),
+                                    'user' : request.user})
+    else:
+        if request.method == 'GET':
+            if request.META.has_key ('HTTP_REFERER'):
+                prev_page = request.META ['HTTP_REFERER']
+            else:
+                prev_page = reverse (track_issues, args = [complaintno,current.id])
 
-        return render_to_response ('update.html',
-                                   {'form' : ComplaintUpdateForm (current, newstatuses),
-                                    'base' : base,
-                                    'current' : current,
-                                    'complaints' : complaints,
-                                    'newstatuses' : newstatuses,
-                                    'menus' : get_user_menus (request.user),
-                                    'user' : request.user,
-                                    'prev' : prev_page})
-    elif request.method == 'POST':
-        #FIXME: Ensure that the isue state transition complies to the desginated role permissions
-        if request.POST.has_key ('prev'):
-            prev_page = request.POST ['prev']
-        elif request.META.has_key ('HTTP_REFERER'):
-            prev_page = request.META ['HTTP_REFERER']
-        else:
-            prev_page = reverse (track_issues, args = [complaintno,current.id])
+            return render_to_response ('update.html',
+                                       {'form' : ComplaintUpdateForm (current, newstatuses),
+                                        'base' : base,
+                                        'current' : current,
+                                        'complaints' : complaints,
+                                        'newstatuses' : newstatuses,
+                                        'menus' : get_user_menus (request.user),
+                                        'user' : request.user,
+                                        'prev' : prev_page})
+        elif request.method == 'POST':
+            #FIXME: Ensure that the isue state transition complies to the desginated role permissions
+            if request.POST.has_key ('prev'):
+                prev_page = request.POST ['prev']
+            elif request.META.has_key ('HTTP_REFERER'):
+                prev_page = request.META ['HTTP_REFERER']
+            else:
+                prev_page = reverse (track_issues, args = [complaintno,current.id])
 
-        if request.POST.has_key ('save'):
-            form = ComplaintUpdateForm (current, newstatuses, request.POST)
-            if form.is_valid ():
-                form.save ()
+            if request.POST.has_key ('save'):
+                form = ComplaintUpdateForm (current, newstatuses, request.POST)
+                if form.is_valid ():
+                    form.save ()
+                    return HttpResponseRedirect (prev_page)
+                else:
+                    return render_to_response ('update.html',
+                                               {'form' : form,
+                                                'base' : base,
+                                                'current' : current,
+                                                'complaints' : complaints,
+                                                'newstatuses' : newstatuses,
+                                                'menus' : get_user_menus (request.user),
+                                                'user' : request.user,
+                                                'prev' : prev_page})
+            elif request.POST.has_key ('cancel'):
                 return HttpResponseRedirect (prev_page)
             else:
-                return render_to_response ('update.html',
-                                           {'form' : form,
-                                            'base' : base,
-                                            'current' : current,
-                                            'complaints' : complaints,
-                                            'newstatuses' : newstatuses,
-                                            'menus' : get_user_menus (request.user),
-                                            'user' : request.user,
-                                            'prev' : prev_page})
-        elif request.POST.has_key ('cancel'):
-            return HttpResponseRedirect (prev_page)
+                return HttpResponseRedirect ("/")
         else:
-            return HttpResponseRedirect ("/")
-    else:
-        pass
+            pass
 
 def track_issues (request, complaintno, complaintid):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
