@@ -64,7 +64,8 @@ class AppRole (models.Model):
         return self.name
 
 
-from usermgr.constants import UserRoles
+from cmh.usermgr.constants import UserRoles
+
 ROLE_ANONYMOUS = AppRole.objects.get (role = UserRoles.ANONYMOUS)
 ROLE_CSO       = AppRole.objects.get (role = UserRoles.CSO)
 ROLE_DELEGATE  = AppRole.objects.get (role = UserRoles.DELEGATE)
