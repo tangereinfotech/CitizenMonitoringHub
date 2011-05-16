@@ -72,7 +72,7 @@ def index (request):
                                         'map' : {'center_lat' : 23.20119,
                                                  'center_long' : 77.081795,
                                                  'zoom_level' : 13}})
-        else:
+    else:
         return HttpResponse ()
 
 def get_category_map_update (request, category):
@@ -328,21 +328,21 @@ def track (request):
 def hot_complaints (request):
     form = HotComplaintForm (request.GET)
     if form.is_valid ():
-        reqperiod = form.cleaned_data ['period']
-        if reqperiod == HotComplaintPeriod.WEEK:
-            x_interval = '1 week'
-            reldelta = relativedelta (weeks = +1)
-        elif reqperiod == HotComplaintPeriod.MONTH:
-            x_interval = '1 month'
-            reldelta = relativedelta (months = +1)
-        elif reqperiod == HotComplaintPeriod.QUARTER:
-            x_interval = '3 month'
-            reldelta = relativedelta (months = +3)
-        else:
-            x_interval = '1 week'
-            reldelta = relativedelta (weeks = +1)
-
         try:
+            reqperiod = form.cleaned_data ['period']
+            if reqperiod == HotComplaintPeriod.WEEK:
+                x_interval = '1 week'
+                reldelta = relativedelta (weeks = +1)
+            elif reqperiod == HotComplaintPeriod.MONTH:
+                x_interval = '1 month'
+                reldelta = relativedelta (months = +1)
+            elif reqperiod == HotComplaintPeriod.QUARTER:
+                x_interval = '3 month'
+                reldelta = relativedelta (months = +3)
+            else:
+                x_interval = '1 week'
+                reldelta = relativedelta (weeks = +1)
+
             now = date.today ()
             period1 = now - reldelta
             period2 = period1 - reldelta
@@ -378,7 +378,8 @@ def hot_complaints (request):
         except:
             import traceback
             traceback.print_exc ()
-
     return HttpResponse (json.dumps ({'datapoints' : datapoints,
                                       'x_interval' : x_interval,
                                       'issuetypes' : issuetypes}))
+
+
