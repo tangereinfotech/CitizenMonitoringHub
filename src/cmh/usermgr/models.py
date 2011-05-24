@@ -17,7 +17,7 @@ import sys, traceback
 from django.db import models
 from django.contrib.auth.models import User
 
-from cmh.common.models import Attribute, Category, CodeName
+from cmh.common.models import ComplaintDepartment, ComplaintType
 
 class Citizen(models.Model):
     name   = models.CharField (max_length = 500, blank = True, null = True)
@@ -85,15 +85,6 @@ class AppRole (models.Model):
         return self.name
 
 
-from cmh.usermgr.constants import UserRoles
-
-ROLE_ANONYMOUS = AppRole.objects.get (role = UserRoles.ANONYMOUS)
-ROLE_CSO       = AppRole.objects.get (role = UserRoles.CSO)
-ROLE_DELEGATE  = AppRole.objects.get (role = UserRoles.DELEGATE)
-ROLE_OFFICIAL  = AppRole.objects.get (role = UserRoles.OFFICIAL)
-ROLE_DM        = AppRole.objects.get (role = UserRoles.DM)
-
-
 class MenuItem (models.Model):
     name   = models.CharField (max_length = 500)
     url    = models.CharField (max_length = 500)
@@ -110,6 +101,7 @@ class Official(models.Model):
     departments = models.ManyToManyField (ComplaintDepartment, blank = True, null = True)
     title       = models.CharField (max_length = 20, blank = True, null = True)
     designation = models.CharField (max_length = 200, blank = True, null = True)
+    complainttypes = models.ManyToManyField (ComplaintType, blank = True, null = True)
 
     def __unicode__(self):
         return u'Official: ' + self.user.username

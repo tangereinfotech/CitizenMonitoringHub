@@ -57,9 +57,9 @@ class ComplaintType (models.Model):
     defsmsopen = models.CharField (max_length = 2000, blank = True, null = True)
     defsmsres  = models.CharField (max_length = 2000, blank = True, null = True)
     defsmsclo = models.CharField (max_length = 2000, blank = True, null = True)
-    official = models.ForeignKey (Official, blank = True, null = True)
 
 
+# ----- TABOO CLASSES -----
 
 
 class Category(models.Model):
