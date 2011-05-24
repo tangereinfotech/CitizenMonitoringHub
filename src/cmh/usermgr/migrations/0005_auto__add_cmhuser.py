@@ -8,20 +8,20 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Removing unique constraint on 'MenuItem', fields ['serial', 'role']
-        db.delete_unique('usermgr_menuitem', ['serial', 'role_id'])
-
-        # Adding unique constraint on 'MenuItem', fields ['url', 'serial', 'role']
-        db.create_unique('usermgr_menuitem', ['url', 'serial', 'role_id'])
+        # Adding model 'CmhUser'
+        db.create_table('usermgr_cmhuser', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
+            ('phone', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
+            ('orgname', self.gf('django.db.models.fields.CharField')(max_length=500, null=True, blank=True)),
+        ))
+        db.send_create_signal('usermgr', ['CmhUser'])
 
 
     def backwards(self, orm):
         
-        # Removing unique constraint on 'MenuItem', fields ['url', 'serial', 'role']
-        db.delete_unique('usermgr_menuitem', ['url', 'serial', 'role_id'])
-
-        # Adding unique constraint on 'MenuItem', fields ['serial', 'role']
-        db.create_unique('usermgr_menuitem', ['serial', 'role_id'])
+        # Deleting model 'CmhUser'
+        db.delete_table('usermgr_cmhuser')
 
 
     models = {
@@ -86,6 +86,13 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'mobile': ('django.db.models.fields.CharField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'})
+        },
+        'usermgr.cmhuser': {
+            'Meta': {'object_name': 'CmhUser'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'orgname': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
+            'phone': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'})
         },
         'usermgr.menuitem': {
             'Meta': {'unique_together': "(('role', 'serial', 'url'),)", 'object_name': 'MenuItem'},

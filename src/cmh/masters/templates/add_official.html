@@ -1,0 +1,67 @@
+{# Copyright 2011, Tangere Infotech Pvt Ltd [http://tangere.in]                 #}
+{#                                                                              #}
+{# Licensed under the Apache License, Version 2.0 (the "License");              #}
+{# you may not use this file except in compliance with the License.             #}
+{# You may obtain a copy of the License at                                      #}
+{#                                                                              #}
+{#       http://www.apache.org/licenses/LICENSE-2.0                             #}
+{#                                                                              #}
+{# Unless required by applicable law or agreed to in writing, software          #}
+{# distributed under the License is distributed on an "AS IS" BASIS,            #}
+{# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     #}
+{# See the License for the specific language governing permissions and          #}
+{# limitations under the License.                                               #}
+
+{% extends "masters.html" %}
+
+{% block master_section %}
+<div style="text-align: center;">
+  <h2>Adding Official</h2>
+  <form action="." method="post" style="margin:0px auto; padding: 0px;width:300px">
+    <table>
+      {% if form.non_field_errors %}
+      <tr>
+        <td/>
+        <td>
+          {{ form.non_field_errors }}
+        </td>
+      </tr>
+      {% endif %}
+      {% for field in form.visible_fields %}
+      {% if field.errors %}
+      <tr>
+        <td/>
+        <td> {{ field.errors }} </td>
+      </tr>
+      {% endif %}
+      <tr>
+        <th align="left">
+          {{ field.label }}:
+        </th>
+        <td>
+          {{ field }}
+        </td>
+      </tr>
+      {% endfor %}
+      <tr>
+        <td colspan="2" align="center">
+          <input type="submit" value="Add" name="add_add_official">
+          <input type="submit" value="Cancel" name="add_cancel_official">
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>
+
+<script type="text/javascript" src="/static/js/select_handler.js"></script>
+<script type="text/javascript">
+  $(document).ready (function () {
+    $("#id_department").change (function () {
+       select_handler ("/masters/department_selected/",
+                       "#id_department",
+                       "#id_supervisor");
+     });
+  });
+</script>
+
+{% endblock %}

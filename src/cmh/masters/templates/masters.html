@@ -17,15 +17,62 @@
 {% block page_content %}
 <div class="master-menu">
   <ul>
-    <li><a href="/masters/csomembers/">CSO Members</a></li>
-    <li><a href="/masters/dms/">District Magistrate</a></li>
-    <li><a href="/masters/officials/">Department Officials</a></li>
-    <li><a href="/master/delegates/">Delegate Official</a></li>
+    <li><a href="/masters/">People</a>
+      <ul>
+        <li><a href="/masters/dm/">District Magistrate</a></li>
+        <li><a href="/masters/officials/">Officials</a></li>
+        <li><a href="/masters/csomembers/">CSO Members</a></li>
+      </ul>
+    </li>
+    <li><a href="/masters/locations/">Locations</a></li>
+    <li><a href="/masters/complaint_types/">Complaint Type</a></li>
   </ul>
 </div>
 <div class="master-content">
   {% block master_section %}
+  <div style="text-align: center;">
+    <h2> Registered Users </h2>
+  </div>
+  <div class="pagination">
+    <span class="step-links">
+      {% if cmhusers.has_previous %}
+      <a href="?page={{ cmhusers.previous_page_number }}">&lt;</a>
+      {% else %}
+      <span style="text-decoration: none">&lt;</span>
+      {% endif %}
 
+      <span class="current">
+        <form class="inlineform" action="{{ page_url}}" method="GET">
+          <input type="text"
+                 name="page"
+                 value="{{ cmhusers.number }}"
+                 style="width:25px; text-align:center;">
+          of {{ cmhusers.paginator.num_pages }}
+        </form>
+      </span>
+      {% if cmhusers.has_next %}
+      <a href="?page={{ cmhusers.next_page_number }}">&gt;</a>
+      {% else %}
+      <span style="text-decoration:none">&gt;</span>
+      {% endif %}
+    </span>
+  </div>
+  <table class="tabularlist">
+    <tr>
+      <th>Name</th>
+      <th>Role</th>
+      <th>Phone</th>
+      <th>Email</th>
+    </tr>
+    {% for cmhuser in cmhusers.object_list %}
+    <tr>
+      <td>{{ cmhuser.get_desc_name }}</td>
+      <td>{{ cmhuser.get_role_name }}</td>
+      <td>{{ cmhuser.phone_number }}</td>
+      <td>{{ cmhuser.user.email }}</td>
+    </tr>
+    {% endfor %}
+  </table>
   {% endblock %}
 </div>
 {% endblock %}

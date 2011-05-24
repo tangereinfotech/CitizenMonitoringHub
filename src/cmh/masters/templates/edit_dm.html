@@ -1,0 +1,55 @@
+{# Copyright 2011, Tangere Infotech Pvt Ltd [http://tangere.in]                 #}
+{#                                                                              #}
+{# Licensed under the Apache License, Version 2.0 (the "License");              #}
+{# you may not use this file except in compliance with the License.             #}
+{# You may obtain a copy of the License at                                      #}
+{#                                                                              #}
+{#       http://www.apache.org/licenses/LICENSE-2.0                             #}
+{#                                                                              #}
+{# Unless required by applicable law or agreed to in writing, software          #}
+{# distributed under the License is distributed on an "AS IS" BASIS,            #}
+{# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     #}
+{# See the License for the specific language governing permissions and          #}
+{# limitations under the License.                                               #}
+
+{% extends "masters.html" %}
+
+{% block master_section %}
+<div style="text-align:center">
+  <h2>District Magistrate</h2>
+  <form action="." method="post" style="width:300px;margin:0px auto">
+    <table width="100%">
+      {% if form.non_field_errors %}
+      <tr>
+        <td width="35%"></td>
+        <td width="65%">{{ form.non_field_errors }}</td>
+      </tr>
+      {% endif %}
+      {% for field in form.visible_fields %}
+
+      {% if forloop.first %}
+        {% for hidden in form.hidden_fields %}
+        <tr><td colspan="2" style="height:0px; padding: 0px">{{ hidden }}</td></tr>
+        {% endfor %}
+      {% endif %}
+      {% if field.errors %}
+      <tr>
+        <td width="35%"></td>
+        <td width="65%">{{ field.errors }}</td>
+      </tr>
+      {% endif %}
+      <tr>
+        <th align="left" width="35%">{{ field.label }}</th>
+        <td width="65%">{{ field }}</td>
+      </tr>
+      {% endfor %}
+      <tr>
+        <td colspan="2" align="center">
+          <input type="submit" value="Save" name="edit_save">
+          <input type="submit" value="Cancel" name="edit_cancel">
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>
+{% endblock %}

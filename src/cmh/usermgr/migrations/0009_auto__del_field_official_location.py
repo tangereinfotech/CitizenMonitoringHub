@@ -5,48 +5,17 @@ from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
-    depends_on = (('cmh.common', '0001_initial'),)
 
     def forwards(self, orm):
-
-        # Adding model 'Citizen'
-        db.create_table('usermgr_citizen', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=500, null=True, blank=True)),
-            ('mobile', self.gf('django.db.models.fields.CharField')(max_length=15, null=True, blank=True)),
-        ))
-        db.send_create_signal('usermgr', ['Citizen'])
-
-        # Adding model 'Official'
-        db.create_table('usermgr_official', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
-            ('designation', self.gf('django.db.models.fields.CharField')(max_length=200, null=True, blank=True)),
-            ('supervisor', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['usermgr.Official'], null=True, blank=True)),
-            ('location', self.gf('django.db.models.fields.related.ForeignKey')(related_name='location_official', to=orm['common.Attribute'])),
-            ('mobile', self.gf('django.db.models.fields.CharField')(max_length=15, null=True, blank=True)),
-        ))
-        db.send_create_signal('usermgr', ['Official'])
-
-        # Adding M2M table for field department on 'Official'
-        db.create_table('usermgr_official_department', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('official', models.ForeignKey(orm['usermgr.official'], null=False)),
-            ('attribute', models.ForeignKey(orm['common.attribute'], null=False))
-        ))
-        db.create_unique('usermgr_official_department', ['official_id', 'attribute_id'])
+        
+        # Deleting field 'Official.location'
+        db.delete_column('usermgr_official', 'location_id')
 
 
     def backwards(self, orm):
-
-        # Deleting model 'Citizen'
-        db.delete_table('usermgr_citizen')
-
-        # Deleting model 'Official'
-        db.delete_table('usermgr_official')
-
-        # Removing M2M table for field department on 'Official'
-        db.delete_table('usermgr_official_department')
+        
+        # Adding field 'Official.location'
+        db.add_column('usermgr_official', 'location', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='location_official', to=orm['common.Attribute']), keep_default=False)
 
 
     models = {
@@ -83,7 +52,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Attribute'},
             'category': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.Category']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'parent': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.Attribute']"}),
+            'parent': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.Attribute']", 'null': 'True', 'blank': 'True'}),
             'value': ('django.db.models.fields.CharField', [], {'max_length': '1000'})
         },
         'common.category': {
@@ -99,18 +68,37 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        'usermgr.approle': {
+            'Meta': {'object_name': 'AppRole'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'role': ('django.db.models.fields.IntegerField', [], {}),
+            'users': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False'})
+        },
         'usermgr.citizen': {
             'Meta': {'object_name': 'Citizen'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'mobile': ('django.db.models.fields.CharField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'})
         },
+        'usermgr.cmhuser': {
+            'Meta': {'object_name': 'CmhUser'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'phone': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'})
+        },
+        'usermgr.menuitem': {
+            'Meta': {'unique_together': "(('role', 'serial', 'url'),)", 'object_name': 'MenuItem'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '500'}),
+            'role': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['usermgr.AppRole']"}),
+            'serial': ('django.db.models.fields.IntegerField', [], {}),
+            'url': ('django.db.models.fields.CharField', [], {'max_length': '500'})
+        },
         'usermgr.official': {
             'Meta': {'object_name': 'Official'},
-            'department': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'department_official'", 'symmetrical': 'False', 'to': "orm['common.Attribute']"}),
-            'designation': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
+            'departments': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'department_official'", 'symmetrical': 'False', 'to': "orm['common.Attribute']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'location': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'location_official'", 'to': "orm['common.Attribute']"}),
             'mobile': ('django.db.models.fields.CharField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
             'supervisor': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['usermgr.Official']", 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'})

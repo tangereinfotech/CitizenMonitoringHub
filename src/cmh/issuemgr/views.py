@@ -27,10 +27,12 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Avg, Max, Min, Count
 from django.contrib.auth.decorators import login_required
 
-from cmh.common.models import Category, Attribute, CodeName, LatLong
+from cmh.common.models import Country, State, District
+from cmh.common.models import Block, GramPanchayat, Village
+from cmh.common.models import Category, Attribute, CodeName
 from cmh.common.models import get_code2name, get_child_attributes
 
-from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES, DEPARTMENTS
+from cmh.issuemgr.constants import COMPLAINT_TYPES, DEPARTMENTS
 from cmh.issuemgr.models import ComplaintItem, Complaint, StatusTransition
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
 from cmh.issuemgr.forms import ComplaintTrackForm
@@ -77,19 +79,16 @@ def index (request):
 
 def get_category_map_update (request, category):
     if category == 'all':
-        complaints = Complaint.objects.all ().order_by ('location')
         retval = {}
-        for complaint in complaints:
-            if retval.has_key (complaint.location.id):
-                retval [complaint.location.id]['count'] += 1
-            else:
-                try:
-                    latlong = LatLong.objects.get (location__id = complaint.location.id)
+        for complaint in Complaint.objects.filter (latest = True).order_by ('location'):
+            location = complaint.location
+            if location != None:
+                if retval.has_key (location.id):
+                    retval [location.id]['count'] += 1
+                else:
                     retval [complaint.location.id] = {'count' : 1,
-                                                      'latitude': latlong.latitude,
-                                                      'longitude' : latlong.longitude}
-                except:
-                    pass
+                                                      'latitude': location.lattd,
+                                                      'longitude' : location.longd}
         return HttpResponse (json.dumps (retval))
     else:
         return HttpResponse (json.dumps ([]))
@@ -102,23 +101,17 @@ def locations (request):
             term = form.cleaned_data ['term']
             matches = re.search (LOCATION_REGEX, term)
             g = matches.groups ()
-            names = []
-            for village in VILLAGES:
-                vill_code = village.value
-                vill_name = CodeName.objects.get (code = vill_code).name
-
-                if term.lower () in vill_name.lower ():
-                    gp_code = village.parent.value
-                    block_code = village.parent.parent.value
-
-                    gp_name = CodeName.objects.get (code = gp_code).name
-                    block_name = CodeName.objects.get (code = block_code).name
-
-                    names.append ({'display' : vill_name,
-                                   'detail' : ('Gram Panchayat: %s<br/>Block: %s' %
-                                               (gp_name, block_name)),
-                                   'id' : village.id})
+            villages = Village.objects.filter (search__icontains = term.lower ())
+            names = [{'display' : village.name,
+                      'detail' : ('Gram Panchayat: %s<br/>Block: %s' %
+                                  (village.grampanchayat.name,
+                                   village.grampanchayat.block.name)),
+                      'id' : village.id}
+                     for village in Village.objects.filter (search__icontains
+                                                            = term.lower ())]
             return HttpResponse (json.dumps (names))
+        else:
+            print form.errors
     except:
         import traceback
         traceback.print_exc ()
@@ -244,7 +237,8 @@ def update (request, complaintno, complaintid):
                 prev_page = reverse (track_issues, args = [complaintno,current.id])
 
             return render_to_response ('update.html',
-                                       {'form' : ComplaintUpdateForm (current, newstatuses),
+                                       {'form' : ComplaintUpdateForm (current,
+                                                                      newstatuses),
                                         'base' : base,
                                         'current' : current,
                                         'complaints' : complaints,
@@ -343,7 +337,7 @@ def hot_complaints (request):
                 x_interval = '1 week'
                 reldelta = relativedelta (weeks = +1)
 
-            now = date.today ()
+            now = datetime.now ()
             period1 = now - reldelta
             period2 = period1 - reldelta
             period3 = period2 - reldelta
@@ -378,8 +372,10 @@ def hot_complaints (request):
         except:
             import traceback
             traceback.print_exc ()
-    return HttpResponse (json.dumps ({'datapoints' : datapoints,
-                                      'x_interval' : x_interval,
-                                      'issuetypes' : issuetypes}))
+    retval = {'datapoints' : datapoints,
+              'x_interval' : x_interval,
+              'issuetypes' : issuetypes}
+    print retval
+    return HttpResponse (json.dumps (retval))
 
 

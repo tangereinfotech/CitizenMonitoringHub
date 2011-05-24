@@ -17,4 +17,10 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns ('cmh.masters.views',
                         (r'^$', 'masters'),
+                        (r'^dm/$', 'process_dm'),
+                        (r'^officials/$', 'officials'),
+                        (r'^add_official/$', 'add_official'),
+                        (r'^department_selected/$', 'department_selected'),
+                        (r'^csomembers/$', 'csomembers'),
+                        (r'^add_cso_user/$', 'add_cso_user'),
                         )

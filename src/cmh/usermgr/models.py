@@ -27,31 +27,52 @@ class Citizen(models.Model):
         return "Citizen: " + self.name
 
 
-class Official(models.Model):
-    user        = models.OneToOneField (User)
-    designation = models.CharField (max_length = 200, blank = True, null = True)
-    supervisor  = models.ForeignKey ('Official', blank=True, null=True)
-    location    = models.ForeignKey (Attribute, related_name = 'location_official')
-    mobile      = models.CharField (max_length=15, blank=True,null=True)
-    department  = models.ManyToManyField (Attribute, related_name = 'department_official')
+class CmhUser (models.Model):
+    user = models.OneToOneField (User)
+    phone = models.CharField (max_length = 20, blank = True, null = True)
 
-    def __unicode__(self):
-        return u'Official: ' + self.user.username
+    def get_desc_name (self):
+        return "%s <%s>" % (self.user.get_full_name (),
+                              self.user.username)
+
+    def get_role_name (self):
+        role = AppRole.objects.get_user_role (self.user)
+        if role == None:
+            return ""
+        else:
+            return UserRoles.ROLE_MAP[role.role]
+
+    def set_user_role (self, role):
+        approle = {UserRoles.CSO: ROLE_CSO,
+                   UserRoles.DELEGATE: ROLE_DELEGATE,
+                   UserRoles.OFFICIAL: ROLE_OFFICIAL,
+                   UserRoles.DM: ROLE_DM}[role]
+        approle.users.add (self.user)
+        approle.save ()
+
+    def _get_phone_number (self):
+        if self.phone == None: return ""
+        else: return self.phone
+
+    phone_number = property (_get_phone_number)
+
 
 class RoleException (Exception):
     pass
 
+
 class AppRoleManager (models.Manager):
     def get_user_role (self, user):
-        try:
-            if user.is_authenticated ():
+        if user.is_authenticated ():
+            try:
                 return AppRole.objects.get (users = user)
-            else:
+            except AppRole.MultipleObjectsReturned:
+                raise RoleException ("Multiple Roles for user: " + user.username)
+            except AppRole.DoesNotExist:
+                ROLE_ANONYMOUS.users.add (user)
                 return ROLE_ANONYMOUS
-        except AppRole.MultipleObjectsReturned:
-            raise RoleException ("Multiple Roles for user: " + user.username)
-        except AppRole.DoesNotExist:
-            raise RoleException ("User %s has no defined role" % (user.username))
+        else:
+            return ROLE_ANONYMOUS
 
 class AppRole (models.Model):
     role  = models.IntegerField ()
@@ -81,3 +102,16 @@ class MenuItem (models.Model):
 
     class Meta:
         unique_together = (('role', 'serial', 'url'),)
+
+
+class Official(models.Model):
+    user        = models.OneToOneField (User)
+    supervisor  = models.ForeignKey ('Official', blank=True, null=True)
+    departments = models.ManyToManyField (ComplaintDepartment, blank = True, null = True)
+    title       = models.CharField (max_length = 20, blank = True, null = True)
+    designation = models.CharField (max_length = 200, blank = True, null = True)
+
+    def __unicode__(self):
+        return u'Official: ' + self.user.username
+
+

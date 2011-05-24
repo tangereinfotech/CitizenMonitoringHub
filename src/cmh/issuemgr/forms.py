@@ -19,7 +19,9 @@ LOCATION_REGEX = r'^ *(?P<village>\w+) *\[(?P<gp>\w+), *(?P<block>\w+)\] *$|^ *(
 
 from datetime import datetime
 
-from cmh.issuemgr.constants import VILLAGES, COMPLAINT_TYPES, STATUS_NEW, STATUS_ACK
+from cmh.common.models import Country, State, District
+from cmh.common.models import Block, GramPanchayat, Village
+from cmh.issuemgr.constants import COMPLAINT_TYPES, STATUS_NEW, STATUS_ACK
 from cmh.issuemgr.constants import STATUSES, DEPARTMENTS
 from cmh.issuemgr.models import Complaint, ComplaintItem, StatusTransition
 from cmh.issuemgr.utils import update_complaint_sequence
@@ -49,7 +51,7 @@ class ComplaintForm (forms.Form):
 
     def clean_locationid (self):
         try:
-            village = VILLAGES.get (id = self.cleaned_data ['locationid'])
+            village = Village.objects.get (id = self.cleaned_data ['locationid'])
         except:
             raise forms.ValidationError ("Location code is not correct")
         return self.cleaned_data ['locationid']
@@ -63,7 +65,7 @@ class ComplaintForm (forms.Form):
         return self.cleaned_data ['categoryid']
 
     def save (self, user):
-        location = VILLAGES.get (id = self.cleaned_data ['locationid'])
+        location = Village.objects.get (id = self.cleaned_data ['locationid'])
         citizen = get_or_create_citizen (self.cleaned_data ['yourmobile'],
                                          self.cleaned_data ['yourname'])
 
@@ -106,7 +108,7 @@ class AcceptComplaintForm (forms.Form):
 
     def clean_locationid (self):
         try:
-            village = VILLAGES.get (id = self.cleaned_data ['locationid'])
+            village = Village.objects.get (id = self.cleaned_data ['locationid'])
         except:
             raise forms.ValidationError ("Location code is not correct")
         return self.cleaned_data ['locationid']
@@ -119,7 +121,7 @@ class AcceptComplaintForm (forms.Form):
         return self.cleaned_data ['categoryid']
 
     def save (self, user):
-        location       = VILLAGES.get (id = self.cleaned_data ['locationid'])
+        location = Village.objects.get (id = self.cleaned_data ['locationid'])
         citizen = get_or_create_citizen (self.cleaned_data ['yourmobile'],
                                          self.cleaned_data ['yourname'])
 
@@ -184,7 +186,7 @@ class ComplaintUpdateForm (forms.Form):
     def clean_revlocationid (self):
         if self.cleaned_data ['revlocationid'] != None:
             try:
-                village = VILLAGES.get (id = self.cleaned_data ['revlocationid'])
+                village = Village.objects.get (id = self.cleaned_data ['revlocationid'])
             except:
                 raise forms.ValidationError ("Location code is not correct")
             return self.cleaned_data ['revlocationid']
@@ -236,7 +238,7 @@ class ComplaintUpdateForm (forms.Form):
         newver.description = self.cleaned_data ['comment']
 
         if self.cleaned_data ['revlocationid'] != None:
-            newver.location = VILLAGES.get (id = self.cleaned_data ['revlocationid'])
+            newver.location = Village.objects.get (id = self.cleaned_data ['revlocationid'])
 
         ## FIXME - this should not be department. Instead it should be issue type ('base')
         if self.cleaned_data ['revdepartmentid'] != None:

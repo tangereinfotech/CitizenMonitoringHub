@@ -18,33 +18,33 @@ from django.contrib.auth.models import User
 
 from cmh.usermgr.models import Citizen, Official, Citizen, AppRole
 from cmh.common.models import CodeName, Category, Attribute
-
-class ComplaintItem (CodeName):
-    desc    = models.CharField (max_length = 5000)
+from cmh.common.models import Country, State, District, Block
+from cmh.common.models import GramPanchayat, Village
+from cmh.common.models import ComplaintType, ComplaintDepartment
 
 class ComplaintManager (models.Manager):
     def get_latest_complaints (self):
         return Complaint.objects.filter (latest = True)
 
+
 class Complaint(models.Model):
-    base        = models.ForeignKey (Attribute, blank = True, null = True,
+    complainttype = models.ForeignKey (ComplaintType, blank = True, null = True,
                                      related_name = 'complaintbase')
-    complaintno = models.CharField (max_length = 50, blank = True, null = True)
-    description = models.CharField (max_length=1000)
-    department  = models.ForeignKey (Attribute, blank = True, null = True,
+    complaintno   = models.CharField (max_length = 50, blank = True, null = True)
+    description   = models.CharField (max_length=1000)
+    department    = models.ForeignKey (ComplaintDepartment, blank = True, null = True,
                                      related_name = 'complaintdepartment')
-    curstate    = models.ForeignKey (Attribute, blank = True, null = True,
+    curstate      = models.ForeignKey (Attribute, blank = True, null = True,
                                      related_name = 'complnaintstate')
-    filedby     = models.ForeignKey (Citizen)
-    assignto    = models.ForeignKey (Official, blank = True, null = True)
-    location    = models.ForeignKey (Attribute, blank = True, null = True,
-                                     related_name = 'complaintlocation')
-    logdate     = models.DateField (blank = True, null = True)
-    original    = models.ForeignKey ('Complaint', blank = True, null = True)
-    created     = models.DateTimeField (auto_now_add = True)
-    latest      = models.BooleanField (default = True)
-    creator     = models.ForeignKey (User, blank = True, null = True)
-    comment     = models.CharField (max_length = 1000, blank = True, null = True)
+    filedby       = models.ForeignKey (Citizen)
+    assignto      = models.ForeignKey (Official, blank = True, null = True)
+    location      = models.ForeignKey (Village, blank = True, null = True)
+    logdate       = models.DateField (blank = True, null = True)
+    original      = models.ForeignKey ('Complaint', blank = True, null = True)
+    created       = models.DateTimeField (auto_now_add = True)
+    latest        = models.BooleanField (default = True)
+    creator       = models.ForeignKey (User, blank = True, null = True)
+    comment       = models.CharField (max_length = 1000, blank = True, null = True)
 
     objects = ComplaintManager ()
 
@@ -64,14 +64,9 @@ class Complaint(models.Model):
 
     def get_location_name (self):
         if self.location != None:
-            vill_code = self.location.value
-            gp_code = self.location.parent.value
-            block_code = self.location.parent.parent.value
-            vill_name = CodeName.objects.get (code = vill_code).name
-            gp_name = CodeName.objects.get (code = gp_code).name
-            block_name = CodeName.objects.get (code = block_code).name
-
-            return "%s [%s, %s]" % (vill_name, gp_name, block_name)
+            return "%s [%s, %s]" % (self.location.name,
+                                    self.location.grampanchayat.name,
+                                    self.location.grampanchayat.block.name)
         else:
             return "----"
 

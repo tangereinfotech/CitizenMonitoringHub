@@ -29,25 +29,7 @@ def get_or_create_citizen (mobile, name):
 
 def get_user_menus (user):
     if user.is_authenticated ():
-        role = get_user_role (user)
+        role = AppRole.objects.get_user_role (user)
         return MenuItem.objects.filter (role = role).order_by ('serial')
     else:
         return MenuItem.objects.filter (role__role = UserRoles.ANONYMOUS).order_by ('serial')
-
-cso_role       = AppRole.objects.get (role = UserRoles.CSO)
-delegate_role  = AppRole.objects.get (role = UserRoles.DELEGATE)
-official_role  = AppRole.objects.get (role = UserRoles.OFFICIAL)
-dm_role        = AppRole.objects.get (role = UserRoles.DM)
-anonymous_role = AppRole.objects.get (role = UserRoles.ANONYMOUS)
-
-def get_user_role (user):
-    if cso_role.users.filter (id = user.id).count () != 0:
-        return cso_role
-    elif delegate_role.users.filter (id = user.id).count () != 0:
-        return delegate_role
-    elif official_role.users.filter (id = user.id).count () != 0:
-        return official_role
-    elif dm_role.users.filter (id = user.id).count () != 0:
-        return dm_role
-    else:
-        return anonymous_role

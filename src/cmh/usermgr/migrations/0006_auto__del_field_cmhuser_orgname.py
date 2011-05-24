@@ -8,14 +8,14 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Adding field 'AppRole.name'
-        db.add_column('usermgr_approle', 'name', self.gf('django.db.models.fields.CharField')(default='', max_length=50), keep_default=False)
+        # Deleting field 'CmhUser.orgname'
+        db.delete_column('usermgr_cmhuser', 'orgname')
 
 
     def backwards(self, orm):
         
-        # Deleting field 'AppRole.name'
-        db.delete_column('usermgr_approle', 'name')
+        # Adding field 'CmhUser.orgname'
+        db.add_column('usermgr_cmhuser', 'orgname', self.gf('django.db.models.fields.CharField')(max_length=500, null=True, blank=True), keep_default=False)
 
 
     models = {
@@ -81,8 +81,14 @@ class Migration(SchemaMigration):
             'mobile': ('django.db.models.fields.CharField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'})
         },
+        'usermgr.cmhuser': {
+            'Meta': {'object_name': 'CmhUser'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'phone': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'})
+        },
         'usermgr.menuitem': {
-            'Meta': {'unique_together': "(('role', 'serial'),)", 'object_name': 'MenuItem'},
+            'Meta': {'unique_together': "(('role', 'serial', 'url'),)", 'object_name': 'MenuItem'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '500'}),
             'role': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['usermgr.AppRole']"}),

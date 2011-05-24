@@ -8,14 +8,20 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Adding field 'Complaint.logdate'
-        db.add_column('issuemgr_complaint', 'logdate', self.gf('django.db.models.fields.DateField')(null=True, blank=True), keep_default=False)
+        # Adding field 'Official.title'
+        db.add_column('usermgr_official', 'title', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True), keep_default=False)
+
+        # Adding field 'Official.designation'
+        db.add_column('usermgr_official', 'designation', self.gf('django.db.models.fields.CharField')(max_length=200, null=True, blank=True), keep_default=False)
 
 
     def backwards(self, orm):
         
-        # Deleting field 'Complaint.logdate'
-        db.delete_column('issuemgr_complaint', 'logdate')
+        # Deleting field 'Official.title'
+        db.delete_column('usermgr_official', 'title')
+
+        # Deleting field 'Official.designation'
+        db.delete_column('usermgr_official', 'designation')
 
 
     models = {
@@ -61,12 +67,6 @@ class Migration(SchemaMigration):
             'key': ('django.db.models.fields.CharField', [], {'max_length': '1000'}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.Category']", 'null': 'True', 'blank': 'True'})
         },
-        'common.codename': {
-            'Meta': {'object_name': 'CodeName'},
-            'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '500'})
-        },
         'contenttypes.contenttype': {
             'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
@@ -74,25 +74,12 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        'issuemgr.complaint': {
-            'Meta': {'object_name': 'Complaint'},
-            'assignto': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['usermgr.Official']", 'null': 'True', 'blank': 'True'}),
-            'base': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'complaintbase'", 'null': 'True', 'to': "orm['common.Attribute']"}),
-            'complaintno': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'curstate': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'complnaintstate'", 'null': 'True', 'to': "orm['common.Attribute']"}),
-            'department': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'complaintdepartment'", 'null': 'True', 'to': "orm['common.Attribute']"}),
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
-            'filedby': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['usermgr.Citizen']"}),
+        'usermgr.approle': {
+            'Meta': {'object_name': 'AppRole'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'location': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'complaintlocation'", 'null': 'True', 'to': "orm['common.Attribute']"}),
-            'logdate': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'original': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['issuemgr.Complaint']", 'null': 'True', 'blank': 'True'})
-        },
-        'issuemgr.complaintitem': {
-            'Meta': {'object_name': 'ComplaintItem', '_ormbases': ['common.CodeName']},
-            'codename_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['common.CodeName']", 'unique': 'True', 'primary_key': 'True'}),
-            'desc': ('django.db.models.fields.CharField', [], {'max_length': '5000'})
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'role': ('django.db.models.fields.IntegerField', [], {}),
+            'users': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False'})
         },
         'usermgr.citizen': {
             'Meta': {'object_name': 'Citizen'},
@@ -100,16 +87,30 @@ class Migration(SchemaMigration):
             'mobile': ('django.db.models.fields.CharField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'})
         },
+        'usermgr.cmhuser': {
+            'Meta': {'object_name': 'CmhUser'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'phone': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'})
+        },
+        'usermgr.menuitem': {
+            'Meta': {'unique_together': "(('role', 'serial', 'url'),)", 'object_name': 'MenuItem'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '500'}),
+            'role': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['usermgr.AppRole']"}),
+            'serial': ('django.db.models.fields.IntegerField', [], {}),
+            'url': ('django.db.models.fields.CharField', [], {'max_length': '500'})
+        },
         'usermgr.official': {
             'Meta': {'object_name': 'Official'},
-            'department': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'department_official'", 'symmetrical': 'False', 'to': "orm['common.Attribute']"}),
+            'departments': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'department_official'", 'symmetrical': 'False', 'to': "orm['common.Attribute']"}),
             'designation': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'location': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'location_official'", 'to': "orm['common.Attribute']"}),
             'mobile': ('django.db.models.fields.CharField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
             'supervisor': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['usermgr.Official']", 'null': 'True', 'blank': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'})
         }
     }
 
-    complete_apps = ['issuemgr']
+    complete_apps = ['usermgr']

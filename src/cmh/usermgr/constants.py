@@ -6,3 +6,10 @@ class UserRoles:
     DELEGATE  = 3
     OFFICIAL  = 4
     DM        = 5
+
+    ROLE_MAP = {ANONYMOUS : "Anonymous",
+                CSO : 'CMH Member',
+                DELEGATE : 'Delegate',
+                OFFICIAL : 'Official',
+                DM : 'District Magistrate'}
+
