@@ -15,8 +15,7 @@
 # limitations under the License.
 
 from django.core.management.base import NoArgsCommand, CommandError
-from cmh.common.models import Category, Attribute, LatLong, CodeName
-from cmh.issuemgr.models import ComplaintItem, StatusTransition
+from cmh.issuemgr.models import StatusTransition
 from cmh.usermgr.constants import UserRoles
 from cmh.usermgr.models import AppRole, MenuItem
 from cmh.issuemgr.constants import *
@@ -25,7 +24,6 @@ from cmh.issuemgr.constants import *
 class Command (NoArgsCommand):
     def handle (self, *args, **kwargs):
         self.populate_role_menus ()
-        self.populate_complaint_status ()
 
     def populate_role_menus (self):
         try:
@@ -99,21 +97,6 @@ class Command (NoArgsCommand):
                 mi = MenuItem.objects.create (name = md ['name'], url = md ['url'],
                                               serial = serial, role = role)
             serial += 1
-
-    def populate_complaint_status (self):
-        try:
-            cat_complaintstatus = Category.objects.get (key = 'Status')
-        except Category.DoesNotExist:
-            cat_complaintstatus = Category.objects.create (key = 'Status')
-
-        statuses = ['New', 'Reopened', 'Acknowledged', 'Open', 'Resolved', 'Closed']
-        for status in statuses:
-            print "Checking/ Creating - " + status
-            try:
-                s = Attribute.objects.get (value = status, category = cat_complaintstatus)
-            except Attribute.DoesNotExist:
-                s = Attribute.objects.create (value = status, category = cat_complaintstatus)
-
 
     def _populate_status_transitions (self, cso, delegate, official, dm, anonymous):
         matrix = [{'role' : cso,

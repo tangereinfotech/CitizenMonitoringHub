@@ -17,7 +17,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from cmh.usermgr.models import Citizen, Official, Citizen, AppRole
-from cmh.common.models import CodeName, Category, Attribute
+from cmh.common.models import ComplaintStatus
 from cmh.common.models import Country, State, District, Block
 from cmh.common.models import GramPanchayat, Village
 from cmh.common.models import ComplaintType, ComplaintDepartment
@@ -34,7 +34,7 @@ class Complaint(models.Model):
     description   = models.CharField (max_length=1000)
     department    = models.ForeignKey (ComplaintDepartment, blank = True, null = True,
                                      related_name = 'complaintdepartment')
-    curstate      = models.ForeignKey (Attribute, blank = True, null = True,
+    curstate      = models.ForeignKey (ComplaintStatus, blank = True, null = True,
                                      related_name = 'complnaintstate')
     filedby       = models.ForeignKey (Citizen)
     assignto      = models.ForeignKey (Official, blank = True, null = True)
@@ -90,7 +90,7 @@ class Complaint(models.Model):
 
 class StatusTransitionManager (models.Manager):
     def get_allowed_statuses (self, role, curstate):
-        newstates = Attribute.objects.filter (newstate__curstate = curstate).distinct ()
+        newstates = ComplaintStatus.objects.filter (newstate__curstate = curstate).distinct ()
         toexclude = []
         for newstate in newstates:
             try:
@@ -111,7 +111,7 @@ class StatusTransitionManager (models.Manager):
 
 class StatusTransition (models.Model):
     role     = models.ForeignKey (AppRole, blank = True, null = True,)
-    curstate = models.ForeignKey (Attribute, related_name = 'curstate', blank = True, null = True)
-    newstate = models.ForeignKey (Attribute, related_name = 'newstate', blank = True, null = True)
+    curstate = models.ForeignKey (ComplaintStatus, related_name = 'curstate')
+    newstate = models.ForeignKey (ComplaintStatus, related_name = 'newstate')
 
     objects = StatusTransitionManager ()

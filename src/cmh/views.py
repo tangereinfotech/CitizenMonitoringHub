@@ -19,26 +19,27 @@ from django.db.models import Q
 
 from cmh.usermgr.utils import get_user_menus
 
-from cmh.common.models import CodeName
+from cmh.common.models import ComplaintType
 
-from cmh.issuemgr.constants import COMPLAINT_TYPES, STATUS_NEW, STATUS_REOPEN, STATUS_ACK, STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED
+from cmh.issuemgr.constants import STATUS_NEW, STATUS_REOPEN, STATUS_ACK, STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED
 from cmh.issuemgr.models import Complaint
 
 def index (request):
     issue_types = []
     complaints = Complaint.objects.filter (latest = True)
-    for issue_type in COMPLAINT_TYPES.order_by ('id'):
-        issue_types.append ({'name' : CodeName.objects.get (code = issue_type.value).name,
+    complaint_types = ComplaintType.objects.all ().order_by ('id')
+    for issue_type in complaint_types:
+        issue_types.append ({'name' : issue_type.summary,
                              'new_reopened' : complaints.filter ((Q (curstate = STATUS_NEW) |
                                                                   Q (curstate = STATUS_REOPEN)),
-                                                                 base = issue_type).count (),
-                             'acknowledged' : complaints.filter (base = issue_type,
+                                                                 complainttype = issue_type).count (),
+                             'acknowledged' : complaints.filter (complainttype = issue_type,
                                                                  curstate = STATUS_ACK).count (),
-                             'opened' : complaints.filter (base = issue_type,
+                             'opened' : complaints.filter (complainttype = issue_type,
                                                          curstate = STATUS_OPEN).count (),
-                             'resolved' : complaints.filter (base = issue_type,
+                             'resolved' : complaints.filter (complainttype = issue_type,
                                                              curstate = STATUS_RESOLVED).count (),
-                             'closed' : complaints.filter (base = issue_type,
+                             'closed' : complaints.filter (complainttype = issue_type,
                                                            curstate = STATUS_CLOSED).count ()})
     return render_to_response ('index.html', {'menus' : get_user_menus (request.user),
                                               'user' : request.user,

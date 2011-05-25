@@ -22,9 +22,6 @@ from optparse import make_option, OptionParser
 from django.core.management.base import BaseCommand, CommandError
 from cmh.common.models import Country, State, District
 from cmh.common.models import Block, GramPanchayat, Village
-from cmh.issuemgr.models import ComplaintItem
-from cmh.usermgr.constants import UserRoles
-from cmh.usermgr.models import AppRole, MenuItem
 from cmh.common.utils import ExcelProcessor as EP
 
 COL_STATE_NAME = 0

@@ -43,10 +43,11 @@ class CmhUser (models.Model):
             return UserRoles.ROLE_MAP[role.role]
 
     def set_user_role (self, role):
-        approle = {UserRoles.CSO: ROLE_CSO,
-                   UserRoles.DELEGATE: ROLE_DELEGATE,
-                   UserRoles.OFFICIAL: ROLE_OFFICIAL,
-                   UserRoles.DM: ROLE_DM}[role]
+        from cmh.usermgr.constants import UserRoles
+        approle = {UserRoles.CSO: UserRoles.ROLE_CSO,
+                   UserRoles.DELEGATE: UserRoles.ROLE_DELEGATE,
+                   UserRoles.OFFICIAL: UserRoles.ROLE_OFFICIAL,
+                   UserRoles.DM: UserRoles.ROLE_DM}[role]
         approle.users.add (self.user)
         approle.save ()
 

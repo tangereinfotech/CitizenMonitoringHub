@@ -1,18 +1,11 @@
-from cmh.common.models import Attribute
+from cmh.common.models import ComplaintStatus
 
-COMPLAINT  = Attribute.objects.get (category__key = 'Complaint')
-COMPLAINT_TYPES   = COMPLAINT.get_category_descendents ('Complaint Type')
-
-STATUS_NEW      = Attribute.objects.get (category__key = 'Status', value = 'New')
-STATUS_REOPEN   = Attribute.objects.get (category__key = 'Status', value = 'Reopened')
-STATUS_ACK      = Attribute.objects.get (category__key = 'Status', value = 'Acknowledged')
-STATUS_OPEN     = Attribute.objects.get (category__key = 'Status', value = 'Open')
-STATUS_RESOLVED = Attribute.objects.get (category__key = 'Status', value = 'Resolved')
-STATUS_CLOSED   = Attribute.objects.get (category__key = 'Status', value = 'Closed')
-
-DEPARTMENTS = COMPLAINT.get_category_descendents ('Complaint Department')
-
-STATUSES = Attribute.objects.filter (category__key = 'Status')
+STATUS_NEW      = ComplaintStatus.objects.get (name = 'New')
+STATUS_REOPEN   = ComplaintStatus.objects.get (name = 'Reopened')
+STATUS_ACK      = ComplaintStatus.objects.get (name = 'Acknowledged')
+STATUS_OPEN     = ComplaintStatus.objects.get (name = 'Open')
+STATUS_RESOLVED = ComplaintStatus.objects.get (name = 'Resolved')
+STATUS_CLOSED   = ComplaintStatus.objects.get (name = 'Closed')
 
 class HotComplaintPeriod:
     WEEK    = 1

@@ -20,8 +20,7 @@ import re
 
 from optparse import make_option, OptionParser
 from django.core.management.base import BaseCommand, CommandError
-from cmh.issuemgr.models import ComplaintType
-from cmh.common.models import District
+from cmh.issuemgr.models import ComplaintDepartment, ComplaintType
 from cmh.common.utils import ExcelProcessor as EP
 from cmh.common.utils import InvalidDataException
 
@@ -34,8 +33,6 @@ COL_COMP_SMSACK = 5
 COL_COMP_SMSOPN = 6
 COL_COMP_SMSRSL = 7
 COL_COMP_SMSCLO = 8
-COL_COMP_OFFICE = 9
-COL_COMP_OFFPHN = 10
 
 class Command (BaseCommand):
     help = """This utility parses an Excel file for location database. The spreadsheet must comply to the format agreed upon earlier
@@ -61,11 +58,36 @@ class Command (BaseCommand):
 
         ep = EP (self.save_data, self.parse_complete)
         ep.process (bookname, sheetname, True,
-                    [EP.CELL_TEXT for i in range (10)])
+                    [EP.CELL_TEXT for i in range (9)])
 
     def save_data (self, rowid, cells):
+        print "Processing row number: ", rowid, ", Content: ", cells
         dept_code = cells [COL_DEPT_CODE]
-        official_phone = cells
+        comp_code = cells [COL_COMP_CODE]
+        comp_summ = cells [COL_COMP_SUMM]
+        comp_clss = cells [COL_COMP_CLSS]
+        comp_smsack = cells [COL_COMP_SMSACK]
+        comp_smsopn = cells [COL_COMP_SMSOPN]
+        comp_smsrsl = cells [COL_COMP_SMSRSL]
+        comp_smsclo = cells [COL_COMP_SMSCLO]
+
+        try:
+            department = ComplaintDepartment.objects.get (code__iexact = dept_code)
+        except ComplaintDepartment.DoesNotExist:
+            raise InvalidDataException ("Department does not exist: "+ dept_code)
+
+        comp_code = "%s.%03d" % (dept_code, int (float (comp_code)))
+        try:
+            complaint = ComplaintType.objects.get (code = comp_code)
+        except ComplaintType.DoesNotExist:
+            complaint = ComplaintType.objects.create (code = comp_code,
+                                                      summary = comp_summ,
+                                                      department = department,
+                                                      cclass = comp_clss,
+                                                      defsmsack = comp_smsack,
+                                                      defsmsopen = comp_smsopn,
+                                                      defsmsres = comp_smsrsl,
+                                                      defsmsclo = comp_smsclo)
 
     def parse_complete (self):
         pass
