@@ -29,6 +29,7 @@ from cmh.usermgr.utils import get_user_menus
 from cmh.usermgr.constants import UserRoles
 
 from cmh.common.models import ComplaintDepartment
+from cmh.common.utils import debug
 
 from cmh.masters.forms import AddCSOMember, RegisterDM, DmId, EditDM
 from cmh.masters.forms import AddEditOfficial, DepartmentSelected
@@ -114,7 +115,7 @@ def process_dm (request):
             # FIXME: Point to send new password through SMS
             return HttpResponse ('Reset Password not implemented')
         elif 'edit_save' in request.POST:
-            print "Saving a DM object"
+            debug ("Saving a DM object")
             form = EditDM (request.POST)
             if form.is_valid ():
                 try:
@@ -143,7 +144,7 @@ def process_dm (request):
                     import traceback
                     traceback.print_exc ()
             else:
-                print "Invalid form:" , form.errors
+                debug ("Invalid form:" , form.errors)
                 return render_to_response ('edit_dm.html',
                                            {'menus': get_user_menus(request.user),
                                             'user' : request.user,
@@ -233,7 +234,7 @@ def add_official (request):
 def department_selected (request):
     form = DepartmentSelected (request.GET)
     if form.is_valid ():
-        print form
+        debug (form)
         try:
             dept_id = form.cleaned_data ['department']
             supervisors = Official.objects.filter (departments__id = dept_id,

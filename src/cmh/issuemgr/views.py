@@ -30,6 +30,7 @@ from django.contrib.auth.decorators import login_required
 from cmh.common.models import Country, State, District
 from cmh.common.models import Block, GramPanchayat, Village
 from cmh.common.models import ComplaintType
+from cmh.common.utils import debug
 
 from cmh.issuemgr.models import Complaint, StatusTransition
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
@@ -113,7 +114,7 @@ def locations (request):
                                                             = term.lower ())]
             return HttpResponse (json.dumps (names))
         else:
-            print form.errors
+            debug (form.errors)
     except:
         import traceback
         traceback.print_exc ()
@@ -360,7 +361,7 @@ def hot_complaints (request):
             issue_table = sorted (issue_table, key = (lambda x: x[1]), reverse = True)
             issue_table = issue_table [:5]
 
-            print issue_table
+            debug (issue_table)
 
             periods = [(now, period1), (period1, period2), (period2, period3), (period3, period4)]
 
@@ -380,7 +381,7 @@ def hot_complaints (request):
     retval = {'datapoints' : datapoints,
               'x_interval' : x_interval,
               'issuetypes' : issuetypes}
-    print retval
+    debug (retval)
     return HttpResponse (json.dumps (retval))
 
 

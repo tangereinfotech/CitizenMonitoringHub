@@ -198,3 +198,7 @@ def ddmmyyyy2date (str):
 
 
 
+def debug (message):
+    import sys
+    sys.stderr.write (str (message) + "\n")
+
