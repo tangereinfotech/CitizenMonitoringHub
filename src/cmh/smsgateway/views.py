@@ -36,8 +36,7 @@ def gateway (request):
         if transferreq.is_valid () == True:
             messages = []
             for tm in TextMessage.objects.filter (processed = False):
-                messages.append ({'to' : tm.phone,
-                                  'message' : tm.message})
+                messages.append ({'to' : tm.phone, 'message' : tm.message})
                 tm.processed = True
                 tm.save ()
             return HttpResponse (json.dumps ({"payload":
@@ -81,7 +80,7 @@ def gateway (request):
             except:
                 import traceback
                 traceback.print_exc ()
-                text_message = "Complaint could not be logged. Please check format"
+                text_message = "Complaint could not be logged. Please check format."
                 TextMessage.objects.queue_text_message (sender_phone, text_message)
                 return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
         else:
