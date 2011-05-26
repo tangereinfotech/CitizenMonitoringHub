@@ -20,6 +20,7 @@ from django.utils import simplejson as json
 from django.http import HttpResponse, HttpResponseForbidden
 
 from cmh.smsgateway.forms import SMSTransferReqFormat, SMSReceivedFormat
+from cmh.smsgateway.models import TextMessage
 
 from cmh.issuemgr.utils import update_complaint_sequence
 from cmh.issuemgr.utils import get_location_attr
@@ -34,8 +35,8 @@ def gateway (request):
         transferreq = SMSTransferReqFormat (request.GET)
         if transferreq.is_valid () == True:
             messages = []
-            for tm in TextMessage.objects.filter (processed = False, valid = True):
-                messages.append ({'to' : tm.getter,
+            for tm in TextMessage.objects.filter (processed = False):
+                messages.append ({'to' : tm.phone,
                                   'message' : tm.message})
                 tm.processed = True
                 tm.save ()
