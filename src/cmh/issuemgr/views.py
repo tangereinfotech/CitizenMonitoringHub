@@ -39,6 +39,8 @@ from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotC
 from cmh.issuemgr.constants import HotComplaintPeriod
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX
 
+from cmh.smsgateway.models import TextMessage
+
 from cmh.usermgr.models import AppRole
 from cmh.usermgr.constants import UserRoles
 from cmh.usermgr.utils import get_user_menus
@@ -63,6 +65,9 @@ def index (request):
         form = ComplaintForm (request.POST)
         if form.is_valid ():
             complaint = form.save (None)
+            debug ("Sending message for complaint acceptance")
+            TextMessage.objects.queue_text_message (complaint.filedby.mobile,
+                                                    "Your complaint is registered. Ref Num: " + complaint.complaintno)
             return render_to_response ('complaint_submitted.html',
                                        {'menus' : get_user_menus (request.user),
                                         'user' : request.user,

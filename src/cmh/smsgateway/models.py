@@ -17,7 +17,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class TextMessageManager (models.Manager):
-    def queue_text_message (phone, message):
+    def queue_text_message (self, phone, message):
         return TextMessage.objects.create (phone = phone, message = message)
 
 class TextMessage (models.Model):
