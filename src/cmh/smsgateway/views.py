@@ -42,7 +42,7 @@ def gateway (request):
             return HttpResponse (json.dumps ({"payload":
                                               {"task": "send",
                                                "secret": "0123456789",
-                                               "messages": messages}})
+                                               "messages": messages}}))
         else:
             return HttpResponse (json.dumps ({}))
     elif request.method == 'POST':
