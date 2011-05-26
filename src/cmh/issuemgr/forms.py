@@ -21,15 +21,14 @@ from datetime import datetime
 
 from cmh.common.models import Country, State, District
 from cmh.common.models import Block, GramPanchayat, Village
-from cmh.issuemgr.constants import COMPLAINT_TYPES, STATUS_NEW, STATUS_ACK
-from cmh.issuemgr.constants import STATUSES, DEPARTMENTS
-from cmh.issuemgr.models import Complaint, ComplaintItem, StatusTransition
+from cmh.common.models import ComplaintType, ComplaintDepartment, ComplaintType
+from cmh.common.models import ComplaintStatus
+from cmh.issuemgr.constants import STATUS_NEW, STATUS_ACK
+from cmh.issuemgr.models import Complaint, StatusTransition
 from cmh.issuemgr.utils import update_complaint_sequence
 
 from cmh.usermgr.utils import get_or_create_citizen
-from cmh.usermgr.models import ROLE_CSO, ROLE_ANONYMOUS, ROLE_DM, ROLE_DELEGATE, ROLE_OFFICIAL
-
-from cmh.common.models import Category, Attribute
+from cmh.usermgr.constants import UserRoles
 
 class ComplaintForm (forms.Form):
     logdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
@@ -59,7 +58,7 @@ class ComplaintForm (forms.Form):
     def clean_categoryid (self):
         if self.cleaned_data ['categoryid'] != None:
             try:
-                category = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
+                category = ComplaintType.objects.get (id = self.cleaned_data ['categoryid'])
             except:
                 raise forms.ValidationError ("Complaint Type is not correct")
         return self.cleaned_data ['categoryid']
@@ -69,14 +68,18 @@ class ComplaintForm (forms.Form):
         citizen = get_or_create_citizen (self.cleaned_data ['yourmobile'],
                                          self.cleaned_data ['yourname'])
 
+        assignto = None
         if self.cleaned_data ['categoryid'] != None:
-            complaint_base = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
-            department = complaint_base.parent
+            complaint_base = ComplaintType.objects.get (id = self.cleaned_data ['categoryid'])
+            department = complaint_base.department
+            officials = department.official_set.all ()
+            if officials.count () > 0:
+                assignto = officials [0]
         else:
             complaint_base = None
             department = None
 
-        cpl = Complaint.objects.create (base = complaint_base,
+        cpl = Complaint.objects.create (complainttype = complaint_base,
                                         complaintno = None,
                                         description = self.cleaned_data ['description'],
                                         department  = department,
@@ -85,7 +88,8 @@ class ComplaintForm (forms.Form):
                                         logdate = self.cleaned_data ['logdate'],
                                         location = location,
                                         original = None,
-                                        creator = user)
+                                        creator = user,
+                                        assignto = assignto)
         update_complaint_sequence (cpl)
         return cpl
 
@@ -115,7 +119,7 @@ class AcceptComplaintForm (forms.Form):
 
     def clean_categoryid (self):
         try:
-            category = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
+            category = ComplaintType.objects.get (id = self.cleaned_data ['categoryid'])
         except:
             raise forms.ValidationError ("Complaint Type is not correct")
         return self.cleaned_data ['categoryid']
@@ -125,10 +129,15 @@ class AcceptComplaintForm (forms.Form):
         citizen = get_or_create_citizen (self.cleaned_data ['yourmobile'],
                                          self.cleaned_data ['yourname'])
 
-        complaint_base = COMPLAINT_TYPES.get (id = self.cleaned_data ['categoryid'])
-        department = complaint_base.parent
+        complaint_base = ComplaintType.objects.get (id = self.cleaned_data ['categoryid'])
+        department = complaint_base.department
+        officials = department.official_set.all ()
+        if officials.count () > 0:
+            assignto = officials [0]
+        else:
+            assignto = None
 
-        cpl = Complaint.objects.create (base = complaint_base,
+        cpl = Complaint.objects.create (complainttype = complaint_base,
                                         complaintno = None,
                                         description = self.cleaned_data ['description'],
                                         department  = department,
@@ -137,10 +146,11 @@ class AcceptComplaintForm (forms.Form):
                                         logdate = self.cleaned_data ['logdate'],
                                         location = location,
                                         original = None,
-                                        creator = user)
+                                        creator = user,
+                                        assignto = assignto)
         update_complaint_sequence (cpl)
 
-        accept_cpl = cpl.clone ()
+        accept_cpl = cpl.clone (user)
         accept_cpl.curstate = STATUS_ACK
         accept_cpl.save ()
 
@@ -165,9 +175,9 @@ class ComplaintUpdateForm (forms.Form):
     revlocationid = forms.IntegerField (widget = forms.HiddenInput (), required = False)
     revlocationdesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:100%'}),
                                    required = False)
-    revdepartmentid = forms.IntegerField (widget = forms.HiddenInput (), required = False)
-    revdepartmentdesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:100%'}),
-                                     required = False)
+    revcategoryid = forms.IntegerField (widget = forms.HiddenInput (), required = False)
+    revcategorydesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:100%'}),
+                                       required = False)
     comment = forms.CharField (widget = forms.Textarea (attrs = {'style' : 'width:100%',
                                                                  'cols' : '40',
                                                                  'rows' : '6'}),
@@ -176,10 +186,12 @@ class ComplaintUpdateForm (forms.Form):
     def __init__ (self, complaint, newstates, *args, **kwargs):
         super (ComplaintUpdateForm, self).__init__ (*args, **kwargs)
 
+        self.newstates = newstates
+
         self.fields ['newstatus'] = \
                     forms.ChoiceField (required = True,
                                        choices = ([(-1, '----')] +
-                                                  [(status.id, status.get_value ())
+                                                  [(status.id, status.name)
                                                    for status in newstates]),
                                        widget = forms.Select (attrs = {'style': 'width:100%'}))
 
@@ -193,13 +205,13 @@ class ComplaintUpdateForm (forms.Form):
         else:
             return None
 
-    def clean_revdepartmentid (self):
-        if self.cleaned_data ['revdepartmentid'] != None:
+    def clean_revcategoryid (self):
+        if self.cleaned_data ['revcategoryid'] != None:
             try:
-                department = DEPARTMENTS.get (id = self.cleaned_data ['revdepartmentid'])
+                ct = ComplaintType.objects.get (id = self.cleaned_data ['revcategoryid'])
             except:
-                raise forms.ValidationError ('Department id is not correct')
-            return self.cleaned_data ['revdepartmentid']
+                raise forms.ValidationError ('Complaint Category is not correct')
+            return self.cleaned_data ['revcategoryid']
         else:
             return None
 
@@ -217,11 +229,9 @@ class ComplaintUpdateForm (forms.Form):
 
         if self.cleaned_data ['newstatus'] != "-1":
             try:
-                checkstatus = STATUSES.get (id = self.cleaned_data ['newstatus'])
-                newstates = StatusTransition.objects.get_allowed_statuses (ROLE_CSO,
-                                                                           complaint.curstate)
-                is_valid = newstates.get (id = checkstatus.id)
-            except Attribute.DoesNotExist:
+                checkstatus = ComplaintStatus.objects.get (id = self.cleaned_data ['newstatus'])
+                is_valid = self.newstates.get (id = checkstatus.id)
+            except ComplaintStatus.DoesNotExist:
                 raise forms.ValidationError ("New status is not a valid status code")
             except StatusTransition.DoesNotExist:
                 raise forms.ValidationError ("That status transition is not allowed")
@@ -229,20 +239,19 @@ class ComplaintUpdateForm (forms.Form):
              raise forms.ValidationError ("Please select a valid next status")
         return self.cleaned_data ['newstatus']
 
-    def save (self):
+    def save (self, user):
         complaint = Complaint.objects.get (complaintno = self.cleaned_data ['complaintno'],
                                            latest = True)
-        newver = complaint.clone ()
+        newver = complaint.clone (user)
 
-        newver.curstate = STATUSES.get (id = self.cleaned_data ['newstatus'])
+        newver.curstate = ComplaintStatus.objects.get (id = self.cleaned_data ['newstatus'])
         newver.description = self.cleaned_data ['comment']
 
         if self.cleaned_data ['revlocationid'] != None:
             newver.location = Village.objects.get (id = self.cleaned_data ['revlocationid'])
 
-        ## FIXME - this should not be department. Instead it should be issue type ('base')
-        if self.cleaned_data ['revdepartmentid'] != None:
-            newver.department = DEPARTMENTS.get (id = self.cleaned_data ['revdepartmentid'])
+        if self.cleaned_data ['revcategoryid'] != None:
+            newver.complainttype = ComplaintType.objects.get (id = self.cleaned_data ['revcategoryid'])
 
         newver.save ()
         return newver

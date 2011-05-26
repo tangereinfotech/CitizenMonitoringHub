@@ -28,7 +28,7 @@ from cmh.usermgr.models import CmhUser, Official
 from cmh.usermgr.utils import get_user_menus
 from cmh.usermgr.constants import UserRoles
 
-from cmh.issuemgr.constants import DEPARTMENTS
+from cmh.common.models import ComplaintDepartment
 
 from cmh.masters.forms import AddCSOMember, RegisterDM, DmId, EditDM
 from cmh.masters.forms import AddEditOfficial, DepartmentSelected
@@ -198,16 +198,18 @@ def add_official (request):
                                         'menus' : get_user_menus (request.user),
                                         'user' : request.user})
         else:
+            departments = ComplaintDepartment.objects.all ()
             return render_to_response ('add_official.html',
                                           {'menus' : get_user_menus (request.user),
                                            'user' : request.user,
-                                           'form' : AddEditOfficial (departments = DEPARTMENTS)})
+                                           'form' : AddEditOfficial (departments = departments)})
     elif request.method == 'POST':
         if 'add_add_official' in request.POST:
             if 'pos_supervisors' in request.session:
                 supervisors = json.loads (request.session ['pos_supervisors'])
+            departments = ComplaintDepartment.objects.all ()
             form = AddEditOfficial (request.POST,
-                                    departments = DEPARTMENTS,
+                                    departments = departments,
                                     supervisors = supervisors)
 
             if form.is_valid ():

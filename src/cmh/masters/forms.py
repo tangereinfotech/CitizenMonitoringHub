@@ -23,10 +23,10 @@ from cmh.common.fields import UsernameField
 from cmh.common.fields import AutoCompleteOffTextInput, SpacedSelectInput
 from cmh.common.fields import SpacedTextInput
 
+from cmh.common.models import ComplaintDepartment
+
 from cmh.usermgr.constants import UserRoles
 from cmh.usermgr.models import CmhUser, Official
-
-from cmh.issuemgr.constants import DEPARTMENTS
 
 class AddCSOMember (forms.Form):
     username = UsernameField (widget = AutoCompleteOffTextInput ())
@@ -111,7 +111,7 @@ class AddEditOfficial (forms.Form):
         super (AddEditOfficial, self).__init__ (*args, **kwargs)
 
         if departments != None:
-            choices = [("%d" % department.id, department.value)
+            choices = [("%d" % department.id, department.name)
                        for department in departments]
             choices.insert (0, ('-1', '----'))
             self.fields ['department'].choices = choices
@@ -135,7 +135,7 @@ class AddEditOfficial (forms.Form):
             supervisor = Official.objects.get (id = self.cleaned_data ['supervisor'])
             role = UserRoles.DELEGATE
 
-        department = DEPARTMENTS.get (id = self.cleaned_data ['department'])
+        department = ComplaintDepartment.objects.get (id = self.cleaned_data ['department'])
 
         user = User.objects.create (username = self.cleaned_data ['username'],
                                     first_name = self.cleaned_data ['name'])
@@ -144,9 +144,7 @@ class AddEditOfficial (forms.Form):
         cmhuser.set_user_role (role)
         cmhuser.save ()
 
-        official = Official.objects.create (user = user,
-                                            supervisor = supervisor,
-                                            mobile = self.cleaned_data ['phone'])
+        official = Official.objects.create (user = user, supervisor = supervisor)
 
         official.departments.add (department)
         return official

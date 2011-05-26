@@ -57,6 +57,7 @@ class ComplaintType (models.Model):
     defsmsopen = models.CharField (max_length = 2000, blank = True, null = True)
     defsmsres  = models.CharField (max_length = 2000, blank = True, null = True)
     defsmsclo = models.CharField (max_length = 2000, blank = True, null = True)
+    search = models.CharField (max_length = 10000, blank = True, null = True)
 
 
 class ComplaintStatus (models.Model):

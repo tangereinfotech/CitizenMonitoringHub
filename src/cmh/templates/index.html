@@ -71,6 +71,10 @@
 <script type="text/javascript" src="/static/js/MapHandler.js"></script>
 <script type="text/javascript" src="/static/js/complainthandler.js"></script>
 <script type="text/javascript">
+  function update_issues_trend (period) {
+    show_hot_complaints ("trending-issues-chart", "/complaint/hot_complaints/", period);
+  }
+
   $(document).ready (function () {
     MapHandler.init ('base_map',
                      {{ map.center_lat }},
@@ -83,8 +87,5 @@
     $('#metrics').dataTable ({bSortable: true});
   });
 
-  function update_issues_trend (period) {
-    show_hot_complaints ("trending-issues-chart", "/complaint/hot_complaints/", period);
-  }
 </script>
 {% endblock %}

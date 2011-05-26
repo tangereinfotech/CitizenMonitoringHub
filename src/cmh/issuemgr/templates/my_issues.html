@@ -63,7 +63,7 @@
     <td style="text-align:center;">{{ issue.complaintno }}</td>
     <td style="text-align:center;">{{ issue.logdate|date:'d/M/Y' }}</td>
     <td style="text-align:left;">{{ issue.description }}</td>
-    <td style="text-align:center;">{{ issue.curstate.get_value }}</td>
+    <td style="text-align:center;">{{ issue.curstate.name }}</td>
     <td style="text-align:center;">{{ issue.created|date:'f A, d/M/Y' }}</td>
     <td class="track" style="display:none">
       <form method="GET" action="/complaint/track/{{issue.complaintno}}/{{issue.id}}/"></form>

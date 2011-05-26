@@ -36,6 +36,7 @@ class CmhUser (models.Model):
                               self.user.username)
 
     def get_role_name (self):
+        from cmh.usermgr.constants import UserRoles
         role = AppRole.objects.get_user_role (self.user)
         if role == None:
             return ""
@@ -64,16 +65,17 @@ class RoleException (Exception):
 
 class AppRoleManager (models.Manager):
     def get_user_role (self, user):
+        from cmh.usermgr.constants import UserRoles
         if user.is_authenticated ():
             try:
                 return AppRole.objects.get (users = user)
             except AppRole.MultipleObjectsReturned:
                 raise RoleException ("Multiple Roles for user: " + user.username)
             except AppRole.DoesNotExist:
-                ROLE_ANONYMOUS.users.add (user)
-                return ROLE_ANONYMOUS
+                UserRoles.ROLE_ANONYMOUS.users.add (user)
+                return UserRoles.ROLE_ANONYMOUS
         else:
-            return ROLE_ANONYMOUS
+            return UserRoles.ROLE_ANONYMOUS
 
 class AppRole (models.Model):
     role  = models.IntegerField ()
@@ -106,5 +108,4 @@ class Official(models.Model):
 
     def __unicode__(self):
         return u'Official: ' + self.user.username
-
 

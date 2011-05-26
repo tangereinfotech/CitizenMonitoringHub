@@ -40,5 +40,3 @@ def get_location_attr (block_no, gp_no, vill_no):
                                       int (vill_no))
 
     return Village.objects.get (code = loc_code)
-
-

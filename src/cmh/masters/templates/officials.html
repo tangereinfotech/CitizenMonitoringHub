@@ -59,7 +59,7 @@
     <td>{{ cmhuser.phone_number }}</td>
     <td>
       {% for dept in cmhuser.user.official.departments.all %}
-      {{ dept.value }}
+      {{ dept.name }}
       {% if forloop.last == False %}
       ,
       {% endif %}

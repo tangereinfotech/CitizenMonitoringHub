@@ -80,6 +80,7 @@ class Command (BaseCommand):
         try:
             complaint = ComplaintType.objects.get (code = comp_code)
         except ComplaintType.DoesNotExist:
+            search_str = "%s;%s" % (comp_summ.lower (), comp_clss.lower ())
             complaint = ComplaintType.objects.create (code = comp_code,
                                                       summary = comp_summ,
                                                       department = department,
@@ -87,7 +88,8 @@ class Command (BaseCommand):
                                                       defsmsack = comp_smsack,
                                                       defsmsopen = comp_smsopn,
                                                       defsmsres = comp_smsrsl,
-                                                      defsmsclo = comp_smsclo)
+                                                      defsmsclo = comp_smsclo,
+                                                      search = search_str)
 
     def parse_complete (self):
         pass

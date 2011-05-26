@@ -13,17 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from cmh.common.models import ComplaintStatus
+from cmh.usermgr.constants import UserRoles
+from cmh.usermgr.models import AppRole
+from django.core.management.base import NoArgsCommand
 
-STATUS_NEW      = ComplaintStatus.objects.get (name = 'New')
-STATUS_REOPEN   = ComplaintStatus.objects.get (name = 'Reopened')
-STATUS_ACK      = ComplaintStatus.objects.get (name = 'Acknowledged')
-STATUS_OPEN     = ComplaintStatus.objects.get (name = 'Open')
-STATUS_RESOLVED = ComplaintStatus.objects.get (name = 'Resolved')
-STATUS_CLOSED   = ComplaintStatus.objects.get (name = 'Closed')
+class Command (NoArgsCommand):
+    def handle (self, *args, **kwargs):
+        AppRole.objects.create (role = UserRoles.ANONYMOUS)
+        AppRole.objects.create (role = UserRoles.CSO)
+        AppRole.objects.create (role = UserRoles.DELEGATE)
+        AppRole.objects.create (role = UserRoles.OFFICIAL)
+        AppRole.objects.create (role = UserRoles.DM)
 
-class HotComplaintPeriod:
-    WEEK    = 1
-    MONTH   = 2
-    QUARTER = 3
 

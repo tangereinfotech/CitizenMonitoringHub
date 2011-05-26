@@ -93,7 +93,6 @@ class ExcelProcessor ():
 
 import re, random, string
 from datetime import datetime, date, timedelta
-from cmh.common.models import Category, Attribute
 from django.db.models import Q
 
 def check_email (email):

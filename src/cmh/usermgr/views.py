@@ -43,13 +43,15 @@ def dologin (request):
             except Exception, e:
                 pass
 
-        return render_to_response ('login.html', {'form': form,
-                                                  'menus' : get_user_menus (request.user),
-                                                  'user' : request.user})
+        return render_to_response ('login.html',
+                                   {'form': form,
+                                    'menus' : get_user_menus (request.user),
+                                    'user' : request.user})
     else:
-        return render_to_response ('login.html', {'form': form,
-                                                  'menus' : get_user_menus (request.user),
-                                                  'user' : request.user})
+        return render_to_response ('login.html',
+                                   {'form': form,
+                                    'menus' : get_user_menus (request.user),
+                                    'user' : request.user})
 
 
 

@@ -40,27 +40,33 @@ class Complaint(models.Model):
     assignto      = models.ForeignKey (Official, blank = True, null = True)
     location      = models.ForeignKey (Village, blank = True, null = True)
     logdate       = models.DateField (blank = True, null = True)
-    original      = models.ForeignKey ('Complaint', blank = True, null = True)
     created       = models.DateTimeField (auto_now_add = True)
+    original      = models.ForeignKey ('Complaint', blank = True, null = True)
     latest        = models.BooleanField (default = True)
     creator       = models.ForeignKey (User, blank = True, null = True)
     comment       = models.CharField (max_length = 1000, blank = True, null = True)
 
     objects = ComplaintManager ()
 
-    def clone (self):
+    def clone (self, cloner):
         self.latest = False
         self.save ()
-        return Complaint.objects.create (base = self.base,
-                                         complaintno = self.complaintno,
-                                         description = self.description,
-                                         department = self.department,
-                                         curstate = self.curstate,
-                                         filedby = self.filedby,
-                                         assignto = self.assignto,
-                                         location = self.location,
-                                         logdate = self.logdate,
-                                         original = self)
+        newver = Complaint.objects.create (complainttype = self.complainttype,
+                                           complaintno = self.complaintno,
+                                           description = self.description,
+                                           department = self.department,
+                                           curstate = self.curstate,
+                                           filedby = self.filedby,
+                                           assignto = self.assignto,
+                                           location = self.location,
+                                           logdate = self.logdate,
+                                           original = self)
+        newver.latest = True
+        if cloner.is_anonymous () == False:
+            newver.creator = cloner
+        newver.save ()
+        return newver
+
 
     def get_location_name (self):
         if self.location != None:
@@ -71,22 +77,11 @@ class Complaint(models.Model):
             return "----"
 
 
-    def get_department_name (self):
-        if self.department != None:
-            dept_code = self.department.value
-            dept_name = CodeName.objects.get (code = dept_code).name
-        else:
-            dept_name = "----"
-        return dept_name
-
     def get_official_name (self):
         if self.assignto != None:
             return self.assignto.user.username
         else:
             return "----"
-
-    def __unicode__ (self):
-        return self.complaintno
 
 class StatusTransitionManager (models.Manager):
     def get_allowed_statuses (self, role, curstate):
@@ -105,9 +100,9 @@ class StatusTransitionManager (models.Manager):
 
         return newstates
 
-
     def get_changeable_statuses (self, role):
-        return Attribute.objects.filter (curstate__role = role, category__key = 'Status')
+        return ComplaintStatus.objects.filter (curstate__role = role)
+
 
 class StatusTransition (models.Model):
     role     = models.ForeignKey (AppRole, blank = True, null = True,)

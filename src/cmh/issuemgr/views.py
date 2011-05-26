@@ -29,11 +29,9 @@ from django.contrib.auth.decorators import login_required
 
 from cmh.common.models import Country, State, District
 from cmh.common.models import Block, GramPanchayat, Village
-from cmh.common.models import Category, Attribute, CodeName
-from cmh.common.models import get_code2name, get_child_attributes
+from cmh.common.models import ComplaintType
 
-from cmh.issuemgr.constants import COMPLAINT_TYPES, DEPARTMENTS
-from cmh.issuemgr.models import ComplaintItem, Complaint, StatusTransition
+from cmh.issuemgr.models import Complaint, StatusTransition
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
 from cmh.issuemgr.forms import ComplaintTrackForm
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
@@ -41,21 +39,25 @@ from cmh.issuemgr.constants import HotComplaintPeriod
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX
 
 from cmh.usermgr.models import AppRole
-from cmh.usermgr.models import ROLE_ANONYMOUS, ROLE_CSO, ROLE_DELEGATE, ROLE_OFFICIAL, ROLE_DM
+from cmh.usermgr.constants import UserRoles
 from cmh.usermgr.utils import get_user_menus
 
 
 def index (request):
     if request.method == 'GET':
-        form = ComplaintForm ()
-        return render_to_response ('complaint.html',
-                                   {'form' : form,
-                                    'menus' : get_user_menus (request.user),
-                                    'user' : request.user,
-                                    'post_url' : reverse (index),
-                                    'map' : {'center_lat' : 23.20119,
-                                             'center_long' : 77.081795,
-                                             'zoom_level' : 13}})
+        try:
+            form = ComplaintForm ()
+            return render_to_response ('complaint.html',
+                                       {'form' : form,
+                                        'menus' : get_user_menus (request.user),
+                                        'user' : request.user,
+                                        'post_url' : reverse (index),
+                                        'map' : {'center_lat' : 23.20119,
+                                                 'center_long' : 77.081795,
+                                                 'zoom_level' : 13}})
+        except:
+            import traceback
+            traceback.print_exc ()
     elif request.method == 'POST':
         form = ComplaintForm (request.POST)
         if form.is_valid ():
@@ -125,15 +127,17 @@ def categories (request):
             retvals = []
             words = set ([x.lower () for x in form.cleaned_data ['term'].split ()])
 
-            for cpl_type in COMPLAINT_TYPES:
-                cpl_code = cpl_type.value
-                cpl_item = ComplaintItem.objects.get (code = cpl_code)
-                cpl_words = set ([x.lower () for x in cpl_item.name.split ()])
-                if len (cpl_words & words) != 0:
-                    cpl_dept = CodeName.objects.get (code = cpl_type.parent.value).name
-                    retvals.append ({'display' : cpl_item.name,
-                                     'detail' : '%s<br/>Department: %s' % (cpl_item.desc, cpl_dept),
-                                     'id' : cpl_type.id})
+
+            complaint_types = ComplaintType.objects.all ()
+            for word in words:
+                complaint_types = complaint_types.filter (search__icontains = word)
+
+            for cpl_type in complaint_types:
+                retvals.append ({'display' : cpl_type.summary,
+                                 'detail' : ('%s<br/>Department: %s' %
+                                             (cpl_type.cclass,
+                                              cpl_type.department.name)),
+                                 'id' : cpl_type.id})
             return HttpResponse (json.dumps (retvals))
     except:
         import traceback
@@ -183,13 +187,14 @@ def accept (request):
                                         'user' : request.user,
                                         'complaint' : complaint})
         else:
-            return render_to_response ('complaint.html', {'form': form,
-                                                          'menus' : get_user_menus (request.user),
-                                                          'user' : request.user,
-                                                          'post_url' : reverse (accept),
-                                                          'map' : {'center_lat' : 23.20119,
-                                                                   'center_long' : 77.081795,
-                                                                   'zoom_level' : 13}})
+            return render_to_response ('complaint.html',
+                                       {'form': form,
+                                        'menus' : get_user_menus (request.user),
+                                        'user' : request.user,
+                                        'post_url' : reverse (accept),
+                                        'map' : {'center_lat' : 23.20119,
+                                                 'center_long' : 77.081795,
+                                                 'zoom_level' : 13}})
     else:
         pass
 
@@ -222,8 +227,7 @@ def update (request, complaintno, complaintid):
     base = complaints.get (original = None)
     current = complaints.get (latest = True)
     user_role = AppRole.objects.get_user_role (request.user)
-    newstatuses = StatusTransition.objects.get_allowed_statuses (user_role,
-                                                                 current.curstate)
+    newstatuses = StatusTransition.objects.get_allowed_statuses (user_role, current.curstate)
 
     if newstatuses.count () == 0:
         return render_to_response ('update-cannot-do.html',
@@ -259,7 +263,7 @@ def update (request, complaintno, complaintid):
             if request.POST.has_key ('save'):
                 form = ComplaintUpdateForm (current, newstatuses, request.POST)
                 if form.is_valid ():
-                    form.save ()
+                    form.save (request.user)
                     return HttpResponseRedirect (prev_page)
                 else:
                     return render_to_response ('update.html',
@@ -346,29 +350,30 @@ def hot_complaints (request):
             # FIXME: remove 'exclude (base = None)' once the form to "update"
             # a new issue to acked issue is fixed to update the issuetype ('base')
             # instead of just the department.
-            period_issues = Complaint.objects.filter (created__lte = now, created__gt = period4, original = None).exclude (base = None)
+            period_issues = Complaint.objects.filter (created__lte = now, created__gt = period4, original = None).exclude (complainttype = None)
 
-            issue_codes = set ([issue.base.id for issue in period_issues])
+            issue_codes = set ([issue.complainttype.id for issue in period_issues])
 
             issue_table = []
             for issue_code in issue_codes:
-                issue_table.append ((issue_code, period_issues.filter (base__id = issue_code).count ()))
+                issue_table.append ((issue_code, period_issues.filter (complainttype__id = issue_code).count ()))
             issue_table = sorted (issue_table, key = (lambda x: x[1]), reverse = True)
             issue_table = issue_table [:5]
+
+            print issue_table
 
             periods = [(now, period1), (period1, period2), (period2, period3), (period3, period4)]
 
             datapoints = []
             issuetypes = []
-            for issue_entry in issue_table:
+            for issue_id, issue_count in issue_table:
                 datapoints.append ([[te.strftime ("%Y-%m-%d 12:01AM"),
-                                     period_issues.filter (base__id = issue_entry [0],
+                                     period_issues.filter (complainttype__id = issue_id,
                                                            created__lte = te,
                                                            created__gte = ts).count ()]
                                     for te, ts in periods])
-                issueattr = COMPLAINT_TYPES.get (id = issue_entry [0])
-                issuetypes.append ({'label': CodeName.objects.get (code = issueattr.value).name,
-                                    'showLabel': True})
+                ct = ComplaintType.objects.get (id = issue_id)
+                issuetypes.append ({'label': ct.summary, 'showLabel': True})
         except:
             import traceback
             traceback.print_exc ()
