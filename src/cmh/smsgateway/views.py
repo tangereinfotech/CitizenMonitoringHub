@@ -33,15 +33,16 @@ def gateway (request):
     if request.method == 'GET':
         transferreq = SMSTransferReqFormat (request.GET)
         if transferreq.is_valid () == True:
-            # Find any pending SMSes to be transferred
-            # Send them as show in the payload section below
+            messages = []
+            for tm in TextMessage.objects.filter (processed = False, valid = True):
+                messages.append ({'to' : tm.getter,
+                                  'message' : tm.message})
+                tm.processed = True
+                tm.save ()
             return HttpResponse (json.dumps ({"payload":
                                               {"task": "send",
                                                "secret": "0123456789",
-                                               "messages": [{"to": "0000000000", # 10-dig phone number
-                                                             "message": "the message goes here" },]
-                                               }
-                                              }))
+                                               "messages": messages}})
         else:
             return HttpResponse (json.dumps ({}))
     elif request.method == 'POST':
@@ -71,6 +72,9 @@ def gateway (request):
                                                   original = None,
                                                   creator = None)
                 update_complaint_sequence (compl)
+                text_message = ("Your complaint is registered. Ref Num: "
+                                + compl.complaintno)
+                TextMessage.objects.queue_text_message (citizen.mobile, text_message)
                 return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
             else:
                 return HttpResponse (json.dumps ({'payload' : {'success' : 'false'}}))
