@@ -1,25 +1,25 @@
-Citizen Monitoring Hub
+* Citizen Monitoring Hub
 
-* About
+** About
 TODO
 
-* To Install:
+** To Install:
 This application is being developed on Ubuntu, though it may be possible to install / run this on Windows/ MacOS.
 
 ** Dependencies:
-*** Django v1.3 or later (http://djangoproject.com)
-*** South v0.7.1 or later (http://aeracode.com or sudo easy_install South)
-*** PostgreSQL v8.4
+Django v1.3 or later (http://djangoproject.com)
+South v0.7.1 or later (http://aeracode.com or sudo easy_install South)
+PostgreSQL v8.4
 
 ** Steps:
-*** Ensure that the user required by PostgreSQL is created on your system (Do not use the default username provided in default settings.py)
-*** Create the PostgreSQL database as specified by settings.
-*** Run the following commands
-**** ./manage.py syncdb
-**** ./manage.py migrate
-**** ./manage.py init_roles
-**** ./manage.py init_statuses
-**** ./manage.py init_status_transition
+Ensure that the user required by PostgreSQL is created on your system (Do not use the default username provided in default settings.py)
+Create the PostgreSQL database as specified by settings.
+Run the following commands
+ * ./manage.py syncdb
+ * ./manage.py migrate
+ * ./manage.py init_roles
+ * ./manage.py init_statuses
+ * ./manage.py init_status_transition
 
-*** Beyond the above setup, the application requires locations, people and complaint types. These can be separately initialized by a set of other scripts included with the application. Or the Application provided UI can be used for that purpose.
+ Beyond the above setup, the application requires locations, people and complaint types. These can be separately initialized by a set of other scripts included with the application. Or the Application provided UI can be used for that purpose.
 
