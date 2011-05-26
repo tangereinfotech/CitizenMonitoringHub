@@ -35,8 +35,8 @@ def update_complaint_sequence (complaint):
 
 def get_location_attr (block_no, gp_no, vill_no):
     loc_code = "%s.%03d.%03d.%03d" % (settings.DEPLOY_DISTT_CODE,
-                                      int (block_no),
-                                      int (gp_no),
-                                      int (vill_no))
+                                      int (block_no.strip ()),
+                                      int (gp_no.strip ()),
+                                      int (vill_no.strip ()))
 
     return Village.objects.get (code = loc_code)
