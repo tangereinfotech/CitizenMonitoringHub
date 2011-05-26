@@ -47,11 +47,12 @@ def gateway (request):
         else:
             return HttpResponse (json.dumps ({}))
     elif request.method == 'POST':
-        try:
-            receivedform = SMSReceivedFormat (request.POST)
-            if receivedform.is_valid ():
-                sender_phone = receivedform.cleaned_data ['from']
-                message      = receivedform.cleaned_data ['message']
+        receivedform = SMSReceivedFormat (request.POST)
+        if receivedform.is_valid ():
+            sender_phone = receivedform.cleaned_data ['from']
+            message      = receivedform.cleaned_data ['message']
+
+            try:
                 message_fields = message.split ()
                 location = message_fields [0]
                 sender_name = message_fields [1]
@@ -77,11 +78,16 @@ def gateway (request):
                                 + compl.complaintno)
                 TextMessage.objects.queue_text_message (citizen.mobile, text_message)
                 return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
-            else:
-                return HttpResponse (json.dumps ({'payload' : {'success' : 'false'}}))
-        except:
-            import traceback
-            traceback.print_exc ()
+            except:
+                import traceback
+                traceback.print_exc ()
+                text_message = "Complaint could not be logged. Please check format"
+                TextMessage.objects.queue_text_message (sender_phone, text_message)
+                return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
+        else:
+            # In this case, we can safely assume that the message is not coming from
+            # SMSSync so silently ignore.
+            return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
     else:
         return HttpResponseForbidden
 
