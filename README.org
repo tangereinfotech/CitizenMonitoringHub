@@ -15,11 +15,16 @@ PostgreSQL v8.4
 Ensure that the user required by PostgreSQL is created on your system (Do not use the default username provided in default settings.py)
 Create the PostgreSQL database as specified by settings.
 Run the following commands
- * ./manage.py syncdb
- * ./manage.py migrate
- * ./manage.py init_roles
- * ./manage.py init_statuses
- * ./manage.py init_status_transition
+
+ + ./manage.py syncdb
+
+ + ./manage.py migrate
+
+ + ./manage.py init_roles
+
+ + ./manage.py init_statuses
+
+ + ./manage.py init_status_transition
 
  Beyond the above setup, the application requires locations, people and complaint types. These can be separately initialized by a set of other scripts included with the application. Or the Application provided UI can be used for that purpose.
 
