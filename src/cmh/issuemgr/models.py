@@ -16,7 +16,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from cmh.usermgr.models import Citizen, Official, Citizen, AppRole
+from cmh.usermgr.models import Citizen, Official, Citizen
 from cmh.common.models import ComplaintStatus
 from cmh.common.models import Country, State, District, Block
 from cmh.common.models import GramPanchayat, Village
@@ -82,31 +82,3 @@ class Complaint(models.Model):
             return self.assignto.user.username
         else:
             return "----"
-
-class StatusTransitionManager (models.Manager):
-    def get_allowed_statuses (self, role, curstate):
-        newstates = ComplaintStatus.objects.filter (newstate__curstate = curstate).distinct ()
-        toexclude = []
-        for newstate in newstates:
-            try:
-                st = StatusTransition.objects.get (role = role,
-                                                   curstate = curstate,
-                                                   newstate = newstate)
-            except StatusTransition.DoesNotExist:
-                toexclude.append (newstate)
-
-        for te in toexclude:
-            newstates = newstates.exclude (id = newstate.id)
-
-        return newstates
-
-    def get_changeable_statuses (self, role):
-        return ComplaintStatus.objects.filter (curstate__role = role)
-
-
-class StatusTransition (models.Model):
-    role     = models.ForeignKey (AppRole, blank = True, null = True,)
-    curstate = models.ForeignKey (ComplaintStatus, related_name = 'curstate')
-    newstate = models.ForeignKey (ComplaintStatus, related_name = 'newstate')
-
-    objects = StatusTransitionManager ()

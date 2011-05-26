@@ -13,16 +13,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from cmh.usermgr.constants import UserRoles
-from cmh.usermgr.models import AppRole
 from django.core.management.base import NoArgsCommand
+
+from cmh.common.models import AppRole
+
+from cmh.usermgr.constants import UserRoles
+
 
 class Command (NoArgsCommand):
     def handle (self, *args, **kwargs):
-        AppRole.objects.create (role = UserRoles.ANONYMOUS)
-        AppRole.objects.create (role = UserRoles.CSO)
-        AppRole.objects.create (role = UserRoles.DELEGATE)
-        AppRole.objects.create (role = UserRoles.OFFICIAL)
-        AppRole.objects.create (role = UserRoles.DM)
+        try:
+            AppRole.objects.get (role = UserRoles.ANONYMOUS)
+        except AppRole.DoesNotExist:
+            AppRole.objects.create (role = UserRoles.ANONYMOUS)
+        try:
+            AppRole.objects.get (role = UserRoles.CSO)
+        except AppRole.DoesNotExist:
+            AppRole.objects.create (role = UserRoles.CSO)
+        try:
+            AppRole.objects.get (role = UserRoles.DELEGATE)
+        except AppRole.DoesNotExist:
+            AppRole.objects.create (role = UserRoles.DELEGATE)
+        try:
+            AppRole.objects.get (role = UserRoles.OFFICIAL)
+        except AppRole.DoesNotExist:
+            AppRole.objects.create (role = UserRoles.OFFICIAL)
+        try:
+            AppRole.objects.get (role = UserRoles.DM)
+        except AppRole.DoesNotExist:
+            AppRole.objects.create (role = UserRoles.DM)
 
 

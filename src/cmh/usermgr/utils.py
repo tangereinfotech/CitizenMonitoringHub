@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from cmh.usermgr.models import MenuItem, AppRole
+from cmh.common.models import MenuItem, AppRole
 from cmh.usermgr.constants import UserRoles
 
 from cmh.usermgr.models import Citizen

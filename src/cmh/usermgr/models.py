@@ -58,46 +58,6 @@ class CmhUser (models.Model):
 
     phone_number = property (_get_phone_number)
 
-
-class RoleException (Exception):
-    pass
-
-
-class AppRoleManager (models.Manager):
-    def get_user_role (self, user):
-        from cmh.usermgr.constants import UserRoles
-        if user.is_authenticated ():
-            try:
-                return AppRole.objects.get (users = user)
-            except AppRole.MultipleObjectsReturned:
-                raise RoleException ("Multiple Roles for user: " + user.username)
-            except AppRole.DoesNotExist:
-                UserRoles.ROLE_ANONYMOUS.users.add (user)
-                return UserRoles.ROLE_ANONYMOUS
-        else:
-            return UserRoles.ROLE_ANONYMOUS
-
-class AppRole (models.Model):
-    role  = models.IntegerField ()
-    name  = models.CharField (max_length = 50)
-    users = models.ManyToManyField (User)
-
-    objects = AppRoleManager ()
-
-    def __unicode__ (self):
-        return self.name
-
-
-class MenuItem (models.Model):
-    name   = models.CharField (max_length = 500)
-    url    = models.CharField (max_length = 500)
-    role   = models.ForeignKey (AppRole)
-    serial = models.IntegerField ()
-
-    class Meta:
-        unique_together = (('role', 'serial', 'url'),)
-
-
 class Official(models.Model):
     user        = models.OneToOneField (User)
     supervisor  = models.ForeignKey ('Official', blank=True, null=True)

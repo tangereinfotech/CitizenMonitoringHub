@@ -14,8 +14,8 @@
 # limitations under the License.
 
 from django.contrib import admin
+from cmh.common.models import AppRole
 from cmh.usermgr.models import Citizen, Official
-from cmh.usermgr.models import AppRole
 
 admin.site.register(Citizen)
 admin.site.register(Official)

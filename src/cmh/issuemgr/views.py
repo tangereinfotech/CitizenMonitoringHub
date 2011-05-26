@@ -29,10 +29,12 @@ from django.contrib.auth.decorators import login_required
 
 from cmh.common.models import Country, State, District
 from cmh.common.models import Block, GramPanchayat, Village
-from cmh.common.models import ComplaintType
+from cmh.common.models import ComplaintType, StatusTransition
+from cmh.common.models import AppRole
+
 from cmh.common.utils import debug
 
-from cmh.issuemgr.models import Complaint, StatusTransition
+from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
 from cmh.issuemgr.forms import ComplaintTrackForm
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
@@ -41,7 +43,6 @@ from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX
 
 from cmh.smsgateway.models import TextMessage
 
-from cmh.usermgr.models import AppRole
 from cmh.usermgr.constants import UserRoles
 from cmh.usermgr.utils import get_user_menus
 
@@ -95,8 +96,10 @@ def get_category_map_update (request, category):
                     retval [location.id]['count'] += 1
                 else:
                     retval [complaint.location.id] = {'count' : 1,
+                                                      'name' : location.name,
                                                       'latitude': location.lattd,
                                                       'longitude' : location.longd}
+        debug (retval)
         return HttpResponse (json.dumps (retval))
     else:
         return HttpResponse (json.dumps ([]))

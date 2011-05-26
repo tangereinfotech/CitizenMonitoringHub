@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from django.db import models
+from django.contrib.auth.models import User
 
 class Location (models.Model):
     code = models.CharField (max_length = 200)
@@ -62,3 +63,75 @@ class ComplaintType (models.Model):
 
 class ComplaintStatus (models.Model):
     name = models.CharField (max_length = 50)
+
+
+
+class RoleException (Exception):
+    pass
+
+
+class AppRoleManager (models.Manager):
+    def get_user_role (self, user):
+        from cmh.usermgr.constants import UserRoles
+        if user.is_authenticated ():
+            try:
+                return AppRole.objects.get (users = user)
+            except AppRole.MultipleObjectsReturned:
+                raise RoleException ("Multiple Roles for user: " + user.username)
+            except AppRole.DoesNotExist:
+                UserRoles.ROLE_ANONYMOUS.users.add (user)
+                return UserRoles.ROLE_ANONYMOUS
+        else:
+            return UserRoles.ROLE_ANONYMOUS
+
+class AppRole (models.Model):
+    role  = models.IntegerField ()
+    name  = models.CharField (max_length = 50)
+    users = models.ManyToManyField (User)
+
+    objects = AppRoleManager ()
+
+    def __unicode__ (self):
+        return self.name
+
+
+class MenuItem (models.Model):
+    name   = models.CharField (max_length = 500)
+    url    = models.CharField (max_length = 500)
+    role   = models.ForeignKey (AppRole)
+    serial = models.IntegerField ()
+
+    class Meta:
+        unique_together = (('role', 'serial', 'url'),)
+
+
+class StatusTransitionManager (models.Manager):
+    def get_allowed_statuses (self, role, curstate):
+        newstates = ComplaintStatus.objects.filter (newstate__curstate = curstate).distinct ()
+        toexclude = []
+        for newstate in newstates:
+            try:
+                st = StatusTransition.objects.get (role = role,
+                                                   curstate = curstate,
+                                                   newstate = newstate)
+            except StatusTransition.DoesNotExist:
+                toexclude.append (newstate)
+
+        for te in toexclude:
+            newstates = newstates.exclude (id = newstate.id)
+
+        return newstates
+
+    def get_changeable_statuses (self, role):
+        return ComplaintStatus.objects.filter (curstate__role = role)
+
+
+class StatusTransition (models.Model):
+    role     = models.ForeignKey (AppRole, blank = True, null = True,)
+    curstate = models.ForeignKey (ComplaintStatus, related_name = 'curstate')
+    newstate = models.ForeignKey (ComplaintStatus, related_name = 'newstate')
+
+    objects = StatusTransitionManager ()
+
+
+

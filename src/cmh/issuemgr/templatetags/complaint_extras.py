@@ -1,7 +1,7 @@
 from django import template
 
-from cmh.usermgr.models import AppRole
-from cmh.issuemgr.models import StatusTransition
+from cmh.common.models import AppRole
+from cmh.common.models import StatusTransition
 
 register = template.Library ()
 

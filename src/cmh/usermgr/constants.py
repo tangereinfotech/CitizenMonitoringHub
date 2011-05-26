@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from cmh.usermgr.models import AppRole
+from cmh.common.models import AppRole
 
 class UserRoles:
     ANONYMOUS = 1

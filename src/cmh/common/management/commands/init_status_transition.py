@@ -15,9 +15,11 @@
 # limitations under the License.
 
 from django.core.management.base import NoArgsCommand, CommandError
-from cmh.issuemgr.models import StatusTransition
+from cmh.common.models import StatusTransition
+from cmh.common.models import AppRole, MenuItem
+
 from cmh.usermgr.constants import UserRoles
-from cmh.usermgr.models import AppRole, MenuItem
+
 from cmh.issuemgr.constants import *
 
 

@@ -37,6 +37,10 @@ var MapHandler = {
                                        radius: value.count * 200
                                    };
                                    var placeCircle = new google.maps.Circle (circleOpts);
+                                   // var overlayView = new MapHandler.map.OverlayView ();
+                                   // alert ("overlayview");
+                                   // var point = google.maps.fromLatLngToContainerPixel (place_latlong);
+                                   // alert ("value.name: " + point.x + ", " + point.y);
                                });
                        MapHandler.map.setCenter (bounds.getCenter ());
                        MapHandler.map.fitBounds (bounds);

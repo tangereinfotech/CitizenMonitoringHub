@@ -22,9 +22,9 @@ from datetime import datetime
 from cmh.common.models import Country, State, District
 from cmh.common.models import Block, GramPanchayat, Village
 from cmh.common.models import ComplaintType, ComplaintDepartment, ComplaintType
-from cmh.common.models import ComplaintStatus
+from cmh.common.models import ComplaintStatus, StatusTransition
 from cmh.issuemgr.constants import STATUS_NEW, STATUS_ACK
-from cmh.issuemgr.models import Complaint, StatusTransition
+from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.utils import update_complaint_sequence
 
 from cmh.usermgr.utils import get_or_create_citizen
