@@ -28,63 +28,40 @@ class Command (NoArgsCommand):
         self.populate_role_menus ()
 
     def populate_role_menus (self):
-        try:
-            anonymous = AppRole.objects.get (role = UserRoles.ANONYMOUS)
-            anonymous.name = 'Anonymous'
-            anonymous.save ()
-        except AppRole.DoesNotExist:
-            anonymous = AppRole.objects.create (role = UserRoles.ANONYMOUS, name = 'Anonymous')
+        anonymous = AppRole.objects.get (role = UserRoles.ANONYMOUS)
+        cso = AppRole.objects.get (role = UserRoles.CSO)
+        delegate = AppRole.objects.get (role = UserRoles.DELEGATE)
+        official = AppRole.objects.get (role = UserRoles.OFFICIAL)
+        dm = AppRole.objects.get (role = UserRoles.DM)
 
-        try:
-            cso = AppRole.objects.get (role = UserRoles.CSO)
-            cso.name = 'CSO Member'
-            cso.save ()
-        except AppRole.DoesNotExist:
-            cso = AppRole.objects.create (role = UserRoles.CSO, name = 'CSO Member')
+        anonymous_menu = [{'name' : 'Home', 'url' : '/'},
+                          {'name' : 'Submit Issue', 'url' : '/complaint/'},
+                          {'name' : 'Track Issue', 'url' : '/complaint/track/'},]
 
-        try:
-            delegate = AppRole.objects.get (role = UserRoles.DELEGATE)
-            delegate.name = 'Delegate'
-            delegate.save ()
-        except AppRole.DoesNotExist:
-            delegate = AppRole.objects.create (role = UserRoles.DELEGATE, name = 'Delegate')
+        cso_menu = [{'name' : 'Home', 'url' : '/'},
+                    {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
+                    {'name' : 'Accept', 'url' : '/complaint/accept/'},
+                    {'name' : 'Track', 'url' : '/complaint/track/'},
+                    {'name' : 'Masters', 'url' : '/masters/'},]
 
-        try:
-            official = AppRole.objects.get (role = UserRoles.OFFICIAL)
-            official.name = 'Official'
-            official.save ()
-        except AppRole.DoesNotExist:
-            official = AppRole.objects.create (role = UserRoles.OFFICIAL, name = 'Official')
+        delegate_menu = [{'name' : 'Home', 'url' : '/'},
+                         {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
+                         {'name' : 'Track', 'url' : '/complaint/track/'},]
 
-        try:
-            dm = AppRole.objects.get (role = UserRoles.DM)
-            dm.name = 'District Magistrate'
-            dm.save ()
-        except AppRole.DoesNotExist:
-            dm = AppRole.objects.create (role = UserRoles.DM, name = 'District Magistrate')
+        official_menu = [{'name' : 'Home', 'url' : '/'},
+                         {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
+                         {'name' : 'Track', 'url' : '/complaint/track/'},]
 
-        anonymous_menu = [{'name' : 'Home',
-                           'url' : '/'},
-                          {'name' : 'Submit Issue',
-                           'url' : '/complaint/'},
-                          {'name' : 'Track Issue',
-                           'url' : '/complaint/track/'},
-                          ]
-
-        cso_menu = [{'name' : 'Home',
-                     'url' : '/'},
-                    {'name' : 'My Issues',
-                     'url' : '/complaint/my_issues/'},
-                    {'name' : 'Accept',
-                     'url' : '/complaint/accept/'},
-                    {'name' : 'Track',
-                     'url' : '/complaint/track/'},
-                    {'name' : 'Masters',
-                     'url' : '/masters/'},
-                    ]
+        dm_menu = [{'name' : 'Home', 'url' : '/'},
+                   {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
+                   {'name' : 'Track', 'url' : '/complaint/track/'},]
 
         self._ensure_menu (anonymous, anonymous_menu)
         self._ensure_menu (cso, cso_menu)
+        self._ensure_menu (delegate, delegate_menu)
+        self._ensure_menu (official, official_menu)
+        self._ensure_menu (dm, dm_menu)
+
         self._populate_status_transitions (cso, delegate, official, dm, anonymous)
 
     def _ensure_menu (self, role, menus):

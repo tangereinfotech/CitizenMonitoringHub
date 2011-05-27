@@ -17,7 +17,7 @@ import sys, traceback
 from django.db import models
 from django.contrib.auth.models import User
 
-from cmh.common.models import ComplaintDepartment, ComplaintType
+from cmh.common.models import ComplaintDepartment, ComplaintType, AppRole
 
 class Citizen(models.Model):
     name   = models.CharField (max_length = 500, blank = True, null = True)

@@ -23,24 +23,24 @@ from cmh.usermgr.constants import UserRoles
 class Command (NoArgsCommand):
     def handle (self, *args, **kwargs):
         try:
-            AppRole.objects.get (role = UserRoles.ANONYMOUS)
+            AppRole.objects.get (role = UserRoles.ANONYMOUS, name = "Anonymous")
         except AppRole.DoesNotExist:
-            AppRole.objects.create (role = UserRoles.ANONYMOUS)
+            AppRole.objects.create (role = UserRoles.ANONYMOUS, name = "Anonymous")
         try:
-            AppRole.objects.get (role = UserRoles.CSO)
+            AppRole.objects.get (role = UserRoles.CSO, name = "CSO Member")
         except AppRole.DoesNotExist:
-            AppRole.objects.create (role = UserRoles.CSO)
+            AppRole.objects.create (role = UserRoles.CSO, name = "CSO Member")
         try:
-            AppRole.objects.get (role = UserRoles.DELEGATE)
+            AppRole.objects.get (role = UserRoles.DELEGATE, name = "Delegate")
         except AppRole.DoesNotExist:
-            AppRole.objects.create (role = UserRoles.DELEGATE)
+            AppRole.objects.create (role = UserRoles.DELEGATE, name = "Delegate")
         try:
-            AppRole.objects.get (role = UserRoles.OFFICIAL)
+            AppRole.objects.get (role = UserRoles.OFFICIAL, name = 'Official')
         except AppRole.DoesNotExist:
-            AppRole.objects.create (role = UserRoles.OFFICIAL)
+            AppRole.objects.create (role = UserRoles.OFFICIAL, name = 'Official')
         try:
-            AppRole.objects.get (role = UserRoles.DM)
+            AppRole.objects.get (role = UserRoles.DM, name = 'District Magistrate')
         except AppRole.DoesNotExist:
-            AppRole.objects.create (role = UserRoles.DM)
+            AppRole.objects.create (role = UserRoles.DM, name = 'District Magistrate')
 
 

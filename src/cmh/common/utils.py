@@ -17,6 +17,8 @@
 import sys
 import xlrd
 
+from django.conf import settings
+
 class InvalidDataException (Exception):
     pass
 
@@ -59,7 +61,6 @@ class ExcelProcessor ():
                     else:
                         cellvalues.append (None)
                 self.rowdatacallback (rowid, cellvalues)
-
 
         self.parsedonecallback ()
 
@@ -191,14 +192,10 @@ def ddmmyyyy2date (str):
         return None
     else:
         return date (year = yyyy, month = mm, day = dd)
-    # except:
-    #     pass
-        #response = get_error_response(request.client_locale, 'E_COMMON_HACK_1')
-        #raise InvalidDateSpec("Date format is invalid. Please provide in format mm/dd/yyyy.")
 
 
 
 def debug (message):
-    import sys
-    sys.stderr.write (str (message) + "\n")
+    if settings.DEBUG:
+        sys.stderr.write (str (message) + "\n")
 

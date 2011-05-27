@@ -42,7 +42,6 @@ class AddCSOMember (forms.Form):
         cmhuser = CmhUser.objects.create (user = user,
                                           phone = self.cleaned_data ['phone'])
 
-
         cmhuser.set_user_role (UserRoles.CSO)
         return cmhuser
 

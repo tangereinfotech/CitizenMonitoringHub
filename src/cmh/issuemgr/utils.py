@@ -16,6 +16,7 @@
 from datetime import datetime
 from django.conf import settings
 
+from cmh.common.models import Village
 
 def update_complaint_sequence (complaint):
     from cmh.issuemgr.models import Complaint
