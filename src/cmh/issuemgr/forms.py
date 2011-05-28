@@ -252,8 +252,18 @@ class ComplaintUpdateForm (forms.Form):
 
         if self.cleaned_data ['revcategoryid'] != None:
             newver.complainttype = ComplaintType.objects.get (id = self.cleaned_data ['revcategoryid'])
+            newver.department = newver.complainttype.department
 
         newver.save ()
+
+        # Update the "original" issue if the new status is ACK state since the
+        # issue has been made actionable
+        if newver.curstate == STATUS_ACK:
+            original = newver.original
+            original.complainttype = newver.complainttype
+            original.location = newver.location
+            original.department = newver.complainttype.department
+            original.save ()
         return newver
 
 

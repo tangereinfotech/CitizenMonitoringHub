@@ -99,7 +99,6 @@ def get_category_map_update (request, category):
                                                       'name' : location.name,
                                                       'latitude': location.lattd,
                                                       'longitude' : location.longd}
-        debug (retval)
         return HttpResponse (json.dumps (retval))
     else:
         return HttpResponse (json.dumps ([]))
@@ -122,8 +121,9 @@ def locations (request):
                                                             = term.lower ())]
             return HttpResponse (json.dumps (names))
         else:
-            debug (form.errors)
+            debug ("Form is invalid: " + str (form.errors))
     except:
+        debug ("General exception")
         import traceback
         traceback.print_exc ()
     return HttpResponse (json.dumps ([]))

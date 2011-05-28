@@ -28,6 +28,7 @@ from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.constants import STATUS_NEW
 
 from cmh.usermgr.utils import get_or_create_citizen
+from cmh.common.utils import debug
 
 
 def gateway (request):
@@ -47,7 +48,9 @@ def gateway (request):
             return HttpResponse (json.dumps ({}))
     elif request.method == 'POST':
         receivedform = SMSReceivedFormat (request.POST)
+        debug ("Received from: " + str (receivedform))
         if receivedform.is_valid ():
+            debug ("Form is valid")
             sender_phone = receivedform.cleaned_data ['from']
             message      = receivedform.cleaned_data ['message']
 
@@ -62,7 +65,7 @@ def gateway (request):
 
                 location = get_location_attr (block_no, gp_no, vill_no)
 
-                compl = Complaint.objects.create (base = None,
+                compl = Complaint.objects.create (complainttype = None,
                                                   complaintno = None,
                                                   description = issue_desc,
                                                   department = None,
