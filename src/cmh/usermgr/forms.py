@@ -70,15 +70,18 @@ class UserRegisterForm(forms.Form):
             raise forms.ValidationError("Phone number format is invalid")
 
 class ProfileEditForm (forms.Form):
-    name     = forms.CharField(max_length= 200, label="NAME")
-    phone    = PhoneNumberField (label="PHONE NUMBER")
-    username = forms.CharField(max_length= 200, label="USER NAME", required="false")
+    name     = forms.CharField(max_length= 200)
+    phone    = PhoneNumberField ()
+    username = forms.CharField(max_length= 200, required="false")
 
 
 class PasswordUpdateForm(forms.Form):
-    oldpassword = forms.CharField(label="Old password", widget=forms.PasswordInput, required = True)
-    newpassword1 = forms.CharField(label="New password", widget=forms.PasswordInput, required = True)
-    newpassword2 = forms.CharField(label="New password (Confirm)", widget=forms.PasswordInput, required = True)
+    oldpassword = forms.CharField (label="Old password:",
+                                   widget=forms.PasswordInput)
+    newpassword1 = forms.CharField (label="New password:",
+                                    widget=forms.PasswordInput)
+    newpassword2 = forms.CharField (label="Confirm Password:",
+                                    widget=forms.PasswordInput)
 
     def __init__ (self, user, *args, **kwargs):
         self.user = user

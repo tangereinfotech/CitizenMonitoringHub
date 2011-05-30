@@ -48,8 +48,14 @@ div.userpanel {
    padding-bottom: 5px;
 }
 
-.userpanel a {
-   padding-right: 10px;
+div.userpanel ul.sys-panel {
+   display:inline;
+   list-style-type: none;
+}
+
+div.userpanel ul.sys-panel li {
+   display:inline;
+   padding: 0px 2px;
 }
 
 div.logo_top_menu {
@@ -409,4 +415,8 @@ ul.errorlist li {
 
 .sorting_desc {
    background: url('/static/images/sort_desc.png') no-repeat center right;
+}
+
+input[readonly="readonly"] {
+   background: #dfdfdf;
 }

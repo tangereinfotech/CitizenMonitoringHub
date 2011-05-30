@@ -1,22 +1,28 @@
 {% extends "basewithmenu.html" %}
-  {% block page_content %}
-    <center>
-    <table border=2>
-        <tr>
-            <td>UserName</td><td><label>{{ obj.user.username }}</label></td>
-        </tr>
-        <tr>
-            <td>Name </td><td><label>{{ obj.user.first_name }}</label></td>
-        </tr>
-        <tr>
-            <td>Phone Number</td><td><label>{{ obj.phone }}</label></td>
-        </tr>
-    </table>      <br>
-            <form action="." method="POST">
-            <input type="submit" name="edit" value="EDIT"><br>
-            <input type="submit" name="reset" value="CHANGE PASSWORD">
-            </form>
-
-    <center>
-  {% endblock %}
+{% block page_content %}
+<center>
+  <h2> User Profile </h2>
+  <form action="." method="POST">
+    <table>
+      <tr>
+        <th style="text-align:left">Username:</th>
+        <td>{{ obj.user.username }}</td>
+      </tr>
+      <tr>
+        <th style="text-align:left">Name:</th>
+        <td>{{ obj.user.first_name }}</td>
+      </tr>
+      <tr>
+        <th style="text-align:left">Phone Number:</th>
+        <td>{{ obj.phone }}</td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <input type="submit" name="edit" value="Edit Profile">
+          <input type="submit" name="reset" value="Change Password">
+        </td>
+    </table>
+  </form>
+</center>
+{% endblock %}
 

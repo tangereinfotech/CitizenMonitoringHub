@@ -1,22 +1,33 @@
 {% extends "basewithmenu.html" %}
-  {% block page_content %}
-    <center>
-    <form action="." method="POST">
+{% block page_content %}
+<center>
+  <h2> Editing User Profile </h2>
+  <form action="." method="POST">
     <table>
-        <tr>
-            <td>UserName</td><td><input type="text" name="username" value="{{ obj.user.username }}" readonly="readonly"></td>
-        </tr>
-        <tr>
-            <td>Name</td><td><input type="text" name="name" value="{{ obj.user.first_name }}"></td>
-        </tr>
-        <tr>
-            <td>Phone Number</td><td><input type="text" name="phone" value="{{ obj.phone }}"></td>
-        </tr>
-
-        <tr>
-            <td></td><td align="center"><input type="submit" name="savechanges" value="SAVE CHANGES"></td>
-        </tr>
+      <tr>
+        <td>Username:</td>
+        <td>
+          <input type="text"
+                 name="username"
+                 value="{{ obj.user.username }}"
+                 readonly="readonly">
+        </td>
+      </tr>
+      <tr>
+        <td>Name:</td>
+        <td><input type="text" name="name" value="{{ obj.user.first_name }}"></td>
+      </tr>
+      <tr>
+        <td>Phone Number</td>
+        <td><input type="text" name="phone" value="{{ obj.phone }}"></td>
+      </tr>
+      <tr>
+        <td colspan="2" style="text-align:center">
+          <input type="submit" name="savechanges" value="Save">
+        </td>
+      </tr>
     </table>
-    <center>
-  {% endblock %}
+  </form>
+</center>
+{% endblock %}
 
