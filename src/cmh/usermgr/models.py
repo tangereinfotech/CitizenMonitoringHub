@@ -52,6 +52,9 @@ class CmhUser (models.Model):
         approle.users.add (self.user)
         approle.save ()
 
+    def get_user_role (self):
+        return AppRole.objects.get_user_role (self.user)
+
     def _get_phone_number (self):
         if self.phone == None: return ""
         else: return self.phone

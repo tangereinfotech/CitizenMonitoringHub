@@ -213,6 +213,12 @@ def my_issues (request):
     role = AppRole.objects.get_user_role (request.user)
     statuses = StatusTransition.objects.get_changeable_statuses (role)
     issues = Complaint.objects.get_latest_complaints ().filter (curstate__in = statuses).order_by ('-created')
+
+    role = request.user.cmhuser.get_user_role ()
+    if role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE:
+        official = request.user.official
+        issues = issues.filter (department__in = official.departments.all ())
+
     paginator = Paginator (issues, 10)
 
     try:
@@ -369,8 +375,6 @@ def hot_complaints (request):
             issue_table = sorted (issue_table, key = (lambda x: x[1]), reverse = True)
             issue_table = issue_table [:5]
 
-            debug (issue_table)
-
             periods = [(now, period1), (period1, period2), (period2, period3), (period3, period4)]
 
             datapoints = []
@@ -389,7 +393,6 @@ def hot_complaints (request):
     retval = {'datapoints' : datapoints,
               'x_interval' : x_interval,
               'issuetypes' : issuetypes}
-    debug (retval)
     return HttpResponse (json.dumps (retval))
 
 
