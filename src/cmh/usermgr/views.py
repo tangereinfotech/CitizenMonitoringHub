@@ -32,15 +32,20 @@ def dologin (request):
             username = form.cleaned_data ['username']
             password = form.cleaned_data ['password']
             try:
+                debug ("authenticating user : " + username)
                 user = authenticate(username=username, password=password)
 
                 if user is not None:
+                    debug ("User auth successful")
                     if user.is_active:
+                        debug ("User is active")
                         login (request, user)
                         request.session.set_expiry (0)
                         return HttpResponseRedirect (settings.LOGIN_REDIRECT_URL)
             except Exception, e:
-                pass
+                debug ("Exception occurred in user-auth")
+                import traceback
+                traceback.print_exc ()
 
         return render_to_response ('login.html',
                                    {'form': form,

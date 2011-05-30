@@ -138,6 +138,9 @@ class AddEditOfficial (forms.Form):
 
         user = User.objects.create (username = self.cleaned_data ['username'],
                                     first_name = self.cleaned_data ['name'])
+        user.set_password ('123') # FIXME: SMS point
+        user.save ()
+
         cmhuser = CmhUser.objects.create (user = user,
                                           phone = self.cleaned_data ['phone'])
         cmhuser.set_user_role (role)
