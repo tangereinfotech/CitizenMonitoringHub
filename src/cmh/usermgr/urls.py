@@ -14,9 +14,11 @@
 # limitations under the License.
 
 from django.conf.urls.defaults import *
+from django.contrib.auth.views import password_change
 
 urlpatterns = patterns ('cmh.usermgr.views',
                         (r'^login/$',             'dologin'),
+                        (r'^myprofile/$',            'gotomyprofile'),
                         (r'^logout/$',            'dologout'),
                         # (r'^register/$',           'doregister'),
                         #(r'^forgot/$',            'forgot'),

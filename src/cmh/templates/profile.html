@@ -1,0 +1,22 @@
+{% extends "basewithmenu.html" %}
+  {% block page_content %}
+    <center>
+    <table border=2>
+        <tr>
+            <td>UserName</td><td><label>{{ obj.user.username }}</label></td>
+        </tr>
+        <tr>
+            <td>Name </td><td><label>{{ obj.user.first_name }}</label></td>
+        </tr>
+        <tr>
+            <td>Phone Number</td><td><label>{{ obj.phone }}</label></td>
+        </tr>
+    </table>      <br>
+            <form action="." method="POST">
+            <input type="submit" name="edit" value="EDIT"><br>
+            <input type="submit" name="reset" value="CHANGE PASSWORD">
+            </form>
+
+    <center>
+  {% endblock %}
+

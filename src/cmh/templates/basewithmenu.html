@@ -18,7 +18,7 @@
   <div class="system_panel">
     <div class="userpanel">
       {% if user.is_authenticated %}
-      Hello {{ user.username }} | <a href="/user/logout/"> Sign out </a>
+      Hello {{ user.username }} | <a href="/user/myprofile/">My Profile</a>| <a href="/user/logout/"> Sign out </a>
       {% else %}
       <a href="/user/login"> Sign in </a>
       {% endif %}
