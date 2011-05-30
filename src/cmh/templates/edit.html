@@ -1,0 +1,22 @@
+{% extends "basewithmenu.html" %}
+  {% block page_content %}
+    <center>
+    <form action="." method="POST">
+    <table>
+        <tr>
+            <td>UserName</td><td><input type="text" name="username" value="{{ obj.user.username }}" readonly="readonly"></td>
+        </tr>
+        <tr>
+            <td>Name</td><td><input type="text" name="name" value="{{ obj.user.first_name }}"></td>
+        </tr>
+        <tr>
+            <td>Phone Number</td><td><input type="text" name="phone" value="{{ obj.phone }}"></td>
+        </tr>
+
+        <tr>
+            <td></td><td align="center"><input type="submit" name="savechanges" value="SAVE CHANGES"></td>
+        </tr>
+    </table>
+    <center>
+  {% endblock %}
+
