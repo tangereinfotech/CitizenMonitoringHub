@@ -20,8 +20,7 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 
 from cmh.common.utils import check_email, check_phone, check_mobile
-from cmh.usermgr.form import UserLoginForm, UserRegisterForm
-from cmh.usermgr.forms import ProfileEditForm
+from cmh.usermgr.forms import ProfileEditForm, UserLoginForm, UserRegisterForm
 # from cmh.usermgr.models import createuser
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -68,8 +67,6 @@ def gotomyprofile (request):
                                  'menus' : get_user_menus (request.user),
                                  'user' : request.user})
     elif request.method=="POST":
-        print "METHOD: ",request.method
-        print "METHOD INFORMATION: ",request.POST
         if 'edit' in request.POST:
             cmhuser = request.user.cmhuser
             return render_to_response('edit.html',
@@ -104,19 +101,17 @@ def gotomyprofile (request):
                                         'user'  : request.user}
                                         )
         elif 'set_password' in request.POST:
-            print "here ..."
             try:
-                form = PasswordUpdateForm (request.POST)
-                print "PasswordUpdateForm is initialized:  ", form.is_valid()
+                form = PasswordUpdateForm (request.user,
+                                           request.POST)
                 if form.is_valid ():
-                    print "form is valid"
                     form.save ()
                     return render_to_response ('password_reset_success.html',
                                                {'menus': get_user_menus (request.user),
                                                 'user'  : request.user})
 
                 else:
-                    print "Form is not valid", form.errors
+                    debug ("Form is not valid" + str (form.errors))
                     return render_to_response ('reset_password.html',
                                                {'form' : form,
                                                 'menus': get_user_menus (request.user),
@@ -131,3 +126,4 @@ def gotomyprofile (request):
 def dologout (request):
     logout (request)
     return HttpResponseRedirect (settings.LOGIN_REDIRECT_URL)
+
