@@ -59,7 +59,11 @@
     <th style="display:none"/>
   </tr>
   {% for issue in issues.object_list %}
+  {% if issue|is_updatable:user %}
   <tr class="updateMenu">
+  {% else %}
+  <tr class="trackMenu">
+  {% endif %}
     <td style="text-align:center;">{{ issue.complaintno }}</td>
     <td style="text-align:center;">{{ issue.logdate|date:'d/M/Y' }}</td>
     <td style="text-align:left;">{{ issue.description }}</td>
@@ -84,9 +88,14 @@
   <li><a href="#track">Track</a></li>
 </ul>
 
+<ul id="trackMenu" class="contextMenu">
+  <li><a href="#track">Track</a></li>
+</ul>
+
 <script type="text/javascript">
   $(document).ready (function() {
     showContextMenu (".updateMenu", "updateMenu");
+    showContextMenu (".trackMenu", "trackMenu");
   });
 </script>
 {% endblock %}

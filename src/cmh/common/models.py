@@ -107,29 +107,16 @@ class MenuItem (models.Model):
 
 class StatusTransitionManager (models.Manager):
     def get_allowed_statuses (self, role, curstate):
-        newstates = ComplaintStatus.objects.filter (newstate__curstate = curstate).distinct ()
-        toexclude = []
-        for newstate in newstates:
-            try:
-                st = StatusTransition.objects.get (role = role,
-                                                   curstate = curstate,
-                                                   newstate = newstate)
-            except StatusTransition.DoesNotExist:
-                toexclude.append (newstate)
-
-        for te in toexclude:
-            newstates = newstates.exclude (id = newstate.id)
-
-        return newstates
+        return ComplaintStatus.objects.filter (statustransitionnewstate__curstate = curstate, statustransitionnewstate__role = role)
 
     def get_changeable_statuses (self, role):
-        return ComplaintStatus.objects.filter (curstate__role = role)
+        return ComplaintStatus.objects.filter (statustransitioncurstate__role = role)
 
 
 class StatusTransition (models.Model):
     role     = models.ForeignKey (AppRole, blank = True, null = True,)
-    curstate = models.ForeignKey (ComplaintStatus, related_name = 'curstate')
-    newstate = models.ForeignKey (ComplaintStatus, related_name = 'newstate')
+    curstate = models.ForeignKey (ComplaintStatus, related_name = 'statustransitioncurstate')
+    newstate = models.ForeignKey (ComplaintStatus, related_name = 'statustransitionnewstate')
 
     objects = StatusTransitionManager ()
 

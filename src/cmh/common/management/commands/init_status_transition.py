@@ -39,10 +39,11 @@ class Command (NoArgsCommand):
                           {'name' : 'Track Issue', 'url' : '/complaint/track/'},]
 
         cso_menu = [{'name' : 'Home', 'url' : '/'},
-                    {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
                     {'name' : 'Accept', 'url' : '/complaint/accept/'},
-                    {'name' : 'Track', 'url' : '/complaint/track/'},
-                    {'name' : 'Masters', 'url' : '/masters/'},]
+                    {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
+                    {'name' : 'Masters', 'url' : '/masters/'},
+                    {'name' : 'Metrics', 'url' : '/complaint/metrics/'},
+                    {'name' : 'All Issues', 'url' : '/complaint/all_issues/'}]
 
         delegate_menu = [{'name' : 'Home', 'url' : '/'},
                          {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
@@ -54,7 +55,8 @@ class Command (NoArgsCommand):
 
         dm_menu = [{'name' : 'Home', 'url' : '/'},
                    {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
-                   {'name' : 'Track', 'url' : '/complaint/track/'},]
+                   {'name' : 'Metrics', 'url' : '/complaint/metrics/'},
+                   {'name' : 'All Issues', 'url' : '/complaint/all_issues/'}]
 
         self._ensure_menu (anonymous, anonymous_menu)
         self._ensure_menu (cso, cso_menu)

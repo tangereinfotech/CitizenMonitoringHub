@@ -24,7 +24,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.utils import simplejson as json
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from django.db.models import Avg, Max, Min, Count
+from django.db.models import Avg, Max, Min, Count, Q
 from django.contrib.auth.decorators import login_required
 
 from cmh.common.models import Country, State, District
@@ -33,6 +33,9 @@ from cmh.common.models import ComplaintType, StatusTransition
 from cmh.common.models import AppRole
 
 from cmh.common.utils import debug
+
+from cmh.issuemgr.constants import STATUS_NEW, STATUS_REOPEN, STATUS_ACK
+from cmh.issuemgr.constants import STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED
 
 from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
@@ -85,6 +88,7 @@ def index (request):
                                                  'zoom_level' : 13}})
     else:
         return HttpResponse ()
+
 
 def get_category_map_update (request, category):
     if category == 'all':
@@ -177,6 +181,30 @@ def departments (request):
 
 
 @login_required
+def metrics (request):
+    its = []
+    cs = Complaint.objects.filter (latest = True)
+    complaint_types = ComplaintType.objects.all ().order_by ('id')
+    for issue_type in complaint_types:
+        its.append ({'name' : issue_type.summary,
+                     'new_reopened' : cs.filter ((Q (curstate = STATUS_NEW) |
+                                                  Q (curstate = STATUS_REOPEN)),
+                                                 complainttype = issue_type).count (),
+                     'acknowledged' : cs.filter (complainttype = issue_type,
+                                                 curstate = STATUS_ACK).count (),
+                     'opened' : cs.filter (complainttype = issue_type,
+                                           curstate = STATUS_OPEN).count (),
+                     'resolved' : cs.filter (complainttype = issue_type,
+                                             curstate = STATUS_RESOLVED).count (),
+                     'closed' : cs.filter (complainttype = issue_type,
+                                           curstate = STATUS_CLOSED).count ()})
+    return render_to_response ('complaint_metrics.html',
+                               {'issue_types' : its,
+                                'menus' : get_user_menus (request.user),
+                                'user' : request.user})
+
+
+@login_required
 def accept (request):
     if request.method == 'GET':
         form = AcceptComplaintForm ()
@@ -207,6 +235,27 @@ def accept (request):
     else:
         pass
 
+
+@login_required
+def all_issues (request):
+    issues = Complaint.objects.filter (latest = True)
+
+    paginator = Paginator (issues, 10)
+
+    try:
+        page = int (request.GET.get ('page', '1'))
+    except ValueError:
+        page = 1
+
+    try:
+        issues = paginator.page (page)
+    except (EmptyPage, InvalidPage):
+        issues = paginator.page (paginator.num_pages)
+
+    return render_to_response ('my_issues.html',
+                               {'menus' : get_user_menus (request.user),
+                                'user' : request.user,
+                                'issues' : issues})
 
 @login_required
 def my_issues (request):
