@@ -59,7 +59,6 @@
 <script type="text/javascript" src="/static/jquery/js/jqplot.dateAxisRenderer.js"></script>
 <script type="text/javascript" src="/static/jquery/js/jqplot.pointLabels.min.js"></script>
 <script type="text/javascript" src="/static/jquery/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="/static/js/CircleOverlay.js"></script>
 <script type="text/javascript" src="/static/js/CountLabel.js"></script>
 <script type="text/javascript" src="/static/js/Label.js"></script>
 <script type="text/javascript" src="/static/js/MapHandler.js"></script>
@@ -72,6 +71,8 @@
 
   $(document).ready (function () {
     MapHandler.init ('base_map',
+                     {{ map.center_lat }},
+                     {{ map.center_long }},
                      function () {
                        MapHandler.update_with_stats ('/complaint/get_category_map_update/', '0', MapHandler.VILLG_ZOOM);
                      });
