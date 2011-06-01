@@ -18,6 +18,6 @@ var department_selector = function (url) {
                     return $(this).val ();
                 }
             ).get ().join (',');
-            MapHandler.update_with_stats (url, selected_dept_ids);
+            MapHandler.update_with_stats (url, selected_dept_ids, MapHandler.map.getZoom ());
         });
 };

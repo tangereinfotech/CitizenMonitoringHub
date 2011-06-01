@@ -28,7 +28,6 @@ def index (request):
     return render_to_response ('index.html', {'menus' : get_user_menus (request.user),
                                               'user' : request.user,
                                               'map' : {'center_lat' : 23.20119,
-                                                       'center_long' : 77.081795,
-                                                       'zoom_level' : 13},
+                                                       'center_long' : 77.081795},
                                               'departments' : departments})
 

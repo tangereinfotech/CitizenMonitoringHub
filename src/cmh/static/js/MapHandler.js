@@ -23,18 +23,19 @@ var MapHandler = {
     BLOCK_ZOOM : 9,
     DISTT_ZOOM : 8,
     STATE_ZOOM : 7,
-    overlays : [],
-    init : function (map_canvas, center_lat, center_long, zoom_level, callback) {
+    circleOverlays : [],
+    nameOverlays : [],
+    countOverlays : [],
+    init : function (map_canvas, callback) {
         this.map_canvas = map_canvas;
-        var latlng = new google.maps.LatLng (center_lat, center_long);
-        
+
         var myOptions  = {
-            zoom : zoom_level,
-            center : latlng,
-            mapTypeId : google.maps.MapTypeId.ROADMAP
+            mapTypeId : google.maps.MapTypeId.ROADMAP,
+            zoom_level : MapHandler.VILLG_ZOOM
         };
 
-        this.map = new google.maps.Map (document.getElementById (map_canvas), myOptions);
+        this.map = new google.maps.Map (document.getElementById (map_canvas),
+                                        myOptions);
 
         // google.maps.event.addListener (this.map, 'zoom_changed', 
         //                                function () {
@@ -81,54 +82,67 @@ var MapHandler = {
     showStateData : function () {
         
     },
-    update_with_stats : function (url, departments) {
+    update_with_stats : function (url, departments, zoom_level) {
+        for (var i = 0; i < MapHandler.nameOverlays.length; i++ ) {
+            MapHandler.nameOverlays [i].setMap (null);
+            MapHandler.nameOverlays [i] = null;
+        }
+        MapHandler.nameOverlays = [];
+        for (i = 0; i < MapHandler.countOverlays.length; i++ ) {
+            MapHandler.countOverlays [i].setMap (null);
+            MapHandler.countOverlays [i] = null;
+        }
+        MapHandler.countOverlays = [];
+        for (i = 0; i < MapHandler.circleOverlays.length; i++ ) {
+            MapHandler.circleOverlays [i].setMap (null);
+            MapHandler.circleOverlays [i] = null;
+        }
+        MapHandler.circleOverlays = [];
+
         $.post (url,
                {'departments' : departments},
                 function (data, status, jqXHR) {
-                    var overlays = MapHandler.overlays;
-                    $.each (overlays, function (index, overlay) {
-                                overlay.setMap (null);
-                            });
                     data = $.parseJSON (data);
 
-                    var map = MapHandler.map;
                     var bounds = new google.maps.LatLngBounds ();
 
                     $.each (data, 
                             function (index, value) {
                                 var place_latlong = new google.maps.LatLng (value.latitude, value.longitude);
                                 
-                                bounds = bounds.extend (place_latlong);
+                                bounds.extend (place_latlong);
                                 
-                                var radius = ("" + value.count + "").length;
-                                var font_size = "" + (radius * 100 * 1.4) + "%";
-                                var count_offset = -radius * 14 * 0.8;
-                                var name_offset = radius * 14 * 0.5;
+                                var numdigits = ("" + value.count + "").length;
+                                var radius = numdigits * 1400;
+                                var font_size = "" + (numdigits * 100 * 1.2) + "%";
+                                var count_offset = -numdigits * 12 * 0.9;
+                                var name_offset = numdigits * 12 * 0.5;
 
-                                var circle = new CircleOverlay (map,
-                                                                place_latlong,
-                                                                radius,
-                                                                "#f6d8ca",
-                                                                16,
-                                                                0.20,
-                                                                "#e5926a",
-                                                                0.40,
-                                                                2000);
+                                var circle = new google.maps.Circle ({ map : MapHandler.map,
+                                                                       center : place_latlong,
+                                                                       radius: radius,
+                                                                       strokeColor : "#f6d8ca",
+                                                                       strokeWeight : 16,
+                                                                       strokeOpacity: 0.60,
+                                                                       fillColor : "#e5926a",
+                                                                       fillOpacity : 0.50});
                                 
-                                var nlabel = new Label ({map : map}, name_offset);
+                                var nlabel = new Label ({map : MapHandler.map}, name_offset);
                                 nlabel.set ('position', place_latlong);
                                 nlabel.set ('text', value.name);
 
-                                var clabel = new CountLabel ({map : map}, font_size, count_offset);
+                                var clabel = new CountLabel ({map : MapHandler.map}, font_size, count_offset);
                                 clabel.set ('position', place_latlong);
                                 clabel.set ('text', "" + value.count);
 
-                                MapHandler.overlays.push (circle);
-                                MapHandler.overlays.push (nlabel);
-                                MapHandler.overlays.push (clabel);
+                                MapHandler.circleOverlays.push (circle);
+                                MapHandler.nameOverlays.push (nlabel);
+                                MapHandler.countOverlays.push (clabel);
                             });
-                    map.setCenter (bounds.getCenter ());
-                    map.setZoom (MapHandler.VILLG_ZOOM);
+                    
+                    MapHandler.map.fitBounds (bounds);
+                    MapHandler.map.setCenter (bounds.getCenter ());
+                    MapHandler.map.setZoom (zoom_level);
                 });
     }
 };

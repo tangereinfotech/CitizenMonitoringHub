@@ -53,7 +53,7 @@ CircleOverlay.prototype.clear = function() {
 // Calculate all the points of the circle and draw them
 CircleOverlay.prototype.draw = function(force) {
 	var d2r = Math.PI / 180;
-	circleLatLngs = new Array();
+	var circleLatLngs = new Array();
 
 	// Convert statute miles into degrees latitude
 	var circleLat = this.radius * 0.014483;
@@ -84,6 +84,7 @@ CircleOverlay.prototype.draw = function(force) {
 // Remove circle method
 CircleOverlay.prototype.remove = function() {
 	this.clear();
+    this.polygon = null;
 }
 
 // Can use this method if the library at is included at http://appdelegateinc.com/blog/2010/05/16/point-in-polygon-checking/
