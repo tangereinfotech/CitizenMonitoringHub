@@ -87,3 +87,16 @@ class AutoCompleteOffTextInput (SpacedTextInput):
             kwargs ['attrs'] = {'autocomplete' : 'off', 'style' : 'width:100%'}
         super (AutoCompleteOffTextInput, self).__init__ (*args, **kwargs)
 
+
+class MultiNumberIdField (forms.CharField):
+    def to_python (self, value):
+        if not value: return []
+        return [int (x) for x in value.split (',')]
+
+    def validate (self, value_list):
+        super (MultiNumberIdField, self).validate (value_list)
+        for number in value_list:
+            try:
+                n = int (number)
+            except ValueError:
+                raise forms.ValidationError ("Non number in MultiNumberIdField")

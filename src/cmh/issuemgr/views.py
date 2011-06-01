@@ -36,13 +36,13 @@ from cmh.common.utils import debug
 
 from cmh.issuemgr.constants import STATUS_NEW, STATUS_REOPEN, STATUS_ACK
 from cmh.issuemgr.constants import STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED
+from cmh.issuemgr.constants import HotComplaintPeriod
 
 from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
 from cmh.issuemgr.forms import ComplaintTrackForm
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
-from cmh.issuemgr.constants import HotComplaintPeriod
-from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX
+from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX, DepartmentIdList
 
 from cmh.smsgateway.models import TextMessage
 
@@ -90,22 +90,40 @@ def index (request):
         return HttpResponse ()
 
 
-def get_category_map_update (request, category):
-    if category == 'all':
-        retval = {}
-        for complaint in Complaint.objects.filter (latest = True).order_by ('location'):
-            location = complaint.location
-            if location != None:
-                if retval.has_key (location.id):
-                    retval [location.id]['count'] += 1
-                else:
-                    retval [complaint.location.id] = {'count' : 1,
-                                                      'name' : location.name,
-                                                      'latitude': location.lattd,
-                                                      'longitude' : location.longd}
-        return HttpResponse (json.dumps (retval))
-    else:
-        return HttpResponse (json.dumps ([]))
+ALL_DEPT_ID = 0
+def get_category_map_update (request):
+    try:
+        print request.POST
+        form = DepartmentIdList (request.POST)
+        if form.is_valid ():
+            ids = form.cleaned_data ['departments']
+            complaints = Complaint.objects.filter (latest = True).order_by ('location')
+
+            if not ALL_DEPT_ID in ids:
+                complaints = complaints.filter (department__id__in = ids)
+
+            debug ("Count of complaints: " + str (complaints.count ()))
+
+            retval = {}
+            for complaint in complaints:
+                location = complaint.location
+                if location != None:
+                    if retval.has_key (location.id):
+                        retval [location.id]['count'] += 1
+                    else:
+                        retval [complaint.location.id] = {'count' : 1,
+                                                          'name' : location.name,
+                                                          'latitude': location.lattd,
+                                                          'longitude' : location.longd}
+
+            return HttpResponse (json.dumps (retval))
+        else:
+            print "form is not valid"
+            return HttpResponse (json.dumps ([]))
+    except:
+        import traceback
+        traceback.print_exc ()
+
 
 
 def locations (request):

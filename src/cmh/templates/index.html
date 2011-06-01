@@ -14,13 +14,40 @@
 
 {% extends "signinbase.html" %}
 {% block extra_heads %}
-    <meta name="viewport" content="initial-scale=0.1, user-scalable=no" />
+<meta name="viewport" content="initial-scale=0.1, user-scalable=no" />
 {% endblock %}
 
 {% block page_content %}
+<div id="department-list">
+  <form method="post" action=".">
+    <table>
+      <tr>
+        <th colspan="2" align="center">
+          <h2> Departments </h2>
+        </th>
+      </tr>
+      <tr class="department_row">
+        <td>
+          <input type="checkbox" class="selector all" name="deptid" value="0">
+        </td>
+        <td><span class="department-name">All Departments</span></td>
+      </tr>
+      {% for department in departments %}
+      <tr class="department_row">
+        <td valign="top">
+          <input type="checkbox" class="selector" name="deptid" value="{{ department.id }}">
+        </td>
+        <td> <span class="department-name">{{department.name}}</span> </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </form>
+</div>
 <div id="base_map"></div>
 <div id="trending-issues-section">
-  <div class="section-title">Hot Issues</div>
+  <div class="section-title">
+    <h2>Hot Issues</h2>
+  </div>
   <ul class="period-right">
     <li>Last:</li>
     <li><a href="javascript:update_issues_trend (1);">Week</a></li>
@@ -32,8 +59,12 @@
 <script type="text/javascript" src="/static/jquery/js/jqplot.dateAxisRenderer.js"></script>
 <script type="text/javascript" src="/static/jquery/js/jqplot.pointLabels.min.js"></script>
 <script type="text/javascript" src="/static/jquery/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/static/js/CircleOverlay.js"></script>
+<script type="text/javascript" src="/static/js/CountLabel.js"></script>
+<script type="text/javascript" src="/static/js/Label.js"></script>
 <script type="text/javascript" src="/static/js/MapHandler.js"></script>
 <script type="text/javascript" src="/static/js/complainthandler.js"></script>
+<script type="text/javascript" src="/static/js/department_selector.js"></script>
 <script type="text/javascript">
   function update_issues_trend (period) {
     show_hot_complaints ("trending-issues-chart", "/complaint/hot_complaints/", period);
@@ -45,9 +76,10 @@
                      {{ map.center_long }},
                      {{ map.zoom_level }},
                      function () {
-                       MapHandler.update_with_stats ('/complaint/get_category_map_update/');
+                       MapHandler.update_with_stats ('/complaint/get_category_map_update/', '0');
                      });
     update_issues_trend (1);
+    department_selector ('/complaint/get_category_map_update/');
   });
 </script>
 {% endblock %}

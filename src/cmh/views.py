@@ -19,14 +19,16 @@ from django.db.models import Q
 
 from cmh.usermgr.utils import get_user_menus
 
-from cmh.common.models import ComplaintType
+from cmh.common.models import ComplaintType, ComplaintDepartment
 
 from cmh.issuemgr.models import Complaint
 
 def index (request):
+    departments = ComplaintDepartment.objects.all ()
     return render_to_response ('index.html', {'menus' : get_user_menus (request.user),
                                               'user' : request.user,
                                               'map' : {'center_lat' : 23.20119,
                                                        'center_long' : 77.081795,
-                                                       'zoom_level' : 13}})
+                                                       'zoom_level' : 13},
+                                              'departments' : departments})
 

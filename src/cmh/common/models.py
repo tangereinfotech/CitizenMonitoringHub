@@ -120,5 +120,3 @@ class StatusTransition (models.Model):
 
     objects = StatusTransitionManager ()
 
-
-

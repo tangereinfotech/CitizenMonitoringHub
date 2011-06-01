@@ -30,6 +30,8 @@ from cmh.issuemgr.utils import update_complaint_sequence
 from cmh.usermgr.utils import get_or_create_citizen
 from cmh.usermgr.constants import UserRoles
 
+from cmh.common.fields import MultiNumberIdField
+
 class ComplaintForm (forms.Form):
     logdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
@@ -277,3 +279,5 @@ class ComplaintTrackForm (forms.Form):
                                                                       'autocomplete' : 'off'}))
 
 
+class DepartmentIdList (forms.Form):
+    departments = MultiNumberIdField ()
