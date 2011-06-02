@@ -91,12 +91,11 @@ def index (request):
 
 
 ALL_DEPT_ID = 0
+
 def get_category_map_update (request):
     try:
-        debug (request.POST)
         form = ComplaintDisplayParams (request.POST)
         if form.is_valid ():
-            debug ("form is valid")
             ids = form.cleaned_data ['departments']
             complaints = Complaint.objects.filter (latest = True)
 
@@ -134,8 +133,6 @@ def get_category_map_update (request):
         import traceback
         traceback.print_exc ()
         return HttpResponse (json.dumps ({}))
-
-
 
 
 def locations (request):

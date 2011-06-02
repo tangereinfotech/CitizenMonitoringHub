@@ -60,9 +60,10 @@ class Command (NoArgsCommand):
 
 
     def find_geo_center (self, latlongs):
-        latav = sum (filter (lambda (x): x < 90, [lat for lat, lon in latlongs]))/len (latlongs)
-        lonav = sum (filter (lambda (x): x < 90, [lon for lat, lon in latlongs]))/len (latlongs)
+        latav = sum (filter (lambda (x): x < 90,
+                             [lat for lat, lon in latlongs])) /len (latlongs)
+        lonav = sum (filter (lambda (x): x < 90,
+                             [lon for lat, lon in latlongs]))/len (latlongs)
 
-        print latav, lonav
         return (latav, lonav)
 
