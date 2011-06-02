@@ -74,7 +74,7 @@
                          {{ map.center_lat }},
                          {{ map.center_long }},
                          function () {
-                           MapHandler.update_with_stats ('/complaint/get_category_map_update/', '0', MapHandler.VILLG_ZOOM);
+                           MapHandler.update_with_stats ('/complaint/get_category_map_update/', '0', MapHandler.VILLG_ZOOM, 'villg');
                          });
         update_issues_trend (1);
         department_selector ('/complaint/get_category_map_update/');

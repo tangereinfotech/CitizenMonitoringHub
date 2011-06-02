@@ -42,7 +42,7 @@ from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
 from cmh.issuemgr.forms import ComplaintTrackForm
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
-from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX, DepartmentIdList
+from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX, ComplaintDisplayParams
 
 from cmh.smsgateway.models import TextMessage
 
@@ -93,36 +93,48 @@ def index (request):
 ALL_DEPT_ID = 0
 def get_category_map_update (request):
     try:
-        print request.POST
-        form = DepartmentIdList (request.POST)
+        debug (request.POST)
+        form = ComplaintDisplayParams (request.POST)
         if form.is_valid ():
+            debug ("form is valid")
             ids = form.cleaned_data ['departments']
-            complaints = Complaint.objects.filter (latest = True).order_by ('location')
+            complaints = Complaint.objects.filter (latest = True)
 
             if not ALL_DEPT_ID in ids:
                 complaints = complaints.filter (department__id__in = ids)
 
-            debug ("Count of complaints: " + str (complaints.count ()))
+            datalevel = form.cleaned_data ['datalevel']
+            if datalevel == 'villg':
+                ann_str = 'location'
+            elif datalevel == 'gramp':
+                ann_str = 'location__grampanchayat'
+            elif datalevel == 'block':
+                ann_str = 'location__grampanchayat__block'
+            elif datalevel == 'distt':
+                ann_str = 'location__grampanchayat__block__district'
+            elif datalevel == 'state':
+                ann_str = 'location__grampanchayat__block__district__state'
+            else:
+                raise Exception ("Invalid data level : " + datalevel)
 
+            records = complaints.values (ann_str + '__id', ann_str, ann_str + '__name', ann_str + '__lattd', ann_str + '__longd').annotate (count = Count (ann_str))
             retval = {}
-            for complaint in complaints:
-                location = complaint.location
-                if location != None:
-                    if retval.has_key (location.id):
-                        retval [location.id]['count'] += 1
-                    else:
-                        retval [complaint.location.id] = {'count' : 1,
-                                                          'name' : location.name,
-                                                          'latitude': location.lattd,
-                                                          'longitude' : location.longd}
+            for record in records:
+                retval [record [ann_str + '__id']] = {'count' : record ['count'],
+                                                      'name' : record [ann_str + '__name'],
+                                                      'latitude' : record [ann_str + '__lattd'],
+                                                      'longitude' : record [ann_str + '__longd']}
 
             return HttpResponse (json.dumps (retval))
         else:
-            print "form is not valid"
+            debug ("form is not valid")
             return HttpResponse (json.dumps ({}))
     except:
+        debug ("exception in return complaint data")
         import traceback
         traceback.print_exc ()
+        return HttpResponse (json.dumps ({}))
+
 
 
 

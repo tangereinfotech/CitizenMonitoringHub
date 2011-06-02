@@ -279,5 +279,10 @@ class ComplaintTrackForm (forms.Form):
                                                                       'autocomplete' : 'off'}))
 
 
-class DepartmentIdList (forms.Form):
+class ComplaintDisplayParams (forms.Form):
     departments = MultiNumberIdField ()
+    datalevel   = forms.ChoiceField (choices = (("villg", "villg"),
+                                                ("gramp", "gramp"),
+                                                ("block", "block"),
+                                                ("distt", "distt"),
+                                                ("state", "state")))

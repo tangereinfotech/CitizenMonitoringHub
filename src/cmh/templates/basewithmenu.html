@@ -49,7 +49,7 @@
             <td style="text-align:center;width:{% widthratio 100 menus|length 1 %}%">
             {% endif %}
             {% endif %}
-            <a href="{{menuitem.url}}">{{menuitem.name}}</a>
+            <a class="{% block menu_selected %}{% endblock %}" href="{{menuitem.url}}">{{menuitem.name}}</a>
             </td>
             {% endfor %}
           </tr>
