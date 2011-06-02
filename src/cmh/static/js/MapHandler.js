@@ -25,7 +25,9 @@ var MapHandler = {
     BLOCK_ZOOM : 9,
     DISTT_ZOOM : 8,
     STATE_ZOOM : 7,
-    overlays : [],
+    circleOverlays : [],
+    nameOverlays : [],
+    countOverlays : [],
     init : function (map_canvas, center_lat, center_long, callback) {
         this.map_canvas = map_canvas;
         this.center_lat = center_lat;
@@ -37,8 +39,7 @@ var MapHandler = {
             center : new google.maps.LatLng (center_lat, center_long)
         };
 
-        this.map = new google.maps.Map (document.getElementById (map_canvas),
-                                        myOptions);
+        this.map = new google.maps.Map (document.getElementById (map_canvas), myOptions);
 
         google.maps.event.addListener (this.map, 'zoom_changed', 
                                        function () {
@@ -61,17 +62,24 @@ var MapHandler = {
                                                break;
                                            default: 
                                                if (zoomLevel < STATE_ZOOM) {
-                                                   MapHandler.showStateData ();
+                                                   MapHandler.updateStateData ();
                                                } else {
-                                                   MapHandler.showVillageData ();
+                                                   MapHandler.updateVillageData ();
                                                }
                                            }
                                        });
 
         callback ();
     },
+    isEmpty : function (object) {
+        for (var attr in object) { return false; }
+        return true;
+    },
     showVillageData : function () {
         
+    },
+    updateVillageData : function () {
+
     },
     showGrampData : function () {
         
@@ -85,19 +93,32 @@ var MapHandler = {
     showStateData : function () {
         
     },
+    updateStateData : function () {
+        
+    },
     update_with_stats : function (url, departments, zoom_level) {
-        for (var i = 0; i < MapHandler.overlays.length; i++ ) {
-            MapHandler.overlays [i].setMap (null);
-            MapHandler.overlays [i] = null;
+        for (var i = 0; i < MapHandler.circleOverlays.length; i++ ) {
+            MapHandler.circleOverlays [i].setMap (null);
+            MapHandler.circleOverlays [i] = null;
         }
-        MapHandler.overlays = [];
+        MapHandler.circleOverlays = [];
+        for (i = 0; i < MapHandler.nameOverlays.length; i++ ) {
+            MapHandler.nameOverlays [i].setMap (null);
+            MapHandler.nameOverlays [i] = null;
+        }
+        MapHandler.nameOverlays = [];
+        for (i = 0; i < MapHandler.countOverlays.length; i++ ) {
+            MapHandler.countOverlays [i].setMap (null);
+            MapHandler.countOverlays [i] = null;
+        }
+        MapHandler.countOverlays = [];
 
         $.post (url,
                {'departments' : departments},
                 function (data, status, jqXHR) {
                     data = $.parseJSON (data);
 
-                    if (data.length != 0) {
+                    if (MapHandler.isEmpty (data) == false) {
                         var bounds = new google.maps.LatLngBounds ();
 
                         $.each (data, 
@@ -116,7 +137,7 @@ var MapHandler = {
                                                                            center : place_latlong,
                                                                            radius: radius,
                                                                            strokeColor : "#f6d8ca",
-                                                                           strokeWeight : 16,
+                                                                           strokeWeight : 10,
                                                                            strokeOpacity: 0.60,
                                                                            fillColor : "#e5926a",
                                                                            fillOpacity : 0.50});
@@ -129,9 +150,9 @@ var MapHandler = {
                                     clabel.set ('position', place_latlong);
                                     clabel.set ('text', "" + value.count);
 
-                                    MapHandler.overlays.push (circle);
-                                    MapHandler.overlays.push (nlabel);
-                                    MapHandler.overlays.push (clabel);
+                                    MapHandler.circleOverlays.push (circle);
+                                    MapHandler.nameOverlays.push (nlabel);
+                                    MapHandler.countOverlays.push (clabel);
                                 });
                         
                         MapHandler.map.fitBounds (bounds);

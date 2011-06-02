@@ -119,7 +119,7 @@ def get_category_map_update (request):
             return HttpResponse (json.dumps (retval))
         else:
             print "form is not valid"
-            return HttpResponse (json.dumps ([]))
+            return HttpResponse (json.dumps ({}))
     except:
         import traceback
         traceback.print_exc ()
