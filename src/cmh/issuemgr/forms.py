@@ -30,7 +30,7 @@ from cmh.issuemgr.utils import update_complaint_sequence
 from cmh.usermgr.utils import get_or_create_citizen
 from cmh.usermgr.constants import UserRoles
 
-from cmh.common.fields import MultiNumberIdField
+from cmh.common.fields import MultiNumberIdField, FormattedDateField
 
 class ComplaintForm (forms.Form):
     logdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
@@ -270,7 +270,9 @@ class ComplaintUpdateForm (forms.Form):
 
 
 class HotComplaintForm (forms.Form):
-    period = forms.IntegerField ()
+    departments = MultiNumberIdField ()
+    stdate      = FormattedDateField ()
+    endate      = FormattedDateField ()
 
 
 class ComplaintTrackForm (forms.Form):
@@ -286,3 +288,6 @@ class ComplaintDisplayParams (forms.Form):
                                                 ("block", "block"),
                                                 ("distt", "distt"),
                                                 ("state", "state")))
+    stdate      = FormattedDateField ();
+    endate      = FormattedDateField ();
+

@@ -31,11 +31,14 @@ var MapHandler = {
     nameOverlays : [],
     countOverlays : [],
     data_level : null,
+    stdate : null,
+    endate : null,
+    bounds : null,
     isEmpty : function (object) {
         for (var attr in object) { return false; }
         return true;
     },
-    init : function (map_canvas, center_lat, center_long, callback) {
+    init : function (map_canvas, center_lat, center_long) {
         this.map_canvas = map_canvas;
         this.center_lat = center_lat;
         this.center_long = center_long;
@@ -75,14 +78,15 @@ var MapHandler = {
                                                }
                                            }
                                        });
-
-        callback ();
     },
     showVillageData : function () {
         MapHandler.update_with_stats (this.url,
                                       this.departments,
                                       MapHandler.VILLG_ZOOM,
-                                      'villg');
+                                      'villg',
+                                      MapHandler.stdate,
+                                      MapHandler.endate
+                                     );
     },
     updateVillageData : function () {
 
@@ -91,25 +95,33 @@ var MapHandler = {
         MapHandler.update_with_stats (this.url,
                                       this.departments,
                                       MapHandler.GRAMP_ZOOM,
-                                      'gramp');
+                                      'gramp',
+                                      MapHandler.stdate,
+                                      MapHandler.endate);
     },
     showBlockData : function () {
         MapHandler.update_with_stats (this.url,
                                       this.departments,
                                       MapHandler.BLOCK_ZOOM,
-                                      'block');
+                                      'block',
+                                      MapHandler.stdate,
+                                      MapHandler.endate);
     },
     showDisttData : function () {
         MapHandler.update_with_stats (this.url,
                                       this.departments,
                                       MapHandler.DISTT_ZOOM,
-                                      'distt');
+                                      'distt',
+                                      MapHandler.stdate,
+                                      MapHandler.endate);
     },
     showStateData : function () {
                 MapHandler.update_with_stats (this.url,
                                       this.departments,
                                       MapHandler.STATE_ZOOM,
-                                      'state');
+                                      'state',
+                                      MapHandler.stdate,
+                                      MapHandler.endate);
     },
     updateStateData : function () {
         
@@ -117,10 +129,13 @@ var MapHandler = {
     getCurrentDataLevel : function () {
         return this.data_level;
     },
-    update_with_stats : function (url, departments, zoom_level, data_level) {
+    update_with_stats : function (url, departments, zoom_level, data_level, st_date, en_date) {
         this.url = url;
         this.departments = departments;
         this.data_level = data_level;
+        this.stdate = st_date;
+        this.endate = en_date;
+
         for (var i = 0; i < MapHandler.circleOverlays.length; i++ ) {
             MapHandler.circleOverlays [i].setMap (null);
             MapHandler.circleOverlays [i] = null;
@@ -137,21 +152,27 @@ var MapHandler = {
         }
         MapHandler.countOverlays = [];
 
+        console.log ("start");
+        console.log (st_date);
+        console.log (en_date);
+
         $.post (url,
                {
                    'departments' : departments,
-                   'datalevel'   : data_level
+                   'datalevel'   : data_level,
+                   'stdate' : st_date,
+                   'endate' : en_date
                },
                 function (data, status, jqXHR) {
                     data = $.parseJSON (data);
                     if (!(MapHandler.isEmpty (data))) {
-                        var bounds = new google.maps.LatLngBounds ();
+                        MapHandler.bounds = new google.maps.LatLngBounds ();
 
                         $.each (data, 
                                 function (index, value) {
                                     var place_latlong = new google.maps.LatLng (value.latitude, value.longitude);
                                     
-                                    bounds.extend (place_latlong);
+                                    MapHandler.bounds.extend (place_latlong);
                                     
                                     var numdigits = ("" + value.count + "").length;
                                     var radius = numdigits * 1400;
@@ -180,8 +201,6 @@ var MapHandler = {
                                     MapHandler.nameOverlays.push (nlabel);
                                     MapHandler.countOverlays.push (clabel);
                                 });
-                        
-                        MapHandler.map.setCenter (bounds.getCenter ());
                     }
                 });
     }

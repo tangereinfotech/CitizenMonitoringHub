@@ -16,6 +16,7 @@
 import re
 from django import forms
 from django.contrib.auth.models import User
+from datetime import datetime, date
 
 
 class StripCharField (forms.CharField):
@@ -100,3 +101,44 @@ class MultiNumberIdField (forms.CharField):
                 n = int (number)
             except ValueError:
                 raise forms.ValidationError ("Non number in MultiNumberIdField")
+
+class FormattedDateField (forms.CharField):
+    def clean (self, value):
+        super (FormattedDateField, self).clean (value)
+        try:
+            (day, month, year) = value.split ('/')
+            day = int (day)
+            month = int (month)
+            year = int (year)
+
+            if (month < 1 and month > 12) or (year < 1970 and year > datetime.now ().year):
+                raise forms.ValidationError ("Invalid Date - month / year: " + value)
+
+            days = [31, self.get_feb_days (year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+            if (day < 1 and day > days [month - 1]):
+                raise forms.ValidationError ("Invalid Date - date: " + value)
+        except:
+            raise forms.ValidationError ("Invalid date - general failure : " + value)
+        return self.to_python (value)
+
+    def to_python (self, value):
+        (day, month, year) = value.split ('/')
+        day = int (day)
+        month = int (month)
+        year = int (year)
+        return date (year, month, day)
+
+
+    def get_feb_days (self, year):
+        if year % 100 == 0:
+            if year % 400 == 0: leap = True
+            else: leap = False
+        else:
+            if year % 4 == 0: leap = True
+            else: leap = False
+
+        if leap:
+            return 29
+        else:
+            return 28
+

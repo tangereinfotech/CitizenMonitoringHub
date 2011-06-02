@@ -199,3 +199,7 @@ def debug (message):
     if settings.DEBUG:
         sys.stderr.write (str (message) + "\n")
 
+def daterange (start_date, end_date):
+    for n in range((end_date - start_date).days):
+        yield start_date + timedelta (days = n)
+
