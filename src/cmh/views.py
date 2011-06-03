@@ -25,7 +25,7 @@ from cmh.issuemgr.models import Complaint
 
 def index (request):
     departments = ComplaintDepartment.objects.all ()
-    return render_to_response ('index.html', {'menus' : get_user_menus (request.user),
+    return render_to_response ('index.html', {'menus' : get_user_menus (request.user,index),
                                               'user' : request.user,
                                               'map' : {'center_lat' : 23.20119,
                                                        'center_long' : 77.081795},

@@ -55,12 +55,12 @@ def dologin (request):
 
         return render_to_response ('login.html',
                                    {'form': form,
-                                    'menus' : get_user_menus (request.user),
+                                    'menus' : get_user_menus (request.user, dologin),
                                     'user' : request.user})
     else:
         return render_to_response ('login.html',
                                    {'form': form,
-                                    'menus' : get_user_menus (request.user),
+                                    'menus' : get_user_menus (request.user, dologin),
                                     'user' : request.user})
 
 @login_required
@@ -69,13 +69,13 @@ def gotomyprofile (request):
         cmhuser = request.user.cmhuser
         return render_to_response('profile.html',
                                 {'obj' : cmhuser,
-                                 'menus' : get_user_menus (request.user),
+                                 'menus' : get_user_menus (request.user,gotomyprofile),
                                  'user' : request.user})
     elif request.method=="POST":
         if 'edit' in request.POST:
             cmhuser = request.user.cmhuser
             return render_to_response('edit.html',
-                                      {'menus'  : get_user_menus (request.user),
+                                      {'menus'  : get_user_menus (request.user,gotomyprofile),
                                        'user'   : request.user,
                                        'form'   : ProfileEditForm (),
                                        'obj'    : cmhuser})
@@ -96,13 +96,13 @@ def gotomyprofile (request):
                 cmhuser = request.user.cmhuser
                 return render_to_response('edit.html',
                                           {'obj'   : form,
-                                           'menus' : get_user_menus (request.user),
+                                           'menus' : get_user_menus (request.user,gotomyprofile),
                                            'user'  : request.user})
 
         elif 'reset' in request.POST:
             return render_to_response ('reset_password.html',
                                        {'form' : PasswordUpdateForm (request.user),
-                                        'menus': get_user_menus (request.user),
+                                        'menus': get_user_menus (request.user,gotomyprofile),
                                         'user'  : request.user}
                                         )
         elif 'set_password' in request.POST:
@@ -112,14 +112,14 @@ def gotomyprofile (request):
                 if form.is_valid ():
                     form.save ()
                     return render_to_response ('password_reset_success.html',
-                                               {'menus': get_user_menus (request.user),
+                                               {'menus': get_user_menus (request.user,gotomyprofile),
                                                 'user'  : request.user})
 
                 else:
                     debug ("Form is not valid" + str (form.errors))
                     return render_to_response ('reset_password.html',
                                                {'form' : form,
-                                                'menus': get_user_menus (request.user),
+                                                'menus': get_user_menus (request.user,gotomyprofile),
                                                 'user'  : request.user})
             except:
                 import traceback

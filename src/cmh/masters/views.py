@@ -55,7 +55,7 @@ def masters (request):
         cmhusers = paginator.page (paginator.num_pages)
 
     return render_to_response ("masters.html",
-                               {'menus' : get_user_menus (request.user),
+                               {'menus' : get_user_menus (request.user,masters),
                                 'cmhusers' : cmhusers,
                                 'user' : request.user})
 
@@ -65,17 +65,17 @@ def process_dm (request):
     if request.method == 'GET':
         if cmhuser_dm.count () == 0:
             return render_to_response ('create_dm.html',
-                                       {'menus' : get_user_menus (request.user),
+                                       {'menus' : get_user_menus (request.user,process_dm),
                                         'user' : request.user,
                                         'form' : RegisterDM ()})
         elif cmhuser_dm.count () == 1:
             return render_to_response ('view_dm.html',
-                                       {'menus' : get_user_menus (request.user),
+                                       {'menus' : get_user_menus (request.user,process_dm),
                                         'user' : request.user,
                                         'dm' : cmhuser_dm [0]})
         else:
             return render_to_response ('error_dm_count.html',
-                                       {'menus' : get_user_menus (request.user),
+                                       {'menus' : get_user_menus (request.user,process_dm),
                                         'user' : request.user})
     elif request.method == 'POST':
         if 'register' in request.POST: # Registering a new DM
@@ -83,12 +83,12 @@ def process_dm (request):
             if form.is_valid ():
                 dm = form.save ()
                 return render_to_response ('view_dm.html',
-                                           {'menus' : get_user_menus (request.user),
+                                           {'menus' : get_user_menus (request.user,process_dm),
                                             'user' : request.user,
                                             'dm' : dm})
             else:
                 return render_to_response ('create_dm.html',
-                                           {'menus' : get_user_menus (request.user),
+                                           {'menus' : get_user_menus (request.user,process_dm),
                                             'user' : request.user,
                                             'form' : form})
         elif 'cancel' in request.POST: # Cancel DM registration
@@ -106,7 +106,7 @@ def process_dm (request):
                                 'phone' : dm.phone}
                     form = EditDM (formdata)
                     return render_to_response ('edit_dm.html',
-                                               {'menus':get_user_menus(request.user),
+                                               {'menus':get_user_menus(request.user,process_dm),
                                                 'user' : request.user,
                                                 'form' : form})
                 except CmhUser.DoesNotExist, CmhUser.MultipleObjectsReturned:
@@ -133,12 +133,12 @@ def process_dm (request):
                 except CmhUser.DoesNotExist:
                     return render_to_response ('error.html',
                                                {'error' : "Invalid DM Object",
-                                                'menus' : get_user_menus (request.user),
+                                                'menus' : get_user_menus (request.user,process_dm),
                                                 'user' : request.user})
                 except CmhUser.MultipleObjectsReturned:
                     return render_to_response ('error.html',
                                                {'error' : "DM is not a singleton",
-                                                'menus' : get_user_menus (request.user),
+                                                'menus' : get_user_menus (request.user,process_dm),
                                                 'user' : request.user})
                 except:
                     import traceback
@@ -146,7 +146,7 @@ def process_dm (request):
             else:
                 debug ("Invalid form:" , form.errors)
                 return render_to_response ('edit_dm.html',
-                                           {'menus': get_user_menus(request.user),
+                                           {'menus': get_user_menus(request.user,process_dm),
                                             'user' : request.user,
                                             'form' : form})
         elif 'edit_cancel' in request.POST:
@@ -175,13 +175,13 @@ def officials (request):
             cmhusers = paginator.page (paginator.num_pages)
 
         return render_to_response ('officials.html',
-                                   {'menus' : get_user_menus (request.user),
+                                   {'menus' : get_user_menus (request.user,process_dm),
                                     'user' : request.user,
                                     'cmhusers' : cmhusers})
     else:
         return render_to_response ('error.html',
                                    {'error': 'No other method is supported',
-                                    'menus' : get_user_menus (request.user),
+                                    'menus' : get_user_menus (request.user,process_dm),
                                     'user' : request.user})
 
 @login_required
@@ -191,17 +191,17 @@ def add_official (request):
         if cmhuser_dm.count () == 0:
             return render_to_response ('error.html',
                                        {'error' : 'District Magistrate must be registered',
-                                        'menus' : get_user_menus (request.user),
+                                        'menus' : get_user_menus (request.user,process_dm),
                                         'user' : request.user})
         elif cmhuser_dm.count () > 1:
             return render_to_response ('error.html',
                                        {'error' : 'Multiple DMs defined [%d]',
-                                        'menus' : get_user_menus (request.user),
+                                        'menus' : get_user_menus (request.user,process_dm),
                                         'user' : request.user})
         else:
             departments = ComplaintDepartment.objects.all ()
             return render_to_response ('add_official.html',
-                                          {'menus' : get_user_menus (request.user),
+                                          {'menus' : get_user_menus (request.user,process_dm),
                                            'user' : request.user,
                                            'form' : AddEditOfficial (departments = departments)})
     elif request.method == 'POST':
@@ -218,7 +218,7 @@ def add_official (request):
                 return HttpResponseRedirect (reverse (officials))
             else:
                 return render_to_response ('add_official.html',
-                                           {'menus' : get_user_menus (request.user),
+                                           {'menus' : get_user_menus (request.user,process_dm),
                                             'user' : request.user,
                                             'form' : form})
         elif 'add_cancel_official' in request.POST:
@@ -268,7 +268,7 @@ def csomembers (request):
         cmhusers = paginator.page (paginator.num_pages)
 
     return render_to_response ("cso_master.html",
-                               {'menus' : get_user_menus (request.user),
+                               {'menus' : get_user_menus (request.user,csomembers),
                                 'cmhusers' : cmhusers,
                                 'user' : request.user})
 
@@ -278,7 +278,7 @@ def csomembers (request):
 def add_cso_user (request):
     if request.method == 'GET':
         return render_to_response ('add_cso_member.html',
-                                   {'menus' : get_user_menus (request.user),
+                                   {'menus' : get_user_menus (request.user,add_cso_user),
                                     'user' : request.user,
                                     'form' : AddCSOMember ()})
     elif request.method == 'POST':
@@ -289,7 +289,7 @@ def add_cso_user (request):
                 return HttpResponseRedirect (reverse (csomembers))
             else:
                 return render_to_response ('add_cso_member.html',
-                                           {'menus' : get_user_menus (request.user),
+                                           {'menus' : get_user_menus (request.user,add_cso_user),
                                             'user' : request.user,
                                             'form' : form})
         else:

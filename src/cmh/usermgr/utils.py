@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.core.urlresolvers import reverse
 from cmh.common.models import MenuItem, AppRole
 from cmh.usermgr.constants import UserRoles
 
@@ -27,9 +28,34 @@ def get_or_create_citizen (mobile, name):
 
     return citizen
 
-def get_user_menus (user):
+def get_user_menus (user, fnname):
     if user.is_authenticated ():
         role = AppRole.objects.get_user_role (user)
-        return MenuItem.objects.filter (role = role).order_by ('serial')
     else:
-        return MenuItem.objects.filter (role__role = UserRoles.ANONYMOUS).order_by ('serial')
+        role = UserRoles.ANONYMOUS
+
+    menus = MenuItem.objects.filter (role = role).order_by ('serial')
+
+    url  = reverse (fnname)
+    try:
+        selmenuitem = MenuItem.objects.get (role = role, url = url)
+    except MenuItem.DoesNotExist:
+        selmenuitem = None
+
+    retmenus = []
+    for mi in menus:
+        if selmenuitem != None:
+            retmenus.append({'url' : mi.url,
+                             'name' : mi.name,
+                             'class' : ('ui-tabs-selected ui-state-active'
+                                        if mi.id == selmenuitem.id else '')})
+        else:
+            retmenus.append({'url' : mi.url,
+                             'name' : mi.name,
+                             'class' : ''})
+
+    print retmenus
+    return retmenus
+
+
+
