@@ -54,7 +54,6 @@ def get_user_menus (user, fnname):
                              'name' : mi.name,
                              'class' : ''})
 
-    print retmenus
     return retmenus
 
 
