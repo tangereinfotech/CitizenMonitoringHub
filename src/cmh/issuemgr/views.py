@@ -56,8 +56,9 @@ def index (request):
             form = ComplaintForm ()
             return render_to_response ('complaint.html',
                                        {'form' : form,
-                                        'menus' : get_user_menus (request.user),
+                                        'menus' : get_user_menus (request.user,index),
                                         'user' : request.user,
+                                        'val':'Submit Issue',
                                         'post_url' : reverse (index),
                                         'map' : {'center_lat' : 23.20119,
                                                  'center_long' : 77.081795,
@@ -73,14 +74,14 @@ def index (request):
             TextMessage.objects.queue_text_message (complaint.filedby.mobile,
                                                     "Your complaint is registered. Ref Num: " + complaint.complaintno)
             return render_to_response ('complaint_submitted.html',
-                                       {'menus' : get_user_menus (request.user),
+                                       {'menus' : get_user_menus (request.user,index),
                                         'user' : request.user,
                                         'complaint' : complaint})
         else:
             return render_to_response ('complaint.html',
                                        {'form': form,
                                         'errors' : form.errors,
-                                        'menus' : get_user_menus (request.user),
+                                        'menus' : get_user_menus (request.user,index),
                                         'user' : request.user,
                                         'post_url' : reverse (index),
                                         'map' : {'center_lat' : 23.20119,
@@ -191,7 +192,6 @@ def categories (request):
     return HttpResponse (json.dumps ([]))
 
 
-
 @login_required
 def metrics (request):
     its = []
@@ -212,7 +212,7 @@ def metrics (request):
                                            curstate = STATUS_CLOSED).count ()})
     return render_to_response ('complaint_metrics.html',
                                {'issue_types' : its,
-                                'menus' : get_user_menus (request.user),
+                                'menus' : get_user_menus (request.user,metrics),
                                 'user' : request.user})
 
 
@@ -221,7 +221,7 @@ def accept (request):
     if request.method == 'GET':
         form = AcceptComplaintForm ()
         return render_to_response ('complaint.html', {'form' : form,
-                                                      'menus' : get_user_menus (request.user),
+                                                      'menus' : get_user_menus (request.user,accept),
                                                       'user' : request.user,
                                                       'post_url' : reverse (accept),
                                                       'map' : {'center_lat' : 23.20119,
@@ -232,13 +232,13 @@ def accept (request):
         if form.is_valid ():
             complaint = form.save (request.user)
             return render_to_response ('complaint_submitted.html',
-                                       {'menus' : get_user_menus (request.user),
+                                       {'menus' : get_user_menus (request.user,accept),
                                         'user' : request.user,
                                         'complaint' : complaint})
         else:
             return render_to_response ('complaint.html',
                                        {'form': form,
-                                        'menus' : get_user_menus (request.user),
+                                        'menus' : get_user_menus (request.user,accept),
                                         'user' : request.user,
                                         'post_url' : reverse (accept),
                                         'map' : {'center_lat' : 23.20119,
@@ -265,7 +265,7 @@ def all_issues (request):
         issues = paginator.page (paginator.num_pages)
 
     return render_to_response ('my_issues.html',
-                               {'menus' : get_user_menus (request.user),
+                               {'menus' : get_user_menus (request.user,all_issues),
                                 'user' : request.user,
                                 'issues' : issues})
 
@@ -294,7 +294,7 @@ def my_issues (request):
 
     return render_to_response ('my_issues.html',
                                {'issues' : issues,
-                                'menus' : get_user_menus (request.user),
+                                'menus' : get_user_menus (request.user,my_issues),
                                 'user' : request.user})
 
 
@@ -307,7 +307,7 @@ def update (request, complaintno, complaintid):
 
     if newstatuses.count () == 0:
         return render_to_response ('update-cannot-do.html',
-                                   {'menus' : get_user_menus (request.user),
+                                   {'menus' : get_user_menus (request.user,update),
                                     'user' : request.user})
     else:
         if request.method == 'GET':
@@ -323,7 +323,7 @@ def update (request, complaintno, complaintid):
                                         'current' : current,
                                         'complaints' : complaints,
                                         'newstatuses' : newstatuses,
-                                        'menus' : get_user_menus (request.user),
+                                        'menus' : get_user_menus (request.user,update),
                                         'user' : request.user,
                                         'prev' : prev_page})
         elif request.method == 'POST':
@@ -348,7 +348,7 @@ def update (request, complaintno, complaintid):
                                                 'current' : current,
                                                 'complaints' : complaints,
                                                 'newstatuses' : newstatuses,
-                                                'menus' : get_user_menus (request.user),
+                                                'menus' : get_user_menus (request.user,update),
                                                 'user' : request.user,
                                                 'prev' : prev_page})
             elif request.POST.has_key ('cancel'):
@@ -374,7 +374,7 @@ def track_issues (request, complaintno, complaintid):
                                {'base' : base,
                                 'current' : current,
                                 'complaints' : complaints,
-                                'menus' : get_user_menus (request.user),
+                                'menus' : get_user_menus (request.user,track_issues),
                                 'user' : request.user,
                                 'updatable' : updatable})
 
@@ -382,7 +382,8 @@ def track (request):
     if request.method == "GET":
         return render_to_response ('track.html',
                                    {'user' : request.user,
-                                    'menus' : get_user_menus (request.user),
+                                    'menus' : get_user_menus (request.user, track),
+                                    'val':'Track Issue',
                                     'form' : ComplaintTrackForm ()})
     else:
         form = ComplaintTrackForm (request.POST)
@@ -395,7 +396,7 @@ def track (request):
         else:
             return render_to_response ('track.html',
                                        {'user' : request.user,
-                                        'menus' : get_user_menus (request.user),
+                                        'menus' : get_user_menus (request.user,track),
                                         'form' : form})
 
 def hot_complaints (request):

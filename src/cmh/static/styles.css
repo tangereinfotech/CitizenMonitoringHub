@@ -34,6 +34,8 @@ fieldset {
 }
 
 div.top_panel {
+    width:100%;
+    height:152px;
 }
 
 div.system_panel {
@@ -60,55 +62,40 @@ div.userpanel ul.sys-panel li {
 }
 
 div.logo_top_menu {
+    clear: both;
+    position: relative;
+    width: 100%;
+    height: 120px;
 }
 
 div.logo {
    float: left;
-   width:  260px;
+   width:  30%;
    height: 120px;
    font-weight: bold;
    font-size: 36px;
-   padding-bottom: 10px;
 }
 
-.menu_part {
+div.menu_part {
+    position: relative;
+    float: right;
+    width: 68%;
+    height: 120px;
 }
 
-.menu_part div.top_menu {
-   float: right;
-   text-align: center;
-   width: 70%;
-   height: 120px;
-   position: relative;
-   vertical-align: bottom;
-   border-spacing: 0;
-   border-collapse: collapse;
-   padding-bottom:10px;
-}
-
-div.top_menu table.top_menu {
-   padding: 10px 0px;
-   background-color: #708dce;
-   position: absolute;
-   bottom: 10px;
-   width: 100%;
-}
-
-div.top_menu table.top_menu tr td {
-   border: 0px;
-   height: 30px;
-   vertical-align: middle;
-}
-
-div.top_menu table.top_menu tr td a {
-   font-size: 14px;
-   color: white;
-   text-decoration: none;
-   font-weight: bold;
+div.menu_part div.top_menu {
+    float: right;
+    text-align: center;
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+    position: absolute;
+    bottom: 0px;
 }
 
 div.page_content {
-   clear: both;
+    clear: both;
+    border: 4px solid #bfd1e5;
 }
 
 ul.category {
@@ -201,6 +188,9 @@ div.footer {
    text-align: center;
    padding-top: 20px;
    border-top: 2px solid #044a98;
+}
+div.img {
+    border:0px;
 }
 
 div.complaint_form {
@@ -436,3 +426,43 @@ ul.errorlist li {
 input[readonly="readonly"] {
    background: #dfdfdf;
 }
+
+/*MENU OUTLINE*/
+#widget-docs ul.ui-tabs-nav { padding:0 0 0 8px; background:#6699CC; border-color:#1569C7;border-bottom-color:#bfd1e5; border-bottom:2px;}
+#widget-docs .ui-tabs-nav li { margin:5px 5px 0 0;  /*#488AC7*/;border-color:#41627E;}
+/*TABS WHICH ARE NOT SELECTED*/
+#widget-docs .ui-tabs-nav li a:link,
+#widget-docs .ui-tabs-nav li a:visited,
+#widget-docs .ui-tabs-nav li a:hover,
+#widget-docs .ui-tabs-nav li a:active { font-size:14px; padding:4px 1.2em 3px; color: #00386b; background:#fff}
+/*TAB WEN SELECTED*/
+#widget-docs .ui-tabs-nav li.ui-tabs-selected a:link,
+#widget-docs .ui-tabs-nav li.ui-tabs-selected a:visited,
+#widget-docs .ui-tabs-nav li.ui-tabs-selected a:hover,
+#widget-docs .ui-tabs-nav li.ui-tabs-selected a:active { color:	#fff; background: #bfd1e5;}
+
+#widget-docs .ui-tabs-panel { padding:20px 9px; font-size:12px; line-height:1.4; color:#000; }
+
+/*BORDER*/
+#widget-docs.ui-widget-content,
+#widget-docs .ui-widget-content { background-image:none; background-color:	#fff; border:0; }
+
+#widget-docs .ui-widget-content a:link,
+#widget-docs .ui-widget-content a:visited { color:#1b75bb; text-decoration:none; }
+#widget-docs .ui-widget-content a:hover,
+#widget-docs .ui-widget-content a:active { color:#0b559b; }
+
+#widget-docs.ui-corner-all {
+	-moz-border-radius-bottomleft:2px;
+	-moz-border-radius-bottomright:2px;
+	-moz-border-radius-topleft:2px;
+	-moz-border-radius-topright:2px;
+}
+
+
+#demo-dialog .ui-dialog-title { font-size:1.2em; }
+
+#widget-docs .toggle-docs-links { float:right; margin:0 0.4em 0.4em; }
+#widget-docs .toggle-docs-links a { margin:0 0.4em;cursor:pointer; }
+
+
