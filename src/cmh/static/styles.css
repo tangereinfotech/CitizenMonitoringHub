@@ -28,21 +28,21 @@ fieldset {
 }
 
 .content_wrapper {
-   padding: 20px 10px;
+   padding: 2px 10px;
    background-color: white;
    height: 100%;
 }
 
 div.top_panel {
     width:100%;
-    height:152px;
+    height:142px;
 }
 
 div.system_panel {
    text-align: right;
    width: 100%;
-   padding-top: 5px;
-   height: 25px;
+   padding-top: 0px;
+   height: 17px;
    border-bottom: 2px solid #044a98;
 }
 
@@ -79,7 +79,7 @@ div.logo {
 div.menu_part {
     position: relative;
     float: right;
-    width: 68%;
+    width: 70%;
     height: 120px;
 }
 
@@ -95,7 +95,7 @@ div.menu_part div.top_menu {
 
 div.page_content {
     clear: both;
-    border: 4px solid #bfd1e5;
+    border: 4px solid #1369a1;
 }
 
 ul.category {
@@ -427,19 +427,18 @@ input[readonly="readonly"] {
 }
 
 /*MENU OUTLINE*/
-#widget-docs ul.ui-tabs-nav { padding:0 0 0 8px; background:#6699CC; border-color:#1569C7;border-bottom-color:#bfd1e5; border-bottom:2px;}
+#widget-docs ul.ui-tabs-nav { padding:0 0 0 8px; background:#499ed7; border-color:#1569C7;border-bottom-color:#bfd1e5; border-bottom:2px;}
 #widget-docs .ui-tabs-nav li { margin:5px 5px 0 0;  /*#488AC7*/;border-color:#41627E;}
 /*TABS WHICH ARE NOT SELECTED*/
 #widget-docs .ui-tabs-nav li a:link,
 #widget-docs .ui-tabs-nav li a:visited,
 #widget-docs .ui-tabs-nav li a:hover,
-#widget-docs .ui-tabs-nav li a:active { font-size:14px; padding:4px 1.2em 3px; color: #00386b; background:#fff}
+#widget-docs .ui-tabs-nav li a:active { font-size:14px; padding:4px 1.2em 3px; color: #1369a1/*#00386b*/; background:#f2efe9/*#efefef*/}
 /*TAB WEN SELECTED*/
 #widget-docs .ui-tabs-nav li.ui-tabs-selected a:link,
 #widget-docs .ui-tabs-nav li.ui-tabs-selected a:visited,
 #widget-docs .ui-tabs-nav li.ui-tabs-selected a:hover,
-#widget-docs .ui-tabs-nav li.ui-tabs-selected a:active { color:	#fff; background: #bfd1e5;}
-
+#widget-docs .ui-tabs-nav li.ui-tabs-selected a:active { color:	#f2efe9; background: #1369a1;}
 #widget-docs .ui-tabs-panel { padding:20px 9px; font-size:12px; line-height:1.4; color:#000; }
 
 /*BORDER*/
