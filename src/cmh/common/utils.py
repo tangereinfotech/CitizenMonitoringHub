@@ -194,12 +194,11 @@ def ddmmyyyy2date (str):
         return date (year = yyyy, month = mm, day = dd)
 
 
-
 def debug (message):
     if settings.DEBUG:
         sys.stderr.write (str (message) + "\n")
 
 def daterange (start_date, end_date):
-    for n in range((end_date - start_date).days):
+    for n in range((end_date - start_date).days + 1):
         yield start_date + timedelta (days = n)
 

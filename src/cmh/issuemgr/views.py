@@ -407,7 +407,7 @@ def hot_complaints (request):
             endate = form.cleaned_data ['endate']
             deptids = form.cleaned_data ['departments']
 
-            complaints = Complaint.objects.filter (createdate__lte = endate)
+            complaints = Complaint.objects.filter (createdate__lte = endate, latest = True)
             open_complaints = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_REOPEN) | Q (curstate = STATUS_OPEN))
             clos_complaints = complaints.filter (Q (curstate = STATUS_RESOLVED) | Q (curstate = STATUS_CLOSED))
 
@@ -423,11 +423,10 @@ def hot_complaints (request):
                 names.append (dept.name)
                 doc = open_complaints.filter (department__id = dept.id)
                 dcc = clos_complaints.filter (department__id = dept.id)
-                data.append ([[d.strftime ('%Y-%m-%d 12:01 AM'), doc.filter (createdate__lt = d).count () - dcc.filter (createdate__lt = d).count ()]
+                data.append ([[d.strftime ('%Y-%m-%d 12:01 AM'), doc.filter (createdate__lte = d).count () - dcc.filter (createdate__lte = d).count ()]
                               for d in dates])
 
-            return HttpResponse (json.dumps ({'datapoints' : data,
-                                              'names' : names}))
+            return HttpResponse (json.dumps ({'datapoints' : data, 'names' : names}))
         else:
             return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : []}))
     except:

@@ -35,7 +35,7 @@ fieldset {
 
 div.top_panel {
     width:100%;
-    height:142px;
+    height:139px;
 }
 
 div.system_panel {
@@ -147,6 +147,7 @@ ul.category li.category_item {
 }
 
 #trending-issues-chart {
+   clear: both;
    width: 100%;
    height: 400px;
 }

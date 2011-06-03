@@ -19,11 +19,15 @@ LOCATION_REGEX = r'^ *(?P<village>\w+) *\[(?P<gp>\w+), *(?P<block>\w+)\] *$|^ *(
 
 from datetime import datetime
 
+from cmh.smsgateway.models import TextMessage
+
 from cmh.common.models import Country, State, District
 from cmh.common.models import Block, GramPanchayat, Village
 from cmh.common.models import ComplaintType, ComplaintDepartment, ComplaintType
 from cmh.common.models import ComplaintStatus, StatusTransition
-from cmh.issuemgr.constants import STATUS_NEW, STATUS_ACK
+
+from cmh.issuemgr.constants import STATUS_NEW, STATUS_ACK, STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED, STATUS_REOPEN
+
 from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.utils import update_complaint_sequence
 
@@ -31,6 +35,8 @@ from cmh.usermgr.utils import get_or_create_citizen
 from cmh.usermgr.constants import UserRoles
 
 from cmh.common.fields import MultiNumberIdField, FormattedDateField
+
+from cmh.common.utils import debug
 
 class ComplaintForm (forms.Form):
     logdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
@@ -244,15 +250,6 @@ class ComplaintUpdateForm (forms.Form):
     def save (self, user):
         complaint = Complaint.objects.get (complaintno = self.cleaned_data ['complaintno'], latest = True)
 
-        assignto = None
-        complaint_base = ComplaintType.objects.get (id = self.cleaned_data ['revcategoryid'])
-        department = complaint_base.department
-        officials = department.official_set.all ()
-        if officials.count () > 0:
-            assignto = officials [0]
-        else:
-            assignto = None
-
         newver = complaint.clone (user)
 
         newver.curstate = ComplaintStatus.objects.get (id = self.cleaned_data ['newstatus'])
@@ -261,7 +258,17 @@ class ComplaintUpdateForm (forms.Form):
         if self.cleaned_data ['revlocationid'] != None:
             newver.location = Village.objects.get (id = self.cleaned_data ['revlocationid'])
 
+        debug ("revcaegory id: " + str (self.cleaned_data ['revcategoryid']))
         if self.cleaned_data ['revcategoryid'] != None:
+            assignto = None
+            complaint_base = ComplaintType.objects.get (id = self.cleaned_data ['revcategoryid'])
+            department = complaint_base.department
+            officials = department.official_set.all ()
+            if officials.count () > 0:
+                assignto = officials [0]
+            else:
+                assignto = None
+
             newver.complainttype = ComplaintType.objects.get (id = self.cleaned_data ['revcategoryid'])
             newver.department = newver.complainttype.department
             newver.assignto = assignto

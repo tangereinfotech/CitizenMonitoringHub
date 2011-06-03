@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, NoReverseMatch
 from cmh.common.models import MenuItem, AppRole
 from cmh.usermgr.constants import UserRoles
 
@@ -36,10 +36,12 @@ def get_user_menus (user, fnname):
 
     menus = MenuItem.objects.filter (role = role).order_by ('serial')
 
-    url  = reverse (fnname)
     try:
+        url  = reverse (fnname)
         selmenuitem = MenuItem.objects.get (role = role, url = url)
     except MenuItem.DoesNotExist:
+        selmenuitem = None
+    except NoReverseMatch:
         selmenuitem = None
 
     retmenus = []
