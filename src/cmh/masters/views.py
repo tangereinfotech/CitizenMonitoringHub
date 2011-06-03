@@ -111,38 +111,12 @@ def process_dm (request):
                                                 'form' : form})
                 except CmhUser.DoesNotExist, CmhUser.MultipleObjectsReturned:
                     return HttpResponse (reverse (masters))
-        elif 'reset_dm' in request.POST:
-            # FIXME: Point to send new password through SMS
-            return HttpResponse ('Reset Password not implemented')
         elif 'edit_save' in request.POST:
             debug ("Saving a DM object")
             form = EditDM (request.POST)
             if form.is_valid ():
-                try:
-                    dmid = form.cleaned_data ['dmid']
-                    dm = CmhUser.objects.get (user__approle__role = UserRoles.DM,
-                                              id = dmid)
-                    user = dm.user
-                    user.first_name = form.cleaned_data ['name']
-                    user.set_password ('123') # FIXME: Send password after saving the CmhUser object
-                    user.save ()
-
-                    dm.phone = form.cleaned_data ['phone']
-                    dm.save ()
-                    return HttpResponseRedirect (reverse (process_dm))
-                except CmhUser.DoesNotExist:
-                    return render_to_response ('error.html',
-                                               {'error' : "Invalid DM Object",
-                                                'menus' : get_user_menus (request.user),
-                                                'user' : request.user})
-                except CmhUser.MultipleObjectsReturned:
-                    return render_to_response ('error.html',
-                                               {'error' : "DM is not a singleton",
-                                                'menus' : get_user_menus (request.user),
-                                                'user' : request.user})
-                except:
-                    import traceback
-                    traceback.print_exc ()
+                form.save ()
+                return HttpResponseRedirect (reverse (process_dm))
             else:
                 debug ("Invalid form:" , form.errors)
                 return render_to_response ('edit_dm.html',

@@ -28,6 +28,11 @@ from cmh.common.models import ComplaintDepartment
 from cmh.usermgr.constants import UserRoles
 from cmh.usermgr.models import CmhUser, Official
 
+from cmh.smsgateway.models import TextMessage
+from cmh.common.utils import get_random_string, debug
+
+from cmh.usermgr.constants import PASSWORD_LEN, PASSWORD_MSG
+
 class AddCSOMember (forms.Form):
     username = UsernameField (widget = AutoCompleteOffTextInput ())
     name     = StripCharField (widget = AutoCompleteOffTextInput ())
@@ -36,13 +41,19 @@ class AddCSOMember (forms.Form):
     def save (self):
         user = User.objects.create (username = self.cleaned_data ['username'],
                                     first_name = self.cleaned_data ['name'])
-        user.set_password ('123') # FIXME: Point to send SMS for password
+        password = get_random_string (PASSWORD_LEN)
+        user.set_password (password)
         user.save ()
 
         cmhuser = CmhUser.objects.create (user = user,
                                           phone = self.cleaned_data ['phone'])
 
         cmhuser.set_user_role (UserRoles.CSO)
+
+        message = PASSWORD_MSG % (cmhuser.phone, password)
+        debug (message)
+        TextMessage.objects.queue_text_message (cmhuser.phone, message)
+
         return cmhuser
 
 
@@ -56,15 +67,21 @@ class RegisterDM (forms.Form):
     def save (self):
         user = User.objects.create (username = 'dm',
                                     first_name = self.cleaned_data ['name'])
-        user.set_password ('123')
-        # FIXME: Point to send SMS to phone after specifying correct password
 
+        password = get_random_string (PASSWORD_LEN)
+
+        user.set_password (password)
         user.save ()
 
-        cmhuser_dm = CmhUser.objects.create (user = user,
+        cmhuser = CmhUser.objects.create (user = user,
                                              phone = self.cleaned_data ['phone'])
-        cmhuser_dm.set_user_role (UserRoles.DM)
-        return cmhuser_dm
+        cmhuser.set_user_role (UserRoles.DM)
+
+        message = PASSWORD_MSG % (cmhuser.phone, password)
+        debug (message)
+        TextMessage.objects.queue_text_message (cmhuser.phone, message)
+
+        return cmhuser
 
 
 class DmId (forms.Form):
@@ -80,11 +97,39 @@ class EditDM (forms.Form):
     phone    = PhoneNumberField (widget = AutoCompleteOffTextInput ())
 
 
+    def clean_dmid (self):
+        try:
+            dm = CmhUser.objects.get (user__approle__role = UserRoles.DM, id = self.cleaned_data ['dmid'])
+        except CmhUser.DoesNotExist:
+            raise forms.ValidationError ("Invalid DM Object")
+        except CmhUser.MultipleObjectsReturned:
+            raise forms.ValidationError ("Multiple DM Objects should not be present")
+        return self.cleaned_data ['dmid']
+
+
     def clean_name (self):
         if self.cleaned_data ['name'] != None:
             return self.cleaned_data ['name'].strip ()
         else:
             return ''
+
+    def save (self):
+        dmid = form.cleaned_data ['dmid']
+        dm = CmhUser.objects.get (user__approle__role = UserRoles.DM, id = dmid)
+
+        user = dm.user
+        user.first_name = form.cleaned_data ['name']
+
+        password = get_random_string (PASSWORD_LEN)
+        user.set_password (password)
+        user.save ()
+
+        dm.phone = form.cleaned_data ['phone']
+        dm.save ()
+
+        message = PASSWORD_MSG % (cmhuser.phone, password)
+        debug (message)
+        TextMessage.objects.queue_text_message (cmhuser.phone, message)
 
 
 class AddEditOfficial (forms.Form):
@@ -138,13 +183,18 @@ class AddEditOfficial (forms.Form):
 
         user = User.objects.create (username = self.cleaned_data ['username'],
                                     first_name = self.cleaned_data ['name'])
-        user.set_password ('123') # FIXME: SMS point
+        password = get_random_string (PASSWORD_LEN)
+        user.set_password (password)
         user.save ()
 
         cmhuser = CmhUser.objects.create (user = user,
                                           phone = self.cleaned_data ['phone'])
         cmhuser.set_user_role (role)
         cmhuser.save ()
+
+        message = PASSWORD_MSG % (cmhuser.phone, password)
+        debug (message)
+        TextMessage.objects.queue_text_message (cmhuser.phone, message)
 
         official = Official.objects.create (user = user, supervisor = supervisor)
 

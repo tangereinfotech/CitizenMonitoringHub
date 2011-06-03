@@ -15,6 +15,9 @@
 
 from cmh.common.models import AppRole
 
+PASSWORD_LEN = 6
+PASSWORD_MSG = "Username: %s ; Password: %s"
+
 class UserRoles:
     ANONYMOUS = 1
     CSO       = 2
@@ -52,3 +55,5 @@ class UserRoles:
         ROLE_DM = AppRole.objects.get (role = DM)
     except AppRole.DoesNotExist:
         ROLE_DM = None
+
+

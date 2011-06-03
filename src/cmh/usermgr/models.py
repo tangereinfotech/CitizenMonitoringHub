@@ -18,6 +18,9 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from cmh.common.models import ComplaintDepartment, ComplaintType, AppRole
+from cmh.common.utils import get_random_string
+
+from cmh.usermgr.constants import PASSWORD_LEN, PASSWORD_MSG
 
 class Citizen(models.Model):
     name   = models.CharField (max_length = 500, blank = True, null = True)
@@ -58,6 +61,12 @@ class CmhUser (models.Model):
     def _get_phone_number (self):
         if self.phone == None: return ""
         else: return self.phone
+
+    def reset_password (self):
+        password = get_random_string (PASSWORD_LEN)
+        message = PASSWORD_MSG % (cmhuser.phone, password)
+        debug (message)
+        TextMessage.objects.queue_text_message (cmhuser.phone, message)
 
     phone_number = property (_get_phone_number)
 

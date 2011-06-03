@@ -203,27 +203,21 @@ div.footer {
    border-top: 2px solid #044a98;
 }
 
-div.complaint_location {
-   height: 480px;
+div.complaint_form {
+   text-align: left;
+   width: 360px;
+}
+
+div.right_section {
 }
 
 #complaint_location {
-   height: 420px;
-   width: 480px;
+   height: 480px;
+   width: 100%;
 }
 
 select.complaint_box {
    width: 355px;
-}
-
-div.left_section {
-   float: left;
-   width: 500px;
-}
-
-div.right_section {
-   float: left;
-   width: 380px;
 }
 
 label.report_date {
