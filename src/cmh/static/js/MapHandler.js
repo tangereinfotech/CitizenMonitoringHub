@@ -18,6 +18,8 @@
 var MapHandler = {
     map : null,
     map_canvas : null,
+    url : null,
+    departments : null,
     center_lat : null,
     center_long : null,
     VILLG_ZOOM : 11,
@@ -28,7 +30,15 @@ var MapHandler = {
     circleOverlays : [],
     nameOverlays : [],
     countOverlays : [],
-    init : function (map_canvas, center_lat, center_long, callback) {
+    data_level : null,
+    stdate : null,
+    endate : null,
+    bounds : null,
+    isEmpty : function (object) {
+        for (var attr in object) { return false; }
+        return true;
+    },
+    init : function (map_canvas, center_lat, center_long) {
         this.map_canvas = map_canvas;
         this.center_lat = center_lat;
         this.center_long = center_long;
@@ -45,58 +55,87 @@ var MapHandler = {
                                        function () {
                                            var zoomLevel = MapHandler.map.getZoom ();
                                            switch (zoomLevel) {
-                                           case VILLG_ZOOM: 
+                                           case MapHandler.VILLG_ZOOM: 
                                                MapHandler.showVillageData ();
                                                break;
-                                           case GRAMP_ZOOM: 
+                                           case MapHandler.GRAMP_ZOOM: 
                                                MapHandler.showGrampData ();
                                                break;
-                                           case BLOCK_ZOOM: 
+                                           case MapHandler.BLOCK_ZOOM: 
                                                MapHandler.showBlockData ();
                                                break;
-                                           case DISTT_ZOOM: 
+                                           case MapHandler.DISTT_ZOOM: 
                                                MapHandler.showDisttData ();
-                                               break;
-                                           case STATE_ZOOM: 
+                                               break; 
+                                           case MapHandler.STATE_ZOOM: 
                                                MapHandler.showStateData ();
                                                break;
                                            default: 
-                                               if (zoomLevel < STATE_ZOOM) {
+                                               if (zoomLevel < MapHandler.STATE_ZOOM) {
                                                    MapHandler.updateStateData ();
                                                } else {
                                                    MapHandler.updateVillageData ();
                                                }
                                            }
                                        });
-
-        callback ();
-    },
-    isEmpty : function (object) {
-        for (var attr in object) { return false; }
-        return true;
     },
     showVillageData : function () {
-        
+        MapHandler.update_with_stats (this.url,
+                                      this.departments,
+                                      MapHandler.VILLG_ZOOM,
+                                      'villg',
+                                      MapHandler.stdate,
+                                      MapHandler.endate
+                                     );
     },
     updateVillageData : function () {
 
     },
     showGrampData : function () {
-        
+        MapHandler.update_with_stats (this.url,
+                                      this.departments,
+                                      MapHandler.GRAMP_ZOOM,
+                                      'gramp',
+                                      MapHandler.stdate,
+                                      MapHandler.endate);
     },
     showBlockData : function () {
-        
+        MapHandler.update_with_stats (this.url,
+                                      this.departments,
+                                      MapHandler.BLOCK_ZOOM,
+                                      'block',
+                                      MapHandler.stdate,
+                                      MapHandler.endate);
     },
     showDisttData : function () {
-        
+        MapHandler.update_with_stats (this.url,
+                                      this.departments,
+                                      MapHandler.DISTT_ZOOM,
+                                      'distt',
+                                      MapHandler.stdate,
+                                      MapHandler.endate);
     },
     showStateData : function () {
-        
+                MapHandler.update_with_stats (this.url,
+                                      this.departments,
+                                      MapHandler.STATE_ZOOM,
+                                      'state',
+                                      MapHandler.stdate,
+                                      MapHandler.endate);
     },
     updateStateData : function () {
         
     },
-    update_with_stats : function (url, departments, zoom_level) {
+    getCurrentDataLevel : function () {
+        return this.data_level;
+    },
+    update_with_stats : function (url, departments, zoom_level, data_level, st_date, en_date) {
+        this.url = url;
+        this.departments = departments;
+        this.data_level = data_level;
+        this.stdate = st_date;
+        this.endate = en_date;
+
         for (var i = 0; i < MapHandler.circleOverlays.length; i++ ) {
             MapHandler.circleOverlays [i].setMap (null);
             MapHandler.circleOverlays [i] = null;
@@ -113,19 +152,27 @@ var MapHandler = {
         }
         MapHandler.countOverlays = [];
 
+        console.log ("start");
+        console.log (st_date);
+        console.log (en_date);
+
         $.post (url,
-               {'departments' : departments},
+               {
+                   'departments' : departments,
+                   'datalevel'   : data_level,
+                   'stdate' : st_date,
+                   'endate' : en_date
+               },
                 function (data, status, jqXHR) {
                     data = $.parseJSON (data);
-
-                    if (MapHandler.isEmpty (data) == false) {
-                        var bounds = new google.maps.LatLngBounds ();
+                    if (!(MapHandler.isEmpty (data))) {
+                        MapHandler.bounds = new google.maps.LatLngBounds ();
 
                         $.each (data, 
                                 function (index, value) {
                                     var place_latlong = new google.maps.LatLng (value.latitude, value.longitude);
                                     
-                                    bounds.extend (place_latlong);
+                                    MapHandler.bounds.extend (place_latlong);
                                     
                                     var numdigits = ("" + value.count + "").length;
                                     var radius = numdigits * 1400;
@@ -154,10 +201,6 @@ var MapHandler = {
                                     MapHandler.nameOverlays.push (nlabel);
                                     MapHandler.countOverlays.push (clabel);
                                 });
-                        
-                        MapHandler.map.fitBounds (bounds);
-                        MapHandler.map.setCenter (bounds.getCenter ());
-                        MapHandler.map.setZoom (zoom_level);
                     }
                 });
     }

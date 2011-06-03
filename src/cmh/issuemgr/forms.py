@@ -30,7 +30,7 @@ from cmh.issuemgr.utils import update_complaint_sequence
 from cmh.usermgr.utils import get_or_create_citizen
 from cmh.usermgr.constants import UserRoles
 
-from cmh.common.fields import MultiNumberIdField
+from cmh.common.fields import MultiNumberIdField, FormattedDateField
 
 class ComplaintForm (forms.Form):
     logdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
@@ -242,8 +242,17 @@ class ComplaintUpdateForm (forms.Form):
         return self.cleaned_data ['newstatus']
 
     def save (self, user):
-        complaint = Complaint.objects.get (complaintno = self.cleaned_data ['complaintno'],
-                                           latest = True)
+        complaint = Complaint.objects.get (complaintno = self.cleaned_data ['complaintno'], latest = True)
+
+        assignto = None
+        complaint_base = ComplaintType.objects.get (id = self.cleaned_data ['revcategoryid'])
+        department = complaint_base.department
+        officials = department.official_set.all ()
+        if officials.count () > 0:
+            assignto = officials [0]
+        else:
+            assignto = None
+
         newver = complaint.clone (user)
 
         newver.curstate = ComplaintStatus.objects.get (id = self.cleaned_data ['newstatus'])
@@ -255,6 +264,7 @@ class ComplaintUpdateForm (forms.Form):
         if self.cleaned_data ['revcategoryid'] != None:
             newver.complainttype = ComplaintType.objects.get (id = self.cleaned_data ['revcategoryid'])
             newver.department = newver.complainttype.department
+            newver.assignto = assignto
 
         newver.save ()
 
@@ -265,12 +275,33 @@ class ComplaintUpdateForm (forms.Form):
             original.complainttype = newver.complainttype
             original.location = newver.location
             original.department = newver.complainttype.department
+            original.assignto = assignto
             original.save ()
+
+        if newver.curstate == STATUS_ACK:
+            message = newver.complainttype.defsmsack.replace ('____', newver.complaintno)
+        elif newver.curstate == STATUS_OPEN:
+            message = newver.complainttype.defsmsopen.replace ('____', newver.complaintno)
+        elif newver.curstate == STATUS_RESOLVED:
+            message = newver.complainttype.defsmsres.replace ('____', newver.complaintno)
+        elif newver.curstate == STATUS_CLOSED:
+            message = newver.complainttype.defsmsclo.replace ('____', newver.complaintno)
+        elif newver.curstate == STATUS_REOPEN:
+            message = "Your complaint number '%s' has been reopeoed" % (newver.complaintno)
+        else:
+            message = None
+
+        if message != None:
+            debug ("Queuing message on change of status")
+            TextMessage.objects.queue_text_message (newver.filedby.mobile, message)
+
         return newver
 
 
 class HotComplaintForm (forms.Form):
-    period = forms.IntegerField ()
+    departments = MultiNumberIdField ()
+    stdate      = FormattedDateField ()
+    endate      = FormattedDateField ()
 
 
 class ComplaintTrackForm (forms.Form):
@@ -279,5 +310,13 @@ class ComplaintTrackForm (forms.Form):
                                                                       'autocomplete' : 'off'}))
 
 
-class DepartmentIdList (forms.Form):
+class ComplaintDisplayParams (forms.Form):
     departments = MultiNumberIdField ()
+    datalevel   = forms.ChoiceField (choices = (("villg", "villg"),
+                                                ("gramp", "gramp"),
+                                                ("block", "block"),
+                                                ("distt", "distt"),
+                                                ("state", "state")))
+    stdate      = FormattedDateField ();
+    endate      = FormattedDateField ();
+

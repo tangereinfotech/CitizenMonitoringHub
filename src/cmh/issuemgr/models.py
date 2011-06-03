@@ -46,6 +46,11 @@ class Complaint(models.Model):
     creator       = models.ForeignKey (User, blank = True, null = True)
     comment       = models.CharField (max_length = 1000, blank = True, null = True)
 
+    ###################################
+    # Custom field for analytics only #
+    ###################################
+    createdate    = models.DateField (auto_now_add = True) # For querying by date
+
     objects = ComplaintManager ()
 
     def clone (self, cloner):

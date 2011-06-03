@@ -15,7 +15,7 @@
 
 import re
 
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -30,9 +30,9 @@ from django.contrib.auth.decorators import login_required
 from cmh.common.models import Country, State, District
 from cmh.common.models import Block, GramPanchayat, Village
 from cmh.common.models import ComplaintType, StatusTransition
-from cmh.common.models import AppRole
+from cmh.common.models import AppRole, ComplaintDepartment
 
-from cmh.common.utils import debug
+from cmh.common.utils import debug, daterange
 
 from cmh.issuemgr.constants import STATUS_NEW, STATUS_REOPEN, STATUS_ACK
 from cmh.issuemgr.constants import STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED
@@ -42,7 +42,7 @@ from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
 from cmh.issuemgr.forms import ComplaintTrackForm
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
-from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX, DepartmentIdList
+from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX, ComplaintDisplayParams
 
 from cmh.smsgateway.models import TextMessage
 
@@ -92,39 +92,54 @@ def index (request):
 
 
 ALL_DEPT_ID = 0
+
 def get_category_map_update (request):
     try:
-        print request.POST
-        form = DepartmentIdList (request.POST)
+        form = ComplaintDisplayParams (request.POST)
         if form.is_valid ():
-            ids = form.cleaned_data ['departments']
-            complaints = Complaint.objects.filter (latest = True).order_by ('location')
+            deptids = form.cleaned_data ['departments']
+            stdate = form.cleaned_data ['stdate']
+            endate = form.cleaned_data ['endate']
+            dttm_start = datetime (stdate.year, stdate.month, stdate.day, 0, 0, 0)
+            dttm_end   = datetime (endate.year, endate.month, endate.day, 23, 59, 59)
 
-            if not ALL_DEPT_ID in ids:
-                complaints = complaints.filter (department__id__in = ids)
+            complaints = Complaint.objects.filter (latest = True, created__gte = dttm_start, created__lte = dttm_end)
+            complaints = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_REOPEN) | Q (curstate = STATUS_OPEN))
 
-            debug ("Count of complaints: " + str (complaints.count ()))
+            if not ALL_DEPT_ID in deptids:
+                complaints = complaints.filter (department__id__in = deptids)
 
+            datalevel = form.cleaned_data ['datalevel']
+            if datalevel == 'villg':
+                ann_str = 'location'
+            elif datalevel == 'gramp':
+                ann_str = 'location__grampanchayat'
+            elif datalevel == 'block':
+                ann_str = 'location__grampanchayat__block'
+            elif datalevel == 'distt':
+                ann_str = 'location__grampanchayat__block__district'
+            elif datalevel == 'state':
+                ann_str = 'location__grampanchayat__block__district__state'
+            else:
+                raise Exception ("Invalid data level : " + datalevel)
+
+            records = complaints.values (ann_str + '__id', ann_str, ann_str + '__name', ann_str + '__lattd', ann_str + '__longd').annotate (count = Count (ann_str))
             retval = {}
-            for complaint in complaints:
-                location = complaint.location
-                if location != None:
-                    if retval.has_key (location.id):
-                        retval [location.id]['count'] += 1
-                    else:
-                        retval [complaint.location.id] = {'count' : 1,
-                                                          'name' : location.name,
-                                                          'latitude': location.lattd,
-                                                          'longitude' : location.longd}
+            for record in records:
+                retval [record [ann_str + '__id']] = {'count' : record ['count'],
+                                                      'name' : record [ann_str + '__name'],
+                                                      'latitude' : record [ann_str + '__lattd'],
+                                                      'longitude' : record [ann_str + '__longd']}
 
             return HttpResponse (json.dumps (retval))
         else:
-            print "form is not valid"
+            debug ("form is not valid")
             return HttpResponse (json.dumps ({}))
     except:
+        debug ("exception in return complaint data")
         import traceback
         traceback.print_exc ()
-
+        return HttpResponse (json.dumps ({}))
 
 
 def locations (request):
@@ -171,27 +186,6 @@ def categories (request):
                                               cpl_type.department.name)),
                                  'id' : cpl_type.id})
             return HttpResponse (json.dumps (retvals))
-    except:
-        import traceback
-        traceback.print_exc ()
-    return HttpResponse (json.dumps ([]))
-
-def departments (request):
-    try:
-        form = ComplaintDepartmentBox (request.GET)
-        if form.is_valid ():
-            retvals = []
-            term = form.cleaned_data ['term']
-            for department in DEPARTMENTS:
-                dept_code = department.value
-                dept_name = CodeName.objects.get (code = dept_code).name
-
-                if term.lower () in dept_name.lower ():
-                    retvals.append ({'display' : dept_name,
-                                     'id' : department.id,
-                                     'detail' : ''})
-            return HttpResponse (json.dumps (retvals))
-
     except:
         import traceback
         traceback.print_exc ()
@@ -405,62 +399,39 @@ def track (request):
                                         'menus' : get_user_menus (request.user,track),
                                         'form' : form})
 
-
 def hot_complaints (request):
-    form = HotComplaintForm (request.GET)
-    if form.is_valid ():
-        try:
-            reqperiod = form.cleaned_data ['period']
-            if reqperiod == HotComplaintPeriod.WEEK:
-                x_interval = '1 week'
-                reldelta = relativedelta (weeks = +1)
-            elif reqperiod == HotComplaintPeriod.MONTH:
-                x_interval = '1 month'
-                reldelta = relativedelta (months = +1)
-            elif reqperiod == HotComplaintPeriod.QUARTER:
-                x_interval = '3 month'
-                reldelta = relativedelta (months = +3)
+    try:
+        form = HotComplaintForm (request.GET)
+        if form.is_valid ():
+            stdate = form.cleaned_data ['stdate']
+            endate = form.cleaned_data ['endate']
+            deptids = form.cleaned_data ['departments']
+
+            complaints = Complaint.objects.filter (createdate__lte = endate)
+            open_complaints = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_REOPEN) | Q (curstate = STATUS_OPEN))
+            clos_complaints = complaints.filter (Q (curstate = STATUS_RESOLVED) | Q (curstate = STATUS_CLOSED))
+
+            if ALL_DEPT_ID in deptids:
+                departments = ComplaintDepartment.objects.all ()
             else:
-                x_interval = '1 week'
-                reldelta = relativedelta (weeks = +1)
+                departments = ComplaintDepartment.objects.filter (id__in = deptids)
 
-            now = datetime.now ()
-            period1 = now - reldelta
-            period2 = period1 - reldelta
-            period3 = period2 - reldelta
-            period4 = period3 - reldelta
+            data  = []
+            names = []
+            dates = [d for d in daterange (stdate, endate)]
+            for dept in departments:
+                names.append (dept.name)
+                doc = open_complaints.filter (department__id = dept.id)
+                dcc = clos_complaints.filter (department__id = dept.id)
+                data.append ([[d.strftime ('%Y-%m-%d 12:01 AM'), doc.filter (createdate__lt = d).count () - dcc.filter (createdate__lt = d).count ()]
+                              for d in dates])
 
-            # FIXME: remove 'exclude (base = None)' once the form to "update"
-            # a new issue to acked issue is fixed to update the issuetype ('base')
-            # instead of just the department.
-            period_issues = Complaint.objects.filter (created__lte = now, created__gt = period4, original = None).exclude (complainttype = None)
-
-            issue_codes = set ([issue.complainttype.id for issue in period_issues])
-
-            issue_table = []
-            for issue_code in issue_codes:
-                issue_table.append ((issue_code, period_issues.filter (complainttype__id = issue_code).count ()))
-            issue_table = sorted (issue_table, key = (lambda x: x[1]), reverse = True)
-            issue_table = issue_table [:5]
-
-            periods = [(now, period1), (period1, period2), (period2, period3), (period3, period4)]
-
-            datapoints = []
-            issuetypes = []
-            for issue_id, issue_count in issue_table:
-                datapoints.append ([[te.strftime ("%Y-%m-%d 12:01AM"),
-                                     period_issues.filter (complainttype__id = issue_id,
-                                                           created__lte = te,
-                                                           created__gte = ts).count ()]
-                                    for te, ts in periods])
-                ct = ComplaintType.objects.get (id = issue_id)
-                issuetypes.append ({'label': ct.summary, 'showLabel': True})
-        except:
-            import traceback
-            traceback.print_exc ()
-    retval = {'datapoints' : datapoints,
-              'x_interval' : x_interval,
-              'issuetypes' : issuetypes}
-    return HttpResponse (json.dumps (retval))
+            return HttpResponse (json.dumps ({'datapoints' : data,
+                                              'names' : names}))
+        else:
+            return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : []}))
+    except:
+        import traceback
+        traceback.print_exc ()
 
 

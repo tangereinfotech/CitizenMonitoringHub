@@ -47,39 +47,41 @@ var showContextMenu = function (row_class, menu_id) {
 
 var plots = {};
 
-var show_hot_complaints = function (chart_id, url, period) {
+var show_hot_complaints = function (chart_id, url, departments, period_start, period_end) {
     $.getJSON (url, 
-               {period: period},
+               {
+                   departments : departments,
+                   stdate : period_start,
+                   endate : period_end
+               },
                function (data, status, xhr) {
                    if (chart_id in plots) {
                        $('#' + chart_id).empty ();
                    }
-                   plots [chart_id] = $.jqplot(chart_id, data.datapoints, 
+                   var series = data.datapoints [0];
+                   var min_date = series [0][0];
+                   var max_date = series [series.length - 1][0];
+                   plots [chart_id] = $.jqplot(chart_id, data.datapoints,
                                                {
-                                                   seriesDefaults : { 
-                                                       showMarker : false,
-                                                       pointLabels: { 
-                                                           show:true, 
-                                                           ypadding: 3,
-                                                           edgeTolerance: 4
-                                                       } 
-                                                   },
-                                                   axes:{
+                                                   axes : {
                                                        xaxis : {
                                                            renderer:$.jqplot.DateAxisRenderer,
                                                            tickOptions: {formatString: '%b %#d'},
-                                                           tickInterval: data.x_interval
+                                                           min : min_date,
+                                                           max : max_date
                                                        },
                                                        yaxis : {
                                                            min: 0,
                                                            tickOptions: {formatString: '%d'}
                                                        }
                                                    },
-                                                   series : data.issuetypes,
-                                                   legend : {
-                                                       show : true,
-                                                       placement: 'outsideGrid',
-                                                       location: 's'
+                                                   seriesDefaults : {
+                                                       showMarker : true,
+                                                       pointLabels: { 
+                                                           show:false, 
+                                                           ypadding: 3,
+                                                           edgeTolerance: 4
+                                                       } 
                                                    }
                                                });
                });

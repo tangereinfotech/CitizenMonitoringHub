@@ -50,9 +50,9 @@
   </div>
   <ul class="period-right">
     <li>Last:</li>
-    <li><a href="javascript:update_issues_trend (1);">Week</a></li>
-    <li><a href="javascript:update_issues_trend (2);">Month</a></li>
-    <li><a href="javascript:update_issues_trend (3);">3 Months</a></li>
+    <li><a href="javascript:update_maps (1);">Week</a></li>
+    <li><a href="javascript:update_maps (2);">Month</a></li>
+    <li><a href="javascript:update_maps (3);">3 Months</a></li>
   </ul>
   <div id="trending-issues-chart"></div>
 </div>
@@ -65,19 +65,49 @@
 <script type="text/javascript" src="/static/js/complainthandler.js"></script>
 <script type="text/javascript" src="/static/js/department_selector.js"></script>
 <script type="text/javascript">
-    function update_issues_trend (period) {
-        show_hot_complaints ("trending-issues-chart", "/complaint/hot_complaints/", period);
+    function update_maps (period) {
+        switch (period) {
+        case 1:
+           ndays = 7;
+           break;
+        case 2:
+           ndays = 30;
+           break;
+        case 3:
+           ndays = 90;
+           break;
+        }
+        now = new Date ();
+        en_date = dateFormat (now);
+        st_date = dateFormat (daysBefore (now, ndays));
+
+        update_issues_maps (MapHandler.departments, MapHandler.map.getZoom (), MapHandler.data_level, st_date, en_date);
+    }
+
+    function update_issues_maps (departments, zoomlevel, datalevel, period_start, period_end) {
+        MapHandler.update_with_stats ('/complaint/get_category_map_update/', departments, zoomlevel, datalevel, period_start, period_end);
+        show_hot_complaints ("trending-issues-chart", "/complaint/hot_complaints/", departments, period_start, period_end);
+    }
+
+    function daysBefore (dateObj, ndays) {
+        dateObj.setDate (dateObj.getDate () - ndays);
+        return dateObj;
+    }
+
+    function dateFormat (date) {
+        return date.getDate () + "/" + (date.getMonth () + 1) + "/" + date.getFullYear ();
     }
 
     $(document).ready (function () {
-        MapHandler.init ('base_map',
-                         {{ map.center_lat }},
-                         {{ map.center_long }},
-                         function () {
-                           MapHandler.update_with_stats ('/complaint/get_category_map_update/', '0', MapHandler.VILLG_ZOOM);
-                         });
-        update_issues_trend (1);
+        now = new Date ();
+        en_date = dateFormat (now);
+        st_date = dateFormat (daysBefore (now, 30));
+
         department_selector ('/complaint/get_category_map_update/');
+        $(".selector").attr ("checked", true);
+        MapHandler.init ('base_map', {{ map.center_lat }}, {{ map.center_long }});
+        update_issues_maps ('0', MapHandler.VILLG_ZOOM, 'villg', st_date, en_date);
+        MapHandler.map.setCenter (MapHandler.bounds.getCenter ());
     });
 </script>
 {% endblock %}
