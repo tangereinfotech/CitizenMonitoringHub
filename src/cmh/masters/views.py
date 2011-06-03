@@ -180,6 +180,7 @@ def add_official (request):
                                            'form' : AddEditOfficial (departments = departments)})
     elif request.method == 'POST':
         if 'add_add_official' in request.POST:
+            supervisors = None
             if 'pos_supervisors' in request.session:
                 supervisors = json.loads (request.session ['pos_supervisors'])
             departments = ComplaintDepartment.objects.all ()
