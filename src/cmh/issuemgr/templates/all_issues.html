@@ -22,7 +22,7 @@
 
 {% block page_content %}
 <div style="text-align:center;">
-  <h2>My Issues</h2>
+  <h2>All Issues</h2>
   <table id="issues_list" class="tabularlist">
     <colgroup>
       <col align="left">
@@ -70,7 +70,7 @@
         'bAutoWidth' : false,
         'sPaginationType': 'full_numbers',
         "bServerSide": true,
-        "sAjaxSource": "{% url cmh.issuemgr.views.my_issues_list %}",
+        "sAjaxSource": "{% url cmh.issuemgr.views.all_issues_list %}",
         "fnRowCallback" : function (nRow, aData, iDisplayIndex) {
             if (aData [5] === 'true') {
                 nRow.className = 'updateMenu';
@@ -85,7 +85,7 @@
             { "bSearchable": true},
             { "bSearchable": false},
             { "bSearchable": true},
-            { "bSearchable" : false, 'bVisible' : false},
+            { "bSearchable": false, "bVisible" : false},
         ],
         "fnDrawCallback" : showMyContextMenu
      });

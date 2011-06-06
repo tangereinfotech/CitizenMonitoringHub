@@ -33,6 +33,7 @@ from cmh.common.models import ComplaintType, StatusTransition
 from cmh.common.models import AppRole, ComplaintDepartment
 
 from cmh.common.utils import debug, daterange
+from cmh.common.utils import get_datatables_records
 
 from cmh.issuemgr.constants import STATUS_NEW, STATUS_REOPEN, STATUS_ACK
 from cmh.issuemgr.constants import STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED
@@ -250,55 +251,50 @@ def accept (request):
 
 @login_required
 def all_issues (request):
-    issues = Complaint.objects.filter (latest = True)
-
-    paginator = Paginator (issues, 10)
-
-    try:
-        page = int (request.GET.get ('page', '1'))
-    except ValueError:
-        page = 1
-
-    try:
-        issues = paginator.page (page)
-    except (EmptyPage, InvalidPage):
-        issues = paginator.page (paginator.num_pages)
-
-    return render_to_response ('my_issues.html',
+    return render_to_response ('all_issues.html',
                                {'menus' : get_user_menus (request.user,all_issues),
-                                'user' : request.user,
-                                'issues' : issues})
+                                'user' : request.user})
+
+@login_required
+def all_issues_list (request):
+    querySet = Complaint.objects.get_latest_complaints ().order_by ('-created')
+
+    columnIndexNameMap = { 0: 'complaintno',
+                           1: 'logdate',
+                           2: 'description',
+                           3: 'curstate',
+                           4: 'created'}
+
+    return get_datatables_records(request, querySet, columnIndexNameMap, 'issue_entity_datatable.html')
 
 @login_required
 def my_issues (request):
+    return render_to_response ('my_issues.html',
+                               {'menus' : get_user_menus (request.user, my_issues),
+                                'user' : request.user})
+
+
+@login_required
+def my_issues_list (request):
     role = AppRole.objects.get_user_role (request.user)
     statuses = StatusTransition.objects.get_changeable_statuses (role)
-    issues = Complaint.objects.get_latest_complaints ().filter (curstate__in = statuses).order_by ('-created')
+    querySet = Complaint.objects.get_latest_complaints ().filter (curstate__in = statuses).order_by ('-created')
 
     role = request.user.cmhuser.get_user_role ()
     if role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE:
         official = request.user.official
-        issues = issues.filter (department__in = official.departments.all ())
+        querySet = querySet.filter (department__in = official.departments.all ())
 
-    paginator = Paginator (issues, 10)
+    columnIndexNameMap = { 0: 'complaintno',
+                           1: 'logdate',
+                           2: 'description',
+                           3: 'curstate',
+                           4: 'created'}
 
-    try:
-        page = int (request.GET.get ('page', '1'))
-    except ValueError:
-        page = 1
-
-    try:
-        issues = paginator.page (page)
-    except (EmptyPage, InvalidPage):
-        issues = paginator.page (paginator.num_pages)
-
-    return render_to_response ('my_issues.html',
-                               {'issues' : issues,
-                                'menus' : get_user_menus (request.user,my_issues),
-                                'user' : request.user})
+    return get_datatables_records (request, querySet, columnIndexNameMap, 'issue_entity_datatable.html')
 
 
-def update (request, complaintno, complaintid):
+def update (request, complaintno):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
     base = complaints.get (original = None)
     current = complaints.get (latest = True)
@@ -314,11 +310,10 @@ def update (request, complaintno, complaintid):
             if request.META.has_key ('HTTP_REFERER'):
                 prev_page = request.META ['HTTP_REFERER']
             else:
-                prev_page = reverse (track_issues, args = [complaintno,current.id])
+                prev_page = reverse (track_issues, args = [complaintno])
 
             return render_to_response ('update.html',
-                                       {'form' : ComplaintUpdateForm (current,
-                                                                      newstatuses),
+                                       {'form' : ComplaintUpdateForm (current, newstatuses),
                                         'base' : base,
                                         'current' : current,
                                         'complaints' : complaints,
@@ -334,7 +329,7 @@ def update (request, complaintno, complaintid):
             elif request.META.has_key ('HTTP_REFERER'):
                 prev_page = request.META ['HTTP_REFERER']
             else:
-                prev_page = reverse (track_issues, args = [complaintno,current.id])
+                prev_page = reverse (track_issues, args = [complaintno])
 
             if request.POST.has_key ('save'):
                 form = ComplaintUpdateForm (current, newstatuses, request.POST)
@@ -358,7 +353,7 @@ def update (request, complaintno, complaintid):
         else:
             pass
 
-def track_issues (request, complaintno, complaintid):
+def track_issues (request, complaintno):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
     base = complaints.get (original = None)
     current = complaints.get (latest = True)
@@ -391,8 +386,7 @@ def track (request):
             complaintno = form.cleaned_data ['complaintno']
             current = Complaint.objects.get (complaintno = complaintno, latest = True)
             return HttpResponseRedirect (reverse (track_issues,
-                                                  args = [form.cleaned_data ['complaintno'],
-                                                          current.id]))
+                                                  args = [form.cleaned_data ['complaintno']]))
         else:
             return render_to_response ('track.html',
                                        {'user' : request.user,

@@ -54,12 +54,15 @@
         {% endfor %}
       </tbody>
     </table>
+    <div style="clear:both"></div>
   </div>
 </center>
 <script type="text/javascript" src="/static/jquery/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript">
   $(document).ready (function () {
-    $('#metrics').dataTable ({bSortable: true});
+    $('#metrics').dataTable ({
+       bSortable: true
+    });
   });
 </script>
 {% endblock %}

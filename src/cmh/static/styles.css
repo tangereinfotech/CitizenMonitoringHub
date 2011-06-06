@@ -297,6 +297,7 @@ ul.errorlist li {
    color: #336;
    border-top: 1px solid transparent;
    padding: 4px;
+   text-align: left;
 }
 
 .inlineform {
@@ -458,10 +459,41 @@ input[readonly="readonly"] {
 	-moz-border-radius-topright:2px;
 }
 
-
 #demo-dialog .ui-dialog-title { font-size:1.2em; }
 
 #widget-docs .toggle-docs-links { float:right; margin:0 0.4em 0.4em; }
 #widget-docs .toggle-docs-links a { margin:0 0.4em;cursor:pointer; }
 
+#issues_list_wrapper {
+   clear: both;
+   padding: 10px 0px;
+}
+
+#issues_list {
+   clear: both;
+}
+
+span.paginate_button {
+   background-color: #dddddd;
+}
+
+.paging_full_numbers span.paginate_active {
+    background-color: #99B3FF;
+}
+
+.paging_full_numbers span.paginate_button, .paging_full_numbers span.paginate_active {
+    border: 1px solid #AAAAAA;
+    border-radius: 5px 5px 5px 5px;
+    cursor: pointer;
+    margin: 0 3px;
+    padding: 2px 5px;
+}
+
+#issues_list_info {
+   padding: 5px 10px;
+}
+
+#issues_list_paginate {
+   padding: 5px 10px;
+}
 

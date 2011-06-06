@@ -40,8 +40,13 @@ var field_autocomplete = function (field_tag, db_id_tag, detail_id_tag, url) {
 var showContextMenu = function (row_class, menu_id) {
   $("tr" + row_class).contextMenu ({'menu' : menu_id},
                                    function (action, el, pos) {
-                                       var form = el.find ("." + action + " form");
-                                       form.submit ();
+                                       complaintno = $(el).find ("td.complaintno").text ();
+                                       var f = document.createElement ("form");
+                                       f.action = "/complaint/" + action + "/" + complaintno + "/";
+                                       f.method = "get";
+                                       f.submit ();
+                                       // var form = el.find (".complaintno" + action + " form");
+                                       // form.submit ();
                                    });
 };
 
