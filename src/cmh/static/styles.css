@@ -369,48 +369,6 @@ ul.errorlist li {
    padding-right: 30px;
 }
 
-.dataTables_length {
-   float: left;
-}
-
-.dataTables_filter {
-   float: right;
-}
-
-.dataTables_Wrapper {
-   clear: both;
-}
-
-.dataTables_info {
-   float: left;
-}
-
-.dataTables_paginate {
-   float: right;
-}
-
-.paginate_disabled_previous, .paginate_enabled_previous, .paginate_disabled_next, .paginate_enabled_next {
-   height: 19px;
-   width: 19px;
-   margin-left: 3px;
-   float: left;
-}
-
-.paginate_enabled_previous {
-   background-image: url('/static/images/back_enabled.jpg');
-}
-
-.paginate_disabled_previous {
-   background-image: url('/static/images/back_disabled.jpg');
-}
-
-.paginate_enabled_next {
-   background-image: url('/static/images/forward_enabled.jpg');
-}
-
-.paginate_disabled_next {
-   background-image: url('/static/images/forward_disabled.jpg');
-}
 
 .sorting {
    background: url('/static/images/sort_both.png') no-repeat center right;
@@ -463,6 +421,49 @@ input[readonly="readonly"] {
 
 #widget-docs .toggle-docs-links { float:right; margin:0 0.4em 0.4em; }
 #widget-docs .toggle-docs-links a { margin:0 0.4em;cursor:pointer; }
+
+.dataTables_length {
+   float: left;
+}
+
+.dataTables_filter {
+   float: right;
+}
+
+.dataTables_Wrapper {
+   clear: both;
+}
+
+.dataTables_info {
+   float: left;
+}
+
+.dataTables_paginate {
+   float: right;
+}
+
+.paginate_disabled_previous, .paginate_enabled_previous, .paginate_disabled_next, .paginate_enabled_next {
+   height: 19px;
+   width: 19px;
+   margin-left: 3px;
+   float: left;
+}
+
+.paginate_enabled_previous {
+   background-image: url('/static/images/back_enabled.jpg');
+}
+
+.paginate_disabled_previous {
+   background-image: url('/static/images/back_disabled.jpg');
+}
+
+.paginate_enabled_next {
+   background-image: url('/static/images/forward_enabled.jpg');
+}
+
+.paginate_disabled_next {
+   background-image: url('/static/images/forward_disabled.jpg');
+}
 
 #issues_list_wrapper {
    clear: both;
