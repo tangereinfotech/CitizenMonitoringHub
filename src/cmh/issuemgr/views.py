@@ -428,3 +428,8 @@ def hot_complaints (request):
         traceback.print_exc ()
 
 
+def report(request) :
+    if request.method=="GET" :
+        return render_to_response('reportselection.html',
+                                 {'menus' : get_user_menus (request.user,report),
+                                 'user' : request.user})

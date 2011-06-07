@@ -33,7 +33,10 @@
   </head>
   <body {% block onload_block %}{%endblock%}>
     <div class="content_wrapper">
-     {% block base_content %}{% endblock %}
+          <div class="aboutpanel">
+            <a href="aboutus">About Us</a>
+          </div>
+      {% block base_content %} {% endblock %}
     </div>
     {% block body_scripts %}{% endblock %}
   </body>

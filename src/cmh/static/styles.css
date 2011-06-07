@@ -45,12 +45,21 @@ div.system_panel {
    height: 17px;
    border-bottom: 2px solid #044a98;
 }
-
+div.aboutpanel {
+    float:left;
+    display: inline;
+    padding-bottom: 5px;
+}
+div.about-content{
+    padding-left:125px;
+    padding-right:125px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
 div.userpanel {
    float: right;
    padding-bottom: 5px;
 }
-
 div.userpanel ul.sys-panel {
    display:inline;
    list-style-type: none;
@@ -324,9 +333,16 @@ ul.errorlist li {
 .section-title {
    border-top: 2px dashed #044a98;
    padding-top: 15px;
+}
+.section-title h2{
    font-size: 18px;
    text-align: center;
    width: 100%;
+}
+.reportlink {
+   float:right;
+   display: inline;
+   padding-bottom:10px;
 }
 
 .master-menu {
