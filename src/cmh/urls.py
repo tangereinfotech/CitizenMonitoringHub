@@ -42,5 +42,7 @@ if settings.DEBUG:
                                                                'static')}),
                              )
 
-urlpatterns += patterns ("", (r'^$', 'cmh.views.index'))
+urlpatterns += patterns ("", 
+                         (r'^$', 'cmh.views.index'),
+                         (r'aboutus$','cmh.views.aboutus'))
 

@@ -31,3 +31,6 @@ def index (request):
                                                        'center_long' : 77.081795},
                                               'departments' : departments})
 
+def aboutus (request):
+    return render_to_response ('aboutus.html', {'menus' : get_user_menus (request.user,index),
+                                              'user' : request.user},)
