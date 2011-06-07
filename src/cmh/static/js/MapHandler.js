@@ -51,26 +51,26 @@ var MapHandler = {
 
         this.map = new google.maps.Map (document.getElementById (map_canvas), myOptions);
 
-        google.maps.event.addListener (this.map, 'zoom_changed', 
+        google.maps.event.addListener (this.map, 'zoom_changed',
                                        function () {
                                            var zoomLevel = MapHandler.map.getZoom ();
                                            switch (zoomLevel) {
-                                           case MapHandler.VILLG_ZOOM: 
+                                           case MapHandler.VILLG_ZOOM:
                                                MapHandler.showVillageData ();
                                                break;
-                                           case MapHandler.GRAMP_ZOOM: 
+                                           case MapHandler.GRAMP_ZOOM:
                                                MapHandler.showGrampData ();
                                                break;
-                                           case MapHandler.BLOCK_ZOOM: 
+                                           case MapHandler.BLOCK_ZOOM:
                                                MapHandler.showBlockData ();
                                                break;
-                                           case MapHandler.DISTT_ZOOM: 
+                                           case MapHandler.DISTT_ZOOM:
                                                MapHandler.showDisttData ();
-                                               break; 
-                                           case MapHandler.STATE_ZOOM: 
+                                               break;
+                                           case MapHandler.STATE_ZOOM:
                                                MapHandler.showStateData ();
                                                break;
-                                           default: 
+                                           default:
                                                if (zoomLevel < MapHandler.STATE_ZOOM) {
                                                    MapHandler.updateStateData ();
                                                } else {
@@ -89,7 +89,13 @@ var MapHandler = {
                                      );
     },
     updateVillageData : function () {
-
+        MapHandler.update_with_stats (this.url,
+                                      this.departments,
+                                      MapHandler.VILLG_ZOOM,
+                                      'villg',
+                                      MapHandler.stdate,
+                                      MapHandler.endate
+                                     );
     },
     showGrampData : function () {
         MapHandler.update_with_stats (this.url,
@@ -116,7 +122,7 @@ var MapHandler = {
                                       MapHandler.endate);
     },
     showStateData : function () {
-                MapHandler.update_with_stats (this.url,
+        MapHandler.update_with_stats (this.url,
                                       this.departments,
                                       MapHandler.STATE_ZOOM,
                                       'state',
@@ -124,7 +130,12 @@ var MapHandler = {
                                       MapHandler.endate);
     },
     updateStateData : function () {
-        
+        MapHandler.update_with_stats (this.url,
+                                      this.departments,
+                                      MapHandler.STATE_ZOOM,
+                                      'state',
+                                      MapHandler.stdate,
+                                      MapHandler.endate);
     },
     getCurrentDataLevel : function () {
         return this.data_level;
@@ -168,14 +179,20 @@ var MapHandler = {
                     if (!(MapHandler.isEmpty (data))) {
                         MapHandler.bounds = new google.maps.LatLngBounds ();
 
-                        $.each (data, 
+                        $.each (data,
                                 function (index, value) {
                                     var place_latlong = new google.maps.LatLng (value.latitude, value.longitude);
-                                    
+
                                     MapHandler.bounds.extend (place_latlong);
-                                    
+
                                     var numdigits = ("" + value.count + "").length;
-                                    var radius = numdigits * 1400;
+                                    var villzoom = MapHandler.VILLG_ZOOM;
+                                    var currzoom = MapHandler.map.getZoom ();
+                                    var zoomval = villzoom - currzoom;
+                                    var radius = (numdigits *1400 * Math.pow(2,zoomval));
+                                    console.log("Radius value"+radius);
+                                    console.log("ZOOM val"+zoomval);
+//                                    console.log("Radius value"+radius);
                                     var font_size = "" + (numdigits * 100 * 1.2) + "%";
                                     var count_offset = -numdigits * 12 * 0.9;
                                     var name_offset = numdigits * 12 * 0.5;
@@ -188,7 +205,7 @@ var MapHandler = {
                                                                            strokeOpacity: 0.60,
                                                                            fillColor : "#e5926a",
                                                                            fillOpacity : 0.50});
-                                    
+
                                     var nlabel = new Label ({map : MapHandler.map}, name_offset);
                                     nlabel.set ('position', place_latlong);
                                     nlabel.set ('text', value.name);
