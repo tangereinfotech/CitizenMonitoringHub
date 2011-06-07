@@ -47,7 +47,7 @@ from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX, ComplaintDis
 
 from cmh.smsgateway.models import TextMessage
 
-from cmh.usermgr.constants import UserRoles
+from cmh.common.constants import UserRoles
 from cmh.usermgr.utils import get_user_menus
 
 

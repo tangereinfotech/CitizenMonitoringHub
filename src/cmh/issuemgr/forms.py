@@ -32,7 +32,8 @@ from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.utils import update_complaint_sequence
 
 from cmh.usermgr.utils import get_or_create_citizen
-from cmh.usermgr.constants import UserRoles
+
+from cmh.common.constants import UserRoles
 
 from cmh.common.fields import MultiNumberIdField, FormattedDateField
 

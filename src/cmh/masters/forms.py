@@ -24,14 +24,14 @@ from cmh.common.fields import AutoCompleteOffTextInput, SpacedSelectInput
 from cmh.common.fields import SpacedTextInput
 
 from cmh.common.models import ComplaintDepartment
+from cmh.common.constants import UserRoles
 
-from cmh.usermgr.constants import UserRoles
 from cmh.usermgr.models import CmhUser, Official
 
 from cmh.smsgateway.models import TextMessage
 from cmh.common.utils import get_random_string, debug
 
-from cmh.usermgr.constants import PASSWORD_LEN, PASSWORD_MSG
+from cmh.common.constants import PASSWORD_LEN, PASSWORD_MSG
 
 class AddCSOMember (forms.Form):
     username = UsernameField (widget = AutoCompleteOffTextInput ())

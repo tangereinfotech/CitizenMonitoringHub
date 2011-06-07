@@ -26,8 +26,8 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 from cmh.usermgr.models import CmhUser, Official
 from cmh.usermgr.utils import get_user_menus
-from cmh.usermgr.constants import UserRoles
 
+from cmh.common.constants import UserRoles
 from cmh.common.models import ComplaintDepartment
 from cmh.common.utils import debug
 

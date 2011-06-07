@@ -23,7 +23,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import User
 from cmh.issuemgr.models import ComplaintDepartment
 from cmh.common.models import District
-from cmh.usermgr.constants import UserRoles
+from cmh.common.constants import UserRoles
 from cmh.usermgr.models import Official, CmhUser
 from cmh.common.utils import ExcelProcessor as EP
 from cmh.common.utils import InvalidDataException

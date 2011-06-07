@@ -16,7 +16,7 @@
 
 from django.core.urlresolvers import reverse, NoReverseMatch
 from cmh.common.models import MenuItem, AppRole
-from cmh.usermgr.constants import UserRoles
+from cmh.common.constants import UserRoles
 
 from cmh.usermgr.models import Citizen
 

@@ -75,7 +75,7 @@ class RoleException (Exception):
 
 class AppRoleManager (models.Manager):
     def get_user_role (self, user):
-        from cmh.usermgr.constants import UserRoles
+        from cmh.common.constants import UserRoles
         if user.is_authenticated ():
             try:
                 return AppRole.objects.get (users = user)
