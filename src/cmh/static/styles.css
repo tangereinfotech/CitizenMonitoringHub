@@ -107,6 +107,9 @@ div.page_content {
     border: 4px solid #1369a1;
 }
 
+div.gendercaste {
+   display: inline;
+}
 ul.category {
    padding-left: 5px;
 }

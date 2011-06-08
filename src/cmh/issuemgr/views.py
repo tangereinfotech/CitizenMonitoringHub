@@ -436,5 +436,3 @@ def report(request) :
                                  {'menus' : get_user_menus (request.user,report),
                                   'user' : request.user})
 
-def renderpdf(request) :
-    return render_to_response("Report Template.pdf")

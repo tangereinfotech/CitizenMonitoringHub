@@ -129,7 +129,10 @@
         {{ form.revlocationid.errors }}
         {{ form.revlocationid }}
         {{ form.revlocationdesc }}
-        <div id="id_revlocation_detail"></div>
+        <div id="id_revlocation_detail">
+          Gram Panchayat: {{ current.location.grampanchayat.name }}<br/>
+          Block: {{ current.location.grampanchayat.block.name }}
+        </div>
       </td>
       <td/>
       <td> Complaint Type (Revised) </td>
@@ -137,7 +140,10 @@
         {{ form.revcategoryid.errors }}
         {{ form.revcategoryid }}
         {{ form.revcategorydesc }}
-        <div id="id_revcategory_detail"></div>
+        <div id="id_revcategory_detail">
+          {{ current.complainttype.cclass }}<br/>
+          Department: {{ current.department.name  }}
+        </div>
       </td>
     </tr>
     {% endif %}
@@ -146,6 +152,7 @@
       <td colspan="4">
         {{ form.comment.errors }}
         {{ form.comment }}
+
       </td>
     </tr>
     <tr>

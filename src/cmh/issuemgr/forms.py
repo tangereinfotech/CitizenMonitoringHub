@@ -203,6 +203,20 @@ class ComplaintUpdateForm (forms.Form):
                                                   [(status.id, status.name)
                                                    for status in newstates]),
                                        widget = forms.Select (attrs = {'style': 'width:100%'}))
+        self.fields ['revlocationid'] = forms.IntegerField (widget = forms.HiddenInput (), required = False, initial = complaint.location.id)
+        self.fields ['revlocationdesc'] = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:100%'}),
+                                                           required = False,
+                                                           initial = complaint.location.name)
+        self.fields ['revcategoryid'] = forms.IntegerField (widget = forms.HiddenInput (), required = False, initial = complaint.complainttype.id)
+        self.fields ['revcategorydesc'] = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:100%'}),
+                                                           required = False,
+                                                           initial = complaint.complainttype.summary)
+        self.fields ['comment'] = forms.CharField (widget = forms.Textarea (attrs = {'style' : 'width:100%',
+                                                                 'cols' : '40',
+                                                                 'rows' : '6'}),
+                                                   required = True,
+                                                   initial = complaint.description)
+
 
     def clean_revlocationid (self):
         if self.cleaned_data ['revlocationid'] != None:

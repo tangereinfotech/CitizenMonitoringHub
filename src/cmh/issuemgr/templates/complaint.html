@@ -63,6 +63,18 @@
             </div>
             {{ form.categoryid }} {{ form.categorydesc }}
             <div id="id_category_detail" style="margin:0"></div>
+            {% if user.is_authenticated %}
+            <div class="gendercaste">
+              Gender:<br/>
+              <input type="checkbox" value="male"> Male
+              <input type="checkbox" value="female"> Female
+              <input type="checkbox" value="unspecified" checked="checked"> Unspecified
+              <br/>
+              Community:<br/>
+              <input type="checkbox" value="SC / ST"> SC / ST
+              <input type="checkbox" value="unspecified" checked="checked"> Unspecified
+            </div>
+            {% endif %}
             <div style="text-align:center;width:100%;">
               <input type="submit" value="Submit Complaint" />
             </div>
