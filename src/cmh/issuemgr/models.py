@@ -50,6 +50,7 @@ class Complaint(models.Model):
     # Custom field for analytics only #
     ###################################
     createdate    = models.DateField (auto_now_add = True) # For querying by date
+    refno         = models.CharField (max_length = 2000, blank = True, null = True)
 
     objects = ComplaintManager ()
 
