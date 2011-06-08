@@ -22,31 +22,20 @@ class Migration(SchemaMigration):
             ('assignto', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['usermgr.Official'], null=True, blank=True)),
             ('location', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['common.Village'], null=True, blank=True)),
             ('logdate', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('original', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['issuemgr.Complaint'], null=True, blank=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('original', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['issuemgr.Complaint'], null=True, blank=True)),
             ('latest', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('creator', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
             ('comment', self.gf('django.db.models.fields.CharField')(max_length=1000, null=True, blank=True)),
+            ('createdate', self.gf('django.db.models.fields.DateField')(auto_now_add=True, blank=True)),
         ))
         db.send_create_signal('issuemgr', ['Complaint'])
-
-        # Adding model 'StatusTransition'
-        db.create_table('issuemgr_statustransition', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('role', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['usermgr.AppRole'], null=True, blank=True)),
-            ('curstate', self.gf('django.db.models.fields.related.ForeignKey')(related_name='curstate', to=orm['common.ComplaintStatus'])),
-            ('newstate', self.gf('django.db.models.fields.related.ForeignKey')(related_name='newstate', to=orm['common.ComplaintStatus'])),
-        ))
-        db.send_create_signal('issuemgr', ['StatusTransition'])
 
 
     def backwards(self, orm):
 
         # Deleting model 'Complaint'
         db.delete_table('issuemgr_complaint')
-
-        # Deleting model 'StatusTransition'
-        db.delete_table('issuemgr_statustransition')
 
 
     models = {
@@ -111,6 +100,7 @@ class Migration(SchemaMigration):
             'defsmsres': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
             'department': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.ComplaintDepartment']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'search': ('django.db.models.fields.CharField', [], {'max_length': '10000', 'null': 'True', 'blank': 'True'}),
             'summary': ('django.db.models.fields.CharField', [], {'max_length': '2000'})
         },
         'common.country': {
@@ -172,6 +162,7 @@ class Migration(SchemaMigration):
             'complaintno': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'complainttype': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'complaintbase'", 'null': 'True', 'to': "orm['common.ComplaintType']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'createdate': ('django.db.models.fields.DateField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
             'curstate': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'complnaintstate'", 'null': 'True', 'to': "orm['common.ComplaintStatus']"}),
             'department': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'complaintdepartment'", 'null': 'True', 'to': "orm['common.ComplaintDepartment']"}),
@@ -182,20 +173,6 @@ class Migration(SchemaMigration):
             'location': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.Village']", 'null': 'True', 'blank': 'True'}),
             'logdate': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'original': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['issuemgr.Complaint']", 'null': 'True', 'blank': 'True'})
-        },
-        'issuemgr.statustransition': {
-            'Meta': {'object_name': 'StatusTransition'},
-            'curstate': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'curstate'", 'to': "orm['common.ComplaintStatus']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'newstate': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'newstate'", 'to': "orm['common.ComplaintStatus']"}),
-            'role': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['usermgr.AppRole']", 'null': 'True', 'blank': 'True'})
-        },
-        'usermgr.approle': {
-            'Meta': {'object_name': 'AppRole'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'role': ('django.db.models.fields.IntegerField', [], {}),
-            'users': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False'})
         },
         'usermgr.citizen': {
             'Meta': {'object_name': 'Citizen'},

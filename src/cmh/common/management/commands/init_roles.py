@@ -17,7 +17,7 @@ from django.core.management.base import NoArgsCommand
 
 from cmh.common.models import AppRole
 
-from cmh.usermgr.constants import UserRoles
+from cmh.common.constants import UserRoles
 
 
 class Command (NoArgsCommand):

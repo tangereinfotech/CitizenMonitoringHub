@@ -18,7 +18,7 @@ from django.core.management.base import NoArgsCommand, CommandError
 from cmh.common.models import StatusTransition
 from cmh.common.models import AppRole, MenuItem
 
-from cmh.usermgr.constants import UserRoles
+from cmh.common.constants import UserRoles
 
 from cmh.issuemgr.constants import *
 

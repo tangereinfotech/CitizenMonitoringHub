@@ -25,35 +25,6 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('usermgr', ['CmhUser'])
 
-        # Adding model 'AppRole'
-        db.create_table('usermgr_approle', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('role', self.gf('django.db.models.fields.IntegerField')()),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-        ))
-        db.send_create_signal('usermgr', ['AppRole'])
-
-        # Adding M2M table for field users on 'AppRole'
-        db.create_table('usermgr_approle_users', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('approle', models.ForeignKey(orm['usermgr.approle'], null=False)),
-            ('user', models.ForeignKey(orm['auth.user'], null=False))
-        ))
-        db.create_unique('usermgr_approle_users', ['approle_id', 'user_id'])
-
-        # Adding model 'MenuItem'
-        db.create_table('usermgr_menuitem', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=500)),
-            ('url', self.gf('django.db.models.fields.CharField')(max_length=500)),
-            ('role', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['usermgr.AppRole'])),
-            ('serial', self.gf('django.db.models.fields.IntegerField')()),
-        ))
-        db.send_create_signal('usermgr', ['MenuItem'])
-
-        # Adding unique constraint on 'MenuItem', fields ['role', 'serial', 'url']
-        db.create_unique('usermgr_menuitem', ['role_id', 'serial', 'url'])
-
         # Adding model 'Official'
         db.create_table('usermgr_official', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -83,23 +54,11 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
 
-        # Removing unique constraint on 'MenuItem', fields ['role', 'serial', 'url']
-        db.delete_unique('usermgr_menuitem', ['role_id', 'serial', 'url'])
-
         # Deleting model 'Citizen'
         db.delete_table('usermgr_citizen')
 
         # Deleting model 'CmhUser'
         db.delete_table('usermgr_cmhuser')
-
-        # Deleting model 'AppRole'
-        db.delete_table('usermgr_approle')
-
-        # Removing M2M table for field users on 'AppRole'
-        db.delete_table('usermgr_approle_users')
-
-        # Deleting model 'MenuItem'
-        db.delete_table('usermgr_menuitem')
 
         # Deleting model 'Official'
         db.delete_table('usermgr_official')
@@ -159,6 +118,7 @@ class Migration(SchemaMigration):
             'defsmsres': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
             'department': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.ComplaintDepartment']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'search': ('django.db.models.fields.CharField', [], {'max_length': '10000', 'null': 'True', 'blank': 'True'}),
             'summary': ('django.db.models.fields.CharField', [], {'max_length': '2000'})
         },
         'common.country': {
@@ -194,13 +154,6 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        'usermgr.approle': {
-            'Meta': {'object_name': 'AppRole'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'role': ('django.db.models.fields.IntegerField', [], {}),
-            'users': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False'})
-        },
         'usermgr.citizen': {
             'Meta': {'object_name': 'Citizen'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -212,14 +165,6 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'phone': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'})
-        },
-        'usermgr.menuitem': {
-            'Meta': {'unique_together': "(('role', 'serial', 'url'),)", 'object_name': 'MenuItem'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '500'}),
-            'role': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['usermgr.AppRole']"}),
-            'serial': ('django.db.models.fields.IntegerField', [], {}),
-            'url': ('django.db.models.fields.CharField', [], {'max_length': '500'})
         },
         'usermgr.official': {
             'Meta': {'object_name': 'Official'},

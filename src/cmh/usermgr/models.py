@@ -20,8 +20,6 @@ from django.contrib.auth.models import User
 from cmh.common.models import ComplaintDepartment, ComplaintType, AppRole
 from cmh.common.utils import get_random_string
 
-from cmh.usermgr.constants import PASSWORD_LEN, PASSWORD_MSG
-
 class Citizen(models.Model):
     name   = models.CharField (max_length = 500, blank = True, null = True)
     mobile = models.CharField (max_length = 15, blank=True,null=True)
@@ -39,7 +37,8 @@ class CmhUser (models.Model):
                               self.user.username)
 
     def get_role_name (self):
-        from cmh.usermgr.constants import UserRoles
+        from cmh.common.constants import UserRoles
+
         role = AppRole.objects.get_user_role (self.user)
         if role == None:
             return ""
@@ -47,7 +46,8 @@ class CmhUser (models.Model):
             return UserRoles.ROLE_MAP[role.role]
 
     def set_user_role (self, role):
-        from cmh.usermgr.constants import UserRoles
+        from cmh.common.constants import UserRoles
+
         approle = {UserRoles.CSO: UserRoles.ROLE_CSO,
                    UserRoles.DELEGATE: UserRoles.ROLE_DELEGATE,
                    UserRoles.OFFICIAL: UserRoles.ROLE_OFFICIAL,
@@ -63,6 +63,8 @@ class CmhUser (models.Model):
         else: return self.phone
 
     def reset_password (self):
+        from cmh.common.constants import PASSWORD_LEN, PASSWORD_MSG
+
         password = get_random_string (PASSWORD_LEN)
         message = PASSWORD_MSG % (cmhuser.phone, password)
         debug (message)
