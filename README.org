@@ -12,6 +12,8 @@ This application is being developed on Ubuntu, though it may be possible to inst
  + PostgreSQL v8.4
  + xlrd (sudo easy_install xlrd)
  + python-psycopg2 (sudo apt-get install python-psycopg2)
+ + python-imaging (sudo apt-get install python-imaging)
+ + python-dateutil (sudo apt-get install python-dateutil)
 
 ** Steps:
  + Ensure that the user required by PostgreSQL is created on your system (Do not use the default username provided in default settings.py)
