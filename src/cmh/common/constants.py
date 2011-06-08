@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from cmh.common.models import AppRole
+from cmh.common.models import District
 
 PASSWORD_LEN = 6
 PASSWORD_MSG = "Username: %s ; Password: %s"
@@ -57,3 +58,8 @@ class UserRoles:
         ROLE_DM = None
 
 
+class DeployDistrict:
+    try:
+        DISTRICT = District.objects.all ()[0]
+    except:
+        DISTRICT = None

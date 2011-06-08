@@ -60,6 +60,9 @@ class ComplaintType (models.Model):
     defsmsclo = models.CharField (max_length = 2000, blank = True, null = True)
     search = models.CharField (max_length = 10000, blank = True, null = True)
 
+class ComplaintMDG (models.Model):
+    complainttype = models.ForeignKey (ComplaintType)
+    goalnum = models.CharField (max_length = 20)
 
 class ComplaintStatus (models.Model):
     name = models.CharField (max_length = 50)

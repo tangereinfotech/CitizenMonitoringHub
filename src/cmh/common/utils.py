@@ -28,10 +28,11 @@ class InvalidDataException (Exception):
     pass
 
 class ExcelProcessor ():
-    CELL_EMPTY  = xlrd.XL_CELL_EMPTY  # 0
-    CELL_TEXT   = xlrd.XL_CELL_TEXT   # 1
-    CELL_NUMBER = xlrd.XL_CELL_NUMBER # 2
-    CELL_DATE   = xlrd.XL_CELL_DATE   # 3
+    CELL_EMPTY  = 0 # xlrd.XL_CELL_EMPTY  # 0
+    CELL_TEXT   = 1 # xlrd.XL_CELL_TEXT   # 1
+    CELL_INT    = 2 # xlrd.XL_CELL_NUMBER # 2
+    CELL_FLOAT  = 3 # xlrd.XL_CELL_NUMBER # 2
+    CELL_DATE   = 4 # xlrd.XL_CELL_DATE   # 3
 
     def __init__ (self, rowdatacallback, parsedonecallback):
         self.rowdatacallback = rowdatacallback
@@ -50,47 +51,58 @@ class ExcelProcessor ():
             for rowid in range (rowno, sheet.nrows):
                 cells = {}
                 for cellid in range (sheet.ncols):
-                    cells.update ({cellid : (sheet.cell_type (rowid, cellid), sheet.cell_value (rowid, cellid))})
-
+                    ct = sheet.cell_type (rowid, cellid)
+                    if ct != xlrd.XL_CELL_EMPTY:
+                        cells.update ({cellid : (sheet.cell_type (rowid, cellid), sheet.cell_value (rowid, cellid))})
+                    else:
+                        cells.update ({cellid : (sheet.cell_type (rowid, cellid), None)})
                 self.rowdatacallback (rowid, cells)
         else:
             for rowid in range (rowno, sheet.nrows):
                 cellvalues = []
                 for cellid in range (len (cell_types)):
-                    ct = sheet.cell_type (rowid, cellid)
-                    if ct != ExcelProcessor.CELL_EMPTY:
-                        value = self.convert_type (ct,
-                                                   cell_types [cellid],
-                                                   sheet.cell_value (rowid, cellid))
-                        cellvalues.append (value)
-                    else:
+                    try:
+                        ct = sheet.cell_type (rowid, cellid)
+                        if ct != xlrd.XL_CELL_EMPTY:
+                            value = self.convert_type (ct,
+                                                       cell_types [cellid],
+                                                       sheet.cell_value (rowid, cellid))
+                            cellvalues.append (value)
+                        else:
+                            cellvalues.append (None)
+                    except IndexError:
                         cellvalues.append (None)
+
                 self.rowdatacallback (rowid, cellvalues)
 
         self.parsedonecallback ()
 
     def convert_type (self, curtype, newtype, data):
-        if curtype == ExcelProcessor.CELL_TEXT:
+        if curtype == xlrd.XL_CELL_TEXT:
             if newtype == ExcelProcessor.CELL_TEXT:
                 return data.strip ()
-            elif newtype == ExcelProcessor.CELL_NUMBER:
+            elif newtype == ExcelProcessor.CELL_INT:
+                return int (data.strip ())
+            elif newtype == ExcelProcessor.CELL_FLOAT:
                 return float (data.strip ())
             elif newtype == ExcelProcessor.CELL_DATE:
                 raise InvalidDataException ("Conversion to Date Type not supported")
             else:
                 raise InvalidDataException ("Invalid target datatype:"+str(newtype))
 
-        elif curtype == ExcelProcessor.CELL_NUMBER:
+        elif curtype == xlrd.XL_CELL_NUMBER:
             if newtype == ExcelProcessor.CELL_TEXT:
                 return str (data)
-            elif newtype == ExcelProcessor.CELL_NUMBER:
-                return data
+            elif newtype == ExcelProcessor.CELL_INT:
+                return int (data)
+            elif newtype == ExcelProcessor.CELL_FLOAT:
+                return float (data)
             elif newtype == ExcelProcessor.CELL_DATE:
                 raise InvalidDataException ("Conversion to Date Type not supported")
             else:
                 raise InvalidDataException ("Invalid target datatype : " +
                                             str (newtype))
-        elif curtype == ExcelProcessor.CELL_DATE:
+        elif curtype == xlrd.XL_CELL_DATE:
             raise InvalidDataException ("Conversion from Date Type not supported")
         else:
             raise InvalidDataException ("Invalid source datatype : " + str (curtype))

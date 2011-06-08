@@ -62,17 +62,17 @@ class Command (BaseCommand):
         ep = EP (self.save_data, self.parse_complete)
         ep.process (bookname, sheetname, True,
                     [EP.CELL_TEXT,
-                     EP.CELL_NUMBER,
+                     EP.CELL_INT,
                      EP.CELL_TEXT,
-                     EP.CELL_NUMBER,
+                     EP.CELL_INT,
                      EP.CELL_TEXT,
-                     EP.CELL_NUMBER,
+                     EP.CELL_INT,
                      EP.CELL_TEXT,
-                     EP.CELL_NUMBER,
+                     EP.CELL_INT,
                      EP.CELL_TEXT,
-                     EP.CELL_NUMBER,
-                     EP.CELL_NUMBER,
-                     EP.CELL_NUMBER])
+                     EP.CELL_INT,
+                     EP.CELL_FLOAT,
+                     EP.CELL_FLOAT])
 
     def save_data (self, rowid, cells):
         print "Processing row number: ", rowid, ", Content: ", cells
@@ -158,4 +158,8 @@ class Command (BaseCommand):
 
 
     def parse_complete (self):
-        print "Done with import"
+        dcount = District.objects.all ().count ()
+        if dcount != 1:
+            print "!!! ERROR : Only one district allowed. Master has %d districts" % (dcount)
+        else:
+            print "Location Master imported correctly"
