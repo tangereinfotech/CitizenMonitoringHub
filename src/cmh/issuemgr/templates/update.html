@@ -142,11 +142,49 @@
         {{ form.revcategorydesc }}
         <div id="id_revcategory_detail">
           {{ current.complainttype.cclass }}<br/>
-          Department: {{ current.department.name  }}
+          department: {{ current.department.name  }}<br/>
+          Gender: {{ current.gender }}<br/>
+          Community: {{ current.community }}
+        </div>
+      </td>
+    </tr>
+
+
+    {% else %}
+    <tr>
+      <td> Location (Revised) </td>
+      <td>
+        <div id="id_revlocation_detail">
+          Gram Panchayat: {{ current.location.grampanchayat.name }}<br/>
+          Block: {{ current.location.grampanchayat.block.name }}
+        </div>
+      </td>
+      <td/>
+      <td> Complaint Type (Revised) </td>
+      <td>
+        <div id="id_revcategory_detail">
+          Classification: {{ current.complainttype.cclass }}<br/>
+          department    : {{ current.department.name  }}<br/>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>Personal Details:</td>
+      <td>
+        <div id="id_revcategory_detail">
+          Gender        : {{ current.gender }}
+        </div>
+      </td>
+      <td></td>
+      <td></td>
+      <td>
+        <div id="id_revcategory_detail">
+          Community     : {{ current.community }}
         </div>
       </td>
     </tr>
     {% endif %}
+
     <tr>
       <td>Comment:</td>
       <td colspan="4">

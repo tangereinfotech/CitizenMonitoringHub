@@ -22,14 +22,21 @@ from cmh.common.models import Country, State, District, Block
 from cmh.common.models import GramPanchayat, Village
 from cmh.common.models import ComplaintType, ComplaintDepartment
 
+GENDER_CHOICES = (
+    ('Male', 'Male'),
+    ('Female', 'Female'),
+    ('Unspecified','Unspecified'))
+COMMUNITY_CHOICES = (
+    ('SC/ST', 'SC / ST'),
+    ('Others','Others'),
+    ('Unspecified','Unspecified'))
+
 class ComplaintManager (models.Manager):
     def get_latest_complaints (self):
         return Complaint.objects.filter (latest = True)
 
-
 class Complaint(models.Model):
-    complainttype = models.ForeignKey (ComplaintType, blank = True, null = True,
-                                     related_name = 'complaintbase')
+    complainttype = models.ForeignKey (ComplaintType, blank = True, null = True, related_name = 'complaintbase')
     complaintno   = models.CharField (max_length = 50, blank = True, null = True)
     description   = models.CharField (max_length=1000)
     department    = models.ForeignKey (ComplaintDepartment, blank = True, null = True,
@@ -45,12 +52,14 @@ class Complaint(models.Model):
     latest        = models.BooleanField (default = True)
     creator       = models.ForeignKey (User, blank = True, null = True)
     comment       = models.CharField (max_length = 1000, blank = True, null = True)
+#    max_number = forms.ChoiceField(widget = forms.Select(),choices = ([('1','1'), ('2','2'),('3','3'), ]), initial='3', required = True,)
+    community     = models.CharField(max_length = 20, blank = True, null = True, choices = COMMUNITY_CHOICES, default = 'Unspecified')
+    gender        = models.CharField(max_length = 20, choices = GENDER_CHOICES, blank = True, null = True, default = 'Unspecified')
 
     ###################################
     # Custom field for analytics only #
     ###################################
     createdate    = models.DateField (auto_now_add = True) # For querying by date
-    refno         = models.CharField (max_length = 2000, blank = True, null = True)
 
     objects = ComplaintManager ()
 
