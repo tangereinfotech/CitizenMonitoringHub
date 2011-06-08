@@ -34,9 +34,10 @@ class ExcelProcessor ():
     CELL_FLOAT  = 3 # xlrd.XL_CELL_NUMBER # 2
     CELL_DATE   = 4 # xlrd.XL_CELL_DATE   # 3
 
-    def __init__ (self, rowdatacallback, parsedonecallback):
+    def __init__ (self, rowdatacallback, parsedonecallback, exceptioncallback = None):
         self.rowdatacallback = rowdatacallback
         self.parsedonecallback = parsedonecallback
+        self.exceptioncallback = exceptioncallback
 
     def process (self, excel, sheet_name, has_header, cell_types = []):
         book = xlrd.open_workbook (excel)
@@ -47,33 +48,25 @@ class ExcelProcessor ():
         else:
             rowno = 0
 
-        if len (cell_types) == 0:
-            for rowid in range (rowno, sheet.nrows):
-                cells = {}
-                for cellid in range (sheet.ncols):
-                    ct = sheet.cell_type (rowid, cellid)
-                    if ct != xlrd.XL_CELL_EMPTY:
-                        cells.update ({cellid : (sheet.cell_type (rowid, cellid), sheet.cell_value (rowid, cellid))})
-                    else:
-                        cells.update ({cellid : (sheet.cell_type (rowid, cellid), None)})
-                self.rowdatacallback (rowid, cells)
-        else:
-            for rowid in range (rowno, sheet.nrows):
+        for rowid in range (rowno, sheet.nrows):
+            try:
                 cellvalues = []
                 for cellid in range (len (cell_types)):
                     try:
                         ct = sheet.cell_type (rowid, cellid)
                         if ct != xlrd.XL_CELL_EMPTY:
-                            value = self.convert_type (ct,
-                                                       cell_types [cellid],
-                                                       sheet.cell_value (rowid, cellid))
+                            value = self.convert_type (ct, cell_types [cellid], sheet.cell_value (rowid, cellid))
                             cellvalues.append (value)
                         else:
                             cellvalues.append (None)
                     except IndexError:
                         cellvalues.append (None)
-
                 self.rowdatacallback (rowid, cellvalues)
+            except Exception, e:
+                if self.exceptioncallback != None:
+                    self.exceptioncallback (rowid, e)
+                else:
+                    raise e
 
         self.parsedonecallback ()
 

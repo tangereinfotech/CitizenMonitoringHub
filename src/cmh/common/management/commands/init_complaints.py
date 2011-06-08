@@ -72,9 +72,8 @@ class Command (BaseCommand):
                      EP.CELL_TEXT])
 
     def save_data (self, rowid, cells):
-        print "Processing row number: ", rowid, ", Content: ", cells
-        if None in cells :
-            print "Skipping row due to empty cells"
+        if None in cells [: -1] :
+            print "Skipping row number: ", rowid, ", due to empty cells"
         else:
             dept_name = cells [COL_DEPT_NAME]
             dept_code = cells [COL_DEPT_CODE]
@@ -111,7 +110,9 @@ class Command (BaseCommand):
                                                           search = search_str)
                 if comp_mdgs != None:
                     for mdg in comp_mdgs.split (','):
-                        ComplaintMDG.objects.create (complainttype = complaint, goalnum = mdg)
+                        g = mdg.strip ()
+                        if len (g) != 0:
+                            ComplaintMDG.objects.create (complainttype = complaint, goalnum = g)
 
     def parse_complete (self):
         pass

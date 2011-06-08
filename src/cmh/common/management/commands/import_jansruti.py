@@ -17,15 +17,25 @@ import xlrd
 import sys
 import os
 import re
+from datetime import datetime
 
 from optparse import make_option, OptionParser
 from django.core.management.base import BaseCommand, CommandError
-from cmh.common.models import ComplaintDepartment, ComplaintType, ComplaintMDG
+
+from cmh.common.remingtrans import translate
+from cmh.common.constants import DeployDistrict
+
 from cmh.common.utils import ExcelProcessor as EP
 from cmh.common.utils import InvalidDataException
-from cmh.common.constants import DeployDistrict
-from cmh.common.remingtrans import translate
+
+from cmh.common.models import ComplaintDepartment, ComplaintType, ComplaintMDG
+from cmh.common.models import GramPanchayat, Village
+
+from cmh.usermgr.utils import get_or_create_citizen
+
+from cmh.issuemgr.constants import STATUS_NEW
 from cmh.issuemgr.models import Complaint
+from cmh.issuemgr.utils import update_complaint_sequence
 
 COL_REFR_NUMB = 0
 COL_DEPT_CODE = 1
@@ -58,7 +68,7 @@ class Command (BaseCommand):
             print self.help
             sys.exit (0)
 
-        ep = EP (self.save_data, self.parse_complete)
+        ep = EP (self.save_data, self.parse_complete, self.exception_handler)
         ep.process (bookname, sheetname, True,
                     [EP.CELL_TEXT,
                      EP.CELL_TEXT,
@@ -69,13 +79,71 @@ class Command (BaseCommand):
                      EP.CELL_TEXT,
                      EP.CELL_TEXT])
 
-    def save_data (self, rowid, cells):
-        print "Registering complaint: %d [%s]" % (rowid, str (cells))
-        name = cells [COL_CITI_NAME]
-        text = cells [COL_COMP_DESC]
+    def exception_handler (self, rowid, e):
+        print "Skipping row %d since exception occured while importing this row:" % (rowid + 1), e
 
-        print "--> name: " + translate (name)
-        print "--> text: " + translate (text)
+    def save_data (self, rowid, cells):
+        skiprow = False
+        reason = ""
+
+        if cells [-1] != None and cells [-1].lower () == 'reject':
+            skiprow = True
+            reason = "Row is marked for skipping"
+
+        if skiprow == False:
+            if None in cells [:-1]:
+                skiprow = True
+                reason = "Empty cells in row"
+
+        if skiprow == False:
+            try:
+                dept = ComplaintDepartment.objects.get (code = cells [COL_DEPT_CODE])
+            except ComplaintDepartment.DoesNotExist:
+                skiprow = True
+                reason = "Department with code [%s] not found" % (cells [COL_DEPT_CODE])
+            except ComplaintDepartment.MultipleObjectsReturned:
+                skiprow = True
+                reason = "Multiple departments found with code: " + cells [COL_DEPT_CODE]
+
+        if skiprow == False:
+            try:
+                ct = ComplaintType.objects.get (code = "%s.%03d" % (dept.code, cells [COL_COMP_CODE]))
+            except ComplaintType.DoesNotExist:
+                skiprow = True
+                reason = "Complaint Type not found with department code [%s] and complaint code [%d]" % (dept.code, cells [COL_COMP_CODE])
+            except ComplaintType.MultipleObjectsReturned:
+                skiprow = True
+                reason = "Multiple Complaint Types found with department code [%s] and complaint code [%d]" % (dept.code, cells [COL_COMP_CODE])
+
+        if skiprow == False:
+            try:
+                gp = GramPanchayat.objects.get (code = DeployDistrict.DISTRICT.code + ".%03d.%03d" % (cells [COL_BLOK_CODE], cells [COL_GRAM_CODE]))
+            except GramPanchayat.DoesNotExist:
+                skiprow = True
+                reason = "Gram Panchayat not found with Block code [%d] and Gram Panchayat code [%d]" % (cells [COL_BLOK_CODE], cells [COL_GRAM_CODE])
+            except GramPanchayat.MultipleObjectsReturned:
+                skiprow = True
+                reason = "Multiple Gram Panchayat found with Block code [%d] and Gram Panchayat code [%d]" % (cells [COL_BLOK_CODE], cells [COL_GRAM_CODE])
+
+        if skiprow == False:
+            village_codes = sorted ([v.code for v in gp.village_set.all ()])
+            if len (village_codes) == 0:
+                skiprow = True
+                reason  = "No villages are present in Gram Panchayat with Block code [%d] and Gram Panchayat code [%d]" % (cells [COL_BLOK_CODE], cells [COL_GRAM_CODE])
+            else:
+                village = gp.village_set.all ().get (code = village_codes [0])
+
+        if skiprow:
+            print "Skipping row [%d], reason: %s" % ((rowid + 1), reason)
+        else:
+            c = Complaint.objects.create (complainttype = ct,
+                                          description = translate (cells [COL_COMP_DESC]),
+                                          department = dept,
+                                          curstate = STATUS_NEW,
+                                          filedby = get_or_create_citizen ('9977001872', translate (cells [COL_CITI_NAME])),
+                                          location = village,
+                                          logdate = datetime.today ())
+            update_complaint_sequence (c)
 
     def parse_complete (self):
         print "Done"
