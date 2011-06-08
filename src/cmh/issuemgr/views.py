@@ -40,7 +40,7 @@ from cmh.issuemgr.constants import STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED
 from cmh.issuemgr.constants import HotComplaintPeriod
 
 from cmh.issuemgr.models import Complaint
-from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox
+from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox, Report
 from cmh.issuemgr.forms import ComplaintTrackForm
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX, ComplaintDisplayParams
@@ -59,7 +59,6 @@ def index (request):
                                        {'form' : form,
                                         'menus' : get_user_menus (request.user,index),
                                         'user' : request.user,
-                                        'val':'Submit Issue',
                                         'post_url' : reverse (index),
                                         'map' : {'center_lat' : 23.20119,
                                                  'center_long' : 77.081795,
@@ -90,8 +89,6 @@ def index (request):
                                                  'zoom_level' : 13}})
     else:
         return HttpResponse ()
-
-
 ALL_DEPT_ID = 0
 
 def get_category_map_update (request):
@@ -378,7 +375,6 @@ def track (request):
         return render_to_response ('track.html',
                                    {'user' : request.user,
                                     'menus' : get_user_menus (request.user, track),
-                                    'val':'Track Issue',
                                     'form' : ComplaintTrackForm ()})
     else:
         form = ComplaintTrackForm (request.POST)
@@ -430,6 +426,15 @@ def hot_complaints (request):
 
 def report(request) :
     if request.method=="GET" :
+        form = Report ()
         return render_to_response('reportselection.html',
-                                 {'menus' : get_user_menus (request.user,report),
+                                 {'form':form,
+                                  'menus' : get_user_menus (request.user,report),
                                  'user' : request.user})
+    elif request.method=="POST" :
+        return render_to_response('report.html',
+                                 {'menus' : get_user_menus (request.user,report),
+                                  'user' : request.user})
+
+def renderpdf(request) :
+    return render_to_response("Report Template.pdf")

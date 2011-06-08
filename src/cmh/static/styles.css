@@ -152,7 +152,7 @@ ul.category li.category_item {
 
 #trending-issues-section {
    clear:both;
-   width: 100%;
+/*   width: 100%;*/
 }
 
 #trending-issues-chart {
@@ -334,15 +334,18 @@ ul.errorlist li {
    border-top: 2px dashed #044a98;
    padding-top: 15px;
 }
-.section-title h2{
-   font-size: 18px;
+.section-title f{
+   font-size: 20px;
    text-align: center;
-   width: 100%;
+   font-weight:bold;
+   padding-left:450px;
+/*   width: 100%;*/
 }
 .reportlink {
+   font-size: 14px;
    float:right;
    display: inline;
-   padding-bottom:10px;
+   padding-right: 20px;
 }
 
 .master-menu {

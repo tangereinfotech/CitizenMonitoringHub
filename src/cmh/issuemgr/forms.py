@@ -328,3 +328,8 @@ class ComplaintDisplayParams (forms.Form):
     stdate      = FormattedDateField ();
     endate      = FormattedDateField ();
 
+class Report (forms.Form):
+    strtdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
+                                   widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
+    enddate     = forms.DateField (input_formats = ('%d/%m/%Y',),
+                                   widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
