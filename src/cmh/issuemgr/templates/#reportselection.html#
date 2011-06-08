@@ -1,0 +1,235 @@
+{% extends "basewithmenu.html" %}
+{% block page_content %}
+<div style="width:100%; text-align:center;">
+    <div class="complaint_form">
+      <form action="/complaint/report/" method="post">
+        {# {% csrf_token %} #}
+        <table align="left">
+          <tr>
+            <td>
+              <div class="form-field">
+                <label for="id_strtdate" class="id_strtdate">Starting Date:</label>
+                {{ form.strtdate.errors }}
+              </div>
+              {{ form.strtdate }} <br/>
+            </td>
+            <td>
+              <div class="form-field">
+                <label for="id_enddate" class="id_enddate">Ending Date:</label>
+                {{ form.enddate.errors }}
+              </div>
+              {{ form.enddate }} <br/>
+            </td>
+            <td>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <label for="id_dept" class="id_dept">Department:</label>
+            </td>
+            <td>
+              <select name="department">
+                <option value="PHFW">PUBLIC HEALTH AND FAMILY WELFARE</option>
+                <option value="EDU">EDUCATION</option>
+                <option value="REV">REVENUE</option>
+                <option value="PRRD">PANCHAYATI RAJ AND RURAL DEVELOPMENT </option>
+                <option value="PRRD-NREGS">PANCHAYATI RAJ AND RURAL DEVELOPMENT - NREGA</option>
+                <option value="SJ">SOCIAL JUSTICE</option>
+                <option value="A&A-FIS">AGRICULTURE & ALLIED - FISHERIES</option>
+                <option value="A&A-VET">AGRICULTURE & ALLIED - VETERINARY DEPARTMENT </option>
+                <option value="PHED">PUBLIC HEALTH AND ENGINEERING</option>
+                <option value="PWD">PUBLIC WORKS DEPARTMENT</option>
+                <option value="WACD">WOMEN AND CHILD DEVELOPMENT</option>
+                <option value="FCS">FOOD AND CIVIL SUPPLIES</option>
+                <option value="IRR">IRRIGATION</option>
+                <option value="IND">INDUSTRIES</option>
+                <option value="HAN">HANDICRAFT</option>
+                <option value="PRD">PUBLIC RELATION DEPARTMENT</option>
+              </select>
+            </td>
+            <td>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <label for="id_issue" class="id_issue">Issue:</label>
+            </td>
+            <td>
+              <select name="issue">
+                <option value="1">Health centre is there but staff is not appointed</option>
+                <option value="2">Required medicines are not available in the health centre most of the time</option>
+                <option value="3">Janani Express did not come in time or issues pertaining to access of Janani Express</option>
+                <option value="4">Vaccinations not being administered to pregnant women</option>
+                <option value="5">Pregnant women not registered by ANM/ Anganwari worker</option>
+                <option value="6">BPL family member does not have deendayal card or is not getting free medical facility from the designated hospitals</option>
+                <option value="7">Immunisation does not happening regularly in the </option>
+                <option value="8">The incentive for institutional delivery is not received or there are issues of corruption in availing the incentive</option>
+                <option value="9">Any corruption related issue</option>
+                <option value="10">ANM not administring immunisation in the village</option>
+              </select>
+            </td>
+            <td>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+            </td>
+            <td>
+              <button type="button" value="Select" name="select" onclick="displayDate()"/>
+            </td>
+            <td>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <label for="id_selectediss" class="id_selectediss">Selected Issues:</label>
+            </td>
+            <td align="top">
+              <textarea rows="4" cols="50">
+              </textarea>
+              <input type="button" value="Remove" name="removeissues"/>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="id_location" class="id_location">Select Location:</label>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <label for="id_district" class="id_district">District:</label>
+            </td>
+            <td>
+              <select name="district">
+                <option value="sehore" selected="selected">Sehore</option>
+              </select>
+            </td>
+            <td>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <label for="id_block" class="id_block">Block:</label>
+            </td>
+            <td>
+             <select name="block">
+                <option value="0001">Sehore</option>
+                <option value="0002">Ashta</option>
+                <option value="0003">Ichhawar</option>
+                <option value="0004">Nasrullahganj</option>
+                <option value="0005">Budni</option>
+              </select>
+            </td>
+            <td>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <label for="id_panchayat" class="id_panchayat">Gram Panchayat:</label>
+            </td>
+            <td>
+             <select name="panchayat">
+                <option value="Amlaha">Amlaha</option>
+                <option value="Bhada Khedi">Bhada Khedi</option>
+                <option value="Dhamanda">Dhamanda</option>
+                <option value="Golu Khedi">Golu Khedi</option>
+                <option value="Durgpura">Durgpura</option>
+                <option value="Nagli">Nagli</option>
+                <option value="Mohanpur Lendi">Mohanpur Lendi</option>
+                <option value="Narsingh Kheda">Narsingh Kheda</option>
+                <option value="Barkheda Kurmi">Barkheda Kurmi</option>
+                <option value="Bishan Khedi">Bishan Khedi</option>
+                <option value="Toraniya">Toraniya</option>
+                <option value="Lau Khedi">Lau Khedi</option>
+                <option value="Chhapari Talluk">Chhapari Talluk</option>
+                <option value="Dhabla Rai">Dhabla Rai</option>
+                <option value="Ram Nagar">Ram Nagar</option>
+                <option value=""></option>
+              </select>
+            </td>
+            <td>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <label for="id_village" class="id_village">Village:</label>
+            </td>
+            <td>
+             <select name="village">
+                <option value="Amlaha">Amlaha</option>
+                <option value="Bhada Khedi">Bhada Khedi</option>
+                <option value="Dhamanda">Dhamanda</option>
+                <option value="Golu Khedi">Golu Khedi</option>
+                <option value="Durgpura">Durgpura</option>
+                <option value="Bishan Kheda">Bishan Kheda</option>
+                <option value="Kaliya Khedi">Kaliya Khedi</option>
+                <option value="Nagli">Nagli</option>
+                <option value="Partappura">Partappura</option>
+                <option value="Chhapari Karan">Chhapari Karan</option>
+                <option value="Mohanpur Lendi">Mohanpur Lendi</option>
+                <option value="Patariya Sidha">Patariya Sidha</option>
+                <option value="Patariya Banka">Patariya Banka</option>
+                <option value="Bhojpura">Bhojpura</option>
+                <option value="Narsingh Kheda">Narsingh Kheda</option>
+                <option value="Kherpura">Kherpura</option>
+                <option value="Sukaliya Hansraj">Sukaliya Hansraj</option>
+                <option value="Barkheda Kurmi">Barkheda Kurmi</option>
+                <option value="Deh Khedi">Deh Khedi</option>
+              </select>
+            </td>
+            <td>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+            </td>
+            <td>
+              <input type="button" value="Select" name="select"/>
+            </td>
+            <td>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <label for="id_selectedloc" class="id_selectedloc">Selected Locations:</label>
+            </td>
+            <td align="top">
+              <textarea rows="4" cols="50">
+              </textarea>
+              <input type="button" value="Remove" name="removeloc"/>
+            </td>
+            <td>
+            </td>
+          </tr>
+        </table>
+        <div style="text-align:center;width:100%;">
+          <input type="submit" value="View Report" />
+        </div>
+      </form>
+    </div>
+</div>
+<script type="text/javascript" src="/static/js/DateTimeHandler.js"></script>
+<script type="text/javascript">
+  $(document).ready (function () {
+    $("#id_strtdate").datepicker ({dateFormat : 'dd/mm/yy'});
+    $("#id_enddate").datepicker ({dateFormat : 'dd/mm/yy'});
+  });
+</script>
+
+{% endblock %}
