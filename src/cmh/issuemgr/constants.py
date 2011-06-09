@@ -27,3 +27,15 @@ class HotComplaintPeriod:
     MONTH   = 2
     QUARTER = 3
 
+
+GENDER_CHOICES = (
+    ('Male', 'Male'),
+    ('Female', 'Female'),
+    ('Unspecified','Unspecified')
+)
+
+COMMUNITY_CHOICES = (
+    ('SC/ST', 'SC / ST'),
+    ('Others','Others'),
+    ('Unspecified','Unspecified')
+)

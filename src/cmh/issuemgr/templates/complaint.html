@@ -66,14 +66,10 @@
             {% if user.is_authenticated %}
             <div class="gendercaste">
               Gender:<br/>
-              <input type="checkbox" value="male"> Male
-              <input type="checkbox" value="female"> Female
-              <input type="checkbox" value="unspecified" checked="checked"> Unspecified
+              {{ form.gender }}
               <br/>
               Community:<br/>
-              <input type="checkbox" value="SC / ST"> SC / ST
-              <input type="checkbox" value="Others"> Others
-              <input type="checkbox" value="unspecified" checked="checked"> Unspecified
+              {{ form.community }}
             </div>
             {% endif %}
             <div style="text-align:center;width:100%;">

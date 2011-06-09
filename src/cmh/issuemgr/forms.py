@@ -38,6 +38,7 @@ from cmh.common.constants import UserRoles
 from cmh.common.fields import MultiNumberIdField, FormattedDateField
 
 from cmh.common.utils import debug
+from cmh.issuemgr.constants import GENDER_CHOICES, COMMUNITY_CHOICES
 
 class ComplaintForm (forms.Form):
     logdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
@@ -103,21 +104,24 @@ class ComplaintForm (forms.Form):
         return cpl
 
 class AcceptComplaintForm (forms.Form):
-    logdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
+    logdate         = forms.DateField (input_formats = ('%d/%m/%Y',),
                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
-    description = forms.CharField (widget=forms.Textarea ( attrs = {'style' :
+    description     = forms.CharField (widget=forms.Textarea ( attrs = {'style' :
                                                                     "width:348px;border-style:inset;",
                                                                     "rows" : "6"}))
-    locationid  = forms.IntegerField (widget = forms.HiddenInput ())
-    locationdesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
+    locationid      = forms.IntegerField (widget = forms.HiddenInput ())
+    locationdesc    = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                        'autocomplete' : 'off'}))
-    yourname    = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
+    yourname        = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                       'maxlength' : '100'}))
-    yourmobile  = forms.IntegerField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
+    yourmobile      = forms.IntegerField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                          'maxlenght' : '15'}))
-    categoryid  = forms.IntegerField (widget = forms.HiddenInput ())
-    categorydesc = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
+    categoryid      = forms.IntegerField (widget = forms.HiddenInput ())
+    categorydesc    = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                        'autocomplete' : 'off'}))
+    gender          = forms.CharField (widget = forms.RadioSelect (choices = GENDER_CHOICES), required = False, initial = 'Unspecified')
+
+    community       = forms.CharField (widget = forms.RadioSelect (choices = COMMUNITY_CHOICES), required = False, initial = 'Unspecified')
 
     def clean_locationid (self):
         try:
@@ -191,6 +195,10 @@ class ComplaintUpdateForm (forms.Form):
                                                                  'cols' : '40',
                                                                  'rows' : '6'}),
                                required = True)
+    gender          = forms.CharField (widget = forms.RadioSelect (choices = (('Male', 'Male'), ('Female', 'Female'), ('Unspecified','Unspecified'))), required = False, initial = 'Unspecified')
+
+    community       = forms.CharField (widget = forms.RadioSelect (choices = (('SC/ST', 'SC / ST'), ('Others', 'Others'), ('Unspecified','Unspecified'))), required = False, initial = 'Unspecified')
+
 
     def __init__ (self, complaint, newstates, *args, **kwargs):
         super (ComplaintUpdateForm, self).__init__ (*args, **kwargs)
@@ -273,7 +281,6 @@ class ComplaintUpdateForm (forms.Form):
         if self.cleaned_data ['revlocationid'] != None:
             newver.location = Village.objects.get (id = self.cleaned_data ['revlocationid'])
 
-        debug ("revcaegory id: " + str (self.cleaned_data ['revcategoryid']))
         if self.cleaned_data ['revcategoryid'] != None:
             assignto = None
             complaint_base = ComplaintType.objects.get (id = self.cleaned_data ['revcategoryid'])
@@ -287,7 +294,8 @@ class ComplaintUpdateForm (forms.Form):
             newver.complainttype = ComplaintType.objects.get (id = self.cleaned_data ['revcategoryid'])
             newver.department = newver.complainttype.department
             newver.assignto = assignto
-
+            newver.gender = self.cleaned_data ['gender']
+            newver.community = self.cleaned_data ['community']
         newver.save ()
 
         # Update the "original" issue if the new status is ACK state since the
@@ -298,6 +306,8 @@ class ComplaintUpdateForm (forms.Form):
             original.location = newver.location
             original.department = newver.complainttype.department
             original.assignto = assignto
+            original.gender = newver.gender
+            original.community = newver.community
             original.save ()
 
         if newver.curstate == STATUS_ACK:

@@ -523,3 +523,10 @@ span.paginate_button {
    padding: 5px 10px;
 }
 
+div.gendercaste ul {
+    display: inline;
+}
+
+div.gendercaste ul li {
+    display: inline;
+}

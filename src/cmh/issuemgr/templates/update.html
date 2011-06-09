@@ -16,190 +16,207 @@
 
 {% block page_content %}
 <form action="." method="post">
-  <input type="hidden" name="prev" value="{{ prev }}">
-  <table width="100%">
-    <tr>
-      <td style="width:15%"> Complaint Number: </td>
-      <td style="width:33%">
-        <input id="id_complaintno"
-               name="complaintno"
-               value="{{ base.complaintno }}"
-               readonly="readonly"
-               style="width:100%">
-      </td>
-      <td style="width:4%"></td>
-      <td style="width:15%"> Current Status </td>
-      <td style="width:33%">
-        <input id="id_curstate"
-               name="curstate"
-               value="{{ current.curstate.name }}"
-               readonly="readonly"
-               style="width:100%">
-      </td>
-    </tr>
-    <tr>
-      <td> Filed By: </td>
-      <td>
-        <input id="id_filedby"
-               name="filedby"
-               value="{{ base.filedby.name }} &lt;{{ base.filedby.mobile }}&gt;"
-               readonly="readonly"
-               style="width:100%">
-      </td>
-      <td/>
-      <td>Location: </td>
-      <td>
-        <input id="id_location"
-               name="location"
-               value="{{ base.get_location_name }}"
-               readonly="readonly"
-               style="width:100%">
-      </td>
-    </tr>
-    <tr>
-      <td> Filed On: </td>
-      <td>
-        <input id="id_created"
-               name="created"
-               value="{{ base.created|date:'f A, d/M/Y' }}"
-               readonly="readonly"
-               style="width:100%">
-      </td>
-      <td/>
-      <td> Issue Date: </td>
-      <td>
-        <input id="id_loggedon"
-               name="loggedon"
-               value="{{ base.logdate|date:'d/M/Y' }}"
-               readonly="readonly"
-               style="width:100%">
-      </td>
-    </tr>
-    <tr>
-      <td> Complaint Summary:</td>
-      <td colspan="4">
-        <input id="id_complaintsummary"
-               name="complaintsummary"
-               value="{{ current.complainttype.summary }}"
-               readonly="readonly"
-               style="width:100%">
-      </td>
-    </tr>
-    <tr>
-      <td> Assigned To: </td>
-      <td>
-        <input id="id_assignto"
-               name="assignto"
-               value="{{ current.get_official_name }}"
-               readonly="readonly"
-               style="width:100%">
-      </td>
-      <td/>
-      <td> Department: </td>
-      <td>
-        <input id="id_department"
-               name="department"
-               value="{{ current.department.name }}"
-               readonly="readonly"
-               style="width:100%">
-      </td>
-    </tr>
-    <tr>
-      <td>Description:</td>
-      <td colspan="4">
-        <textarea name="description"
-                  cols="40"
-                  rows="6"
-                  style="width:100%;"
-                  id="id_description"
-                  readonly="readonly">{{ base.description }}</textarea>
-      </td>
-    </tr>
-    <tr>
-      <td> New Status </td>
-      <td>
-        {{ form.newstatus.errors }}
-        {{ form.newstatus }}
-      </td>
-    </tr>
-    {% if current.curstate.name == 'New' %}
-    <tr>
-      <td> Location (Revised) </td>
-      <td>
-        {{ form.revlocationid.errors }}
-        {{ form.revlocationid }}
-        {{ form.revlocationdesc }}
-        <div id="id_revlocation_detail">
-          Gram Panchayat: {{ current.location.grampanchayat.name }}<br/>
-          Block: {{ current.location.grampanchayat.block.name }}
-        </div>
-      </td>
-      <td/>
-      <td> Complaint Type (Revised) </td>
-      <td>
-        {{ form.revcategoryid.errors }}
-        {{ form.revcategoryid }}
-        {{ form.revcategorydesc }}
-        <div id="id_revcategory_detail">
-          {{ current.complainttype.cclass }}<br/>
-          department: {{ current.department.name  }}<br/>
-          Gender: {{ current.gender }}<br/>
-          Community: {{ current.community }}
-        </div>
-      </td>
-    </tr>
+  <fieldset>
+    <legend>Details</legend>
+    <input type="hidden" name="prev" value="{{ prev }}">
+    <table width="100%">
+      <tr>
+        <td style="width:15%"> Complaint Number: </td>
+        <td style="width:33%">
+          <input id="id_complaintno"
+                 name="complaintno"
+                 value="{{ base.complaintno }}"
+                 readonly="readonly"
+                 style="width:100%">
+        </td>
+        <td style="width:4%"></td>
+        <td style="width:15%"> Current Status </td>
+        <td style="width:33%">
+          <input id="id_curstate"
+                 name="curstate"
+                 value="{{ current.curstate.name }}"
+                 readonly="readonly"
+                 style="width:100%">
+        </td>
+      </tr>
+      <tr>
+        <td> Filed By: </td>
+        <td>
+          <input id="id_filedby"
+                 name="filedby"
+                 value="{{ base.filedby.name }} &lt;{{ base.filedby.mobile }}&gt;"
+                 readonly="readonly"
+                 style="width:100%">
+        </td>
+        <td/>
+        <td>Location: </td>
+        <td>
+          <input id="id_location"
+                 name="location"
+                 value="{{ base.get_location_name }}"
+                 readonly="readonly"
+                 style="width:100%">
+        </td>
+      </tr>
+      <tr>
+        <td> Filed On: </td>
+        <td>
+          <input id="id_created"
+                 name="created"
+                 value="{{ base.created|date:'f A, d/M/Y' }}"
+                 readonly="readonly"
+                 style="width:100%">
+        </td>
+        <td/>
+        <td> Issue Date: </td>
+        <td>
+          <input id="id_loggedon"
+                 name="loggedon"
+                 value="{{ base.logdate|date:'d/M/Y' }}"
+                 readonly="readonly"
+                 style="width:100%">
+        </td>
+      </tr>
+      <tr>
+        <td> Complaint Summary:</td>
+        <td colspan="4">
+          <input id="id_complaintsummary"
+                 name="complaintsummary"
+                 value="{{ current.complainttype.summary }}"
+                 readonly="readonly"
+                 style="width:100%">
+        </td>
+      </tr>
+      <tr>
+        <td> Assigned To: </td>
+        <td>
+          <input id="id_assignto"
+                 name="assignto"
+                 value="{{ current.get_official_name }}"
+                 readonly="readonly"
+                 style="width:100%">
+        </td>
+        <td/>
+        <td> Department: </td>
+        <td>
+          <input id="id_department"
+                 name="department"
+                 value="{{ current.department.name }}"
+                 readonly="readonly"
+                 style="width:100%">
+        </td>
+      </tr>
+      <tr>
+        <td>Description:</td>
+        <td colspan="4">
+          <textarea name="description"
+                    cols="40"
+                    rows="6"
+                    style="width:100%;"
+                    id="id_description"
+                    readonly="readonly">{{ base.description }}</textarea>
+        </td>
+      </tr>
+    </table>
+  </fieldset>
+  {% if current.curstate.name == 'New' %}
+  <fieldset>
+      <legend>Optional</legend>
+      <table width = "100%">
+        <tr>
+          <td>Personal Details:</td>
+          <td>
+            <div class="gendercaste">
+              Gender        :<br/>
+              {{ form.gender }}
+            </div>
+          </td>
+          <td></td>
+          <td></td>
+          <td>
+            <div class="gendercaste">
+              Community     : <br/>
+              {{ form.community }}
+            </div>
+          </td>
+        </tr>
+      </table>
+  </fieldset>
+  {% else %}
+  <fieldset>
+    <legend>Optional</legend>
+    <table width = "100%">
+      <tr>
+        <td>Personal Details:</td>
+        <td>
+          <div id="id_revcategory_detail">
+            Gender        : {{ current.gender }}
+          </div>
+        </td>
+        <td></td>
+        <td></td>
+        <td>
+          <div id="id_revcategory_detail">
+            Community     : {{ current.community }}
+          </div>
+        </td>
+      </tr>
+    </table>
+  </fieldset>
+  {% endif %}
+  <fieldset>
+    <legend>Update</legend>
+    <table width = "100%">
+      <tr>
+        <td> New Status </td>
+        <td>
+          {{ form.newstatus.errors }}
+          {{ form.newstatus }}
+        </td>
+      </tr>
 
+      {% if current.curstate.name == 'New' %}
+      <tr>
+        <td> Location (Revised) </td>
+        <td>
+          {{ form.revlocationid.errors }}
+          {{ form.revlocationid }}
+          {{ form.revlocationdesc }}
+          <div id="id_revlocation_detail">
+            Gram Panchayat: {{ current.location.grampanchayat.name }}<br/>
+            Block: {{ current.location.grampanchayat.block.name }}
+          </div>
+        </td>
+        <td/>
+        <td> Complaint Type (Revised) </td>
+        <td>
+          {{ form.revcategoryid.errors }}
+          {{ form.revcategoryid }}
+          {{ form.revcategorydesc }}
+          <div id="id_revcategory_detail">
+            {{ current.complainttype.cclass }}<br/>
+            department: {{ current.department.name  }}<br/>
+          </div>
+        </td>
+      </tr>
 
-    {% else %}
-    <tr>
-      <td> Location (Revised) </td>
-      <td>
-        <div id="id_revlocation_detail">
-          Gram Panchayat: {{ current.location.grampanchayat.name }}<br/>
-          Block: {{ current.location.grampanchayat.block.name }}
-        </div>
-      </td>
-      <td/>
-      <td> Complaint Type (Revised) </td>
-      <td>
-        <div id="id_revcategory_detail">
-          Classification: {{ current.complainttype.cclass }}<br/>
-          department    : {{ current.department.name  }}<br/>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td>Personal Details:</td>
-      <td>
-        <div id="id_revcategory_detail">
-          Gender        : {{ current.gender }}
-        </div>
-      </td>
-      <td></td>
-      <td></td>
-      <td>
-        <div id="id_revcategory_detail">
-          Community     : {{ current.community }}
-        </div>
-      </td>
-    </tr>
-    {% endif %}
+      {% endif %}
 
-    <tr>
-      <td>Comment:</td>
-      <td colspan="4">
-        {{ form.comment.errors }}
-        {{ form.comment }}
-
-      </td>
-    </tr>
-    <tr>
-      <td/>
-      <td style="text-align:right"> <input type="submit" name="save" value="Save" style="width:100px"> </td>
-      <td/>
-      <td style="text-align:left"> <input type="submit" name="cancel" value="Cancel" style="width:100px"> </td>
-    </tr>
-  </table>
+      <tr>
+        <td>Comment:</td>
+        <td colspan="4">
+          {{ form.comment.errors }}
+          {{ form.comment }}
+        </td>
+      </tr>
+      <tr>
+        <td/>
+        <td style="text-align:right"> <input type="submit" name="save" value="Save" style="width:100px"> </td>
+        <td/>
+        <td style="text-align:left"> <input type="submit" name="cancel" value="Cancel" style="width:100px"> </td>
+      </tr>
+    </table>
+  </fieldset>
 </form>
 <div class="complaint-history-banner">
   History for Complaint No. {{ base.complaintno }}

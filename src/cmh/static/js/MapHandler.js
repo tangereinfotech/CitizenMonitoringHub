@@ -22,11 +22,11 @@ var MapHandler = {
     departments : null,
     center_lat : null,
     center_long : null,
-    VILLG_ZOOM : 11,
-    GRAMP_ZOOM : 10,
-    BLOCK_ZOOM : 9,
-    DISTT_ZOOM : 8,
-    STATE_ZOOM : 7,
+    VILLG_ZOOM : 12,
+    GRAMP_ZOOM : 11,
+    BLOCK_ZOOM : 10,
+    DISTT_ZOOM : 9,
+    STATE_ZOOM : 8,
     circleOverlays : [],
     nameOverlays : [],
     countOverlays : [],
@@ -189,13 +189,13 @@ var MapHandler = {
                                     var villzoom = MapHandler.VILLG_ZOOM;
                                     var currzoom = MapHandler.map.getZoom ();
                                     var zoomval = villzoom - currzoom;
-                                    var radius = (numdigits *1400 * Math.pow(2,zoomval));
+                                    var radius = (numdigits * 400 * Math.pow(2,zoomval));
                                     console.log("Radius value"+radius);
                                     console.log("ZOOM val"+zoomval);
 //                                    console.log("Radius value"+radius);
-                                    var font_size = "" + (numdigits * 100 * 1.2) + "%";
-                                    var count_offset = -numdigits * 12 * 0.9;
-                                    var name_offset = numdigits * 12 * 0.5;
+                                    var font_size = "90%";
+                                    var count_offset = -12 * 0.9;
+                                    var name_offset = 12 * 0.5;
 
                                     var circle = new google.maps.Circle ({ map : MapHandler.map,
                                                                            center : place_latlong,

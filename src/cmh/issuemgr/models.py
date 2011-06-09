@@ -16,20 +16,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from cmh.issuemgr.constants import GENDER_CHOICES, COMMUNITY_CHOICES
+
+
 from cmh.usermgr.models import Citizen, Official, Citizen
 from cmh.common.models import ComplaintStatus
 from cmh.common.models import Country, State, District, Block
 from cmh.common.models import GramPanchayat, Village
 from cmh.common.models import ComplaintType, ComplaintDepartment
-
-GENDER_CHOICES = (
-    ('Male', 'Male'),
-    ('Female', 'Female'),
-    ('Unspecified','Unspecified'))
-COMMUNITY_CHOICES = (
-    ('SC/ST', 'SC / ST'),
-    ('Others','Others'),
-    ('Unspecified','Unspecified'))
 
 class ComplaintManager (models.Manager):
     def get_latest_complaints (self):
@@ -52,7 +46,6 @@ class Complaint(models.Model):
     latest        = models.BooleanField (default = True)
     creator       = models.ForeignKey (User, blank = True, null = True)
     comment       = models.CharField (max_length = 1000, blank = True, null = True)
-#    max_number = forms.ChoiceField(widget = forms.Select(),choices = ([('1','1'), ('2','2'),('3','3'), ]), initial='3', required = True,)
     community     = models.CharField(max_length = 20, blank = True, null = True, choices = COMMUNITY_CHOICES, default = 'Unspecified')
     gender        = models.CharField(max_length = 20, choices = GENDER_CHOICES, blank = True, null = True, default = 'Unspecified')
 
@@ -75,7 +68,9 @@ class Complaint(models.Model):
                                            assignto = self.assignto,
                                            location = self.location,
                                            logdate = self.logdate,
-                                           original = self)
+                                           original = self,
+                                           gender = self.gender,
+                                           community = self.community)
         newver.latest = True
         if cloner.is_anonymous () == False:
             newver.creator = cloner
