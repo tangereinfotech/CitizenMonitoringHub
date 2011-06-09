@@ -18,6 +18,7 @@
 var MapHandler = {
     map : null,
     map_canvas : null,
+    data : null,
     url : null,
     departments : null,
     center_lat : null,
@@ -77,6 +78,11 @@ var MapHandler = {
                                                    MapHandler.updateVillageData ();
                                                }
                                            }
+                                       });
+
+        google.maps.event.addListener (this.map, 'center_changed',
+                                       function () {
+                                           MapHandler.renderWithinBounds ();
                                        });
     },
     showVillageData : function () {
@@ -140,13 +146,7 @@ var MapHandler = {
     getCurrentDataLevel : function () {
         return this.data_level;
     },
-    update_with_stats : function (url, departments, zoom_level, data_level, st_date, en_date) {
-        this.url = url;
-        this.departments = departments;
-        this.data_level = data_level;
-        this.stdate = st_date;
-        this.endate = en_date;
-
+    renderWithinBounds : function () {
         for (var i = 0; i < MapHandler.circleOverlays.length; i++ ) {
             MapHandler.circleOverlays [i].setMap (null);
             MapHandler.circleOverlays [i] = null;
@@ -163,6 +163,59 @@ var MapHandler = {
         }
         MapHandler.countOverlays = [];
 
+        var data = MapHandler.data;
+
+        if (!(MapHandler.isEmpty (data))) {
+            MapHandler.bounds = new google.maps.LatLngBounds ();
+            var mapBounds = MapHandler.map.getBounds ();
+
+            $.each (data,
+                    function (index, value) {
+                        var place_latlong = new google.maps.LatLng (value.latitude, value.longitude);
+                        if (mapBounds.contains (place_latlong)) {
+                            MapHandler.bounds.extend (place_latlong);
+
+                            var numdigits = ("" + value.count + "").length;
+                            var villzoom = MapHandler.VILLG_ZOOM;
+                            var currzoom = MapHandler.map.getZoom ();
+                            var zoomval = villzoom - currzoom;
+                            var radius = (numdigits * 400 * Math.pow(2,zoomval));
+                            var font_size = "90%";
+                            var count_offset = -12 * 0.9;
+                            var name_offset = 12 * 0.5;
+
+                            var circle = new google.maps.Circle ({ map : MapHandler.map,
+                                                                   center : place_latlong,
+                                                                   radius: radius,
+                                                                   strokeColor : "#f6d8ca",
+                                                                   strokeWeight : 10,
+                                                                   strokeOpacity: 0.60,
+                                                                   fillColor : "#e5926a",
+                                                                   fillOpacity : 0.50});
+
+                            var nlabel = new Label ({map : MapHandler.map}, name_offset);
+                            nlabel.set ('position', place_latlong);
+                            nlabel.set ('text', value.name);
+
+                            var clabel = new CountLabel ({map : MapHandler.map}, font_size, count_offset);
+                            clabel.set ('position', place_latlong);
+                            clabel.set ('text', "" + value.count);
+
+                            MapHandler.circleOverlays.push (circle);
+                            MapHandler.nameOverlays.push (nlabel);
+                            MapHandler.countOverlays.push (clabel);
+                        }
+                    });
+        }
+    },
+    update_with_stats : function (url, departments, zoom_level, data_level, st_date, en_date) {
+        this.url = url;
+        this.departments = departments;
+        this.data_level = data_level;
+        this.stdate = st_date;
+        this.endate = en_date;
+
+	console.log ("data_level : " + data_level);
 
         $.post (url,
                {
@@ -173,56 +226,8 @@ var MapHandler = {
                },
                 function (data, status, jqXHR) {
                     data = $.parseJSON (data);
-                    if (!(MapHandler.isEmpty (data))) {
-                        MapHandler.bounds = new google.maps.LatLngBounds ();
-
-                        $.each (data,
-                                function (index, value) {
-                                    var place_latlong = new google.maps.LatLng (value.latitude, value.longitude);
-
-                                    MapHandler.bounds.extend (place_latlong);
-
-                                    var numdigits = ("" + value.count + "").length;
-                                    var villzoom = MapHandler.VILLG_ZOOM;
-                                    var currzoom = MapHandler.map.getZoom ();
-                                    var zoomval = villzoom - currzoom;
-<<<<<<< HEAD
-                                    var radius = (numdigits * 400 * Math.pow(2,zoomval));
-                                    console.log("Radius value"+radius);
-                                    console.log("ZOOM val"+zoomval);
-//                                    console.log("Radius value"+radius);
-                                    var font_size = "90%";
-                                    var count_offset = -12 * 0.9;
-                                    var name_offset = 12 * 0.5;
-=======
-                                    var radius = (numdigits *1400 * Math.pow(2,zoomval));
-                                    var font_size = "" + (numdigits * 100 * 1.2) + "%";
-                                    var count_offset = -numdigits * 12 * 0.9;
-                                    var name_offset = numdigits * 12 * 0.5;
->>>>>>> 71add9e5e2e8500ef36981e42987bb822ce2a729
-
-                                    var circle = new google.maps.Circle ({ map : MapHandler.map,
-                                                                           center : place_latlong,
-                                                                           radius: radius,
-                                                                           strokeColor : "#f6d8ca",
-                                                                           strokeWeight : 10,
-                                                                           strokeOpacity: 0.60,
-                                                                           fillColor : "#e5926a",
-                                                                           fillOpacity : 0.50});
-
-                                    var nlabel = new Label ({map : MapHandler.map}, name_offset);
-                                    nlabel.set ('position', place_latlong);
-                                    nlabel.set ('text', value.name);
-
-                                    var clabel = new CountLabel ({map : MapHandler.map}, font_size, count_offset);
-                                    clabel.set ('position', place_latlong);
-                                    clabel.set ('text', "" + value.count);
-
-                                    MapHandler.circleOverlays.push (circle);
-                                    MapHandler.nameOverlays.push (nlabel);
-                                    MapHandler.countOverlays.push (clabel);
-                                });
-                    }
+                    MapHandler.data = data;
+                    MapHandler.renderWithinBounds ();
                 });
     }
 };

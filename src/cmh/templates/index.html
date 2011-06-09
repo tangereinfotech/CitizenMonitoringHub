@@ -112,7 +112,6 @@
         $(".selector").attr ("checked", true);
         MapHandler.init ('base_map', {{ map.center_lat }}, {{ map.center_long }});
         update_issues_maps ('0', MapHandler.VILLG_ZOOM, 'villg', st_date, en_date);
-        MapHandler.map.setCenter (MapHandler.bounds.getCenter ());
     });
 </script>
 {% endblock %}
