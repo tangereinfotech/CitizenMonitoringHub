@@ -39,7 +39,7 @@ var MapHandler = {
         for (var attr in object) { return false; }
         return true;
     },
-    init : function (map_canvas, center_lat, center_long) {
+    init : function (map_canvas, center_lat, center_long, donecallback) {
         this.map_canvas = map_canvas;
         this.center_lat = center_lat;
         this.center_long = center_long;
@@ -84,6 +84,11 @@ var MapHandler = {
                                        function () {
                                            MapHandler.renderWithinBounds ();
                                        });
+
+	google.maps.event.addListenerOnce (this.map, "bounds_changed", 
+					   function () {
+					       donecallback ();
+					   });
     },
     showVillageData : function () {
         MapHandler.update_with_stats (this.url,
@@ -214,8 +219,6 @@ var MapHandler = {
         this.data_level = data_level;
         this.stdate = st_date;
         this.endate = en_date;
-
-	console.log ("data_level : " + data_level);
 
         $.post (url,
                {

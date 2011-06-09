@@ -90,8 +90,8 @@
     }
 
     function update_issues_maps (departments, zoomlevel, datalevel, period_start, period_end) {
-        MapHandler.update_with_stats ('/complaint/get_category_map_update/', departments, zoomlevel, datalevel, period_start, period_end);
         show_hot_complaints ("trending-issues-chart", "/complaint/hot_complaints/", departments, period_start, period_end);
+        MapHandler.update_with_stats ('/complaint/get_category_map_update/', departments, zoomlevel, datalevel, period_start, period_end);
     }
 
     function daysBefore (dateObj, ndays) {
@@ -110,8 +110,9 @@
 
         department_selector ('/complaint/get_category_map_update/');
         $(".selector").attr ("checked", true);
-        MapHandler.init ('base_map', {{ map.center_lat }}, {{ map.center_long }});
-        update_issues_maps ('0', MapHandler.VILLG_ZOOM, 'villg', st_date, en_date);
+        MapHandler.init ('base_map', {{ map.center_lat }}, {{ map.center_long }}, function () {
+            update_issues_maps ('0', MapHandler.VILLG_ZOOM, 'villg', st_date, en_date);
+        });
     });
 </script>
 {% endblock %}
