@@ -382,7 +382,7 @@ def track_issues (request, complaintno):
     except:
         return render_to_response ('error.html',
                                    {'menus' : get_user_menus (request.user,track_issues),
-                                    'user' : request.user)
+                                    'user' : request.user})
 
 
 
@@ -396,9 +396,15 @@ def track (request):
         form = ComplaintTrackForm (request.POST)
         if form.is_valid ():
             complaintno = form.cleaned_data ['complaintno']
-            current = Complaint.objects.get (complaintno = complaintno, latest = True)
-            return HttpResponseRedirect (reverse (track_issues,
-                                                  args = [form.cleaned_data ['complaintno']]))
+            try:
+                current = Complaint.objects.get (complaintno = complaintno, latest = True)
+                return HttpResponseRedirect (reverse (track_issues,
+                                                      args = [form.cleaned_data ['complaintno']]))
+            except Complaint.DoesNotExist:
+                return render_to_response ('track_issues_not_found.html',
+                                           {'menus' : get_user_menus (request.user, track),
+                                            'user' : request.user,
+                                            'complaintno' : complaintno})
         else:
             return render_to_response ('track.html',
                                        {'user' : request.user,

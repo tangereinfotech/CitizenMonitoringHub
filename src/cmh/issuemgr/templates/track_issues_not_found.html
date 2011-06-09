@@ -15,7 +15,11 @@
 {% extends "basewithmenu.html" %}
 
 {% block page_content %}
-<center>
+<div style="display: table;height:400px; #position: relative; overflow: hidden; width:100%">
+  <div style="#position:absolute;#top:50%;display:table-cell; vertical-align: middle">
+    <div style="#position: relative; #top: -50%; text-align:center">
   The complaint number [{{ complaintno }}] was not found. Are you sure about the complaint number?
-</center>
+    </div>
+  </div>
+</div>
 {% endblock %}
