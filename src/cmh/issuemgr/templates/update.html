@@ -183,8 +183,10 @@
           {{ form.revlocationid }}
           {{ form.revlocationdesc }}
           <div id="id_revlocation_detail">
+            {% if current.location %}
             Gram Panchayat: {{ current.location.grampanchayat.name }}<br/>
             Block: {{ current.location.grampanchayat.block.name }}
+            {% endif %}
           </div>
         </td>
         <td/>
@@ -194,8 +196,10 @@
           {{ form.revcategoryid }}
           {{ form.revcategorydesc }}
           <div id="id_revcategory_detail">
+            {% if current.complainttype %}
             {{ current.complainttype.cclass }}<br/>
-            department: {{ current.department.name  }}<br/>
+            Department: {{ current.department.name  }}<br/>
+            {% endif %}
           </div>
         </td>
       </tr>
