@@ -114,22 +114,22 @@ class EditDM (forms.Form):
             return ''
 
     def save (self):
-        dmid = form.cleaned_data ['dmid']
+        dmid = self.cleaned_data ['dmid']
         dm = CmhUser.objects.get (user__approle__role = UserRoles.DM, id = dmid)
 
         user = dm.user
-        user.first_name = form.cleaned_data ['name']
+        user.first_name = self.cleaned_data ['name']
 
         password = get_random_string (PASSWORD_LEN)
         user.set_password (password)
         user.save ()
 
-        dm.phone = form.cleaned_data ['phone']
+        dm.phone = self.cleaned_data ['phone']
         dm.save ()
 
-        message = PASSWORD_MSG % (cmhuser.phone, password)
+        message = PASSWORD_MSG % (dm.phone, password)
         debug (message)
-        TextMessage.objects.queue_text_message (cmhuser.phone, message)
+        TextMessage.objects.queue_text_message (dm.phone, message)
 
 
 class AddEditOfficial (forms.Form):

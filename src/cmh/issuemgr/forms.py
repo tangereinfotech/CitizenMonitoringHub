@@ -198,9 +198,17 @@ class ComplaintUpdateForm (forms.Form):
                                                                  'cols' : '40',
                                                                  'rows' : '6'}),
                                required = True)
-    gender          = forms.CharField (widget = forms.RadioSelect (choices = (('Male', 'Male'), ('Female', 'Female'), ('Unspecified','Unspecified'))), required = False, initial = 'Unspecified')
+    gender          = forms.CharField (widget = forms.RadioSelect (choices = (('Male', 'Male'),
+                                                                              ('Female', 'Female'),
+                                                                              ('Unspecified','Unspecified'))),
+                                       required = False,
+                                       initial = 'Unspecified')
 
-    community       = forms.CharField (widget = forms.RadioSelect (choices = (('SC/ST', 'SC / ST'), ('Others', 'Others'), ('Unspecified','Unspecified'))), required = False, initial = 'Unspecified')
+    community       = forms.CharField (widget = forms.RadioSelect (choices = (('SC/ST', 'SC / ST'),
+                                                                              ('Others', 'Others'),
+                                                                              ('Unspecified','Unspecified'))),
+                                       required = False,
+                                       initial = 'Unspecified')
 
 
     def __init__ (self, complaint, newstates, *args, **kwargs):
@@ -306,12 +314,12 @@ class ComplaintUpdateForm (forms.Form):
 
         # Update the "original" issue if the new status is ACK state since the
         # issue has been made actionable
-        if newver.curstate == STATUS_ACK:
+        if complaint.curstate == STATUS_NEW and newver.curstate == STATUS_ACK:
             original = newver.original
             original.complainttype = newver.complainttype
             original.location = newver.location
             original.department = newver.complainttype.department
-            original.assignto = assignto
+            original.assignto = newver.assignto
             original.gender = newver.gender
             original.community = newver.community
             original.save ()
