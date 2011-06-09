@@ -163,9 +163,6 @@ var MapHandler = {
         }
         MapHandler.countOverlays = [];
 
-        console.log ("start");
-        console.log (st_date);
-        console.log (en_date);
 
         $.post (url,
                {
@@ -189,6 +186,7 @@ var MapHandler = {
                                     var villzoom = MapHandler.VILLG_ZOOM;
                                     var currzoom = MapHandler.map.getZoom ();
                                     var zoomval = villzoom - currzoom;
+<<<<<<< HEAD
                                     var radius = (numdigits * 400 * Math.pow(2,zoomval));
                                     console.log("Radius value"+radius);
                                     console.log("ZOOM val"+zoomval);
@@ -196,6 +194,12 @@ var MapHandler = {
                                     var font_size = "90%";
                                     var count_offset = -12 * 0.9;
                                     var name_offset = 12 * 0.5;
+=======
+                                    var radius = (numdigits *1400 * Math.pow(2,zoomval));
+                                    var font_size = "" + (numdigits * 100 * 1.2) + "%";
+                                    var count_offset = -numdigits * 12 * 0.9;
+                                    var name_offset = numdigits * 12 * 0.5;
+>>>>>>> 71add9e5e2e8500ef36981e42987bb822ce2a729
 
                                     var circle = new google.maps.Circle ({ map : MapHandler.map,
                                                                            center : place_latlong,
