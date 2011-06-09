@@ -401,23 +401,30 @@ def hot_complaints (request):
             open_complaints = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_REOPEN) | Q (curstate = STATUS_OPEN))
             clos_complaints = complaints.filter (Q (curstate = STATUS_RESOLVED) | Q (curstate = STATUS_CLOSED))
 
+            all_departments = ComplaintDepartment.objects.all ().order_by ('id')
             if ALL_DEPT_ID in deptids:
-                departments = ComplaintDepartment.objects.all ()
+                departments = all_departments
             else:
-                departments = ComplaintDepartment.objects.filter (id__in = deptids)
+                departments = ComplaintDepartment.objects.filter (id__in = deptids).order_by ('id')
+
+            index = 0
+            sel_depts = []
+            for d in all_departments:
+                if d in departments:
+                    sel_depts.append ((index, d))
+                index += 1
 
             data  = []
             names = []
             deptinfo = []
             dates = [d for d in daterange (stdate, endate)]
-            for dept in departments:
-                deptinfo.append ([dept.id, dept.name])
+            for pos, dept in sel_depts:
+                deptinfo.append ([dept.id, pos])
                 names.append (dept.name)
                 doc = open_complaints.filter (department__id = dept.id)
                 dcc = clos_complaints.filter (department__id = dept.id)
                 data.append ([[d.strftime ('%Y-%m-%d 12:01 AM'), doc.filter (createdate__lte = d).count () - dcc.filter (createdate__lte = d).count ()]
                               for d in dates])
-
             return HttpResponse (json.dumps ({'datapoints' : data, 'names' : names, 'departments' : deptinfo}))
         else:
             return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : [], 'departments' : []}))

@@ -68,8 +68,10 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                    endate : period_end
                },
                function (data, status, xhr) {
+                   var ncolors = [];
                    $.each (data.departments, function (index, value) {
-                               $(".dept-selector.deptid-" + value [0]).css("background-color", colors [index]);
+                               $(".dept-selector.deptid-" + value [0]).css("background-color", colors [value[1]]);
+                               ncolors.push (colors [value[1]]);
                            });
                    if (chart_id in plots) {
                        $('#' + chart_id).empty ();
@@ -79,7 +81,7 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                    var max_date = series [series.length - 1][0];
                    plots [chart_id] = $.jqplot(chart_id, data.datapoints,
                                                {
-                                                   seriesColors : colors,
+                                                   seriesColors : ncolors,
                                                    axes : {
                                                        xaxis : {
                                                            renderer:$.jqplot.DateAxisRenderer,
