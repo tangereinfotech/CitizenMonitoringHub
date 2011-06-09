@@ -367,13 +367,13 @@ def track_issues (request, complaintno):
         else:
             updatable = True
 
-            return render_to_response ('track_issues.html',
-                                       {'base' : base,
-                                        'current' : current,
-                                        'complaints' : complaints,
-                                        'menus' : get_user_menus (request.user,track_issues),
-                                        'user' : request.user,
-                                        'updatable' : updatable})
+        return render_to_response ('track_issues.html',
+                                   {'base' : base,
+                                    'current' : current,
+                                    'complaints' : complaints,
+                                    'menus' : get_user_menus (request.user,track_issues),
+                                    'user' : request.user,
+                                    'updatable' : updatable})
     except Complaint.DoesNotExist:
         return render_to_response ('track_issues_not_found.html',
                                    {'menus' : get_user_menus (request.user,track_issues),
