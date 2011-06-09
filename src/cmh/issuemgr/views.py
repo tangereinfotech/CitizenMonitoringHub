@@ -354,24 +354,37 @@ def update (request, complaintno):
             pass
 
 def track_issues (request, complaintno):
-    complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
-    base = complaints.get (original = None)
-    current = complaints.get (latest = True)
-    user_role = AppRole.objects.get_user_role (request.user)
-    newstatuses = StatusTransition.objects.get_allowed_statuses (user_role, current.curstate)
+    complaintno = complaintno.strip ()
+    try:
+        complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
+        base = complaints.get (original = None)
+        current = complaints.get (latest = True)
+        user_role = AppRole.objects.get_user_role (request.user)
+        newstatuses = StatusTransition.objects.get_allowed_statuses (user_role, current.curstate)
 
-    if newstatuses.count () == 0:
-        updatable = False
-    else:
-        updatable = True
+        if newstatuses.count () == 0:
+            updatable = False
+        else:
+            updatable = True
 
-    return render_to_response ('track_issues.html',
-                               {'base' : base,
-                                'current' : current,
-                                'complaints' : complaints,
-                                'menus' : get_user_menus (request.user,track_issues),
-                                'user' : request.user,
-                                'updatable' : updatable})
+            return render_to_response ('track_issues.html',
+                                       {'base' : base,
+                                        'current' : current,
+                                        'complaints' : complaints,
+                                        'menus' : get_user_menus (request.user,track_issues),
+                                        'user' : request.user,
+                                        'updatable' : updatable})
+    except Complaint.DoesNotExist:
+        return render_to_response ('track_issues_not_found.html',
+                                   {'menus' : get_user_menus (request.user,track_issues),
+                                    'user' : request.user,
+                                    'complaintno' : complaintno})
+    except:
+        return render_to_response ('error.html',
+                                   {'menus' : get_user_menus (request.user,track_issues),
+                                    'user' : request.user)
+
+
 
 def track (request):
     if request.method == "GET":
