@@ -163,9 +163,6 @@ var MapHandler = {
         }
         MapHandler.countOverlays = [];
 
-        console.log ("start");
-        console.log (st_date);
-        console.log (en_date);
 
         $.post (url,
                {
@@ -190,9 +187,6 @@ var MapHandler = {
                                     var currzoom = MapHandler.map.getZoom ();
                                     var zoomval = villzoom - currzoom;
                                     var radius = (numdigits *1400 * Math.pow(2,zoomval));
-                                    console.log("Radius value"+radius);
-                                    console.log("ZOOM val"+zoomval);
-//                                    console.log("Radius value"+radius);
                                     var font_size = "" + (numdigits * 100 * 1.2) + "%";
                                     var count_offset = -numdigits * 12 * 0.9;
                                     var name_offset = numdigits * 12 * 0.5;
