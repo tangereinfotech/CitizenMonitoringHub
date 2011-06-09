@@ -137,7 +137,7 @@ class Command (BaseCommand):
             print "Skipping row [%d], reason: %s" % ((rowid + 1), reason)
         else:
             c = Complaint.objects.create (complainttype = ct,
-                                          description = translate (cells [COL_COMP_DESC]),
+                                          description = cells [COL_REFR_NUMB] + ":" +  translate (cells [COL_COMP_DESC]),
                                           department = dept,
                                           curstate = STATUS_NEW,
                                           filedby = get_or_create_citizen ('9977001872', translate (cells [COL_CITI_NAME])),

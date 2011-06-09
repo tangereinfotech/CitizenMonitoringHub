@@ -408,17 +408,19 @@ def hot_complaints (request):
 
             data  = []
             names = []
+            deptinfo = []
             dates = [d for d in daterange (stdate, endate)]
             for dept in departments:
+                deptinfo.append ([dept.id, dept.name])
                 names.append (dept.name)
                 doc = open_complaints.filter (department__id = dept.id)
                 dcc = clos_complaints.filter (department__id = dept.id)
                 data.append ([[d.strftime ('%Y-%m-%d 12:01 AM'), doc.filter (createdate__lte = d).count () - dcc.filter (createdate__lte = d).count ()]
                               for d in dates])
 
-            return HttpResponse (json.dumps ({'datapoints' : data, 'names' : names}))
+            return HttpResponse (json.dumps ({'datapoints' : data, 'names' : names, 'departments' : deptinfo}))
         else:
-            return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : []}))
+            return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : [], 'departments' : []}))
     except:
         import traceback
         traceback.print_exc ()
