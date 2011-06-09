@@ -131,10 +131,14 @@ class Command (BaseCommand):
                 skiprow = True
                 reason  = "No villages are present in Gram Panchayat with Block code [%d] and Gram Panchayat code [%d]" % (cells [COL_BLOK_CODE], cells [COL_GRAM_CODE])
             else:
-                village = gp.village_set.all ().get (code = village_codes [0])
+                try:
+                    village = gp.village_set.all ().get (code = village_codes [0])
+                except Village.MultipleObjectsReturned:
+                    skiprow = True
+                    reason = "Multiple village exist with the same code. Gram Panchayat Code [%s] and Village code [%s]" % (gp.code, village_codes [0])
 
         if skiprow:
-            print "Skipping row [%d], reason: %s" % ((rowid + 1), reason)
+            print "Skipping row [%d], REFNO: %s, reason: %s" % ((rowid + 1), cells [COL_REFR_NUMB], reason)
         else:
             c = Complaint.objects.create (complainttype = ct,
                                           description = cells [COL_REFR_NUMB] + ":" +  translate (cells [COL_COMP_DESC]),

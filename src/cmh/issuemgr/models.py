@@ -16,8 +16,17 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from cmh.issuemgr.constants import GENDER_CHOICES, COMMUNITY_CHOICES
+GENDER_CHOICES = (
+    ('Male', 'Male'),
+    ('Female', 'Female'),
+    ('Unspecified','Unspecified')
+)
 
+COMMUNITY_CHOICES = (
+    ('SC/ST', 'SC / ST'),
+    ('Others','Others'),
+    ('Unspecified','Unspecified')
+)
 
 from cmh.usermgr.models import Citizen, Official, Citizen
 from cmh.common.models import ComplaintStatus

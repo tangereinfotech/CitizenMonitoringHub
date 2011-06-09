@@ -71,8 +71,11 @@ def index (request):
         if form.is_valid ():
             complaint = form.save (None)
             debug ("Sending message for complaint acceptance")
-            TextMessage.objects.queue_text_message (complaint.filedby.mobile,
-                                                    "Your complaint is registered. Ref Num: " + complaint.complaintno)
+
+            # HACK ALERT - complaint type is not known so just pick any complaint type and pick its defsmsnew
+            message = ComplaintType.objects.all ()[0].defsmsnew.replace ('____', complaint.complaintno)
+            TextMessage.objects.queue_text_message (complaint.filedby.mobile, message)
+
             return render_to_response ('complaint_submitted.html',
                                        {'menus' : get_user_menus (request.user,index),
                                         'user' : request.user,

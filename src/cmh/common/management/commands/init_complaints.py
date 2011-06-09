@@ -30,11 +30,12 @@ COL_DEPT_CODE = 1
 COL_COMP_CODE = 2
 COL_COMP_SUMM = 3
 COL_COMP_CLSS = 4
-COL_COMP_SMSACK = 5
-COL_COMP_SMSOPN = 6
-COL_COMP_SMSRSL = 7
-COL_COMP_SMSCLO = 8
-COL_COMP_MDGS   = 9
+COL_COMP_SMSNEW = 5
+COL_COMP_SMSACK = 6
+COL_COMP_SMSOPN = 7
+COL_COMP_SMSRSL = 8
+COL_COMP_SMSCLO = 9
+COL_COMP_MDGS   = 10
 
 class Command (BaseCommand):
     help = """This utility parses an Excel file for location database. The spreadsheet must comply to the format agreed upon earlier
@@ -69,6 +70,7 @@ class Command (BaseCommand):
                      EP.CELL_TEXT,
                      EP.CELL_TEXT,
                      EP.CELL_TEXT,
+                     EP.CELL_TEXT,
                      EP.CELL_TEXT])
 
     def save_data (self, rowid, cells):
@@ -80,6 +82,7 @@ class Command (BaseCommand):
             comp_code = cells [COL_COMP_CODE]
             comp_summ = cells [COL_COMP_SUMM]
             comp_clss = cells [COL_COMP_CLSS]
+            comp_smsnew = cells [COL_COMP_SMSNEW]
             comp_smsack = cells [COL_COMP_SMSACK]
             comp_smsopn = cells [COL_COMP_SMSOPN]
             comp_smsrsl = cells [COL_COMP_SMSRSL]
@@ -103,6 +106,7 @@ class Command (BaseCommand):
                                                           summary = comp_summ,
                                                           department = department,
                                                           cclass = comp_clss,
+                                                          defsmsnew = comp_smsnew,
                                                           defsmsack = comp_smsack,
                                                           defsmsopen = comp_smsopn,
                                                           defsmsres = comp_smsrsl,

@@ -13,20 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from cmh.common.models import ComplaintStatus
-from cmh.issuemgr.models import GENDER_CHOICES, COMMUNITY_CHOICES
+from django.core.management.base import NoArgsCommand
 
+from django.contrib.auth.models import User
 
-STATUS_NEW      = ComplaintStatus.objects.get (name = 'New')
-STATUS_REOPEN   = ComplaintStatus.objects.get (name = 'Reopened')
-STATUS_ACK      = ComplaintStatus.objects.get (name = 'Acknowledged')
-STATUS_OPEN     = ComplaintStatus.objects.get (name = 'Open')
-STATUS_RESOLVED = ComplaintStatus.objects.get (name = 'Resolved')
-STATUS_CLOSED   = ComplaintStatus.objects.get (name = 'Closed')
+from cmh.common.constants import UserRoles
+from cmh.usermgr.models import CmhUser
 
-class HotComplaintPeriod:
-    WEEK    = 1
-    MONTH   = 2
-    QUARTER = 3
-
-
+class Command (NoArgsCommand):
+    def handle (self, *args, **kwargs):
+        try:
+            u = User.objects.create (username = 'cso')
+            u.set_password ('123')
+            u.save ()
+            cu = CmhUser.objects.create (user = u, phone = '9977001872')
+            cu.set_user_role (UserRoles.CSO)
+        except:
+            pass

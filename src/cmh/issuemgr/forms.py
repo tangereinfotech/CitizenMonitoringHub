@@ -167,6 +167,9 @@ class AcceptComplaintForm (forms.Form):
         accept_cpl.curstate = STATUS_ACK
         accept_cpl.save ()
 
+        message = cpl.complainttype.defsmsack.replace ('____', cpl.filedby.mobile)
+        TextMessage.objects.queue_text_message (cpl.filedby.mobile, message)
+
         return accept_cpl
 
 
@@ -319,7 +322,7 @@ class ComplaintUpdateForm (forms.Form):
         elif newver.curstate == STATUS_CLOSED:
             message = newver.complainttype.defsmsclo.replace ('____', newver.complaintno)
         elif newver.curstate == STATUS_REOPEN:
-            message = "Your complaint number '%s' has been reopeoed" % (newver.complaintno)
+            message = newver.complainttype.defsmsnew.replace ('____', newver.complaintno)
         else:
             message = None
 

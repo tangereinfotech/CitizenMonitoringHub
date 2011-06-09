@@ -75,10 +75,13 @@ def gateway (request):
                                                   location = location,
                                                   original = None,
                                                   creator = None)
+
                 update_complaint_sequence (compl)
-                text_message = ("Your complaint is registered. Ref Num: "
-                                + compl.complaintno)
-                TextMessage.objects.queue_text_message (citizen.mobile, text_message)
+
+                # HACK ALERT - complaint type is not known so just pick any complaint type and pick its defsmsnew
+                message = ComplaintType.objects.all ()[0].defsmsnew.replace ('____', compl.complaintno)
+                TextMessage.objects.queue_text_message (citizen.mobile, message)
+
                 return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
             except:
                 import traceback

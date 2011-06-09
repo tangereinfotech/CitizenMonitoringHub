@@ -23,10 +23,9 @@ from cmh.common.models import District, State, Country
 class Command (NoArgsCommand):
     def handle (self, *args, **kwargs):
         for gp in GramPanchayat.objects.all ():
-            latlongs = [(villg.lattd, villg.longd) for villg in gp.village_set.all ()]
-            (lat, lon) = self.find_geo_center (latlongs)
-            gp.lattd = lat
-            gp.longd = lon
+            gp_village = sorted ([(v.code, v) for v in gp.village_set.all ()], key=(lambda x: x [0]))[0][1]
+            gp.lattd = gp_village.lattd
+            gp.longd = gp_village.longd
             gp.save ()
 
         for block in Block.objects.all ():

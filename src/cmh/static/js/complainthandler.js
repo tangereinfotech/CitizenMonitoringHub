@@ -1,7 +1,7 @@
 var field_autocomplete = function (field_tag, db_id_tag, detail_id_tag, url) {
     var cache = {}, lastXhr;
 
-    $(field_tag).autocomplete ({minLength : 0,
+    $(field_tag).autocomplete ({minLength : 3,
                                 source : function (request, response) {
                                     var term = request.term;
                                     if (term in cache) {
@@ -53,13 +53,14 @@ var showContextMenu = function (row_class, menu_id) {
 var plots = {};
 
 var show_hot_complaints = function (chart_id, url, departments, period_start, period_end) {
-    var colors = ["#663333", "#FFFF33", "#0066CC", "#669900", "#CC0099", "#666666", "#660000", "#00FFFF", 
-                  "#9966FF", "#006600", "#FFE87C", "#FF3300", "#003366", "#CC9900", "#FFCCFF", "#CCFF33", 
-                  "#660066", "#FFCC00", "#003300", "#00BFFF", "#8D38C9", "#F778A1", "#FDD017", "#666633", 
-                  "#FF9933", "#660033", "#FFFF00", "#999999", "#0099FF", "#CCFF00", "#663300", "#CCCCFF", 
-                  "#FF0000", "#C9BE62", "#2F4F4F", "#000000", "#FFF0F5", "#D3D3D3", "#191970", "#EEE8AA", 
-                  "#8B6508", "#FFDEAD", "#CDB7B5", "#CD1076", "#E066FF", "#F88158", "#87F717", "#333300",
-                  "#3399FF", "#C3FDB8"];
+    var colors = ["#4bb2c5", "#c5b47f", "#EAA228", "#579575", "#839557", "#958c12", "#953579", "#4b5de4",
+                  "#d8b83f", "#ff5800", "#0085cc", "#663333", "#FFFF33", "#0066CC", "#669900", "#CC0099",
+                  "#666666", "#660000", "#00FFFF", "#9966FF", "#006600", "#FFE87C", "#FF3300", "#003366",
+                  "#CC9900", "#FFCCFF", "#CCFF33", "#660066", "#FFCC00", "#003300", "#00BFFF", "#8D38C9",
+                  "#F778A1", "#FDD017", "#666633", "#FF9933", "#660033", "#FFFF00", "#999999", "#0099FF",
+                  "#CCFF00", "#663300", "#CCCCFF", "#FF0000", "#C9BE62", "#2F4F4F", "#000000", "#FFF0F5", 
+                  "#D3D3D3", "#191970", "#EEE8AA", "#8B6508", "#FFDEAD", "#CDB7B5", "#CD1076", "#E066FF",
+                  "#F88158", "#87F717", "#333300", "#3399FF", "#C3FDB8"];
 
     $.getJSON (url, 
                {
