@@ -21,6 +21,8 @@ body {
    width: 90%;
    font-size: 90%;
    background-color: #cfcfcf;
+   width: expression( document.body.clientWidth < 900 ? "900px" : "90%" );
+   min-width: 900px;
 }
 
 img {
@@ -409,6 +411,12 @@ ul.errorlist li {
 
 input[readonly="readonly"] {
    background: #dfdfdf;
+}
+
+.btn{
+    background:#499ed7;
+    border-color:#1569C7;
+    color:#f2efe9;
 }
 
 /*MENU OUTLINE*/
