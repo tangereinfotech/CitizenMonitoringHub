@@ -27,6 +27,8 @@ from cmh.issuemgr.utils import get_location_attr
 from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.constants import STATUS_NEW
 
+from cmh.common.models import ComplaintType
+
 from cmh.usermgr.utils import get_or_create_citizen
 from cmh.common.utils import debug
 
