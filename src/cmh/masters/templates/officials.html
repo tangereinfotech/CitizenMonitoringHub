@@ -82,33 +82,5 @@
   {% endfor %}
 </table>
 
-<ul id="updateMenu" class="contextMenu">
-  <li><a href="#update">Update</a></li>
-</ul>
-
-<script type="text/javascript" src="/static/jquery/js/jquery.simplemodal-1.1.1.js"></script>
-<script type="text/javascript" src="/static/jquery/js/jquery.contextMenu.js"></script>
-<script type="text/javascript" src="/static/jquery/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript">
-  $(document).ready (function () {
-    $("#offlist")({
-        "fnRowCallback" : function (nRow, aData, iDisplayIndex) {
-          nRow.className = "updateData";
-          return nRow;
-        },
-        'fnDrawCallback' : function () {
-          $("table#offlist tr").contextMenu ({'menu' : "updateMenu"},
-                                         function (action, el, pos) {
-                                            var tds = $(el).find ("td");
-                                            var form = document.createElement ("form");
-                                            form.action = "/masters/edit_off/" + tds.first ().text() + "/";
-                                            form.method = "GET";
-                                            form.submit ();
-                                         });
-        }
-    });
-  });
-
-</script>
 
 {% endblock %}

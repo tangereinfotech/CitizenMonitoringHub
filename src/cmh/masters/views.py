@@ -163,6 +163,8 @@ def officials (request):
                                     'menus' : get_user_menus (request.user,process_dm),
                                     'user' : request.user})
 
+
+
 @login_required
 def add_official (request):
     cmhuser_dm = CmhUser.objects.filter (user__approle__role = UserRoles.DM)
@@ -280,8 +282,6 @@ def add_cso_user (request):
 def state (request) :
     stateobj=State.objects.all()
     for j in stateobj:
-        print "j", j.name
-        print "jcode", j.code
     return render_to_response ('view_state.html',
                                {'i':stateobj,
                                 'menus' : get_user_menus (request.user,process_dm),
@@ -407,7 +407,6 @@ def addgp(request):
             form.save()
             return HttpResponseRedirect (reverse (gp))
         else:
-            print form.errors
             return render_to_response ('add_gp.html',
                                        {'trial' : form,
                                         'menus' : get_user_menus (request.user,process_dm),

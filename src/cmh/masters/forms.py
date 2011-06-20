@@ -241,7 +241,6 @@ class AddDep (forms.Form):
 
     def clean_depcode(self) :
         dcode = self.cleaned_data ['depcode']
-        print "department code",dcode
         if ComplaintDepartment.objects.filter (code = dcode).count () != 0:
             raise forms.ValidationError ("Department code already exists")
 
@@ -433,7 +432,6 @@ class EditBlk (forms.Form):
             self.fields ['longd'].initial = blkobj.longd
 
     def clean (self):
-        print "blk code", self.cleaned_data['objid']
         try:
             orgblkobj = Block.objects.get (id = self.cleaned_data['objid'])
             real_blkcode = "%s.%03s" % (DeployDistrict.DISTRICT.code, self.cleaned_data ['bcode'])
@@ -460,14 +458,12 @@ class EditBlk (forms.Form):
             gp.code = "%s.%03s.%03s" % (DeployDistrict.DISTRICT.code,
                                                   self.cleaned_data ['bcode'],
                                                   gp.get_code ())
-            print "gp code", gp.code
             gp.save()
             for village in gp.village_set.all ():
                 village.code = "%s.%03s.%03s.%03s" % (DeployDistrict.DISTRICT.code,
                                                       self.cleaned_data ['bcode'],
                                                       village.get_gpcode(),
                                                       village.get_code ())
-                print "code", village.code
                 village.save()
 
 
@@ -498,7 +494,6 @@ class EditGp (forms.Form):
             self.fields ['longd'].initial = gpobj.longd
 
     def clean (self):
-        print "gp code", self.cleaned_data['objid']
         try:
             orggpobj = GramPanchayat.objects.get (id = self.cleaned_data['objid'])
             real_gpcode = "%s.%03s.%03s" % (DeployDistrict.DISTRICT.code, self.cleaned_data ['bcode'], self.cleaned_data ['gpcode'])
@@ -527,7 +522,6 @@ class EditGp (forms.Form):
                                                   self.cleaned_data ['bcode'],
                                                   self.cleaned_data ['gpcode'],
                                                   village.get_code ())
-            print "code", village.code
             village.save()
 
 
@@ -605,7 +599,6 @@ class EditDep (forms.Form):
             self.fields ['dcode'].initial = depobj.code
 
     def clean (self):
-        print "Dep ID: ", self.cleaned_data['objid']
         try:
             orgdepobj = ComplaintDepartment.objects.get (id = self.cleaned_data['objid'])
             real_depcode =  self.cleaned_data ['dcode']
@@ -647,7 +640,6 @@ class EditComp (forms.Form):
     def __init__(self, compobj, *args, **kwargs) :
         super(EditComp, self).__init__(*args,**kwargs)
         if compobj != None:
-            print compobj.get_department
             self.fields ['objid'].initial       = compobj.id
             self.fields ['code'].initial        = compobj.get_code()
             self.fields ['hcode'].initial       = compobj.get_department()
@@ -664,7 +656,6 @@ class EditComp (forms.Form):
         try:
             orgcompobj = ComplaintType.objects.get (id = self.cleaned_data['objid'])
             real_compcode =  "%s.%03s" % (self.cleaned_data['hcode'],self.cleaned_data ['code'])
-            print real_compcode
             if real_compcode != orgcompobj.code:
                 compobj = ComplaintType.objects.get (code = real_compcode)
                 raise forms.ValidationError ("Complaint code already exists please enter non-existing complaint code")
@@ -672,7 +663,6 @@ class EditComp (forms.Form):
             pass
         except ComplaintType.MultipleObjectsReturned:
             raise forms.ValidationError ("Complaint code already exists please enter non-existing complaint code")
-        print self.cleaned_data
         return self.cleaned_data
 
 
