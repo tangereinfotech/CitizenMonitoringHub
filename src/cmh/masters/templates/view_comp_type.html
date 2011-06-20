@@ -1,0 +1,81 @@
+{# Copyright 2011, Tangere Infotech Pvt Ltd [http://tangere.in]                 #}
+{#                                                                              #}
+{# Licensed under the Apache License, Version 2.0 (the "License");              #}
+{# you may not use this file except in compliance with the License.             #}
+{# You may obtain a copy of the License at                                      #}
+{#                                                                              #}
+{#       http://www.apache.org/licenses/LICENSE-2.0                             #}
+{#                                                                              #}
+{# Unless required by applicable law or agreed to in writing, software          #}
+{# distributed under the License is distributed on an "AS IS" BASIS,            #}
+{# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     #}
+{# See the License for the specific language governing permissions and          #}
+{# limitations under the License.                                               #}
+
+{% extends "masters.html" %}
+
+{% block extra_heads %}
+<link type="text/css" href="/static/jquery/css/jquery.contextMenu.css" rel="stylesheet" media="screen">
+{% endblock %}
+
+
+{% block master_section %}
+<div class="content-heading">
+  <h2 style="text-align:center;">List of Complaints and Complaint Types</h2>
+</div>
+
+<div class="pagination">
+  <a href="/masters/add_comp_type">Add New</a>
+</div>
+
+<table id="clist" class="tabularlist">
+  <thead>
+  <tr>
+    <th>Department Code</th>
+    <th>Complaint Code</th>
+    <th>Complaint Department</th>
+    <th>Complaint Classification</th>
+  </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<ul id="updateMenu" class="contextMenu">
+  <li><a href="#update">Update</a></li>
+</ul>
+
+<script type="text/javascript" src="/static/jquery/js/jquery.simplemodal-1.1.1.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jquery.contextMenu.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+  $(document).ready (function () {
+    $("#clist").dataTable ({
+      'bAutoWidth' : false,
+        'sPaginationType': 'full_numbers',
+        "bServerSide": true,
+        "sAjaxSource": "{% url cmh.masters.views.clist %}",
+        "fnRowCallback" : function (nRow, aData, iDisplayIndex) {
+          nRow.className = "updateData";
+          return nRow;
+        },
+        "aoColumns": [
+            { "bSearchable": true},
+            { "bSearchable": true},
+            { "bSearchable": true},
+            { "bSearchable": true},
+        ],
+        'fnDrawCallback' : function () {
+          $("table#clist tr").contextMenu ({'menu' : "updateMenu"},
+                                         function (action, el, pos) {
+                                            var tds = $(el).find ("td");
+                                            var form = document.createElement ("form");
+                                            form.action = "/masters/edit_c/" +tds.first ().text() + "/" +tds.eq(1).text() + "/";
+                                            form.submit ();
+                                         });
+        }
+    });
+  });
+
+</script>
+
+{% endblock %}

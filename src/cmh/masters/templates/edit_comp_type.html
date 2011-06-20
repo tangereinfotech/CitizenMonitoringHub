@@ -1,0 +1,83 @@
+{# Copyright 2011, Tangere Infotech Pvt Ltd [http://tangere.in]                 #}
+{#                                                                              #}
+{# Licensed under the Apache License, Version 2.0 (the "License");              #}
+{# you may not use this file except in compliance with the License.             #}
+{# You may obtain a copy of the License at                                      #}
+{#                                                                              #}
+{#       http://www.apache.org/licenses/LICENSE-2.0                             #}
+{#                                                                              #}
+{# Unless required by applicable law or agreed to in writing, software          #}
+{# distributed under the License is distributed on an "AS IS" BASIS,            #}
+{# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     #}
+{# See the License for the specific language governing permissions and          #}
+{# limitations under the License.                                               #}
+
+{% extends "masters.html" %}
+
+{% block master_section %}
+<div style="text-align:center">
+  <h2>Edit Complaint Type</h2>
+  <form action="." method="post" style="width:400px;margin:0px auto">
+    {{ trial.objid }}
+    {{ trial.hcode }}
+    <table width="100%" style="text-align:center">
+      {% if trial.non_field_errors %}
+      <tr>
+        <th align="left" colspan="2">{{ trial.non_field_errors }}</th>
+      </tr>
+      {% endif %}
+      <tr>
+        <th align="left">{{ trial.dname.label }}</th>
+        <td align="left">
+          {{ trial.dname}}
+        </td>
+      </tr>
+      <tr>
+        <th align="left">{{ trial.code.label }}</th>
+        <td align="left">
+          {{ trial.code.errors }}
+          {{ trial.code }}
+        </td>
+      </tr>
+      <tr>
+        <th align="left">{{ trial.summary.label }}</th>
+        <td align="left">{{ trial.summary }}</td>
+      </tr>
+      <tr>
+        <th align="left">{{ trial.department.label }}</th>
+        <td align="left" width="100%">{{ trial.department }}</td>
+      </tr>
+      <tr>
+        <th align="left">{{ trial.cclass.label }}</th>
+        <td align="left">{{ trial.cclass }}</td>
+      </tr>
+      <tr>
+        <th align="left">{{ trial.defsmsnew.label }}</th>
+        <td align="left">{{ trial.defsmsnew }}</td>
+      </tr>
+      <tr>
+        <th align="left" width="80%">{{ trial.defsmsack.label }}</th>
+        <td align="left">{{ trial.defsmsack }}</td>
+      </tr>
+      <tr>
+        <th align="left">{{ trial.defsmsopen.label }}</th>
+        <td align="left">{{ trial.defsmsopen }}</td>
+      </tr>
+      <tr>
+        <th align="left">{{ trial.defsmsres.label }}</th>
+        <td align="left">{{ trial.defsmsres }}</td>
+      </tr>
+      <tr>
+        <th align="left">{{ trial.defsmsclo.label }}</th>
+        <td align="left">{{ trial.defsmsclo }}</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td style="text-align:center">
+          <input type="submit" value="Edit" name="edit" class="btn">
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>
+{% endblock %}
