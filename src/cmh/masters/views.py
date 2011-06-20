@@ -278,12 +278,12 @@ def add_cso_user (request):
             return HttpResponseRedirect (reverse (csomembers))
     else:
         return HttpResponseRedirect ("/")
+
 @login_required
 def state (request) :
     stateobj=State.objects.all()
-    for j in stateobj:
     return render_to_response ('view_state.html',
-                               {'i':stateobj,
+                               {'states':stateobj,
                                 'menus' : get_user_menus (request.user,process_dm),
                                 'user' : request.user})
 
@@ -303,17 +303,17 @@ def add_state(request):
             return HttpResponseRedirect (reverse (state))
         else:
             return render_to_response ('edit_state.html',
-                                   {'trial' : form,
-                                    'menus' : get_user_menus (request.user,process_dm),
-                                    'flag'  : True,
-                                    'user' : request.user})
+                                       {'trial' : form,
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'flag'  : True,
+                                        'user' : request.user})
 
 
 @login_required
 def district (request) :
     distobj=District.objects.all()
     return render_to_response ('view_district.html',
-                               {'i':distobj,
+                               {'districts':distobj,
                                 'menus' : get_user_menus (request.user,process_dm),
                                 'user' : request.user})
 
@@ -341,8 +341,8 @@ def add_district(request):
 def block (request) :
     blockobj=Block.objects.all()
     dname=DeployDistrict.DISTRICT.name
-    dcode=DeployDistrict.DISTRICT.code
-    scode = DeployDistrict.DISTRICT.state.code
+    dcode=DeployDistrict.DISTRICT.get_code()
+    scode = DeployDistrict.DISTRICT.state.get_code()
     sname = DeployDistrict.DISTRICT.state.name
     codeli =[]
     for i in blockobj:
@@ -374,17 +374,17 @@ def addblock(request):
             return HttpResponseRedirect (reverse (block))
         else:
             return render_to_response ('add_block.html',
-                                   {'trial' : form,
-                                    'menus' : get_user_menus (request.user,process_dm),
-                                    'user' : request.user})
+                                       {'trial' : form,
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user' : request.user})
 
 
 @login_required
 def gp (request) :
     gpobj=GramPanchayat.objects.all()
     dname=DeployDistrict.DISTRICT.name
-    dcode=DeployDistrict.DISTRICT.code
-    scode = DeployDistrict.DISTRICT.state.code
+    dcode=DeployDistrict.DISTRICT.get_code ()
+    scode = DeployDistrict.DISTRICT.state.get_code ()
     sname = DeployDistrict.DISTRICT.state.name
     return render_to_response ('view_gp.html',
                                {'disname':dname,
@@ -417,8 +417,8 @@ def addgp(request):
 def village (request) :
     villobj=Village.objects.all()
     dname = DeployDistrict.DISTRICT.name
-    dcode = DeployDistrict.DISTRICT.code
-    scode = DeployDistrict.DISTRICT.state.code
+    dcode = DeployDistrict.DISTRICT.get_code ()
+    scode = DeployDistrict.DISTRICT.state.get_code ()
     sname = DeployDistrict.DISTRICT.state.name
     return render_to_response ('view_village.html',
                                {'disname'  : dname,
@@ -529,7 +529,9 @@ def gplist (request):
         columnIndexNameMap = { 0: 'block__code',
                                1: 'block__name',
                                2: 'code',
-                               3: 'name'}
+                               3: 'name',
+                               4: 'lattd',
+                               5: 'longd'}
 
         x = get_datatables_records (request, querySet, columnIndexNameMap, 'gplist_datatable.html')
     except:
@@ -543,7 +545,9 @@ def blist (request):
         querySet = Block.objects.all ()
 
         columnIndexNameMap = { 0: 'code',
-                               1: 'name'}
+                               1: 'name',
+                               2 : 'lattd',
+                               3 : 'longd'}
 
         x = get_datatables_records (request, querySet, columnIndexNameMap, 'block_datatable.html')
     except:
@@ -563,7 +567,9 @@ def villist (request):
                                2: 'grampanchayat__code',
                                3: 'grampanchayat__name',
                                4: 'code',
-                               5: 'name'}
+                               5: 'name',
+                               6: 'lattd',
+                               7: 'longd'}
 
         x = get_datatables_records (request, querySet, columnIndexNameMap, 'villist_datatable.html')
     except:

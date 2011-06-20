@@ -43,7 +43,10 @@
       </tr>
       <tr>
         <th align="left">{{ trial.bname.label }}</th>
-        <td align="left">{{ trial.bname }}</td>
+        <td align="left">
+          {{ trial.bname.errors }}
+          {{ trial.bname }}
+        </td>
       </tr>
       <tr>
         <th align="left">{{ trial.bcode.label }}</th>
@@ -69,7 +72,7 @@
       <tr>
         <td></td>
         <td style="text-align:center">
-          <input type="submit" value="Edit" name="edit" class="btn">
+          <input type="submit" value="Save" name="edit" class="btn">
         </td>
       </tr>
     </table>

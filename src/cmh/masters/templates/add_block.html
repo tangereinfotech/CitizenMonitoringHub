@@ -17,7 +17,7 @@
 {% block master_section %}
 <div style="text-align:center">
   <h2>Add Block</h2>
-  <form action="." method="post" style="width:300px;margin:0px auto">
+  <form action="." method="post" style="width:500px;margin:0px auto">
     <table width="100%">
       <tr>
         <th width="35%" align="left">{{ trial.sname.label }}</th>
@@ -37,7 +37,10 @@
       </tr>
       <tr>
         <th width="35%" align="left">{{ trial.bname.label }}</th>
-        <td width="65%" align="left">{{ trial.bname }}</td>
+        <td width="65%" align="left">
+          {{ trial.bname.errors }}
+          {{ trial.bname }}
+        </td>
       </tr>
       <tr>
         <th width="35%" align="left">{{ trial.bcode.label }}</th>

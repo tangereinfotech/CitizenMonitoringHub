@@ -448,12 +448,10 @@ def hot_complaints (request):
                 data.append ([[d.strftime ('%Y-%m-%d 12:01 AM'), doc.filter (createdate__lte = d).count () - dcc.filter (createdate__lte = d).count ()]
                               for d in dates])
             return HttpResponse (json.dumps ({'datapoints' : data, 'names' : names, 'departments' : deptinfo}))
-        else:
-            return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : [], 'departments' : []}))
     except:
         import traceback
         traceback.print_exc ()
-
+    return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : [], 'departments' : []}))
 
 def report(request) :
     if request.method=="GET" :

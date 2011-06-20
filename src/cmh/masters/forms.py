@@ -23,6 +23,7 @@ from cmh.common.fields import UsernameField
 from cmh.common.fields import AutoCompleteOffTextInput, SpacedSelectInput
 from cmh.common.fields import SpacedTextInput, SpacedROTextInput
 from cmh.common.fields import SpacedTextField, SpacedROTextField
+from cmh.common.fields import LatLongField
 
 from cmh.common.models import ComplaintDepartment
 from cmh.common.constants import UserRoles
@@ -210,9 +211,9 @@ class DepartmentSelected (forms.Form):
 
 class AddState (forms.Form):
     sname       = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
-    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.code)
-    lattd       = forms.DecimalField (label  = "State Latitude", max_value = 180, min_value = -180, initial = DeployDistrict.DISTRICT.state.lattd)
-    longd       = forms.DecimalField (label  = "State Longitude", max_value = 180, min_value = -180,initial = DeployDistrict.DISTRICT.state.longd)
+    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code())
+    lattd       = LatLongField (label  = "Latitude", initial = DeployDistrict.DISTRICT.state.lattd)
+    longd       = LatLongField (label  = "Longitude", initial = DeployDistrict.DISTRICT.state.longd)
 
     def save (self):
         state = DeployDistrict.DISTRICT.state
@@ -222,11 +223,11 @@ class AddState (forms.Form):
 
 class AddDistrict (forms.Form):
     sname       = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
-    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.code)
+    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code())
     dname       = SpacedROTextField (label = "District Name", initial = DeployDistrict.DISTRICT.name)
-    dcode       = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.code)
-    lattd       = forms.DecimalField (label  = "District Latitude", max_value = 180, min_value = -180, initial = DeployDistrict.DISTRICT.lattd)
-    longd       = forms.DecimalField (label  = "District Longitude", max_value = 180, min_value = -180,initial = DeployDistrict.DISTRICT.longd)
+    dcode       = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.get_code())
+    lattd       = LatLongField (label  = "District Latitude", initial = DeployDistrict.DISTRICT.lattd)
+    longd       = LatLongField (label  = "District Longitude", initial = DeployDistrict.DISTRICT.longd)
     def save (self):
         dist = DeployDistrict.DISTRICT
         dist.lattd = self.cleaned_data['lattd']
@@ -256,13 +257,13 @@ class AddDep (forms.Form):
 
 class AddBlock (forms.Form):
     sname       = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
-    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.code,)
+    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code ())
     dname       = SpacedROTextField (label = "District Name", initial = DeployDistrict.DISTRICT.name)
-    dcode       = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.code)
-    bname       = forms.CharField (label="Block Name")
-    bcode       = forms.CharField (label="Block Code")
-    lattd       = forms.DecimalField (label  = "Block Latitude", max_value = 180, min_value = -180)
-    longd       = forms.DecimalField (label  = "Block Longitude", max_value = 180, min_value = -180)
+    dcode       = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.get_code ())
+    bname       = SpacedTextField (label="Block Name")
+    bcode       = SpacedTextField (label="Block Code")
+    lattd       = LatLongField (label  = "Block Latitude")
+    longd       = LatLongField (label  = "Block Longitude")
 
     def clean_bcode(self) :
         try:
@@ -285,51 +286,49 @@ class AddBlock (forms.Form):
 
 class AddGramPanchayat (forms.Form):
     sname       = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
-    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.code,)
+    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code ())
     dname       = SpacedROTextField (label = "District Name", initial = DeployDistrict.DISTRICT.name)
-    dcode       = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.code)
-    lattd       = forms.DecimalField (label  = "Gram Panchayat Latitude", max_value = 180, min_value = -180)
-    longd       = forms.DecimalField (label  = "Gram Panchayat Longitude", max_value = 180, min_value = -180)
+    dcode       = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.get_code ())
+    lattd       = LatLongField (label  = "Gram Panchayat Latitude")
+    longd       = LatLongField (label  = "Gram Panchayat Longitude")
 
     block       = forms.ModelChoiceField (queryset = Block.objects.filter(district=DeployDistrict.DISTRICT), empty_label = "------", label="Block")
-    gpname      = forms.CharField (label="Gram Panchayat Name")
-    gpcode      = forms.CharField (label="Gram Panchayat Code")
+    gpname      = SpacedTextField (label="Gram Panchayat Name")
+    gpcode      = SpacedTextField (label="Gram Panchayat Code")
 
     def clean (self) :
         super (AddGramPanchayat, self).clean ()
-        try:
-            gpcode = int (self.cleaned_data['gpcode'])
-        except ValueError:
-            raise forms.ValidationError ("Gram Panchayat code must be a number")
 
-        comp_gpcode = "%s.%03d" % (self.cleaned_data['block'].code, gpcode)
-        if GramPanchayat.objects.filter (code = comp_gpcode).count () != 0:
-            raise forms.ValidationError ("Gram Panchayat code already exists")
+        if 'gpcode' in self.cleaned_data:
+            try:
+                gpcode = int (self.cleaned_data['gpcode'])
+            except ValueError:
+                raise forms.ValidationError ("Gram Panchayat code must be a number")
 
-        self.cleaned_data ['gpcode'] = comp_gpcode
+            comp_gpcode = "%s.%03d" % (self.cleaned_data['block'].code, gpcode)
+            if GramPanchayat.objects.filter (code = comp_gpcode).count () != 0:
+                raise forms.ValidationError ("Gram Panchayat code already exists")
+
+            self.cleaned_data ['gpcode'] = comp_gpcode
         return self.cleaned_data
 
-
-
-
     def save (self):
-        blk = GramPanchayat.objects.create(code       = self.cleaned_data['gpcode'],
-                                           name       = self.cleaned_data['gpname'],
-                                           lattd      = self.cleaned_data['lattd'],
-                                           longd      = self.cleaned_data['longd'],
-                                           block      = self.cleaned_data['block'],
-                                           )
+        return GramPanchayat.objects.create(code       = self.cleaned_data['gpcode'],
+                                            name       = self.cleaned_data['gpname'],
+                                            lattd      = self.cleaned_data['lattd'],
+                                            longd      = self.cleaned_data['longd'],
+                                            block      = self.cleaned_data['block'])
 
 
 class AddVillage (forms.Form):
     sname       = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
-    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.code,)
+    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code ())
     dname       = SpacedROTextField (label = "District Name", initial = DeployDistrict.DISTRICT.name)
-    dcode       = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.code)
+    dcode       = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.get_code ())
     vname       = SpacedTextField (label   = "Village Name")
     vcode       = SpacedTextField (label   = "Village Code")
-    lattd       = forms.DecimalField (label  = "Village Latitude", max_value = 180, min_value = -180)
-    longd       = forms.DecimalField (label  = "Village Longitude", max_value = 180, min_value = -180)
+    lattd       = LatLongField (label  = "Village Latitude")
+    longd       = LatLongField (label  = "Village Longitude")
     blockdata   = forms.ModelChoiceField (queryset = Block.objects.filter(district=DeployDistrict.DISTRICT), empty_label = "------", label="Block")
     gp          = forms.ModelChoiceField (queryset = GramPanchayat.objects.none (), empty_label = '------', label="Gram Panchayat")
 
@@ -347,16 +346,17 @@ class AddVillage (forms.Form):
 
     def clean (self) :
         super (AddVillage, self).clean ()
-        try:
-            vcode = int (self.cleaned_data['vcode'])
-        except ValueError:
-            raise forms.ValidationError ("Village code must be a number")
+        if 'vcode' in self.cleaned_data:
+            try:
+                vcode = int (self.cleaned_data['vcode'])
+            except ValueError:
+                raise forms.ValidationError ("Village code must be a number")
 
-        comp_vcode = "%s.%03d" % (self.cleaned_data['gp'].code, vcode)
-        if Village.objects.filter (code = comp_vcode).count () != 0:
-            raise forms.ValidationError ("Village code already exists")
+            comp_vcode = "%s.%03d" % (self.cleaned_data['gp'].code, vcode)
+            if Village.objects.filter (code = comp_vcode).count () != 0:
+                raise forms.ValidationError ("Village code already exists")
 
-        self.cleaned_data ['vcode'] = comp_vcode
+            self.cleaned_data ['vcode'] = comp_vcode
         return self.cleaned_data
 
     def save (self):
@@ -447,6 +447,9 @@ class EditBlk (forms.Form):
 
     def save (self):
         blk         = Block.objects.get(id = self.cleaned_data['objid'])
+
+        oldcode = blk.code
+
         blk.code    = "%s.%03s" % (DeployDistrict.DISTRICT.code,
                                        self.cleaned_data ['bcode'])
         blk.name    = self.cleaned_data['bname']
@@ -454,17 +457,18 @@ class EditBlk (forms.Form):
         blk.longd   = self.cleaned_data['longd']
         blk.save()
 
-        for gp in blk.grampanchayat_set.all ():
-            gp.code = "%s.%03s.%03s" % (DeployDistrict.DISTRICT.code,
-                                                  self.cleaned_data ['bcode'],
-                                                  gp.get_code ())
-            gp.save()
-            for village in gp.village_set.all ():
-                village.code = "%s.%03s.%03s.%03s" % (DeployDistrict.DISTRICT.code,
-                                                      self.cleaned_data ['bcode'],
-                                                      village.get_gpcode(),
-                                                      village.get_code ())
-                village.save()
+        if oldcode != blk.code:
+            for gp in blk.grampanchayat_set.all ():
+                gp.code = "%s.%03s.%03s" % (DeployDistrict.DISTRICT.code,
+                                            self.cleaned_data ['bcode'],
+                                            gp.get_code ())
+                gp.save()
+                for village in gp.village_set.all ():
+                    village.code = "%s.%03s.%03s.%03s" % (DeployDistrict.DISTRICT.code,
+                                                          self.cleaned_data ['bcode'],
+                                                          village.get_gpcode(),
+                                                          village.get_code ())
+                    village.save()
 
 
 
@@ -509,6 +513,8 @@ class EditGp (forms.Form):
 
     def save (self):
         gp         = GramPanchayat.objects.get(id = self.cleaned_data['objid'])
+
+        oldcode    = gp.code
         gp.code    = "%s.%03s.%03s" % (DeployDistrict.DISTRICT.code,
                                        self.cleaned_data ['bcode'],
                                        self.cleaned_data ['gpcode'])
@@ -517,15 +523,13 @@ class EditGp (forms.Form):
         gp.longd   = self.cleaned_data['longd']
         gp.save()
 
-        for village in gp.village_set.all ():
-            village.code = "%s.%03s.%03s.%03s" % (DeployDistrict.DISTRICT.code,
-                                                  self.cleaned_data ['bcode'],
-                                                  self.cleaned_data ['gpcode'],
-                                                  village.get_code ())
-            village.save()
-
-
-
+        if oldcode != gp.code:
+            for village in gp.village_set.all ():
+                village.code = "%s.%03s.%03s.%03s" % (DeployDistrict.DISTRICT.code,
+                                                      self.cleaned_data ['bcode'],
+                                                      self.cleaned_data ['gpcode'],
+                                                      village.get_code ())
+                village.save()
 
 
 class EditVillage (forms.Form):
@@ -559,25 +563,27 @@ class EditVillage (forms.Form):
             self.fields ['longd'].initial = villobj.longd
 
     def clean (self):
-        try:
-            orgvillobj = Village.objects.get (id = self.cleaned_data['objid'])
-            real_vcode = "%s.%03s.%03s.%03s" % (DeployDistrict.DISTRICT.code, self.cleaned_data ['bcode'], self.cleaned_data ['gpcode'],self.cleaned_data['vcode'])
-            if real_vcode != orgvillobj.code:
-                villobj = Village.objects.get (code = real_vcode)
+        if 'vcode' in self.cleaned_data:
+            try:
+                orgvillobj = Village.objects.get (id = self.cleaned_data['objid'])
+                real_vcode = "%s.%03s.%03s.%03s" % (DeployDistrict.DISTRICT.code, self.cleaned_data ['bcode'], self.cleaned_data ['gpcode'],self.cleaned_data['vcode'])
+                if real_vcode != orgvillobj.code:
+                    villobj = Village.objects.get (code = real_vcode)
+                    raise forms.ValidationError ("This code can't be used. Village with this code exists within Gram Panchayat")
+            except Village.DoesNotExist:
+                pass
+            except Village.MultipleObjectsReturned:
                 raise forms.ValidationError ("This code can't be used. Village with this code exists within Gram Panchayat")
-        except Village.DoesNotExist:
-            pass
-        except Village.MultipleObjectsReturned:
-            raise forms.ValidationError ("This code can't be used. Village with this code exists within Gram Panchayat")
+
         return self.cleaned_data
 
 
     def save (self):
         vil         = Village.objects.get(id = self.cleaned_data['objid'])
         vil.code    = "%s.%03s.%03s.%03s" % (DeployDistrict.DISTRICT.code,
-                                       self.cleaned_data ['bcode'],
-                                       self.cleaned_data ['gpcode'],
-                                       self.cleaned_data ['vcode'])
+                                             self.cleaned_data ['bcode'],
+                                             self.cleaned_data ['gpcode'],
+                                             self.cleaned_data ['vcode'])
         vil.name    = self.cleaned_data['vname']
         vil.lattd   = self.cleaned_data['lattd']
         vil.longd   = self.cleaned_data['longd']
@@ -675,7 +681,6 @@ class EditComp (forms.Form):
         comp.defsmsack    = self.cleaned_data['defsmsack']
         comp.defsmsres    = self.cleaned_data['defsmsres']
         comp.defsmsclo    = self.cleaned_data['defsmsclo']
-
         comp.save()
 
 

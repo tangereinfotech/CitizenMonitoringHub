@@ -106,6 +106,15 @@ class SpacedROTextField (forms.CharField):
         kwargs ['widget'] = SpacedROTextInput ()
         super (SpacedROTextField, self).__init__ (*args, **kwargs)
 
+
+class LatLongField (forms.DecimalField):
+    def __init__ (self, *args, **kwargs):
+        kwargs ['widget'] = forms.TextInput (attrs = {'style' : 'width: 100%'})
+        kwargs ['min_value'] = -180
+        kwargs ['max_value'] = 180
+        super (LatLongField, self).__init__ (*args, **kwargs)
+
+
 class MultiNumberIdField (forms.CharField):
     def to_python (self, value):
         if not value: return []

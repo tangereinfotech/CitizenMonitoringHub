@@ -20,7 +20,9 @@
         {% for blk in querySet %}
         [
             "{{blk.get_code}}",
-            "{{blk.name}}"
+            "{{blk.name}}",
+            "{{blk.lattd}}",
+            "{{blk.longd}}"
         ]
         {% if not forloop.last %},{% endif %}
         {% endfor %}

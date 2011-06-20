@@ -16,7 +16,7 @@
 
 {% block master_section %}
 <div style="text-align:center;">
-  <h2>List of Districts</h2>
+  <h2>District</h2>
 </div>
 
 <div class="pagination">
@@ -28,12 +28,16 @@
   <tr>
     <th>District Code</th>
     <th>District Name</th>
+    <th>Latitude</th>
+    <th>Longitude</th>
   </tr>
   </thead>
-  {% for blk in i %}
+  {% for district in districts %}
   <tr>
-    <td>{{ blk.code }}</td>
-    <td>{{ blk.name }}</td>
+    <td>{{ district.get_code }}</td>
+    <td>{{ district.name }}</td>
+    <td>{{ district.lattd }} </td>
+    <td>{{ district.longd }} </td>
   </tr>
   {% endfor %}
 </table>

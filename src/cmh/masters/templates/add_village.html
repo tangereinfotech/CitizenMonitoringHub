@@ -54,7 +54,10 @@
       </tr>
       <tr>
         <th align="left">{{ trial.vname.label }}</th>
-        <td align="left">{{ trial.vname }}</td>
+        <td align="left">
+          {{ trial.vname.errors }}
+          {{ trial.vname }}
+        </td>
       </tr>
       <tr>
         <th align="left">{{ trial.vcode.label }}</th>

@@ -16,7 +16,7 @@
 
 {% block master_section %}
 <div style="text-align:center;">
-  <h2>List of State</h2>
+  <h2>State</h2>
 </div>
 
 <div class="pagination">
@@ -28,13 +28,19 @@
   <tr>
     <th>State Code</th>
     <th>State Name</th>
+    <th>Latitude</th>
+    <th>Longitude</th>
   </tr>
   </thead>
-  {% for blk in i %}
-  <tr>
-    <td>{{ blk.code }}</td>
-    <td>{{ blk.name }}</td>
-  </tr>
-  {% endfor %}
+  <tbody>
+    {% for state in states %}
+    <tr>
+      <td>{{ state.get_code }}</td>
+      <td>{{ state.name }}</td>
+      <td>{{ state.lattd }} </td>
+      <td>{{ state.longd }} </td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 {% endblock %}

@@ -46,7 +46,10 @@
       </tr>
       <tr>
         <th align="left">{{ trial.gpname.label }}</th>
-        <td align="left">{{ trial.gpname }}</td>
+        <td align="left">
+          {{ trial.gpname.errors }}
+          {{ trial.gpname }}
+        </td>
       </tr>
       <tr>
         <th align="left">{{ trial.gpcode.label }}</th>

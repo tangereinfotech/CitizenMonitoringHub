@@ -25,22 +25,18 @@
   </h4>
 <table id="state" align="center">
   <tr>
-    <td>
-      State&nbsp;&nbsp;&nbsp;&nbsp;:  {{ statename }}
-    </td>
+    <td> State: </td>
+    <td>{{ statename }} </td>
     <td></td><td></td>
-      <td>
-        State Code&nbsp;&nbsp;&nbsp;&nbsp;: {{ statecode }}
-      </td>
+    <td> State Code:</td>
+    <td> {{ statecode }} </td>
   </tr>
   <tr>
-    <td>
-      District&nbsp;&nbsp;: {{ disname }}
-    </td>
+    <td> District: </td>
+    <td> {{ disname }} </td>
     <td></td><td></td>
-      <td>
-        District Code&nbsp;&nbsp;: {{ discode }}
-      </td>
+    <td> District Code:</td>
+    <td>{{ discode }} </td>
   </tr>
 </table>
 </div>
@@ -58,6 +54,8 @@
     <th>Gram Panchayat Name</th>
     <th>Village Code</th>
     <th>Village Name</th>
+    <th>Lattitude</th>
+    <th>Longitude</th>
   </tr>
   </thead>
   <tbody>
@@ -84,6 +82,8 @@
           return nRow;
         },
         "aoColumns": [
+            { "bSearchable": true},
+            { "bSearchable": true},
             { "bSearchable": true},
             { "bSearchable": true},
             { "bSearchable": true},
