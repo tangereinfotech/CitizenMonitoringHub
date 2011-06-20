@@ -24,6 +24,13 @@ class Location (models.Model):
     class Meta:
         abstract = True
 
+    def __unicode__ (self):
+        return "%s [%s]" % (self.name, self.code.split ('.')[-1])
+
+    def get_code (self):
+        return self.code.split ('.')[-1]
+
+
 class Country (Location):
     pass
 
@@ -43,10 +50,15 @@ class Village (Location):
     grampanchayat = models.ForeignKey (GramPanchayat)
     search = models.CharField (max_length = 5000)
 
+    def get_gpcode (self):
+        return self.code.split ('.')[-2]
+
 class ComplaintDepartment (models.Model):
     code = models.CharField (max_length = 200)
     name = models.CharField (max_length = 5000)
     district = models.ForeignKey (District)
+    def __unicode__ (self):
+        return "%s<%s>" % (self.name, self.code)
 
 class ComplaintType (models.Model):
     code = models.CharField (max_length = 200)
@@ -59,6 +71,10 @@ class ComplaintType (models.Model):
     defsmsres  = models.CharField (max_length = 2000, blank = True, null = True)
     defsmsclo = models.CharField (max_length = 2000, blank = True, null = True)
     search = models.CharField (max_length = 10000, blank = True, null = True)
+    def get_code (self):
+        return self.code.split ('.')[-1]
+    def get_department (self):
+        return self.code.split ('.')[0]
 
 class ComplaintMDG (models.Model):
     complainttype = models.ForeignKey (ComplaintType)

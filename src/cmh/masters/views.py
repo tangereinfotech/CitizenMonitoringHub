@@ -28,11 +28,16 @@ from cmh.usermgr.models import CmhUser, Official
 from cmh.usermgr.utils import get_user_menus
 
 from cmh.common.constants import UserRoles
-from cmh.common.models import ComplaintDepartment
+from cmh.common.models import ComplaintDepartment, ComplaintType
 from cmh.common.utils import debug
+from cmh.common.utils import get_datatables_records
+from cmh.common.constants import DeployDistrict
+from cmh.common.models import  State, District, Block, GramPanchayat, Village
 
 from cmh.masters.forms import AddCSOMember, RegisterDM, DmId, EditDM
 from cmh.masters.forms import AddEditOfficial, DepartmentSelected
+from cmh.masters.forms import AddBlock, AddComplaint, AddGramPanchayat, AddDep
+from cmh.masters.forms import AddVillage, AddDistrict, AddState, EditGp, EditVillage, EditDep, EditComp, EditBlk
 
 @login_required
 def masters (request):
@@ -271,3 +276,434 @@ def add_cso_user (request):
             return HttpResponseRedirect (reverse (csomembers))
     else:
         return HttpResponseRedirect ("/")
+@login_required
+def state (request) :
+    stateobj=State.objects.all()
+    for j in stateobj:
+        print "j", j.name
+        print "jcode", j.code
+    return render_to_response ('view_state.html',
+                               {'i':stateobj,
+                                'menus' : get_user_menus (request.user,process_dm),
+                                'user' : request.user})
+
+@login_required
+def add_state(request):
+    if request.method =="GET":
+        form = AddState();
+        return render_to_response ('edit_state.html',
+                                   {'trial' : AddState (),
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'flag'  : True,
+                                    'user'  : request.user})
+    elif request.method == "POST":
+        form = AddState(request.POST)
+        if form.is_valid() :
+            form.save()
+            return HttpResponseRedirect (reverse (state))
+        else:
+            return render_to_response ('edit_state.html',
+                                   {'trial' : form,
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'flag'  : True,
+                                    'user' : request.user})
+
+
+@login_required
+def district (request) :
+    distobj=District.objects.all()
+    return render_to_response ('view_district.html',
+                               {'i':distobj,
+                                'menus' : get_user_menus (request.user,process_dm),
+                                'user' : request.user})
+
+@login_required
+def add_district(request):
+    if request.method =="GET":
+        return render_to_response ('edit_district.html',
+                                   {'trial' : AddDistrict (),
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'flag'  : True,
+                                    'user' : request.user})
+    elif request.method == "POST":
+        form = AddDistrict(request.POST)
+        if form.is_valid() :
+            form.save()
+            return HttpResponseRedirect (reverse (district))
+        else:
+            return render_to_response ('edit_district.html',
+                                   {'trial' : form,
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'flag'  : True,
+                                    'user' : request.user})
+
+@login_required
+def block (request) :
+    blockobj=Block.objects.all()
+    dname=DeployDistrict.DISTRICT.name
+    dcode=DeployDistrict.DISTRICT.code
+    scode = DeployDistrict.DISTRICT.state.code
+    sname = DeployDistrict.DISTRICT.state.name
+    codeli =[]
+    for i in blockobj:
+        codeli.append({'bcode' : i.code.split ('.')[-1],
+                       'bname' : i.name,
+                       })
+
+    return render_to_response ('view_block.html',
+                               {'disname':dname,
+                                'discode':dcode,
+                                'i':codeli,
+                                'menus' : get_user_menus (request.user,process_dm),
+                                'statecode': scode,
+                                'statename': sname,
+                                'user' : request.user})
+
+
+@login_required
+def addblock(request):
+    if request.method =="GET":
+        return render_to_response ('add_block.html',
+                                   {'trial' : AddBlock (),
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'user' : request.user})
+    elif request.method == "POST":
+        form = AddBlock(request.POST)
+        if form.is_valid() :
+            form.save()
+            return HttpResponseRedirect (reverse (block))
+        else:
+            return render_to_response ('add_block.html',
+                                   {'trial' : form,
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'user' : request.user})
+
+
+@login_required
+def gp (request) :
+    gpobj=GramPanchayat.objects.all()
+    dname=DeployDistrict.DISTRICT.name
+    dcode=DeployDistrict.DISTRICT.code
+    scode = DeployDistrict.DISTRICT.state.code
+    sname = DeployDistrict.DISTRICT.state.name
+    return render_to_response ('view_gp.html',
+                               {'disname':dname,
+                                'discode':dcode,
+                                'statecode': scode,
+                                'statename': sname,
+                                'menus' : get_user_menus (request.user,process_dm),
+                                'user' : request.user})
+
+@login_required
+def addgp(request):
+    if request.method =="GET":
+        return render_to_response ('add_gp.html',
+                                   {'trial' : AddGramPanchayat (),
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'user' : request.user})
+    elif request.method == "POST":
+        form = AddGramPanchayat(request.POST)
+        if form.is_valid() :
+            form.save()
+            return HttpResponseRedirect (reverse (gp))
+        else:
+            print form.errors
+            return render_to_response ('add_gp.html',
+                                       {'trial' : form,
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user' : request.user})
+
+
+@login_required
+def village (request) :
+    villobj=Village.objects.all()
+    dname = DeployDistrict.DISTRICT.name
+    dcode = DeployDistrict.DISTRICT.code
+    scode = DeployDistrict.DISTRICT.state.code
+    sname = DeployDistrict.DISTRICT.state.name
+    return render_to_response ('view_village.html',
+                               {'disname'  : dname,
+                                'discode'  : dcode,
+                                'statecode': scode,
+                                'statename': sname,
+                                'menus'    : get_user_menus (request.user,process_dm),
+                                'user'     : request.user})
+
+
+@login_required
+def addvillage(request):
+    if request.method =="GET":
+        return render_to_response ('add_village.html',
+                                   {'trial' : AddVillage (),
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'user' : request.user})
+    elif request.method == "POST":
+        form = AddVillage(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect( reverse(village) )
+        else:
+            return render_to_response ('add_village.html',
+                                       {'trial' : form,
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user'  : request.user})
+
+
+
+@login_required
+def department (request) :
+    return render_to_response ('view_dep.html',
+                               {'menus'    : get_user_menus (request.user,process_dm),
+                                'user'     : request.user})
+
+@login_required
+def complainttype(request) :
+    return render_to_response ('view_comp_type.html',
+                               {'menus'    : get_user_menus (request.user,process_dm),
+                                'user'     : request.user})
+
+
+@login_required
+def adddep(request):
+    if request.method=="GET":
+        return render_to_response ('add_dep.html',
+                                   {'trial' : AddDep (),
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'user' : request.user})
+    elif request.method == "POST":
+        form = AddDep(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect( reverse(department) )
+        else:
+            return render_to_response ('add_dep.html',
+                                       {'trial' : form,
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user'  : request.user})
+
+
+@login_required
+def addcomp(request):
+    if request.method=="GET":
+        return render_to_response ('add_comp_type.html',
+                                   {'trial' : AddComplaint (),
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'user' : request.user})
+    elif request.method == "POST":
+        form = AddComplaint(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect( reverse(complainttype) )
+        else:
+            return render_to_response ('add_comp_type.html',
+                                       {'trial' : form,
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user'  : request.user})
+
+@login_required
+def getgpinblocks (request):
+    blockid = request.GET['blockid']
+    try:
+        gps = Block.objects.get (id = blockid).grampanchayat_set.all ()
+    except Block.DoesNotExist:
+        gps = []
+    retdata = [{'id' : gp.id, 'name' : str (gp)} for gp in gps]
+    return HttpResponse (json.dumps ({'gps' : retdata}))
+
+
+@login_required
+def getclassindep (request):
+    depid = request.GET['depid']
+    try:
+        classes = ComplaintDepartments.objects.get (id = depid).ComplaintType_set.all ()
+    except Block.DoesNotExist:
+        classes = []
+    retdata = [{'id' : dep.id, 'name' : str (dep)} for dep in classes]
+    return HttpResponse (json.dumps ({'classes' : retdata}))
+
+
+@login_required
+def gplist (request):
+    try:
+        querySet = GramPanchayat.objects.all ()
+
+        columnIndexNameMap = { 0: 'block__code',
+                               1: 'block__name',
+                               2: 'code',
+                               3: 'name'}
+
+        x = get_datatables_records (request, querySet, columnIndexNameMap, 'gplist_datatable.html')
+    except:
+        import traceback
+        traceback.print_exc ()
+    return x
+
+@login_required
+def blist (request):
+    try:
+        querySet = Block.objects.all ()
+
+        columnIndexNameMap = { 0: 'code',
+                               1: 'name'}
+
+        x = get_datatables_records (request, querySet, columnIndexNameMap, 'block_datatable.html')
+    except:
+        import traceback
+        traceback.print_exc ()
+    return x
+
+
+
+@login_required
+def villist (request):
+    try:
+        querySet = Village.objects.all ()
+
+        columnIndexNameMap = { 0: 'grampanchayat__block__code',
+                               1: 'grampanchayat__block__name',
+                               2: 'grampanchayat__code',
+                               3: 'grampanchayat__name',
+                               4: 'code',
+                               5: 'name'}
+
+        x = get_datatables_records (request, querySet, columnIndexNameMap, 'villist_datatable.html')
+    except:
+        import traceback
+        traceback.print_exc ()
+    return x
+
+@login_required
+def deplist (request):
+    try:
+        querySet = ComplaintDepartment.objects.all()
+
+        columnIndexNameMap = { 0: 'code',
+                               1: 'name'}
+
+        x = get_datatables_records (request, querySet, columnIndexNameMap, 'department_datatable.html')
+    except:
+        import traceback
+        traceback.print_exc ()
+    return x
+
+@login_required
+def clist (request):
+    try:
+        querySet = ComplaintType.objects.all()
+
+
+        columnIndexNameMap = { 0: 'department__code',
+                               1: 'code',
+                               2: 'summary',
+                               3: 'cclass'}
+
+        x = get_datatables_records (request, querySet, columnIndexNameMap, 'comp_datatable.html')
+    except:
+        import traceback
+        traceback.print_exc ()
+    return x
+
+
+@login_required
+def editblk (request, blkcode):
+    if request.method == "POST":
+        form = EditBlk(None, request.POST)
+        if form.is_valid() :
+            form.save()
+            return HttpResponseRedirect (reverse (block))
+        else:
+            return render_to_response ('edit_block.html',
+                                       {'trial' : form,
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user' : request.user})
+    else:
+        bcode = DeployDistrict.DISTRICT.code + "." + blkcode
+        blk = Block.objects.get (code = bcode)
+        return render_to_response ('edit_block.html',
+                                   {'trial' : EditBlk (blkobj = blk),
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'user'  : request.user})
+
+
+@login_required
+def editvill (request, block, gpcode, villcode):
+    if request.method == "POST":
+        form = EditVillage(None, request.POST)
+        if form.is_valid() :
+            form.save()
+            return HttpResponseRedirect (reverse (village))
+
+        else:
+            return render_to_response ('edit_village.html',
+                                       {'trial' : form,
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user' : request.user})
+    else:
+        villcode = DeployDistrict.DISTRICT.code +"." + block + "." + gpcode + "." + villcode
+        vilage = Village.objects.get(code = villcode)
+        return render_to_response ('edit_village.html',
+                                   {'trial' : EditVillage (villobj = vilage),
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'user'  : request.user})
+
+
+
+@login_required
+def editgp (request, block, gpcode):
+    if request.method == "POST":
+        form = EditGp(None, request.POST)
+        if form.is_valid() :
+            form.save()
+            return HttpResponseRedirect (reverse (gp))
+        else:
+            return render_to_response ('edit_gp.html',
+                                       {'trial' : form,
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user' : request.user})
+    else:
+        gpcode = DeployDistrict.DISTRICT.code + "." + block + "." + gpcode
+        gramp = GramPanchayat.objects.get (code = gpcode)
+        return render_to_response ('edit_gp.html',
+                                   {'trial' : EditGp (gpobj = gramp),
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'user'  : request.user})
+
+
+@login_required
+def editdep (request, depcode):
+    if request.method == "POST":
+        form = EditDep(None, request.POST)
+        if form.is_valid() :
+            form.save()
+            return HttpResponseRedirect (reverse (department))
+        else:
+            return render_to_response ('edit_dep.html',
+                                       {'trial' : form,
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user' : request.user})
+    else:
+        dept = ComplaintDepartment.objects.get (code = depcode)
+        return render_to_response ('edit_dep.html',
+                                   {'trial' : EditDep (depobj = dept),
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'user'  : request.user})
+
+@login_required
+def editc (request, compcode, depcode):
+    if request.method == "POST":
+        form = EditComp(None, request.POST)
+        if form.is_valid() :
+            form.save()
+            return HttpResponseRedirect (reverse (complainttype))
+        else:
+            return render_to_response ('edit_comp_type.html',
+                                       {'trial' : form,
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user' : request.user})
+    else:
+        ccode = "%s.%03s" %(depcode,compcode)
+        comp = ComplaintType.objects.get (code = ccode)
+        return render_to_response ('edit_comp_type.html',
+                                   {'trial' : EditComp (compobj = comp),
+                                    'menus' : get_user_menus (request.user,process_dm),
+                                    'user'  : request.user})

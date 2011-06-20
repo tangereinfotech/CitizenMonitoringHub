@@ -17,13 +17,34 @@
 {% block page_content %}
 <div class="master-menu">
   <ul>
-    <li><a href="/masters/">People</a>
+    <li class="clikppl">People</li>
+    <div class="slideppl">
       <ul>
-        <li><a href="/masters/dm/">District Magistrate</a></li>
-        <li><a href="/masters/officials/">Officials</a></li>
-        <li><a href="/masters/csomembers/">CSO Members</a></li>
+        <a href="/masters/dm/">District Magistrate</a><br/>
+        <a href="/masters/officials/">Officials</a><br/>
+        <a href="/masters/csomembers/">CSO Members</a><br/>
       </ul>
-    </li>
+    </div>
+
+    <li class="clik">Locations</li>
+    <div class="slide">
+      <ul>
+          <a href="/masters/state">State</a></br>
+          <a href="/masters/district">District</a></br>
+          <a href="/masters/block">Block</a></br>
+          <a href="/masters/gp">Gram Panchayat</a></br>
+          <a href="/masters/village">Village</a>
+      </ul>
+    </div>
+
+    <li class="clikcomp">Complaints</li>
+      <div class="slidecomp">
+        <ul>
+          <a href="/masters/department">Departments</a></br>
+          <a href="/masters/complainttype">Complaint Type</a></br>
+        </ul>
+      </div>
+
   </ul>
 </div>
 <div class="master-content">
@@ -74,4 +95,25 @@
   {% endblock %}
 </div>
 <div style="clear:both"></div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+  $(document).ready(function()
+  {
+     $(".clik").click(function()
+     {
+         $(".slide").slideToggle("slow");
+     }),
+     $(".clikcomp").click(function()
+     {
+         $(".slidecomp").slideToggle("slow");
+     }),
+     $(".clikppl").click(function()
+     {
+         $(".slideppl").slideToggle("slow");
+     })
+
+     }
+  );
+</script>
 {% endblock %}

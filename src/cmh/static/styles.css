@@ -38,10 +38,43 @@ fieldset {
    background-color: white;
    height: 100%;
 }
+div.slideppl,li.clikppl
+{
+   margin:0px;
+   padding:5px;
+}
+div.slideppl{
+   height: 50px;
+   display:none;
+/*   padding-left:20px;*/
+
+}
+
+div.slide,li.clik
+{
+   margin:0px;
+   padding:5px;
+}
+div.slide{
+   height: 80px;
+   display:none;
+/*   padding-left:20px;*/
+}
+
+div.slidecomp,li.clikcomp
+{
+   margin:0px;
+   padding:5px;
+}
+div.slidecomp{
+   height:40px;
+   display:none;
+/*   padding-left:20px;*/
+}
 
 div.top_panel {
-    width:100%;
-    height:139px;
+   width:100%;
+   height:139px;
 }
 
 div.system_panel {
@@ -314,7 +347,7 @@ ul.errorlist li {
    color: #336;
    border-top: 1px solid transparent;
    padding: 4px;
-   text-align: left;
+   text-align: center;
 }
 
 .inlineform {
@@ -358,13 +391,14 @@ ul.errorlist li {
 
 .master-menu {
    float: left;
-   width: 275px;
+   width: 18%;
 }
 
 .master-menu ul {
    margin: 0px;
    padding: 0px;
    list-style-type: none;
+
 }
 
 .master-menu ul li {
@@ -373,23 +407,16 @@ ul.errorlist li {
    font-size: 18px;
 }
 
-.master-menu ul li a {
+.master-menu ul a {
    text-decoration: none;
+   padding-left:20px;
 }
 
-.master-menu ul li ul li {
-   padding-left: 20px;
-}
 
-.master-menu ul li ul li a {
-   font-size: 14px;
-   text-decoration: none;
-   color: normal;
-}
 
 .master-content {
    float: right;
-   width: 600px;
+   width: 82%;
 }
 
 .step-links {
@@ -417,6 +444,7 @@ input[readonly="readonly"] {
     background:#499ed7;
     border-color:#1569C7;
     color:#f2efe9;
+
 }
 
 /*MENU OUTLINE*/
@@ -498,12 +526,12 @@ input[readonly="readonly"] {
    background-image: url('/static/images/forward_disabled.jpg');
 }
 
-#issues_list_wrapper {
+#issues_list_wrapper, #gplist_wrapper {
    clear: both;
    padding: 10px 0px;
 }
 
-#issues_list {
+#issues_list, #gplist , #villist, #deplist, #clist, #blist{
    clear: both;
 }
 
@@ -523,11 +551,11 @@ span.paginate_button {
     padding: 2px 5px;
 }
 
-#issues_list_info {
+#issues_list_info, #gplist_info, #villist_info , #deplist_info, #clist_info, #blist_info{
    padding: 5px 10px;
 }
 
-#issues_list_paginate {
+#issues_list_paginate, #gplist_paginate , #villist_paginate, #deplist_paginate, #clist_paginate, #blist_paginate{
    padding: 5px 10px;
 }
 

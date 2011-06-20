@@ -80,6 +80,14 @@ class SpacedTextInput (forms.TextInput):
             kwargs ['attrs'] = {'style' : 'width:100%'}
         super (SpacedTextInput, self).__init__ (*args, **kwargs)
 
+class SpacedROTextInput (forms.TextInput):
+    def __init__ (self, *args, **kwargs):
+        if 'attrs' in kwargs:
+            kwargs ['attrs'].update ({'style' : 'width:100%', 'readonly' : 'readonly'})
+        else:
+            kwargs ['attrs'] = {'style' : 'width:100%', 'readonly' : 'readonly'}
+        super (SpacedROTextInput, self).__init__ (*args, **kwargs)
+
 class AutoCompleteOffTextInput (SpacedTextInput):
     def __init__ (self, *args, **kwargs):
         if 'attrs' in kwargs:
@@ -88,6 +96,15 @@ class AutoCompleteOffTextInput (SpacedTextInput):
             kwargs ['attrs'] = {'autocomplete' : 'off', 'style' : 'width:100%'}
         super (AutoCompleteOffTextInput, self).__init__ (*args, **kwargs)
 
+class SpacedTextField (forms.CharField):
+    def __init__ (self, *args, **kwargs):
+        kwargs ['widget'] = SpacedTextInput ()
+        super (SpacedTextField, self).__init__ (*args, **kwargs)
+
+class SpacedROTextField (forms.CharField):
+    def __init__ (self, *args, **kwargs):
+        kwargs ['widget'] = SpacedROTextInput ()
+        super (SpacedROTextField, self).__init__ (*args, **kwargs)
 
 class MultiNumberIdField (forms.CharField):
     def to_python (self, value):
