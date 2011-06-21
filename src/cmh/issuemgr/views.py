@@ -419,15 +419,11 @@ def hot_complaints (request):
             endate = form.cleaned_data ['endate']
             deptids = form.cleaned_data ['departments']
 
-            complaints = Complaint.objects.filter (createdate__lte = endate, latest = True)
-            open_complaints = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_REOPEN) | Q (curstate = STATUS_OPEN))
-            clos_complaints = complaints.filter (Q (curstate = STATUS_RESOLVED) | Q (curstate = STATUS_CLOSED))
-
             all_departments = ComplaintDepartment.objects.all ().order_by ('id')
             if ALL_DEPT_ID in deptids:
-                departments = all_departments
-            else:
-                departments = ComplaintDepartment.objects.filter (id__in = deptids).order_by ('id')
+                deptids = [dept.id for dept in all_departments]
+
+            departments = ComplaintDepartment.objects.filter (id__in = deptids).order_by ('id')
 
             index = 0
             sel_depts = []
@@ -436,22 +432,20 @@ def hot_complaints (request):
                     sel_depts.append ((index, d))
                 index += 1
 
-            data  = []
             names = []
             deptinfo = []
-            dates = [d for d in daterange (stdate, endate)]
             for pos, dept in sel_depts:
                 deptinfo.append ([dept.id, pos])
                 names.append (dept.name)
-                doc = open_complaints.filter (department__id = dept.id)
-                dcc = clos_complaints.filter (department__id = dept.id)
-                data.append ([[d.strftime ('%Y-%m-%d 12:01 AM'), doc.filter (createdate__lte = d).count () - dcc.filter (createdate__lte = d).count ()]
-                              for d in dates])
+
+            data  = get_complaint_data (deptids, stdate, endate)
+
             return HttpResponse (json.dumps ({'datapoints' : data, 'names' : names, 'departments' : deptinfo}))
     except:
         import traceback
         traceback.print_exc ()
     return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : [], 'departments' : []}))
+
 
 def report(request) :
     if request.method=="GET" :
@@ -464,4 +458,81 @@ def report(request) :
         return render_to_response('report.html',
                                  {'menus' : get_user_menus (request.user,report),
                                   'user' : request.user})
+
+
+
+def get_complaint_data (deptids, stdate, endate):
+    complaints = Complaint.objects.filter (createdate__lte = endate, latest = True, department__id__in = deptids)
+    open_complaints = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_REOPEN) | Q (curstate = STATUS_OPEN))
+    clos_complaints = complaints.filter (Q (curstate = STATUS_RESOLVED) | Q (curstate = STATUS_CLOSED))
+
+    open_data = open_complaints.values ('department__id', 'department__name', 'createdate').annotate (Count ('createdate'))
+    clos_data = clos_complaints.values ('department__id', 'department__name', 'createdate').annotate (Count ('createdate'))
+
+    ds = [d for d in daterange (stdate, endate)]
+    depts = ComplaintDepartment.objects.filter (id__in = deptids).order_by ('id')
+
+    composite_data = ([(od ['department__id'], od ['department__name'], od ['createdate'], od ['createdate__count']) for od in open_data]
+                      + [(cd ['department__id'], cd ['department__name'], cd ['createdate'], - cd ['createdate__count']) for cd in clos_data])
+
+    composite_data = sorted (composite_data, key = (lambda x: x [0]))
+
+    depts_data = group_by_departments (composite_data, ds)
+
+    return depts_data
+
+
+def group_by_departments (cdata, drange):
+    curdeptid = cdata [0][0]
+    deptdata = {curdeptid : [cdata [0]]}
+    for cd in cdata [1:]:
+        if cd [0] == curdeptid:
+            deptdata [curdeptid].append (cd)
+        else:
+            curdeptid = cd [0]
+            deptdata [curdeptid] = [cd]
+
+    nd = []
+    for did, cstats in deptdata.items ():
+        nd.append (combine_dept_data (cstats, drange))
+
+    return nd
+
+def combine_dept_data (cstats, drange):
+    cstats = sorted (cstats, key = (lambda x: x [2]))
+
+    cstat = cstats [0]
+
+    dinq = cstat [2] # Date In Question
+    dinqdata = {dinq : cstat [3]}
+
+    for cstat in cstats [1:]:
+        if cstat [2] == dinq:
+            dinqdata [dinq] += cstat [3]
+        else:
+            dinq = cstat [2]
+            dinqdata [dinq] = cstat [3]
+
+    dinqdata = sorted (dinqdata.items (), key = (lambda x: -x[1]))
+
+    dcounter = 0
+
+    curdate = drange [dcounter]
+    dcounter += 1
+    deptdata = []
+    prevcount = 0
+    for cstat_date, cstat_count in dinqdata:
+        while cstat_date > curdate:
+            deptdata.append ([curdate.strftime ('%Y-%m-%d 12:01 AM'), prevcount])
+            curdate = drange [dcounter]
+            dcounter += 1
+        prevcount += cstat_count
+
+    while cstat_date <= drange [-1]:
+        deptdata.append ([cstat_date.strftime ('%Y-%m-%d 12:01 AM'), prevcount])
+        cstat_date += timedelta (days = 1)
+
+    return deptdata
+
+
 
