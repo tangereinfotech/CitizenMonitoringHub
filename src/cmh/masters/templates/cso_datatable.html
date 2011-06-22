@@ -16,14 +16,12 @@
     "iTotalRecords": {{iTotalRecords}},
     "iTotalDisplayRecords": {{iTotalDisplayRecords}},
     "aaData":[
-        {% for offi in querySet %}
+        {% for cso in querySet %}
         [
-            "{{offi.get_desc_name}}",
-            "{{offi.get_role_name}}",
-            "{{offi.phone_number}}",
-            "{{offi.department_names}}",
-            "{{offi.supervisor_names}}",
-            "{{offi.id}}"
+            "{{cso.get_desc_name}}",
+            "{{cso.get_role_name}}",
+            "{{cso.phone_number}}",
+            "{{cso.id}}"
         ]
         {% if not forloop.last %},{% endif %}
         {% endfor %}

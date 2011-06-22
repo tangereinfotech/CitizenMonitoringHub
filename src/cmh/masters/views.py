@@ -37,7 +37,8 @@ from cmh.common.models import  State, District, Block, GramPanchayat, Village
 from cmh.masters.forms import AddCSOMember, RegisterDM, DmId, EditDM
 from cmh.masters.forms import AddEditOfficial, DepartmentSelected
 from cmh.masters.forms import AddBlock, AddComplaint, AddGramPanchayat, AddDep
-from cmh.masters.forms import AddVillage, AddDistrict, AddState, EditGp, EditVillage, EditDep, EditComp, EditBlk
+from cmh.masters.forms import AddVillage, AddDistrict, AddState
+from cmh.masters.forms import EditGp, EditVillage, EditDep, EditComp, EditBlk, EditOfficial, EditCso
 
 @login_required
 def masters (request):
@@ -138,31 +139,61 @@ def process_dm (request):
 @login_required
 def officials (request):
     if request.method == 'GET':
-        query = (Q (user__approle__role = UserRoles.OFFICIAL) |
-                 Q (user__approle__role = UserRoles.DELEGATE))
-        cmhusers = CmhUser.objects.filter (query)
-        paginator = Paginator (cmhusers, 10)
-
-        try:
-            page = int (request.GET.get ('page', '1'))
-        except ValueError:
-            page = 1
-
-        try:
-            cmhusers = paginator.page (page)
-        except (EmptyPage, InvalidPage):
-            cmhusers = paginator.page (paginator.num_pages)
-
         return render_to_response ('officials.html',
                                    {'menus' : get_user_menus (request.user,process_dm),
-                                    'user' : request.user,
-                                    'cmhusers' : cmhusers})
+                                    'user' : request.user})
     else:
         return render_to_response ('error.html',
                                    {'error': 'No other method is supported',
                                     'menus' : get_user_menus (request.user,process_dm),
                                     'user' : request.user})
 
+
+
+@login_required
+def officialist(request):
+    try:
+        query = (Q (user__approle__role = UserRoles.OFFICIAL) |
+                 Q (user__approle__role = UserRoles.DELEGATE))
+
+        querySet = CmhUser.objects.filter (query)
+
+        columnIndexNameMap = { 0: 'id',
+                               1: 'get_role_name',
+                               2: 'phone_number',
+                               3: 'department_names',
+                               4: 'supervisor_names',
+                               5: 'id'}
+
+        x = get_datatables_records (request, querySet, columnIndexNameMap, 'officials_datatable.html')
+    except:
+        import traceback
+        traceback.print_exc ()
+    return x
+
+@login_required
+def edit_off(request, offid):
+    if request.method == "POST":
+        form = EditOfficial(None, request.POST)
+        if form.is_valid() :
+            form.save()
+            return HttpResponseRedirect (reverse (officials))
+        else:
+            return render_to_response ('edit_official.html',
+                                       {'trial' : form,
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user' : request.user})
+    else:
+        off = CmhUser.objects.get (id = offid)
+
+        if (off.get_user_role () != UserRoles.ROLE_OFFICIAL and
+            off.get_user_role () != UserRoles.ROLE_DELEGATE):
+            raise Exception("Wrong data passed! The data passed doesnot belong to any official Please go back and click again")
+        else:
+            return render_to_response ('edit_official.html',
+                                       {'trial' : EditOfficial (offobj = off ),
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user'  : request.user})
 
 
 @login_required
@@ -235,25 +266,49 @@ def department_selected (request):
 
 @login_required
 def csomembers (request):
-    cmhusers = CmhUser.objects.filter (user__approle__role = UserRoles.CSO)
-
-    paginator = Paginator (cmhusers, 10)
-
-    try:
-        page = int (request.GET.get ('page', '1'))
-    except ValueError:
-        page = 1
-
-    try:
-        cmhusers = paginator.page (page)
-    except (EmptyPage, InvalidPage):
-        cmhusers = paginator.page (paginator.num_pages)
-
     return render_to_response ("cso_master.html",
                                {'menus' : get_user_menus (request.user,csomembers),
-                                'cmhusers' : cmhusers,
                                 'user' : request.user})
 
+
+@login_required
+def csolist(request):
+    try:
+        querySet = CmhUser.objects.filter (user__approle__role = UserRoles.CSO)
+
+        columnIndexNameMap = { 0: 'id',
+                               1: 'get_role_name',
+                               2: 'phone_number',
+                               3: 'id'}
+
+        x = get_datatables_records (request, querySet, columnIndexNameMap, 'cso_datatable.html')
+    except:
+        import traceback
+        traceback.print_exc ()
+    return x
+
+@login_required
+def edit_cso(request, csoid):
+    if request.method == "POST":
+        form = EditCso(None, request.POST)
+        if form.is_valid() :
+            form.save()
+            return HttpResponseRedirect (reverse (csomembers))
+        else:
+            return render_to_response ('edit_cso.html',
+                                       {'trial' : form,
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user' : request.user})
+    else:
+        cso = CmhUser.objects.get (id = csoid)
+
+        if (cso.get_user_role () != UserRoles.ROLE_CSO):
+            raise Exception("Wrong data passed! The data passed doesnot belong to any cso Please go back and click again")
+        else:
+            return render_to_response ('edit_cso.html',
+                                       {'trial' : EditCso (csoobj = cso ),
+                                        'menus' : get_user_menus (request.user,process_dm),
+                                        'user'  : request.user})
 
 
 @login_required
@@ -339,25 +394,34 @@ def add_district(request):
 
 @login_required
 def block (request) :
-    blockobj=Block.objects.all()
     dname=DeployDistrict.DISTRICT.name
     dcode=DeployDistrict.DISTRICT.get_code()
     scode = DeployDistrict.DISTRICT.state.get_code()
     sname = DeployDistrict.DISTRICT.state.name
-    codeli =[]
-    for i in blockobj:
-        codeli.append({'bcode' : i.code.split ('.')[-1],
-                       'bname' : i.name,
-                       })
-
     return render_to_response ('view_block.html',
                                {'disname':dname,
                                 'discode':dcode,
-                                'i':codeli,
                                 'menus' : get_user_menus (request.user,process_dm),
                                 'statecode': scode,
                                 'statename': sname,
                                 'user' : request.user})
+
+@login_required
+def blist (request):
+    try:
+        querySet = Block.objects.all ()
+
+        columnIndexNameMap = { 0: 'code',
+                               1: 'name',
+                               2 : 'lattd',
+                               3 : 'longd'}
+
+        x = get_datatables_records (request, querySet, columnIndexNameMap, 'block_datatable.html')
+    except:
+        import traceback
+        traceback.print_exc ()
+    return x
+
 
 
 @login_required
@@ -381,7 +445,6 @@ def addblock(request):
 
 @login_required
 def gp (request) :
-    gpobj=GramPanchayat.objects.all()
     dname=DeployDistrict.DISTRICT.name
     dcode=DeployDistrict.DISTRICT.get_code ()
     scode = DeployDistrict.DISTRICT.state.get_code ()
@@ -415,7 +478,6 @@ def addgp(request):
 
 @login_required
 def village (request) :
-    villobj=Village.objects.all()
     dname = DeployDistrict.DISTRICT.name
     dcode = DeployDistrict.DISTRICT.get_code ()
     scode = DeployDistrict.DISTRICT.state.get_code ()
@@ -539,21 +601,6 @@ def gplist (request):
         traceback.print_exc ()
     return x
 
-@login_required
-def blist (request):
-    try:
-        querySet = Block.objects.all ()
-
-        columnIndexNameMap = { 0: 'code',
-                               1: 'name',
-                               2 : 'lattd',
-                               3 : 'longd'}
-
-        x = get_datatables_records (request, querySet, columnIndexNameMap, 'block_datatable.html')
-    except:
-        import traceback
-        traceback.print_exc ()
-    return x
 
 
 

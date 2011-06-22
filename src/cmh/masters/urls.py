@@ -44,9 +44,13 @@ urlpatterns = patterns ('cmh.masters.views',
                         (r'^villist/$','villist'),
                         (r'^clist/$','clist'),
                         (r'^blist/$','blist'),
+                        (r'^officialist/$','officialist'),
+                        (r'^csolist/$','csolist'),
                         (r'^edit_vill/(?P<block>\d+)/(?P<gpcode>\d+)/(?P<villcode>\d+)/$','editvill'),
                         (r'^edit_gp/(?P<block>\d+)/(?P<gpcode>\d+)/$','editgp'),
                         (r'^edit_dep/(?P<depcode>\w+)/$','editdep'),
                         (r'^edit_blk/(?P<blkcode>\d+)/$','editblk'),
-                        (r'^edit_c/(?P<compcode>\d+)/(?P<depcode>\w+)/$','editc')
+                        (r'^edit_c/(?P<compcode>\d+)/(?P<depcode>\w+)/$','editc'),
+                        (r'^edit_off/(?P<offid>\d+)/$','edit_off'),
+                        (r'^edit_cso/(?P<csoid>\d+)/$','edit_cso')
                         )

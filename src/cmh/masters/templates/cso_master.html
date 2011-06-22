@@ -14,50 +14,76 @@
 
 {% extends "masters.html" %}
 
+{% block extra_heads %}
+<link type="text/css" href="/static/jquery/css/jquery.contextMenu.css" rel="stylesheet" media="screen">
+{% endblock %}
+
+
 {% block master_section %}
 <div style="text-align:center;">
   <h2>CMH Members</h2>
 </div>
 <div class="pagination">
-  <span class="step-links">
-    {% if cmhusers.has_previous %}
-    <a href="?page={{ cmhusers.previous_page_number }}">&lt;</a>
-    {% else %}
-    <span style="text-decoration: none">&lt;</span>
-    {% endif %}
-
-    <span class="current">
-      <form class="inlineform" action="{{ page_url}}" method="GET">
-        <input type="text"
-               name="page"
-               value="{{ cmhusers.number }}"
-               style="width:25px; text-align:center;">
-        of {{ cmhusers.paginator.num_pages }}
-      </form>
-    </span>
-    {% if cmhusers.has_next %}
-    <a href="?page={{ cmhusers.next_page_number }}">&gt;</a>
-    {% else %}
-    <span style="text-decoration:none">&gt;</span>
-    {% endif %}
-  </span>
   <a href="/masters/add_cso_user/">Add New</a>
 </div>
-<table class="tabularlist">
-  <tr>
-    <th>Name</th>
-    <th>Role</th>
-    <th>Phone</th>
-    <th>Email</th>
-  </tr>
-  {% for cmhuser in cmhusers.object_list %}
-  <tr>
-    <td>{{ cmhuser.get_desc_name }}</td>
-    <td>{{ cmhuser.get_role_name }}</td>
-    <td>{{ cmhuser.phone_number }}</td>
-    <td>{{ cmhuser.user.email }}</td>
-  </tr>
-  {% endfor %}
+<table class="tabularlist" id="csolist">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Role</th>
+      <th>Phone</th>
+      <th/>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
 </table>
+
+<ul id="updateMenu" class="contextMenu">
+  <li><a href="#update">Update</a></li>
+</ul>
+
+<script type="text/javascript" src="/static/jquery/js/jquery.simplemodal-1.1.1.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jquery.contextMenu.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+  $(document).ready (function () {
+    $("#csolist").dataTable ({
+        'bAutoWidth' : false,
+        'sPaginationType': 'full_numbers',
+        "bServerSide": true,
+        "sAjaxSource": "{% url cmh.masters.views.csolist %}",
+        "fnRowCallback" : function (nRow, aData, iDisplayIndex) {
+          nRow.className = "updateData";
+
+          var form = document.createElement ("form");
+          form.action = "/masters/edit_cso/" + aData[3] + "/";
+          form.className = "edit_csomem";
+          form.method = "get";
+
+          var first_cell_elem = nRow.getElementsByTagName ("td")[0];
+          first_cell_elem.appendChild (form);
+
+          return nRow;
+        },
+        "aoColumns": [
+            { "bSearchable": true},
+            { "bSearchable": true},
+            { "bSearchable": true},
+            { "bSearchable": false, 'bVisible' : false},
+//            { "bSearchable": true},
+        ],
+        'fnDrawCallback' : function () {
+          $("table#csolist tr").contextMenu ({'menu' : "updateMenu"},
+                                         function (action, el, pos) {
+                                            var form = $(el).find ("td .edit_csomem");
+                                            form.submit ();
+                                         });
+        }
+    });
+  });
+
+</script>
+
 
 {% endblock %}

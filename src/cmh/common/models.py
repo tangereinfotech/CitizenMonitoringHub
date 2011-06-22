@@ -60,6 +60,9 @@ class ComplaintDepartment (models.Model):
     def __unicode__ (self):
         return "%s<%s>" % (self.name, self.code)
 
+    def _get_depname(self):
+        return self.name
+
 class ComplaintType (models.Model):
     code = models.CharField (max_length = 200)
     summary = models.CharField (max_length = 2000)

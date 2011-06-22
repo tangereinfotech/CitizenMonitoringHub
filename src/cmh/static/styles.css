@@ -531,7 +531,7 @@ input[readonly="readonly"] {
    padding: 10px 0px;
 }
 
-#issues_list, #gplist , #villist, #deplist, #clist, #blist{
+#issues_list, #gplist , #villist, #deplist, #clist, #blist, #offlist, #csolist{
    clear: both;
 }
 
@@ -551,11 +551,11 @@ span.paginate_button {
     padding: 2px 5px;
 }
 
-#issues_list_info, #gplist_info, #villist_info , #deplist_info, #clist_info, #blist_info{
+#issues_list_info, #gplist_info, #villist_info , #deplist_info, #clist_info, #blist_info, #offlist_info, #csolist_info{
    padding: 5px 10px;
 }
 
-#issues_list_paginate, #gplist_paginate , #villist_paginate, #deplist_paginate, #clist_paginate, #blist_paginate{
+#issues_list_paginate, #gplist_paginate , #villist_paginate, #deplist_paginate, #clist_paginate, #blist_paginate, #offlist_paginate, #csolist_paginate{
    padding: 5px 10px;
 }
 

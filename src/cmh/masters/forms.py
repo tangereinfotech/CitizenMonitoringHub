@@ -206,6 +206,70 @@ class AddEditOfficial (forms.Form):
         return official
 
 
+
+class EditOfficial (forms.Form):
+    objid       = forms.CharField (widget = forms.HiddenInput ())
+    depid       = forms.CharField (widget = forms.HiddenInput ())
+    username    = SpacedROTextField (label = "UserName")
+    name        = SpacedTextField (widget=AutoCompleteOffTextInput (), label = "Name")
+    phone       = PhoneNumberField (widget=AutoCompleteOffTextInput (), label ="Phone Number")
+    department  = forms.ModelChoiceField (queryset = ComplaintDepartment.objects.all(), empty_label = "------", label="Department")
+    def __init__(self, offobj, *args, **kwargs) :
+        super(EditOfficial, self).__init__(*args,**kwargs)
+        if offobj != None:
+            self.fields ['objid'].initial        = offobj.id
+            self.fields ['username'].initial     = offobj.user.username
+            self.fields ['name'].initial         = offobj.user.first_name
+            self.fields ['phone'].initial        = offobj.phone_number
+            self.fields ['department'].initial   = offobj.department_names [0]
+            self.fields ['depid'].initial        = offobj.department_names
+
+
+    def save (self):
+        dept            = ComplaintDepartment.objects.get (id = self.cleaned_data['department'].id)
+        cmhuser         = CmhUser.objects.get(id = self.cleaned_data['objid'])
+        official        = Official.objects.get(user__cmhuser__id = self.cleaned_data['objid'])
+        usr             = User.objects.get(username = self.cleaned_data['username'])
+        usr.first_name  = self.cleaned_data['name']
+        usr.save()
+
+        cmhuser.user    = usr
+        cmhuser.phone   = self.cleaned_data ['phone']
+
+        official.user   = usr
+        official.departments.add(dept)
+
+        official.save()
+        cmhuser.save ()
+
+
+class EditCso (forms.Form):
+    objid    = forms.CharField (widget = forms.HiddenInput ())
+    username =  SpacedROTextField (widget = AutoCompleteOffTextInput ())
+    name     = StripCharField (widget = AutoCompleteOffTextInput ())
+    phone    = PhoneNumberField (widget = AutoCompleteOffTextInput ())
+    def __init__(self, csoobj, *args, **kwargs) :
+        super(EditCso, self).__init__(*args,**kwargs)
+        if csoobj != None:
+            self.fields ['objid'].initial        = csoobj.id
+            self.fields ['username'].initial     = csoobj.user.username
+            self.fields ['name'].initial         = csoobj.user.first_name
+            self.fields ['phone'].initial        = csoobj.phone_number
+
+
+    def save (self):
+        usr             = User.objects.get(username = self.cleaned_data['username'])
+        cmhuser         = CmhUser.objects.get(id = self.cleaned_data['objid'])
+        usr.first_name  = self.cleaned_data['name']
+        usr.save()
+
+        cmhuser.user    = usr
+        cmhuser.phone   = self.cleaned_data ['phone']
+
+        cmhuser.save ()
+
+
+
 class DepartmentSelected (forms.Form):
     department = forms.IntegerField ()
 

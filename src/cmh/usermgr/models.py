@@ -72,6 +72,27 @@ class CmhUser (models.Model):
 
     phone_number = property (_get_phone_number)
 
+    def _get_departments (self):
+        from cmh.common.constants import UserRoles
+
+        if self.get_user_role () in [UserRoles.ROLE_OFFICIAL, UserRoles.ROLE_DELEGATE]:
+            return ", ".join ([d.name for d in self.user.official.departments.all ()])
+        else:
+            return ""
+
+    department_names = property (_get_departments)
+
+    def _get_supervisor (self):
+        from cmh.common.constants import UserRoles
+
+        if self.get_user_role () in [UserRoles.ROLE_OFFICIAL, UserRoles.ROLE_DELEGATE]:
+            return self.user.official.supervisor
+        else:
+            return ""
+
+    supervisor_names = property (_get_supervisor)
+
+
 class Official(models.Model):
     user        = models.OneToOneField (User)
     supervisor  = models.ForeignKey ('Official', blank=True, null=True)
