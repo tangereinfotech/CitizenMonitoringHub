@@ -33,7 +33,7 @@
       <th>Phone</th>
       <th>Department</th>
       <th>Supervisor</th>
-      <th style="display:none"/>
+      <th style="display:none">
     </tr>
   </thead>
   <tbody>
@@ -73,7 +73,8 @@
             { "bSearchable": true},
             { "bSearchable": true},
             { "bSearchable": true},
-            { "bSearchable": false, 'bVisible' : false, "sClass" : "objid"},
+//            { "bSearchable": true},
+            { "bSearchable": false, 'bVisible' : false},
         ],
         'fnDrawCallback' : function () {
           $("table#offlist tr").contextMenu ({'menu' : "updateMenu"},

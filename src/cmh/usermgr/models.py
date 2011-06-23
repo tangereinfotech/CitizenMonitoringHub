@@ -76,7 +76,7 @@ class CmhUser (models.Model):
         from cmh.common.constants import UserRoles
 
         if self.get_user_role () in [UserRoles.ROLE_OFFICIAL, UserRoles.ROLE_DELEGATE]:
-            return ", ".join ([d.name for d in self.user.official.departments.all ()])
+            return self.user.official.departments
         else:
             return ""
 
@@ -96,10 +96,13 @@ class CmhUser (models.Model):
 class Official(models.Model):
     user        = models.OneToOneField (User)
     supervisor  = models.ForeignKey ('Official', blank=True, null=True)
-    departments = models.ManyToManyField (ComplaintDepartment, blank = True, null = True)
+    departments = models.ForeignKey (ComplaintDepartment, blank = True, null = True)
     title       = models.CharField (max_length = 20, blank = True, null = True)
     designation = models.CharField (max_length = 200, blank = True, null = True)
     complainttypes = models.ManyToManyField (ComplaintType, blank = True, null = True)
+
+    class Meta:
+        unique_together = (("supervisor", "departments"),)
 
     def __unicode__(self):
         return u'Official: ' + self.user.username

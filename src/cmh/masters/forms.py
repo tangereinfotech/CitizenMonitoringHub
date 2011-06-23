@@ -202,7 +202,8 @@ class AddEditOfficial (forms.Form):
 
         official = Official.objects.create (user = user, supervisor = supervisor)
 
-        official.departments.add (department)
+        official.departments = department
+        official.save()
         return official
 
 
@@ -217,15 +218,17 @@ class EditOfficial (forms.Form):
     def __init__(self, offobj, *args, **kwargs) :
         super(EditOfficial, self).__init__(*args,**kwargs)
         if offobj != None:
+            print "dep", offobj.department_names.id
             self.fields ['objid'].initial        = offobj.id
             self.fields ['username'].initial     = offobj.user.username
             self.fields ['name'].initial         = offobj.user.first_name
             self.fields ['phone'].initial        = offobj.phone_number
-            self.fields ['department'].initial   = offobj.department_names [0]
+            self.fields ['department'].initial   = ComplaintDepartment.objects.get(id = offobj.department_names.id)
             self.fields ['depid'].initial        = offobj.department_names
 
 
     def save (self):
+        print "hey",self.cleaned_data['department']
         dept            = ComplaintDepartment.objects.get (id = self.cleaned_data['department'].id)
         cmhuser         = CmhUser.objects.get(id = self.cleaned_data['objid'])
         official        = Official.objects.get(user__cmhuser__id = self.cleaned_data['objid'])
@@ -237,7 +240,7 @@ class EditOfficial (forms.Form):
         cmhuser.phone   = self.cleaned_data ['phone']
 
         official.user   = usr
-        official.departments.add(dept)
+        official.departments = dept
 
         official.save()
         cmhuser.save ()
