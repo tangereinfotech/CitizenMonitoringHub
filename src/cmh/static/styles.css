@@ -566,3 +566,29 @@ div.gendercaste ul {
 div.gendercaste ul li {
     display: inline;
 }
+
+.locstatlist {
+   width: 100%;
+   border-collapse: separate;
+   border-spacing: 2px 2px;
+}
+
+.locstatlist th {
+   font-weight: bold;
+   background-color: #B9C9FE;
+   border-top: 4px solid #AABCFE;
+   border-bottom: 1px solid white;
+   color: #669;
+   padding: 8px;
+   font-size: 10px;
+}
+
+.locstatlist td {
+   background: #E8EDFF;
+   border-bottom: 1px solid white;
+   color: #336;
+   border-top: 1px solid transparent;
+   padding: 4px;
+   text-align: center;
+   font-size: 10px;
+}

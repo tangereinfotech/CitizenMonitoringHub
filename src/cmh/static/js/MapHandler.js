@@ -84,11 +84,11 @@ var MapHandler = {
                                        function () {
                                            MapHandler.renderWithinBounds ();
                                        });
-
-	google.maps.event.addListenerOnce (this.map, "bounds_changed", 
-					   function () {
-					       donecallback ();
-					   });
+        
+	    google.maps.event.addListenerOnce (this.map, "bounds_changed", 
+					                       function () {
+					                           donecallback ();
+					                       });
     },
     showVillageData : function () {
         MapHandler.update_with_stats (this.url,
@@ -209,6 +209,26 @@ var MapHandler = {
                             MapHandler.circleOverlays.push (circle);
                             MapHandler.nameOverlays.push (nlabel);
                             MapHandler.countOverlays.push (clabel);
+
+                            google.maps.event.addListener(circle, 'click', function() {
+                                                              $.post ("/complaint/getstats/",
+                                                                      {
+                                                                          'departments' : MapHandler.departments,
+                                                                          'datalevel' : MapHandler.data_level,
+                                                                          'stdate' : MapHandler.stdate,
+                                                                          'endate' : MapHandler.endate,
+                                                                          'locid' : value.id
+                                                                      },
+                                                                      function (data, textStatus, jqXHR) {
+                                                                          var infowindow  = new google.maps.InfoWindow ({
+                                                                                                                            content : data,
+                                                                                                                            position : place_latlong,
+                                                                                                                            maxWidth: 350,
+                                                                                                                        });
+                                                                          
+                                                                          infowindow.open (MapHandler.map);
+                                                                      });
+                                                          });
                         }
                     });
         }

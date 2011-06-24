@@ -1,0 +1,63 @@
+{# Copyright 2011, Tangere Infotech Pvt Ltd [http://tangere.in]                 #}
+{#                                                                              #}
+{# Licensed under the Apache License, Version 2.0 (the "License");              #}
+{# you may not use this file except in compliance with the License.             #}
+{# You may obtain a copy of the License at                                      #}
+{#                                                                              #}
+{#       http://www.apache.org/licenses/LICENSE-2.0                             #}
+{#                                                                              #}
+{# Unless required by applicable law or agreed to in writing, software          #}
+{# distributed under the License is distributed on an "AS IS" BASIS,            #}
+{# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     #}
+{# See the License for the specific language governing permissions and          #}
+{# limitations under the License.                                               #}
+
+<div>
+  <center>
+      <table>
+        <tr>
+          <td>
+            <span style="font-weight:bold; font-size:14px;">
+              {{stats.type}} :
+            </span>
+          </td>
+          <td>
+            <span style="font-weight:bold; font-size:14px;">
+              {{ stats.name }}
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span style="font-weight:bold; font-size:14px;">
+              {{ stats.uptype }} :
+            </span>
+          </td>
+          <td>
+            <span style="font-weight:bold; font-size:14px;">
+              {{ stats.upname}}
+            </span>
+          </td>
+        </tr>
+      </table>
+  </center>
+  <div>
+    <table class='locstatlist'>
+      <thead>
+        <tr>
+          <th style="width:60%">Complaints:</th>
+          <th style="width:40%">{{stats.count}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for dept in stats.departments %}
+        <tr>
+          <td>{{dept.name}}</td>
+          <td>{{dept.count}}</td>
+        </tr>
+        {% endfor %}
+      <tbody>
+    </table>
+  </div>
+</div>
+

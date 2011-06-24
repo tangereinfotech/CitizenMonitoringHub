@@ -41,7 +41,7 @@ from cmh.issuemgr.constants import HotComplaintPeriod
 
 from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox, Report
-from cmh.issuemgr.forms import ComplaintTrackForm
+from cmh.issuemgr.forms import ComplaintTrackForm, LocationStatsForm
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX, ComplaintDisplayParams
 
@@ -92,6 +92,7 @@ def index (request):
                                                  'zoom_level' : 13}})
     else:
         return HttpResponse ()
+
 ALL_DEPT_ID = 0
 
 def get_category_map_update (request):
@@ -128,6 +129,7 @@ def get_category_map_update (request):
             retval = {}
             for record in records:
                 retval [record [ann_str + '__id']] = {'count' : record ['count'],
+                                                      'id' : record [ann_str + '__id'],
                                                       'name' : record [ann_str + '__name'],
                                                       'latitude' : record [ann_str + '__lattd'],
                                                       'longitude' : record [ann_str + '__longd']}
@@ -141,6 +143,74 @@ def get_category_map_update (request):
         import traceback
         traceback.print_exc ()
         return HttpResponse (json.dumps ({}))
+
+
+def getstats (request):
+    form = LocationStatsForm (request.POST)
+
+    if form.is_valid ():
+        deptids = form.cleaned_data ['departments']
+        stdate = form.cleaned_data ['stdate']
+        endate = form.cleaned_data ['endate']
+        dttm_start = datetime (stdate.year, stdate.month, stdate.day, 0, 0, 0)
+        dttm_end   = datetime (endate.year, endate.month, endate.day, 23, 59, 59)
+
+        complaints = Complaint.objects.filter (latest = True, created__gte = dttm_start, created__lte = dttm_end)
+        complaints = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_REOPEN) | Q (curstate = STATUS_OPEN))
+
+        if not ALL_DEPT_ID in deptids:
+            complaints = complaints.filter (department__id__in = deptids)
+
+        datalevel = form.cleaned_data ['datalevel']
+        locid = form.cleaned_data ['locid']
+
+        if datalevel == 'villg':
+            loctype = "Village"
+            location = Village.objects.get (id = locid)
+            complaints = complaints.filter (location__id = locid)
+            uptype = 'Gram Panchayat'
+            upname = location.grampanchayat.name
+        elif datalevel == 'gramp':
+            loctype = "Gram Panchayat"
+            location = GramPanchayat.objects.get (id = locid)
+            complaints = complaints.filter (location__grampanchayat__id = locid)
+            uptype = 'Block'
+            upname = location.block.name
+        elif datalevel == 'block':
+            loctype = "Block"
+            location = Block.objects.get (id = locid)
+            complaints = complaints.filter (location__grampanchayat__block__id = locid)
+            uptype = 'District'
+            upname = location.district.name
+        elif datalevel == 'distt':
+            loctype = "District"
+            location = District.objects.get (id = locid)
+            complaints = complaints.filter (location__grampanchayat__block__district__id = locid)
+            uptype = 'State'
+            upname = location.state.name
+        elif datalevel == 'state':
+            loctype = "State"
+            location = State.objects.get (id = locid)
+            complaints = complaints.filter (location__grampanchayat__block__district__state__id = locid)
+            uptype = 'Country'
+            upname = location.country.name
+        else:
+            raise InvalidDataException ("Invalid data level specified")
+
+        dept_complaints = [{'name' : c ['department__name'],
+                            'count' : c ['count']}
+                           for c in complaints.values ('department__name', 'department__id').annotate (count=Count ('department__name')).order_by ('department__id')]
+
+        stats = {'count' : complaints.count (),
+                 'name' : location.name,
+                 'type' : loctype,
+                 'departments' : dept_complaints,
+                 'uptype' : uptype,
+                 'upname' : upname}
+        return render_to_response ('location_stats.html', {'stats' : stats})
+
+    else:
+        return HttpResponse ("");
 
 
 def locations (request):

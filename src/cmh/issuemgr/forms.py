@@ -371,3 +371,6 @@ class Report (forms.Form):
                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
     enddate     = forms.DateField (input_formats = ('%d/%m/%Y',),
                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
+
+class LocationStatsForm (ComplaintDisplayParams):
+    locid = forms.IntegerField ()
