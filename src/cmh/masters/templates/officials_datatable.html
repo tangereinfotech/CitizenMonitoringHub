@@ -18,10 +18,10 @@
     "aaData":[
         {% for offi in querySet %}
         [
-            "{{offi.get_desc_name}}",
+            "{{offi}}",
             "{{offi.get_role_name}}",
             "{{offi.phone_number}}",
-            "{{offi.department_names}}",
+            "{{offi.department_name}}",
             "{{offi.supervisor_names}}",
             "{{offi.id}}"
         ]

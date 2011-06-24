@@ -346,22 +346,29 @@ def my_issues (request):
 
 @login_required
 def my_issues_list (request):
-    role = AppRole.objects.get_user_role (request.user)
-    statuses = StatusTransition.objects.get_changeable_statuses (role)
-    querySet = Complaint.objects.get_latest_complaints ().filter (curstate__in = statuses).order_by ('-created')
+    try:
+        role = AppRole.objects.get_user_role (request.user)
+        statuses = StatusTransition.objects.get_changeable_statuses (role)
+        querySet = Complaint.objects.get_latest_complaints ().filter (curstate__in = statuses).order_by ('-created')
 
-    role = request.user.cmhuser.get_user_role ()
-    if role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE:
-        official = request.user.official
-        querySet = querySet.filter (department__in = official.departments.all ())
+        role = request.user.cmhuser.get_user_role ()
+        if role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE:
+            official = request.user.official
+            querySet = querySet.filter (department = official.department)
 
-    columnIndexNameMap = { 0: 'complaintno',
-                           1: 'logdate',
-                           2: 'description',
-                           3: 'curstate',
-                           4: 'created'}
+        columnIndexNameMap = { 0: 'complaintno',
+                               1: 'logdate',
+                               2: 'description',
+                               3: 'curstate',
+                               4: 'created'}
 
-    return get_datatables_records (request, querySet, columnIndexNameMap, 'issue_entity_datatable.html')
+        x = get_datatables_records (request, querySet, columnIndexNameMap, 'issue_entity_datatable.html')
+        print x
+    except:
+        import traceback
+        traceback.print_exc ()
+
+    return x
 
 
 def update (request, complaintno):

@@ -241,7 +241,7 @@
       <td> {{ complaint.created|date:'f A, d/M/Y' }}</td>
       <td> {{ complaint.department.name }} </td>
       <td> {{ complaint.curstate.name }} </td>
-      <td> {{ complaint.description }} </td>
+      <td> {{ complaint.description|linebreaksbr }} </td>
       <td> {{ complaint.creator.username }} </td>
     </tr>
     {% endfor %}

@@ -187,6 +187,7 @@ class AddEditOfficial (forms.Form):
 
         user = User.objects.create (username = self.cleaned_data ['username'],
                                     first_name = self.cleaned_data ['name'])
+
         password = get_random_string (PASSWORD_LEN)
         user.set_password (password)
         user.save ()
@@ -202,7 +203,7 @@ class AddEditOfficial (forms.Form):
 
         official = Official.objects.create (user = user, supervisor = supervisor)
 
-        official.departments = department
+        official.department = department
         official.save()
         return official
 
@@ -218,32 +219,39 @@ class EditOfficial (forms.Form):
     def __init__(self, offobj, *args, **kwargs) :
         super(EditOfficial, self).__init__(*args,**kwargs)
         if offobj != None:
-            print "dep", offobj.department_names.id
             self.fields ['objid'].initial        = offobj.id
             self.fields ['username'].initial     = offobj.user.username
             self.fields ['name'].initial         = offobj.user.first_name
             self.fields ['phone'].initial        = offobj.phone_number
-            self.fields ['department'].initial   = ComplaintDepartment.objects.get(id = offobj.department_names.id)
-            self.fields ['depid'].initial        = offobj.department_names
+            self.fields ['department'].initial   = ComplaintDepartment.objects.get(id = offobj.department.id)
+            self.fields ['depid'].initial        = offobj.department.id
 
 
     def save (self):
-        print "hey",self.cleaned_data['department']
         dept            = ComplaintDepartment.objects.get (id = self.cleaned_data['department'].id)
         cmhuser         = CmhUser.objects.get(id = self.cleaned_data['objid'])
         official        = Official.objects.get(user__cmhuser__id = self.cleaned_data['objid'])
-        usr             = User.objects.get(username = self.cleaned_data['username'])
-        usr.first_name  = self.cleaned_data['name']
-        usr.save()
 
-        cmhuser.user    = usr
+        user             = User.objects.get(username = self.cleaned_data['username'])
+        user.first_name  = self.cleaned_data['name']
+        password = get_random_string (PASSWORD_LEN)
+        user.set_password (password)
+        user.save ()
+
+        cmhuser.user    = user
         cmhuser.phone   = self.cleaned_data ['phone']
 
-        official.user   = usr
-        official.departments = dept
+        official.user   = user
+        official.department = dept
 
         official.save()
         cmhuser.save ()
+
+        message = PASSWORD_MSG % (cmhuser.phone, password)
+        debug (message)
+        TextMessage.objects.queue_text_message (cmhuser.phone, message)
+
+        return official
 
 
 class EditCso (forms.Form):
@@ -251,6 +259,7 @@ class EditCso (forms.Form):
     username =  SpacedROTextField (widget = AutoCompleteOffTextInput ())
     name     = StripCharField (widget = AutoCompleteOffTextInput ())
     phone    = PhoneNumberField (widget = AutoCompleteOffTextInput ())
+
     def __init__(self, csoobj, *args, **kwargs) :
         super(EditCso, self).__init__(*args,**kwargs)
         if csoobj != None:
@@ -261,17 +270,24 @@ class EditCso (forms.Form):
 
 
     def save (self):
-        usr             = User.objects.get(username = self.cleaned_data['username'])
-        cmhuser         = CmhUser.objects.get(id = self.cleaned_data['objid'])
-        usr.first_name  = self.cleaned_data['name']
-        usr.save()
+        user             = User.objects.get(username = self.cleaned_data['username'])
 
-        cmhuser.user    = usr
+        cmhuser          = CmhUser.objects.get(id = self.cleaned_data['objid'])
+        user.first_name  = self.cleaned_data['name']
+        password = get_random_string (PASSWORD_LEN)
+        user.set_password (password)
+        user.save()
+
+        cmhuser.user    = user
         cmhuser.phone   = self.cleaned_data ['phone']
 
         cmhuser.save ()
 
+        message = PASSWORD_MSG % (cmhuser.phone, password)
+        debug (message)
+        TextMessage.objects.queue_text_message (cmhuser.phone, message)
 
+        return cmhuser
 
 class DepartmentSelected (forms.Form):
     department = forms.IntegerField ()

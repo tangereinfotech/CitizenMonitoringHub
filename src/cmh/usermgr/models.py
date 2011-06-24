@@ -33,8 +33,10 @@ class CmhUser (models.Model):
     phone = models.CharField (max_length = 20, blank = True, null = True)
 
     def get_desc_name (self):
-        return "%s <%s>" % (self.user.get_full_name (),
-                              self.user.username)
+        return "%s <%s>" % (self.user.get_full_name (), self.user.username)
+
+    def __unicode__ (self):
+        return self.get_desc_name ()
 
     def get_role_name (self):
         from cmh.common.constants import UserRoles
@@ -72,15 +74,25 @@ class CmhUser (models.Model):
 
     phone_number = property (_get_phone_number)
 
-    def _get_departments (self):
+    def _get_department_name (self):
         from cmh.common.constants import UserRoles
 
         if self.get_user_role () in [UserRoles.ROLE_OFFICIAL, UserRoles.ROLE_DELEGATE]:
-            return self.user.official.departments
+            return self.user.official.department.name
         else:
             return ""
 
-    department_names = property (_get_departments)
+    department_name = property (_get_department_name)
+
+    def _get_department (self):
+        from cmh.common.constants import UserRoles
+
+        if self.get_user_role () in [UserRoles.ROLE_OFFICIAL, UserRoles.ROLE_DELEGATE]:
+            return self.user.official.department
+        else:
+            return None
+
+    department = property (_get_department)
 
     def _get_supervisor (self):
         from cmh.common.constants import UserRoles
@@ -96,13 +108,13 @@ class CmhUser (models.Model):
 class Official(models.Model):
     user        = models.OneToOneField (User)
     supervisor  = models.ForeignKey ('Official', blank=True, null=True)
-    departments = models.ManyToManyField (ComplaintDepartment, blank = True, null = True)
     title       = models.CharField (max_length = 20, blank = True, null = True)
     designation = models.CharField (max_length = 200, blank = True, null = True)
     complainttypes = models.ManyToManyField (ComplaintType, blank = True, null = True)
+    department  = models.ForeignKey (ComplaintDepartment, blank = True, null = True)
 
-    # class Meta:
-    #     unique_together = (("supervisor", "departments"),)
+    class Meta:
+        unique_together = (("supervisor", "department"),)
 
     def __unicode__(self):
         return u'Official: ' + self.user.username

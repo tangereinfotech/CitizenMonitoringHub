@@ -158,10 +158,10 @@ def officialist(request):
 
         querySet = CmhUser.objects.filter (query)
 
-        columnIndexNameMap = { 0: 'id',
+        columnIndexNameMap = { 0: 'user__first_name',
                                1: 'get_role_name',
                                2: 'phone_number',
-                               3: 'department_names',
+                               3: 'department__name',
                                4: 'supervisor_names',
                                5: 'id'}
 
@@ -221,6 +221,7 @@ def add_official (request):
             supervisors = None
             if 'pos_supervisors' in request.session:
                 supervisors = json.loads (request.session ['pos_supervisors'])
+
             departments = ComplaintDepartment.objects.all ()
             form = AddEditOfficial (request.POST,
                                     departments = departments,
