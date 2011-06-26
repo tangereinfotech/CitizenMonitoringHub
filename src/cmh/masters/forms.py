@@ -54,7 +54,7 @@ class AddCSOMember (forms.Form):
 
         cmhuser.set_user_role (UserRoles.CSO)
 
-        message = PASSWORD_MSG % (cmhuser.phone, password)
+        message = PASSWORD_MSG % (cmhuser.user.username, password)
         debug (message)
         TextMessage.objects.queue_text_message (cmhuser.phone, message)
 
@@ -81,7 +81,7 @@ class RegisterDM (forms.Form):
                                              phone = self.cleaned_data ['phone'])
         cmhuser.set_user_role (UserRoles.DM)
 
-        message = PASSWORD_MSG % (cmhuser.phone, password)
+        message = PASSWORD_MSG % (cmhuser.user.username, password)
         debug (message)
         TextMessage.objects.queue_text_message (cmhuser.phone, message)
 
@@ -197,7 +197,7 @@ class AddEditOfficial (forms.Form):
         cmhuser.set_user_role (role)
         cmhuser.save ()
 
-        message = PASSWORD_MSG % (cmhuser.phone, password)
+        message = PASSWORD_MSG % (cmhuser.user.username, password)
         debug (message)
         TextMessage.objects.queue_text_message (cmhuser.phone, message)
 
@@ -247,7 +247,7 @@ class EditOfficial (forms.Form):
         official.save()
         cmhuser.save ()
 
-        message = PASSWORD_MSG % (cmhuser.phone, password)
+        message = PASSWORD_MSG % (cmhuser.user.username, password)
         debug (message)
         TextMessage.objects.queue_text_message (cmhuser.phone, message)
 
@@ -283,7 +283,7 @@ class EditCso (forms.Form):
 
         cmhuser.save ()
 
-        message = PASSWORD_MSG % (cmhuser.phone, password)
+        message = PASSWORD_MSG % (cmhuser.user.username, password)
         debug (message)
         TextMessage.objects.queue_text_message (cmhuser.phone, message)
 
