@@ -363,7 +363,6 @@ def my_issues_list (request):
                                4: 'created'}
 
         x = get_datatables_records (request, querySet, columnIndexNameMap, 'issue_entity_datatable.html')
-        print x
     except:
         import traceback
         traceback.print_exc ()
