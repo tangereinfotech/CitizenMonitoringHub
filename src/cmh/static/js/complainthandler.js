@@ -72,6 +72,7 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                    var ncolors = [];
                    $.each (data.departments, function (index, value) {
                                $(".dept-selector.deptid-" + value [0]).css("background-color", colors [value[1]]);
+                               $(".dept-selector.deptid-" + value [0]).css("display", "inline");
                                ncolors.push (colors [value[1]]);
                            });
                    if (chart_id in plots) {
