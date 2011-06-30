@@ -563,7 +563,7 @@ def group_by_departments (cdata, drange):
             deptdata [curdeptid] = [cd]
 
     nd = []
-    for did, cstats in deptdata.items ():
+    for did, cstats in sorted (deptdata.items (), key = (lambda x : x [0])):
         nd.append (combine_dept_data (cstats, drange))
 
     return nd
@@ -583,7 +583,7 @@ def combine_dept_data (cstats, drange):
             dinq = cstat [2]
             dinqdata [dinq] = cstat [3]
 
-    dinqdata = sorted (dinqdata.items (), key = (lambda x: -x[1]))
+    dinqdata = sorted (dinqdata.items (), key = (lambda x: x[0]))
 
     dcounter = 0
 
