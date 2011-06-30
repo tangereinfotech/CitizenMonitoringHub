@@ -1,235 +1,199 @@
+{# Copyright 2011, Tangere Infotech Pvt Ltd [http://tangere.in]                 #}
+{#                                                                              #}
+{# Licensed under the Apache License, Version 2.0 (the "License");              #}
+{# you may not use this file except in compliance with the License.             #}
+{# You may obtain a copy of the License at                                      #}
+{#                                                                              #}
+{#       http://www.apache.org/licenses/LICENSE-2.0                             #}
+{#                                                                              #}
+{# Unless required by applicable law or agreed to in writing, software          #}
+{# distributed under the License is distributed on an "AS IS" BASIS,            #}
+{# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     #}
+{# See the License for the specific language governing permissions and          #}
+{# limitations under the License.                                               #}
+
 {% extends "basewithmenu.html" %}
 {% block page_content %}
 <div style="width:100%; text-align:center;">
-    <div class="complaint_form">
+    <div class="report_form" align="center">
       <form action="/complaint/report/" method="post">
         {# {% csrf_token %} #}
-        <table align="left">
-          <tr>
-            <td>
-              <div class="form-field">
-                <label for="id_strtdate" class="id_strtdate">Starting Date:</label>
-                {{ form.strtdate.errors }}
-              </div>
-              {{ form.strtdate }} <br/>
-            </td>
-            <td>
-              <div class="form-field">
-                <label for="id_enddate" class="id_enddate">Ending Date:</label>
-                {{ form.enddate.errors }}
-              </div>
-              {{ form.enddate }} <br/>
-            </td>
-            <td>
-            </td>
-          </tr>
+        <fieldset  style="width:750px;">
+          <legend>
+            Duration
+          </legend>
+          {% if errorpost %}
+          <table align="center">
+            <tr>
+              <td>
+                <div class="form-field">
+                  <label for="id_strtdate" class="id_strtdate">Starting Date:</label>
+                  {{ errorpost.strtdate.errors }}
+                </div>
+                {{ errorpost.strtdate }} <br/>
+              </td>
+              <td></td>
+              <td>
+                <div class="form-field">
+                  <label for="id_enddate" class="id_enddate">Ending Date:</label>
+                  {{ errorpost.enddate.errors }}
+                </div>
+                {{ errorpost.enddate }} <br/>
+              </td>
+              <td>
+              </td>
+            </tr>
+          </table>
+          {% else %}
+          <table align="center">
+            <tr>
+              <td>
+                <div class="form-field">
+                  <label for="id_strtdate" class="id_strtdate">Starting Date:</label>
+                  {{ form.strtdate.errors }}
+                </div>
+                {{ form.strtdate }} <br/>
+              </td>
+              <td></td>
+              <td>
+                <div class="form-field">
+                  <label for="id_enddate" class="id_enddate">Ending Date:</label>
+                  {{ form.enddate.errors }}
+                </div>
+                {{ form.enddate }} <br/>
+              </td>
+              <td>
+              </td>
+            </tr>
+          </table>
+          {% endif %}
 
+        </fieldset>
+        <fieldset  style="width:750px;">
+          <legend>
+            Department
+          </legend>
+          <table style="text-align:center;">
+            <tr>
+              <td>
+                Departments Available<br /><br/>
+                {{ form.departments }}
+              </td>
+              <td style="text-align:center">
+                <input type = "button" value="Add" id = "btnMoveRight" onclick = "fnMoveItems('id_departments','id_selecteddep')" class="btn" style="width:80px" name="hello"><br/>
+                <input type = "button" value="Remove" id = "btnMoveLeft" onclick = "fnMoveItems('id_selecteddep','id_departments')" class="btn" style="width:80px">
+              </td>
+              <td>
+                Departments Selected<br/><br/>
+                {{ form.selecteddep }}
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+        <fieldset  style="width:750px;">
+          <legend>
+            Locations
+          </legend>
+        <table style="text-align:center;width:100%">
           <tr>
-            <td>
-              <label for="id_dept" class="id_dept">Department:</label>
+            <td style="text-align:left;width:20%">
+              Select Block
             </td>
-            <td>
-              <select name="department">
-                <option value="PHFW">PUBLIC HEALTH AND FAMILY WELFARE</option>
-                <option value="EDU">EDUCATION</option>
-                <option value="REV">REVENUE</option>
-                <option value="PRRD">PANCHAYATI RAJ AND RURAL DEVELOPMENT </option>
-                <option value="PRRD-NREGS">PANCHAYATI RAJ AND RURAL DEVELOPMENT - NREGA</option>
-                <option value="SJ">SOCIAL JUSTICE</option>
-                <option value="A&A-FIS">AGRICULTURE & ALLIED - FISHERIES</option>
-                <option value="A&A-VET">AGRICULTURE & ALLIED - VETERINARY DEPARTMENT </option>
-                <option value="PHED">PUBLIC HEALTH AND ENGINEERING</option>
-                <option value="PWD">PUBLIC WORKS DEPARTMENT</option>
-                <option value="WACD">WOMEN AND CHILD DEVELOPMENT</option>
-                <option value="FCS">FOOD AND CIVIL SUPPLIES</option>
-                <option value="IRR">IRRIGATION</option>
-                <option value="IND">INDUSTRIES</option>
-                <option value="HAN">HANDICRAFT</option>
-                <option value="PRD">PUBLIC RELATION DEPARTMENT</option>
-              </select>
+            <td style="width:100%">
+              {{ form.block }}
             </td>
-            <td>
+            <td style="text-align:center;width:10%">
+              <input type="button" value="Add" onclick="appendRow('blk')" class="btn" style="width:80px">
             </td>
           </tr>
-
-          <tr>
-            <td>
-              <label for="id_issue" class="id_issue">Issue:</label>
+          <tr >
+            <td style="text-align:left;width:20%">
+              Select GramPanchayat
             </td>
-            <td>
-              <select name="issue">
-                <option value="1">Health centre is there but staff is not appointed</option>
-                <option value="2">Required medicines are not available in the health centre most of the time</option>
-                <option value="3">Janani Express did not come in time or issues pertaining to access of Janani Express</option>
-                <option value="4">Vaccinations not being administered to pregnant women</option>
-                <option value="5">Pregnant women not registered by ANM/ Anganwari worker</option>
-                <option value="6">BPL family member does not have deendayal card or is not getting free medical facility from the designated hospitals</option>
-                <option value="7">Immunisation does not happening regularly in the </option>
-                <option value="8">The incentive for institutional delivery is not received or there are issues of corruption in availing the incentive</option>
-                <option value="9">Any corruption related issue</option>
-                <option value="10">ANM not administring immunisation in the village</option>
-              </select>
+            <td style="width:100%">
+              {{ form.gp }}
             </td>
-            <td>
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-            </td>
-            <td>
-              <button type="button" value="Select" name="select" onclick="displayDate()" class="btn"/>
-            </td>
-            <td>
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              <label for="id_selectediss" class="id_selectediss">Selected Issues:</label>
-            </td>
-            <td align="top">
-              <textarea rows="4" cols="50">
-              </textarea>
-              <input type="button" value="Remove" name="removeissues" class="btn"/>
-            </td>
-            <td>
+            <td style="text-align:center;width:10%">
+              <input type="button" value="Add" onclick="appendRow('gp')" class="btn" style="width:80px">
             </td>
           </tr>
           <tr>
-            <td>
-              <label for="id_location" class="id_location">Select Location:</label>
+            <td style="text-align:left;width:20%">
+              Select Village
             </td>
-            <td>
+            <td style="width:100%">
+              {{ form.village }}
             </td>
-            <td>
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              <label for="id_district" class="id_district">District:</label>
-            </td>
-            <td>
-              <select name="district">
-                <option value="sehore" selected="selected">Sehore</option>
-              </select>
-            </td>
-            <td>
+            <td style="text-align:center;width:10%">
+              <input type="button" value="Add" onclick="appendRow('vill')" class="btn" style="width:80px">
             </td>
           </tr>
-
           <tr>
-            <td>
-              <label for="id_block" class="id_block">Block:</label>
+            <td style="text-align:left;width:20%">
+              Selected Location Details
             </td>
-            <td>
-             <select name="block">
-                <option value="0001">Sehore</option>
-                <option value="0002">Ashta</option>
-                <option value="0003">Ichhawar</option>
-                <option value="0004">Nasrullahganj</option>
-                <option value="0005">Budni</option>
-              </select>
-            </td>
-            <td>
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              <label for="id_panchayat" class="id_panchayat">Gram Panchayat:</label>
-            </td>
-            <td>
-             <select name="panchayat">
-                <option value="Amlaha">Amlaha</option>
-                <option value="Bhada Khedi">Bhada Khedi</option>
-                <option value="Dhamanda">Dhamanda</option>
-                <option value="Golu Khedi">Golu Khedi</option>
-                <option value="Durgpura">Durgpura</option>
-                <option value="Nagli">Nagli</option>
-                <option value="Mohanpur Lendi">Mohanpur Lendi</option>
-                <option value="Narsingh Kheda">Narsingh Kheda</option>
-                <option value="Barkheda Kurmi">Barkheda Kurmi</option>
-                <option value="Bishan Khedi">Bishan Khedi</option>
-                <option value="Toraniya">Toraniya</option>
-                <option value="Lau Khedi">Lau Khedi</option>
-                <option value="Chhapari Talluk">Chhapari Talluk</option>
-                <option value="Dhabla Rai">Dhabla Rai</option>
-                <option value="Ram Nagar">Ram Nagar</option>
-                <option value=""></option>
-              </select>
-            </td>
-            <td>
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              <label for="id_village" class="id_village">Village:</label>
-            </td>
-            <td>
-             <select name="village">
-                <option value="Amlaha">Amlaha</option>
-                <option value="Bhada Khedi">Bhada Khedi</option>
-                <option value="Dhamanda">Dhamanda</option>
-                <option value="Golu Khedi">Golu Khedi</option>
-                <option value="Durgpura">Durgpura</option>
-                <option value="Bishan Kheda">Bishan Kheda</option>
-                <option value="Kaliya Khedi">Kaliya Khedi</option>
-                <option value="Nagli">Nagli</option>
-                <option value="Partappura">Partappura</option>
-                <option value="Chhapari Karan">Chhapari Karan</option>
-                <option value="Mohanpur Lendi">Mohanpur Lendi</option>
-                <option value="Patariya Sidha">Patariya Sidha</option>
-                <option value="Patariya Banka">Patariya Banka</option>
-                <option value="Bhojpura">Bhojpura</option>
-                <option value="Narsingh Kheda">Narsingh Kheda</option>
-                <option value="Kherpura">Kherpura</option>
-                <option value="Sukaliya Hansraj">Sukaliya Hansraj</option>
-                <option value="Barkheda Kurmi">Barkheda Kurmi</option>
-                <option value="Deh Khedi">Deh Khedi</option>
-              </select>
-            </td>
-            <td>
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-            </td>
-            <td>
-              <input type="button" value="Select" name="select" class="btn"/>
-            </td>
-            <td>
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              <label for="id_selectedloc" class="id_selectedloc">Selected Locations:</label>
-            </td>
-            <td align="top">
-              <textarea rows="4" cols="50">
-              </textarea>
-              <input type="button" value="Remove" name="removeloc" class="btn"/>
-            </td>
-            <td>
+            <td colspan="2" style="width:80%">
+              <table class="tabularlist" id="sel_loc">
+                <thead>
+                  <tr>
+                    <th>
+                      Block
+                    </th>
+                    <th>
+                      GramPanchayat
+                    </th>
+                    <th>
+                      Village
+                    </th>
+                </tr>
+                </thead>
+              </table>
             </td>
           </tr>
         </table>
-        <div style="text-align:center;width:100%;">
-          <input type="submit" value="View Report" class="btn"/>
-        </div>
+        </fieldset>
+        <table align="center" style="text-align:center;width:830px;">
+          <tr>
+            <td colspan="3">
+              <input type="submit" value="View Report" class="btn" />
+            </td>
+          </tr>
+        </table>
       </form>
     </div>
 </div>
 <script type="text/javascript" src="/static/js/DateTimeHandler.js"></script>
+<script type="text/javascript" src="/static/js/customAlert.js"></script>
+<script type="text/javascript" src="/static/js/reportSelectors.js"></script>
 <script type="text/javascript">
-  $(document).ready (function () {
+$(document).ready (function () {
     $("#id_strtdate").datepicker ({dateFormat : 'dd/mm/yy'});
     $("#id_enddate").datepicker ({dateFormat : 'dd/mm/yy'});
-  });
+    $("#id_block").change(function(){
+        $.getJSON ("/masters/getgpinblocks/",
+                   {blockid : $(this).val ()},
+                   function (data, status, jqXHR) {
+                       var gp_dom_html = "<option value='0'>-------</option>"
+                           var village_dom_html = "<option value='0'>-------</option>"
+                               $.each (data.gps, function (index, gpdata) {
+                                   gp_dom_html += "<option value='" + gpdata.id + "'>" + gpdata.name + "</option>"
+                               });
+                       $("#id_gp").html (gp_dom_html);
+                       $("#id_village").html (village_dom_html);
+                   });
+    });
+    $("#id_gp").change(function(){
+        $.getJSON ("/masters/getvillingps/",
+                   {gpid : $(this).val ()},
+                   function (data, status, jqXHR) {
+                       var vill_dom_html = "<option value='0'>-------</option>"
+                           $.each (data.vills, function (index, villdata) {
+                               vill_dom_html += "<option value='" + villdata.id + "'>" + villdata.name + "</option>"
+                           });
+                       $("#id_village").html (vill_dom_html);
+                   });
+    });
+});
 </script>
 
 {% endblock %}

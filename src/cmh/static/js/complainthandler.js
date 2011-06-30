@@ -8,8 +8,8 @@ var field_autocomplete = function (field_tag, db_id_tag, detail_id_tag, url) {
                                         response (cache [term]);
                                         return;
                                     } else {
-                                        lastXhr = $.getJSON (url, 
-                                                             request, 
+                                        lastXhr = $.getJSON (url,
+                                                             request,
                                                              function (data, status, xhr) {
                                                                  cache [term] = data;
                                                                  if (xhr === lastXhr) {
@@ -58,11 +58,11 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                   "#666666", "#660000", "#00FFFF", "#9966FF", "#006600", "#FFE87C", "#FF3300", "#003366",
                   "#CC9900", "#FFCCFF", "#CCFF33", "#660066", "#FFCC00", "#003300", "#00BFFF", "#8D38C9",
                   "#F778A1", "#FDD017", "#666633", "#FF9933", "#660033", "#FFFF00", "#999999", "#0099FF",
-                  "#CCFF00", "#663300", "#CCCCFF", "#FF0000", "#C9BE62", "#2F4F4F", "#000000", "#FFF0F5", 
+                  "#CCFF00", "#663300", "#CCCCFF", "#FF0000", "#C9BE62", "#2F4F4F", "#000000", "#FFF0F5",
                   "#D3D3D3", "#191970", "#EEE8AA", "#8B6508", "#FFDEAD", "#CDB7B5", "#CD1076", "#E066FF",
                   "#F88158", "#87F717", "#333300", "#3399FF", "#C3FDB8"];
 
-    $.getJSON (url, 
+    $.getJSON (url,
                {
                    departments : departments,
                    stdate : period_start,
@@ -98,11 +98,11 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                                                    },
                                                    seriesDefaults : {
                                                        showMarker : true,
-                                                       pointLabels: { 
-                                                           show:false, 
+                                                       pointLabels: {
+                                                           show:false,
                                                            ypadding: 3,
                                                            edgeTolerance: 4
-                                                       } 
+                                                       }
                                                    }
                                                });
                });

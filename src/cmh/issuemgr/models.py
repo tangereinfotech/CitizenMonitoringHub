@@ -15,13 +15,13 @@
 
 from django.db import models
 from django.contrib.auth.models import User
-
+from cmh.common.models import Block, GramPanchayat, Village
+from cmh.common.models import ComplaintDepartment
 GENDER_CHOICES = (
     ('Male', 'Male'),
     ('Female', 'Female'),
     ('Unspecified','Unspecified')
 )
-
 COMMUNITY_CHOICES = (
     ('SC/ST', 'SC / ST'),
     ('Others','Others'),
@@ -101,3 +101,13 @@ class Complaint(models.Model):
             return self.assignto.user.username
         else:
             return "----"
+
+
+
+class ReportData(models.Model):
+    strtdate    = models.DateField (blank = True, null = True)
+    enddate     = models.DateField (blank = True, null = True)
+    block       = models.ManyToManyField (Block, blank = True, null = True)
+    gp          = models.ManyToManyField (GramPanchayat, blank = True, null = True)
+    village     = models.ManyToManyField (Village, blank = True, null = True)
+    department  = models.ManyToManyField (ComplaintDepartment, blank = True, null = True)

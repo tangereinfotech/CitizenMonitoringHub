@@ -41,7 +41,7 @@ from cmh.issuemgr.constants import HotComplaintPeriod
 
 from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox, Report
-from cmh.issuemgr.forms import ComplaintTrackForm, LocationStatsForm
+from cmh.issuemgr.forms import ComplaintTrackForm, LocationStatsForm, ReportForm
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX, ComplaintDisplayParams
 
@@ -522,21 +522,6 @@ def hot_complaints (request):
         traceback.print_exc ()
     return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : [], 'departments' : []}))
 
-
-def report(request) :
-    if request.method=="GET" :
-        form = Report ()
-        return render_to_response('reportselection.html',
-                                 {'form':form,
-                                  'menus' : get_user_menus (request.user,report),
-                                 'user' : request.user})
-    elif request.method=="POST" :
-        return render_to_response('report.html',
-                                 {'menus' : get_user_menus (request.user,report),
-                                  'user' : request.user})
-
-
-
 def get_complaint_data (deptids, stdate, endate):
     complaints = Complaint.objects.filter (createdate__lte = endate, latest = True, department__id__in = deptids)
     open_complaints = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_REOPEN) | Q (curstate = STATUS_OPEN))
@@ -625,3 +610,91 @@ def combine_dept_data (cstats, drange):
         curdate += timedelta (days = 1)
 
     return deptdata
+
+
+from cmh.issuemgr.models import ReportData
+SESSION_REPORT_ID = 'report-id'
+
+def get_repdata_in_session (request):
+    if SESSION_REPORT_ID in request.session:
+        repdata = ReportData.objects.get (id = int (request.session [SESSION_REPORT_ID]))
+    else:
+        repdata = ReportData.objects.create ()
+        request.session [SESSION_REPORT_ID] = str (repdata.id)
+
+    print "repdata.id ", repdata.id
+
+    return repdata
+def reportgeneration (obj):
+    #    print "in report generation", obj.strtdate, "   ", obj.enddate, "   ",  obj.department.all(), "   ",  obj.block.all()
+    complaint = Complaint.objects.filter(department = obj.department
+
+
+
+def report(request) :
+    repdata = get_repdata_in_session (request)
+    if request.method=="GET" :
+        form = Report (repdata)
+        return render_to_response('reportselection.html',
+                                 {'form':form,
+                                  'menus' : get_user_menus (request.user,report),
+                                  'user' : request.user})
+    elif request.method=="POST":
+        postform = ReportForm(request.POST)
+        print "validitiy", postform.is_valid()
+        if postform.is_valid():
+            repdata = get_repdata_in_session (request)
+            repdata.strtdate = postform.cleaned_data['strtdate']
+            repdata.enddate = postform.cleaned_data['enddate']
+            repdata.save()
+            finaldata = get_repdata_in_session (request)
+            request.session.flush()
+            reportgeneration(finaldata)
+            return render_to_response('report.html',
+                                      {'menus' : get_user_menus (request.user,report),
+                                       'user' : request.user})
+        else:
+            return render_to_response('reportselection.html',
+                                      {'form'      : Report(repdata),
+                                       'errorpost' : postform,
+                                       'menus'     : get_user_menus (request.user,report),
+                                       'user'      : request.user})
+
+def storedata(request, identifier, codea, codeb, codec):
+    if identifier == "DEP":
+        repdata            = get_repdata_in_session (request)
+        depobj             = ComplaintDepartment.objects.get(id = codea)
+        repdata.department.add (depobj)
+        repdata.save()
+        return HttpResponse()
+
+    elif identifier == "BLK":
+        repdata         = get_repdata_in_session (request)
+        blkobj          = Block.objects.get(id = codea)
+        repdata.block.add (blkobj)
+        repdata.save()
+        return HttpResponse()
+    elif identifier == "GP":
+        repdata         = get_repdata_in_session (request)
+        blkobj          = Block.objects.get(id = codea)
+        gpobj           = GramPanchayat.objects.get(id = codeb)
+
+        repdata.block.add (blkobj)
+        repdata.gp.add (gpobj)
+
+        repdata.save()
+        return HttpResponse()
+    elif identifier == "VILL":
+        repdata         = get_repdata_in_session (request)
+        blkobj          = Block.objects.get(id = codea)
+        gpobj           = GramPanchayat.objects.get(id = codeb)
+        try:
+            villobj         = Village.objects.get(id = codec)
+            repdata.village.add (villobj)
+        except Village.DoesNotExist:
+            pass
+        repdata.block.add (blkobj)
+        repdata.gp.add (gpobj)
+        repdata.save()
+        return HttpResponse()
+

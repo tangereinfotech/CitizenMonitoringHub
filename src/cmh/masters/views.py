@@ -562,7 +562,6 @@ def addcomp(request):
                                         'menus' : get_user_menus (request.user,process_dm),
                                         'user'  : request.user})
 
-@login_required
 def getgpinblocks (request):
     blockid = request.GET['blockid']
     try:
@@ -571,6 +570,16 @@ def getgpinblocks (request):
         gps = []
     retdata = [{'id' : gp.id, 'name' : str (gp)} for gp in gps]
     return HttpResponse (json.dumps ({'gps' : retdata}))
+
+
+def getvillingps (request):
+    gpid = request.GET['gpid']
+    try:
+        vills = GramPanchayat.objects.get (id = gpid).village_set.all ()
+    except GramPanchayat.DoesNotExist:
+        vills = []
+    retdata = [{'id' : vill.id, 'name' : str (vill)} for vill in vills]
+    return HttpResponse (json.dumps ({'vills' : retdata}))
 
 
 @login_required

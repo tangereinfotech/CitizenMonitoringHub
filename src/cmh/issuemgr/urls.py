@@ -32,4 +32,5 @@ urlpatterns = patterns ('cmh.issuemgr.views',
                         (r'^hot_complaints/', 'hot_complaints'),
                         (r'^report/$','report'),
                         (r'^getstats/$', 'getstats'),
+                        (r'^storedata/(?P<identifier>\w+)/(?P<codea>\d+)/(?P<codeb>\d+)/(?P<codec>\d+)/$','storedata'),
                         )

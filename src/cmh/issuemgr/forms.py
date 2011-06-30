@@ -368,9 +368,50 @@ class ComplaintDisplayParams (forms.Form):
 
 class Report (forms.Form):
     strtdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
-                                   widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
-    enddate     = forms.DateField (input_formats = ('%d/%m/%Y',),
-                                   widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
+                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}),
+                                    required = False)
+    enddate      = forms.DateField (input_formats = ('%d/%m/%Y',),
+                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}),
+                                    required = False)
+    departments  = forms.ModelMultipleChoiceField(queryset = ComplaintDepartment.objects.all(),
+                                                  label    = "Available Departments",
+                                                  widget   = forms.Select (attrs = {'style' : 'width:300px;height:150px;',
+                                                                                  'multiple' : 'multiple',}),
+                                                  required = False)
+    selecteddep  = forms.ModelMultipleChoiceField(queryset = ComplaintDepartment.objects.none(),
+                                                  label    = "Selected Departments",
+                                                  widget   = forms.Select (attrs = {'style' : 'width:300px;height:150px;',
+                                                                                  'multiple' : 'multiple',}),
+                                                  required = False)
+    sel_loc      = forms.MultipleChoiceField( widget = forms.Select (attrs = {'style' : 'width:300px;height:150px;',
+                                                                                  'multiple' : 'multiple',}),
+                                              required = False)
+    block        = forms.ModelChoiceField(queryset = Block.objects.all(), empty_label = "------",
+                                          widget   = forms.Select (attrs = { 'style' : 'width:100%'}),
+                                          required = False)
+    gp           = forms.ModelChoiceField (queryset = GramPanchayat.objects.none (),
+                                           empty_label = '------',
+                                           widget   = forms.Select (attrs = { 'style' : 'width:100%'}),
+                                           required = False)
+    village      = forms.ModelChoiceField (queryset = Village.objects.none (),empty_label = '------',
+                                           widget   = forms.Select (attrs = { 'style' : 'width:100%'}),
+                                           required = False)
+    def __init__ (self, repdata, *args, **kwargs):
+        super (Report, self).__init__ (*args, **kwargs)
+        if repdata != None:
+            self.fields['departments'].queryset = ComplaintDepartment.objects.exclude(id__in = [d.id for d in repdata.department.all ()])
+            self.fields['selecteddep'].queryset = repdata.department.all ()
+            self.fields['gp'].queryset          = repdata.gp.all()
+            self.fields['village'].queryset     = repdata.village.all()
+
+
+
 
 class LocationStatsForm (ComplaintDisplayParams):
     locid = forms.IntegerField ()
+
+class ReportForm(forms.Form):
+    strtdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
+                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
+    enddate      = forms.DateField (input_formats = ('%d/%m/%Y',),
+                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
