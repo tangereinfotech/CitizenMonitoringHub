@@ -27,18 +27,18 @@
             <tr>
               <td>
                 <div class="form-field">
-                  <label for="id_strtdate" class="id_strtdate">Starting Date:</label>
-                  {{ errorpost.strtdate.errors }}
+                  <label for="id_stdate" class="id_stdate">Starting Date:</label>
+                  {{ errorpost.stdate.errors }}
                 </div>
-                {{ errorpost.strtdate }} <br/>
+                {{ errorpost.stdate }} <br/>
               </td>
               <td></td>
               <td>
                 <div class="form-field">
-                  <label for="id_enddate" class="id_enddate">Ending Date:</label>
-                  {{ errorpost.enddate.errors }}
+                  <label for="id_endate" class="id_endate">Ending Date:</label>
+                  {{ errorpost.endate.errors }}
                 </div>
-                {{ errorpost.enddate }} <br/>
+                {{ errorpost.endate }} <br/>
               </td>
               <td>
               </td>
@@ -49,18 +49,18 @@
             <tr>
               <td>
                 <div class="form-field">
-                  <label for="id_strtdate" class="id_strtdate">Starting Date:</label>
-                  {{ form.strtdate.errors }}
+                  <label for="id_stdate" class="id_stdate">Starting Date:</label>
+                  {{ form.stdate.errors }}
                 </div>
-                {{ form.strtdate }} <br/>
+                {{ form.stdate }} <br/>
               </td>
               <td></td>
               <td>
                 <div class="form-field">
-                  <label for="id_enddate" class="id_enddate">Ending Date:</label>
-                  {{ form.enddate.errors }}
+                  <label for="id_endate" class="id_endate">Ending Date:</label>
+                  {{ form.endate.errors }}
                 </div>
-                {{ form.enddate }} <br/>
+                {{ form.endate }} <br/>
               </td>
               <td>
               </td>
@@ -147,6 +147,29 @@
                     </th>
                 </tr>
                 </thead>
+                <tbody>
+                  {% for b in repdata.block.all %}
+                  <tr>
+                    <td> {{ b }} </td>
+                    <td/>
+                    <td/>
+                  </tr>
+                  {% endfor %}
+                  {% for g in repdata.gp.all %}
+                  <tr>
+                    <td> {{ g.block }} </td>
+                    <td> {{ g }} </td>
+                    <td/>
+                  </tr>
+                  {% endfor %}
+                  {% for v in repdata.village.all %}
+                  <tr>
+                    <td> {{ v.grampanchayat.block }} </td>
+                    <td> {{ v.grampanchayat }} </td>
+                    <td> {{ v }} </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
               </table>
             </td>
           </tr>
@@ -167,8 +190,8 @@
 <script type="text/javascript" src="/static/js/reportSelectors.js"></script>
 <script type="text/javascript">
 $(document).ready (function () {
-    $("#id_strtdate").datepicker ({dateFormat : 'dd/mm/yy'});
-    $("#id_enddate").datepicker ({dateFormat : 'dd/mm/yy'});
+    $("#id_stdate").datepicker ({dateFormat : 'dd/mm/yy'});
+    $("#id_endate").datepicker ({dateFormat : 'dd/mm/yy'});
     $("#id_block").change(function(){
         $.getJSON ("/masters/getgpinblocks/",
                    {blockid : $(this).val ()},

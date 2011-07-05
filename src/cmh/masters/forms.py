@@ -616,20 +616,20 @@ class EditGp (forms.Form):
 
 
 class EditVillage (forms.Form):
-    objid  = forms.CharField (widget = forms.HiddenInput ())
+    objid  = forms.CharField (widget  = forms.HiddenInput ())
     sname  = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
     scode  = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code ())
     dname  = SpacedROTextField (label = "District Name", initial = DeployDistrict.DISTRICT.name)
     dcode  = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.get_code ())
-    bname  = SpacedROTextField (label="Block Name")
-    bcode  = SpacedROTextField (label="Block Code")
-    gpname = SpacedROTextField (label="Gram Panchayat Name")
-    gpcode = SpacedROTextField (label="Gram Panchayat Code")
+    bname  = SpacedROTextField (label ="Block Name")
+    bcode  = SpacedROTextField (label ="Block Code")
+    gpname = SpacedROTextField (label ="Gram Panchayat Name")
+    gpcode = SpacedROTextField (label ="Gram Panchayat Code")
 
     vname  = SpacedTextField (label   = "Village Name")
     vcode  = SpacedTextField (label   = "Village Code")
-    lattd  = forms.DecimalField (label  = "Village Latitude", max_value = 180, min_value = -180)
-    longd  = forms.DecimalField (label  = "Village Longitude", max_value = 180, min_value = -180)
+    lattd  = forms.DecimalField (label= "Village Latitude", max_value = 180, min_value = -180)
+    longd  = forms.DecimalField (label= "Village Longitude", max_value = 180, min_value = -180)
 
 
     def __init__(self, villobj, *args, **kwargs) :

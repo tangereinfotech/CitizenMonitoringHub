@@ -1,6 +1,208 @@
-{% extends "basewithmenu.html" %}
-{% block page_content %}
+{# Copyright 2011, Tangere Infotech Pvt Ltd [http://tangere.in]                 #}
+{#                                                                              #}
+{# Licensed under the Apache License, Version 2.0 (the "License");              #}
+{# you may not use this file except in compliance with the License.             #}
+{# You may obtain a copy of the License at                                      #}
+{#                                                                              #}
+{#       http://www.apache.org/licenses/LICENSE-2.0                             #}
+{#                                                                              #}
+{# Unless required by applicable law or agreed to in writing, software          #}
+{# distributed under the License is distributed on an "AS IS" BASIS,            #}
+{# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     #}
+{# See the License for the specific language governing permissions and          #}
+{# limitations under the License.                                               #}
+
+{% extends "base.html" %}
+
+{% block base_content %}
+<div style="clear:both;width:100%;text-align:center;font-size:24px">
+  {{ stats.today }}
+</div>
+
 <center>
-<object type="application/pdf" data="/static/Report Template.pdf"  width="90%" height="90%"></object >
+  <table class="tabularlist" style="width:80%">
+    <thead>
+      <tr>
+        <th>Complaint Status</th>
+        <th>Number of complaints in status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>New</td>
+        <td>{{stats.new_count}}</td>
+      </tr>
+      <tr>
+        <td>Acknowledged</td>
+        <td>{{stats.ack_count}}</td>
+      </tr>
+      <tr>
+        <td>Opened</td>
+        <td>{{stats.ope_count}}</td>
+      </tr>
+      <tr>
+        <td>Resolved</td>
+        <td>{{stats.res_count}}</td>
+      </tr>
+      <tr>
+        <td>Closed</td>
+        <td>{{stats.clo_count}}</td>
+      </tr>
+    </tbody>
+  </table>
 </center>
+<br/><br/><br/>
+<center>
+  <div id="bargraph" style="width:90%;height:400px">
+  </div>
+</center>
+<br/><br/><br/>
+<center>
+  <div id="linegraph" style="width:90%;height:400px">
+  </div>
+</center>
+
+<div style="text-align:left">
+  <h2>Hot Issues</h2>
+</div>
+<center>
+  <table class="tabularlist">
+    <thead>
+      <tr>
+        <th>Sr.<br/>No.</th>
+        <th>Scheme</th>
+        <th>Department</th>
+        <th>Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in stats.hot_issues %}
+      <tr>
+        <td>{{e.slno}}</td>
+        <td>{{e.scheme}}</td>
+        <td>{{e.name}}</td>
+        <td>{{e.count}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</center>
+
+ <div style="text-align:left">
+  <h2>Top Five Complaints</h2>
+</div>
+ <center>
+  <table class="tabularlist">
+    <thead>
+      <tr>
+        <th>Time in<br/>System</th>
+        <th>Department<br/>code</th>
+        <th>Village</th>
+        <th>GP</th>
+        <th>Issue Details</th>
+        <th>MDGs*<br />Covered</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for dur,e,md in stats.top_five_comp %}
+      <tr>
+        <td>{{ dur }}</td>
+        <td>{{e.department.code}}</td>
+        <td>{{e.location.name}}</td>
+        <td>{{e.location.grampanchayat.name}}</td>
+         <td>{{e.complainttype.summary}}</td>
+         <td>{{md.goalnum}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}
+
+{% block body_scripts %}
+<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.canvasAxisTickRenderer.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.enhancedLegendRenderer.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.pointLabels.min.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.barRenderer.min.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.dateAxisRenderer.js"></script>
+<script type="text/javascript">
+ $(document).ready(function () {
+     $.jqplot.config.enablePlugins = true;
+     var colors = ["#4bb2c5", "#c5b47f", "#EAA228", "#579575", "#839557", "#958c12", "#953579", "#4b5de4",
+         "#d8b83f", "#ff5800", "#0085cc", "#663333", "#FFFF33", "#0066CC", "#669900", "#CC0099",
+         "#666666", "#660000", "#00FFFF", "#9966FF", "#006600", "#FFE87C", "#FF3300", "#003366",
+         "#CC9900", "#FFCCFF", "#CCFF33", "#660066", "#FFCC00", "#003300", "#00BFFF", "#8D38C9",
+         "#F778A1", "#FDD017", "#666633", "#FF9933", "#660033", "#FFFF00", "#999999", "#0099FF",
+         "#CCFF00", "#663300", "#CCCCFF", "#FF0000", "#C9BE62", "#2F4F4F", "#000000", "#FFF0F5",
+         "#D3D3D3", "#191970", "#EEE8AA", "#8B6508", "#FFDEAD", "#CDB7B5", "#CD1076", "#E066FF",
+         "#F88158", "#87F717", "#333300", "#3399FF", "#C3FDB8"];
+     $.jqplot ('linegraph', {{ stats.line_graph.linescheme_data|safe }},
+               {
+                   title : "COMPLAINTS PER SCHEME",
+                   axes : {
+                       xaxis : {
+                           renderer:$.jqplot.DateAxisRenderer,
+                           tickOptions: {formatString: '%b %#d'},
+                       },
+                       yaxis : {
+                           min: 0,
+                           tickOptions: {formatString: '%d'},
+                           max : {{ stats.line_graph.maxval }}
+                       }
+                   },
+                   seriesColors : colors,
+                   seriesDefaults : {
+                       showMarker : true,
+                       pointLabels: {
+                           show:false,
+                           ypadding: 3,
+                           edgeTolerance: 4
+                       }
+                   },
+                   series:[{% for legend in stats.line_graph.legends %}
+                           {label: "{{ legend|safe }}"}{% if not forloop.last %},{% endif %}
+                           {% endfor %}],
+                   legend: {
+                       show: true,
+                       placement: 'inside',
+                       location: 'n',
+                       renderer : $.jqplot.EnhancedLegendRenderer,
+                       rendererOptions : {numberColumns : 5}
+                   }
+               });
+
+     $.jqplot('bargraph', {{ stats.bar_chart.scheme_data }},
+              {
+                  title : "OPEN COMPLAINTS",
+                  series:[{% for legend in stats.bar_chart.legends %}
+                          {label: "{{ legend|safe }}", renderer : $.jqplot.BarRenderer}{% if not forloop.last %},{% endif %}
+                          {% endfor %}],
+                  axesDefaults: {
+                      tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+                      tickOptions: {
+                          angle: -30,
+                          labelPosition : 'middle'
+                      }
+                  },
+                  legend: {
+                      show: true,
+                      placement: 'insideGrid'
+                  },
+                  axes: {
+                      xaxis: {
+                          renderer: $.jqplot.CategoryAxisRenderer,
+                          ticks: [{% for scheme in stats.bar_chart.schemes %}"{{ scheme|safe }}"{% if not forloop.last %},{% endif %}{% endfor %}],
+                          tickOptions : {angle:-45}
+                      },
+                      yaxis: {
+                          pad: 1.00,
+                          tickOptions: {formatString: '%d',
+                                        angle:0}
+                      }
+                  }
+              });
+  });
+</script>
 {% endblock %}

@@ -1,17 +1,16 @@
 // constants to define the title of the alert and button text.
-var ALERT_TITLE = "Duplicate Selection";
 var ALERT_BUTTON_TEXT = "Ok";
 
 // over-ride the alert method only if this a newer browser.
 // Older browser will see standard alerts
 if (document.getElementById) {
-    window.alert = function(txt) {
-        createCustomAlert(txt);
+    window.alert = function(title, txt) {
+        createCustomAlert(title, txt);
     }
 }
 
 
-function createCustomAlert(txt) {
+function createCustomAlert(title,txt) {
     // shortcut reference to the document object
     d = document;
 
@@ -36,7 +35,7 @@ function createCustomAlert(txt) {
     alertObj.style.top = (d.documentElement.scrollWidth - alertObj.offsetWidth) / 3 + "px";
     // create an H1 element as the title bar
     h1 = alertObj.appendChild(d.createElement("h1"));
-    h1.appendChild(d.createTextNode(ALERT_TITLE));
+    h1.appendChild(d.createTextNode(title));
 
     // create a paragraph element to contain the txt argument
     msg = alertObj.appendChild(d.createElement("p"));

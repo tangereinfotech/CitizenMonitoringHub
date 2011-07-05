@@ -8,13 +8,13 @@ function fnMoveItems(box1,box2) {
     {
         if(varFromBox.length < 1)
         {
-            alert('There are no items in the source ListBox');
+            alert('No Value Selected','There are no items in the source ListBox');
             return false;
         }
         if(varFromBox.options.selectedIndex == -1) // when no Item is selected the index will be -1
 
         {
-            alert('Please select an Item to move');
+            alert('No Value Selected','Please select an Item to move');
             return false;
         }
 
@@ -45,18 +45,42 @@ function appendRow(val) {
         var flag=0;
         var textb = document.getElementById("id_block");
         var selectedval;
-        if (blkcheckarray.length!=0)
-        {
-            for (j=0;j<blkcheckarray.length;j++)
+        if(textb.value != ''){
+            if (blkcheckarray.length!=0)
             {
-                if(textb.value==blkcheckarray[j])
+                for (j=0;j<blkcheckarray.length;j++)
                 {
-                    alert("Block already added! Please choose a different block");
-                    flag=1;
-                    break;
+                    if(textb.value==blkcheckarray[j])
+                    {
+                        alert("Duplicate Selection","Block already added! Please choose a different block");
+                        flag=1;
+                        break;
+                    }
                 }
+                if (!flag)
+                {
+                    var row = tbl.insertRow(tbl.rows.length);      // append table row
+                    $.post ("/complaint/storedata/" + "BLK" + "/"  + textb.value + "/" + 0 + "/" + 0 +"/",
+                            {},
+                            function (data, textStatus, jqXHR) {
+                            })
+                    for (i=0; i<textb.options.length; i++)
+                    {
+                        if (textb.options[i].selected)
+                        {
+                            selectedval = textb.options[i].text;
+                            createCell(row.insertCell(0), selectedval, 'row');
+                        }
+                    }
+                    for (i = 1; i < tbl.rows[0].cells.length; i++)
+                    {
+                        createCell(row.insertCell(i), '-----' , 'row');
+                    }
+                }
+                blkcheckarray[blkcount] = textb.value;
+                blkcount++;
             }
-            if (!flag)
+            else
             {
                 var row = tbl.insertRow(tbl.rows.length);      // append table row
                 $.post ("/complaint/storedata/" + "BLK" + "/"  + textb.value + "/" + 0 + "/" + 0 +"/",
@@ -75,32 +99,14 @@ function appendRow(val) {
                 {
                     createCell(row.insertCell(i), '-----' , 'row');
                 }
+                blkcheckarray[blkcount] = textb.value;
+                blkcount++;
             }
-            blkcheckarray[blkcount] = textb.value;
-            blkcount++;
         }
-        else
-        {
-            var row = tbl.insertRow(tbl.rows.length);      // append table row
-            $.post ("/complaint/storedata/" + "BLK" + "/"  + textb.value + "/" + 0 + "/" + 0 +"/",
-                    {},
-                    function (data, textStatus, jqXHR) {
-                    })
-            for (i=0; i<textb.options.length; i++)
-            {
-                if (textb.options[i].selected)
-                {
-                    selectedval = textb.options[i].text;
-                    createCell(row.insertCell(0), selectedval, 'row');
-                }
-            }
-            for (i = 1; i < tbl.rows[0].cells.length; i++)
-            {
-                createCell(row.insertCell(i), '-----' , 'row');
-            }
-            blkcheckarray[blkcount] = textb.value;
-            blkcount++;
+        else{
+            alert("Invalid Selection","Select a valid Block option");
         }
+
 
     }
     if (val == 'gp')
@@ -110,18 +116,51 @@ function appendRow(val) {
         var textc = document.getElementById("id_gp");
         var textb = document.getElementById("id_block");
         var selectedval;
-        if (gpcheckarray.length!=0)
+        if(textc.value != 0 && textc.value != '')
         {
-            for (j=0;j<gpcheckarray.length;j++)
+            if (gpcheckarray.length!=0)
             {
-                if(textc.value==gpcheckarray[j])
+                for (j=0;j<gpcheckarray.length;j++)
                 {
-                    alert("GramPanchayat already added! Please choose a different GramPanchayat");
-                    flag=1;
-                    break;
+                    if(textc.value==gpcheckarray[j])
+                    {
+                        alert("Duplicate Selection","GramPanchayat already added! Please choose a different GramPanchayat");
+                        flag=1;
+                        break;
+                    }
+                }
+                if (!flag)
+                {
+                    var row = tbl.insertRow(tbl.rows.length);      // append table row
+                    $.post ("/complaint/storedata/" + "GP" + "/"  + textb.value + "/" + textc.value + "/" + 0 +"/",
+                            {},
+                            function (data, textStatus, jqXHR) {
+                            })
+                    for (i=0; i<textb.options.length; i++)
+                    {
+                        if (textb.options[i].selected)
+                        {
+                            selectedval = textb.options[i].text;
+                            createCell(row.insertCell(0), selectedval, 'row');
+                        }
+                    }
+                    for (i=0; i<textc.options.length; i++)
+                    {
+                        if (textc.options[i].selected)
+                        {
+                            selectedval = textc.options[i].text;
+                            createCell(row.insertCell(1), selectedval, 'row');
+                        }
+                    }
+                    for (i = 2; i < tbl.rows[0].cells.length; i++)
+                    {
+                        createCell(row.insertCell(i), '-----' , 'row');
+                    }
+                    gpcheckarray[gpcount] = textc.value;
+                    gpcount++;
                 }
             }
-            if (!flag)
+            else
             {
                 var row = tbl.insertRow(tbl.rows.length);      // append table row
                 $.post ("/complaint/storedata/" + "GP" + "/"  + textb.value + "/" + textc.value + "/" + 0 +"/",
@@ -150,39 +189,14 @@ function appendRow(val) {
                 }
                 gpcheckarray[gpcount] = textc.value;
                 gpcount++;
+
             }
         }
         else
         {
-            var row = tbl.insertRow(tbl.rows.length);      // append table row
-            $.post ("/complaint/storedata/" + "GP" + "/"  + textb.value + "/" + textc.value + "/" + 0 +"/",
-                    {},
-                    function (data, textStatus, jqXHR) {
-                    })
-            for (i=0; i<textb.options.length; i++)
-            {
-                if (textb.options[i].selected)
-                {
-                    selectedval = textb.options[i].text;
-                    createCell(row.insertCell(0), selectedval, 'row');
-                }
-            }
-            for (i=0; i<textc.options.length; i++)
-            {
-                if (textc.options[i].selected)
-                {
-                    selectedval = textc.options[i].text;
-                    createCell(row.insertCell(1), selectedval, 'row');
-                }
-            }
-            for (i = 2; i < tbl.rows[0].cells.length; i++)
-            {
-                createCell(row.insertCell(i), '-----' , 'row');
-            }
-            gpcheckarray[gpcount] = textc.value;
-            gpcount++;
-
+            alert("Invalid Selection","Select a valid GramPanchayat");
         }
+
     }
 
     if (val == 'vill')
@@ -193,18 +207,55 @@ function appendRow(val) {
         var textb = document.getElementById("id_gp");
         var textc = document.getElementById("id_block");
         var selectedval;
-        if (vcheckarray.length!=0)
+        if(texta.value != 0 && texta.value != '')
         {
-            for (j=0;j<vcheckarray.length;j++)
+            if (vcheckarray.length!=0)
             {
-                if(texta.value==vcheckarray[j])
+                for (j=0;j<vcheckarray.length;j++)
                 {
-                    alert("Village already added! Please choose a different Village");
-                    flag=1;
-                    break;
+                    if(texta.value==vcheckarray[j])
+                    {
+                        alert("Duplicate Selection","Village already added! Please choose a different Village");
+                        flag=1;
+                        break;
+                    }
+                }
+                if (!flag)
+                {
+                    var row = tbl.insertRow(tbl.rows.length);      // append table row
+                    $.post ("/complaint/storedata/" + "VILL" + "/"  + textc.value + "/" + textb.value + "/" + texta.value +"/",
+                            {},
+                            function (data, textStatus, jqXHR) {
+                            })
+                    for (i=0; i<textc.options.length; i++)
+                    {
+                        if (textc.options[i].selected)
+                        {
+                            selectedval = textc.options[i].text;
+                            createCell(row.insertCell(0), selectedval, 'row');
+                        }
+                    }
+                    for (i=0; i<textb.options.length; i++)
+                    {
+                        if (textb.options[i].selected)
+                        {
+                            selectedval = textb.options[i].text;
+                            createCell(row.insertCell(1), selectedval, 'row');
+                        }
+                    }
+                    for (i=0; i<texta.options.length; i++)
+                    {
+                        if (texta.options[i].selected)
+                        {
+                            selectedval = texta.options[i].text;
+                            createCell(row.insertCell(2), selectedval, 'row');
+                        }
+                    }
+                    vcheckarray[vcount] = texta.value;
+                    vcount++;
                 }
             }
-            if (!flag)
+            else
             {
                 var row = tbl.insertRow(tbl.rows.length);      // append table row
                 $.post ("/complaint/storedata/" + "VILL" + "/"  + textc.value + "/" + textb.value + "/" + texta.value +"/",
@@ -241,38 +292,9 @@ function appendRow(val) {
         }
         else
         {
-            var row = tbl.insertRow(tbl.rows.length);      // append table row
-            $.post ("/complaint/storedata/" + "VILL" + "/"  + textc.value + "/" + textb.value + "/" + texta.value +"/",
-                    {},
-                    function (data, textStatus, jqXHR) {
-                    })
-            for (i=0; i<textc.options.length; i++)
-            {
-                if (textc.options[i].selected)
-                {
-                    selectedval = textc.options[i].text;
-                    createCell(row.insertCell(0), selectedval, 'row');
-                }
-            }
-            for (i=0; i<textb.options.length; i++)
-            {
-                if (textb.options[i].selected)
-                {
-                    selectedval = textb.options[i].text;
-                    createCell(row.insertCell(1), selectedval, 'row');
-                }
-            }
-            for (i=0; i<texta.options.length; i++)
-            {
-                if (texta.options[i].selected)
-                {
-                    selectedval = texta.options[i].text;
-                    createCell(row.insertCell(2), selectedval, 'row');
-                }
-            }
-            vcheckarray[vcount] = texta.value;
-            vcount++;
+            alert("Invalid Selection","Select a valid Village");
         }
+
     }
 
 }

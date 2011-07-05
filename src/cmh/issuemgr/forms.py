@@ -367,10 +367,10 @@ class ComplaintDisplayParams (forms.Form):
     endate      = FormattedDateField ();
 
 class Report (forms.Form):
-    strtdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
+    stdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
                                     widget = forms.TextInput (attrs = {'autocomplete' : 'off'}),
                                     required = False)
-    enddate      = forms.DateField (input_formats = ('%d/%m/%Y',),
+    endate      = forms.DateField (input_formats = ('%d/%m/%Y',),
                                     widget = forms.TextInput (attrs = {'autocomplete' : 'off'}),
                                     required = False)
     departments  = forms.ModelMultipleChoiceField(queryset = ComplaintDepartment.objects.all(),
@@ -401,8 +401,6 @@ class Report (forms.Form):
         if repdata != None:
             self.fields['departments'].queryset = ComplaintDepartment.objects.exclude(id__in = [d.id for d in repdata.department.all ()])
             self.fields['selecteddep'].queryset = repdata.department.all ()
-            self.fields['gp'].queryset          = repdata.gp.all()
-            self.fields['village'].queryset     = repdata.village.all()
 
 
 
@@ -411,7 +409,7 @@ class LocationStatsForm (ComplaintDisplayParams):
     locid = forms.IntegerField ()
 
 class ReportForm(forms.Form):
-    strtdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
-                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
-    enddate      = forms.DateField (input_formats = ('%d/%m/%Y',),
-                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
+    stdate = forms.DateField (input_formats = ('%d/%m/%Y',),
+                              widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
+    endate = forms.DateField (input_formats = ('%d/%m/%Y',),
+                              widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
