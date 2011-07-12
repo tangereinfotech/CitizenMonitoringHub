@@ -21,6 +21,29 @@
 {% block page_content %}
 <div id="department-list">
   <form method="post" action=".">
+    <fieldset>
+      <legend>
+        Time Period
+      </legend>
+      <table style="width:100%">
+        <tr>
+          <td>
+            Start Date
+        </td>
+          <td>
+            {{ form.stdate }}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            End Date
+          </td>
+          <td>
+            {{ form.endate }}
+          </td>
+        </tr>
+      </table>
+    </fieldset>
     <table style="width:100%">
       <tr>
         <th colspan="2" align="center">
@@ -52,6 +75,9 @@
     </table>
   </form>
 </div>
+<div id="report" style="float:right">
+<input type="submit" value="View Report" name="report" class="btn" onclick="callReport()" id="report">
+</div>
 <div id="base_map"></div>
 <div id="trending-issues-section">
   <div class="section-title">
@@ -69,8 +95,8 @@
   </ul>
   <div id="trending-issues-chart"></div>
 </div>
-<script type="text/javascript" src="/static/jquery/js/jqplot.dateAxisRenderer.js"></script>
-<script type="text/javascript" src="/static/jquery/js/jqplot.pointLabels.min.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.dateAxisRenderer.js"></script>
+<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.pointLabels.min.js"></script>
 <script type="text/javascript" src="/static/jquery/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="/static/js/CountLabel.js"></script>
 <script type="text/javascript" src="/static/js/Label.js"></script>
@@ -78,49 +104,62 @@
 <script type="text/javascript" src="/static/js/complainthandler.js"></script>
 <script type="text/javascript" src="/static/js/department_selector.js"></script>
 <script type="text/javascript">
-    function update_maps (period) {
-        switch (period) {
-        case 1:
-           ndays = 7;
-           break;
-        case 2:
-           ndays = 30;
-           break;
-        case 3:
-           ndays = 90;
-           break;
-        }
-        now = new Date ();
-        en_date = dateFormat (now);
-        st_date = dateFormat (daysBefore (now, ndays));
+ function update_maps (period) {
+     switch (period) {
+     case 1:
+         ndays = 7;
+         break;
+     case 2:
+         ndays = 30;
+         break;
+     case 3:
+         ndays = 90;
+         break;
+     }
+     now = new Date ();
+     en_date = dateFormat (now);
+     st_date = dateFormat (daysBefore (now, ndays));
 
-        update_issues_maps (MapHandler.departments, MapHandler.map.getZoom (), MapHandler.data_level, st_date, en_date);
-    }
+     update_issues_maps (MapHandler.departments, MapHandler.map.getZoom (), MapHandler.data_level, st_date, en_date);
+ }
 
-    function update_issues_maps (departments, zoomlevel, datalevel, period_start, period_end) {
-        show_hot_complaints ("trending-issues-chart", "/complaint/hot_complaints/", departments, period_start, period_end);
-        MapHandler.update_with_stats ('/complaint/get_category_map_update/', departments, zoomlevel, datalevel, period_start, period_end);
-    }
+ function update_issues_maps (departments, zoomlevel, datalevel, period_start, period_end) {
+     show_hot_complaints ("trending-issues-chart", "/complaint/hot_complaints/", departments, period_start, period_end);
+     MapHandler.update_with_stats ('/complaint/get_category_map_update/', departments, zoomlevel, datalevel, period_start, period_end);
+ }
 
-    function daysBefore (dateObj, ndays) {
-        dateObj.setDate (dateObj.getDate () - ndays);
-        return dateObj;
-    }
+ function daysBefore (dateObj, ndays) {
+     dateObj.setDate (dateObj.getDate () - ndays);
+     return dateObj;
+ }
+ function callReport ()
+ {
+     var selected_dept_ids = $('.selector:checked').map (
+         function () {
+             return $(this).val ();
+         }
+     ).get ().join (',');
+     alert('hey',selected_dept_ids );
+ }
 
-    function dateFormat (date) {
-        return date.getDate () + "/" + (date.getMonth () + 1) + "/" + date.getFullYear ();
-    }
 
-    $(document).ready (function () {
-        now = new Date ();
-        en_date = dateFormat (now);
-        st_date = dateFormat (daysBefore (now, 30));
+ function dateFormat (date)
+ {
+     return date.getDate () + "/" + (date.getMonth () + 1) + "/" + date.getFullYear ();
+ }
 
-        department_selector ('/complaint/get_category_map_update/');
-        $(".selector").attr ("checked", true);
-        MapHandler.init ('base_map', {{ map.center_lat }}, {{ map.center_long }}, function () {
-            update_issues_maps ('0', MapHandler.VILLG_ZOOM, 'villg', st_date, en_date);
-        });
-    });
-</script>
+ $(document).ready (function () {
+     now = new Date ();
+     en_date = dateFormat (now);
+     st_date = dateFormat (daysBefore (now, 30));
+
+     $("#id_stdate").datepicker ({dateFormat : 'dd/mm/yy'});
+     $("#id_endate").datepicker ({dateFormat : 'dd/mm/yy'});
+     department_selector ('/complaint/get_category_map_update/');
+     $(".selector").attr ("checked", true);
+     MapHandler.init ('base_map', {{ map.center_lat }}, {{ map.center_long }}, function () {
+         update_issues_maps ('0', MapHandler.VILLG_ZOOM, 'villg', st_date, en_date);
+     });
+ });
+ </script>
 {% endblock %}

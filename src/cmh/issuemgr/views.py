@@ -52,6 +52,7 @@ from cmh.usermgr.utils import get_user_menus
 
 
 def index (request):
+    print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++", request.session['blkids']
     if request.method == 'GET':
         try:
             form = ComplaintForm ()
@@ -201,12 +202,13 @@ def getstats (request):
                             'count' : c ['count']}
                            for c in complaints.values ('department__name', 'department__id').annotate (count=Count ('department__name')).order_by ('department__id')]
 
-        stats = {'count' : complaints.count (),
-                 'name' : location.name,
-                 'type' : loctype,
-                 'departments' : dept_complaints,
-                 'uptype' : uptype,
-                 'upname' : upname}
+        stats = {'count'      : complaints.count (),
+                 'name'       : location.name,
+                 'type'       : loctype,
+                 'locid'      : location.id,
+                 'departments': dept_complaints,
+                 'uptype'     : uptype,
+                 'upname'     : upname}
         return render_to_response ('location_stats.html', {'stats' : stats})
 
     else:
@@ -626,6 +628,161 @@ def get_repdata_in_session (request):
 
     return repdata
 
+def get_report_stats (repdata):
+    stats = {'today' : repdata.enddate.strftime ("%d %B, %Y")}
+
+    deptids     = [dept.id for dept in repdata.department.all()]
+    complaints = Complaint.objects.filter (latest = True, department__id__in = deptids)
+
+    if repdata.block.all ().count () != 0:
+        complaints = complaints.filter (location__grampanchayat__block__id__in = [b.id for b in repdata.block.all ()])
+
+    if repdata.gp.all ().count () != 0:
+        complaints = complaints.filter (location__grampanchayat__id__in = [b.id for b in repdata.gp.all ()])
+
+    if repdata.village.all ().count () != 0:
+        complaints = complaints.filter (location__id__in = [b.id for b in repdata.village.all ()])
+
+    #Complaints before the end date
+    end_complaints = complaints.filter (createdate__lte = repdata.enddate)
+
+
+    #report_health_check
+    end_new_complaints = end_complaints.filter (curstate = STATUS_NEW)
+    end_ack_complaints = end_complaints.filter (curstate = STATUS_ACK)
+    end_ope_complaints = end_complaints.filter (curstate = STATUS_OPEN)
+    end_res_complaints = end_complaints.filter (curstate = STATUS_RESOLVED)
+    end_clo_complaints = end_complaints.filter (curstate = STATUS_CLOSED)
+
+    stats ['new_count'] = end_new_complaints.count ()
+    stats ['ack_count'] = end_ack_complaints.count ()
+    stats ['ope_count'] = end_ope_complaints.count ()
+    stats ['res_count'] = end_res_complaints.count ()
+    stats ['clo_count'] = end_clo_complaints.count ()
+
+    #bar chart of ack and open complaints
+    bar_new_complaints = end_new_complaints.values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
+    bar_ack_complaints = end_ack_complaints.values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
+    bar_res_complaints = end_res_complaints.values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
+    bar_clo_complaints = end_clo_complaints.values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
+
+    bar_new_scheme_data = dict ([(bac ['complainttype__cclass'], bac ['count']) for bac in bar_new_complaints])
+    bar_ack_scheme_data = dict ([(bac ['complainttype__cclass'], bac ['count']) for bac in bar_ack_complaints])
+    bar_res_scheme_data = dict ([(brc ['complainttype__cclass'], brc ['count']) for brc in bar_res_complaints])
+    bar_clo_scheme_data = dict ([(bcc ['complainttype__cclass'], bcc ['count']) for bcc in bar_clo_complaints])
+
+    schemes     = list (set (bar_new_scheme_data.keys () + bar_ack_scheme_data.keys () + bar_res_scheme_data.keys () + bar_clo_scheme_data.keys ()))
+
+    def get_scheme_data (mydict, lschemes):
+        retdata = []
+        for cclass in lschemes:
+            try:
+                retdata.append (mydict [cclass])
+            except KeyError:
+                retdata.append (0)
+        return retdata
+
+    new_counts = get_scheme_data (bar_new_scheme_data, schemes)
+    ack_counts = get_scheme_data (bar_ack_scheme_data, schemes)
+    res_counts = get_scheme_data (bar_res_scheme_data, schemes)
+    clo_counts = get_scheme_data (bar_clo_scheme_data, schemes)
+
+    res_clo_counts = map (lambda x, y: x + y, res_counts, clo_counts)
+    scheme_data = [new_counts, ack_counts, res_clo_counts]
+
+    if len(schemes) <= 10:
+        wid = 30
+    elif ((len(schemes) > 10) and (len(schemes) <= 20)):
+        wid = 25
+    elif len(schemes) <= 20:
+        wid = 10
+
+    stats ['bar_chart']                = {'legends' : ['New', 'Acknowledged', 'Resolved/ Closed']}
+    stats ['bar_chart']['schemes']     = schemes
+    stats ['bar_chart']['scheme_data'] = scheme_data
+    stats ['bar_chart']['width']       = wid
+
+    #line graph for trends on selected schemes
+    line_range_data      = complaints.filter(createdate__gt = repdata.strtdate,
+                                             createdate__lte = repdata.enddate).values ('complainttype__cclass',
+                                                                                        'createdate').annotate (count = Count ('createdate'))
+    schemelist = list (set ([lrd ['complainttype__cclass'] for lrd in line_range_data]))
+
+    line_prev_data = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_OPEN), createdate__lte = repdata.strtdate)
+    line_prev_data = line_prev_data.filter (complainttype__cclass__in = schemelist).values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
+    line_prev_data = [(lpd ['complainttype__cclass'], lpd ['count']) for lpd in line_prev_data]
+
+    ymax = max ([lpd [1] for lpd in line_prev_data] + [0])
+    line_prev_data = dict (line_prev_data)
+
+
+
+    last_date_data = {}
+    linescheme_data = {}
+    for scheme in schemelist:
+        if scheme in line_prev_data.keys ():
+            linescheme_data [scheme] = [[repdata.strtdate.strftime ('%Y-%m-%d 1:00 AM'), line_prev_data [scheme]]]
+        else:
+            linescheme_data [scheme] = [[repdata.strtdate.strftime ('%Y-%m-%d 1:00 AM'), 0]]
+        last_date_data [scheme] = linescheme_data [scheme][0][1]
+
+
+    line_range_data = [(lrd ['complainttype__cclass'], lrd ['createdate'], lrd ['count']) for lrd in line_range_data]
+
+    line_range_data = sorted (line_range_data, key = (lambda x : x [1]))
+
+    for lrd in line_range_data:
+        linescheme_data [lrd [0]].append ([lrd [1].strftime ('%Y-%m-%d 1:00 AM'), last_date_data [lrd[0]] + lrd [2]])
+        last_date_data[lrd[0]] += lrd[2]
+
+    range_last_datestr = repdata.enddate.strftime ('%Y-%m-%d 1:00 AM')
+    for schemename, lsd in linescheme_data.items ():
+        last_data_point = lsd [-1]
+        if last_data_point [0] != range_last_datestr:
+            linescheme_data [schemename].append ([range_last_datestr, last_data_point [1]])
+
+    linescheme_datalist = []
+    for scheme in schemelist:
+        linescheme_datalist.append (linescheme_data [scheme])
+
+        ymax = max (ymax, max ([lsdp [1] for lsdp in linescheme_data [scheme]] + [0]))
+
+    stats ['line_graph'] = {'legends' : schemelist}
+    stats ['line_graph']['daterange'] = {"stdate":repdata.strtdate, "endate":repdata.enddate}
+    stats ['line_graph']['linescheme_data'] = linescheme_datalist
+    stats ['line_graph']['maxval'] = ymax * 1.4
+
+    #hot_issues section
+    hot_issues = end_complaints.values ('department__name', 'complainttype__cclass').annotate (count=Count ('complainttype__cclass'))
+    hot_issues = sorted (hot_issues, key = (lambda x : -x ['count']))
+
+    slno = 1
+    stats ['hot_issues'] = []
+    for hi in hot_issues [:5]:
+        stats ['hot_issues'].append ({'slno' : slno,
+                                      'count': hi ['count'],
+                                      'name' : hi ['department__name'],
+                                      'scheme' : hi ['complainttype__cclass']})
+        slno += 1
+
+    #Top five pending complaints based on time period
+    top_five_complaints = complaints.exclude (curstate = STATUS_CLOSED).exclude(curstate = STATUS_RESOLVED).order_by ('created')[:5]
+
+    now = datetime.now()
+
+    comp_list  = []
+    for complaint in top_five_complaints:
+        mdgs = ", ".join ([mdg.goalnum for mdg in complaint.complainttype.complaintmdg_set.all()])
+        if complaint.original != None:
+            delay = (now - complaint.original.created).days
+        else:
+            delay = (now - complaint.created).days
+        comp_list.append((delay, complaint, mdgs))
+
+    stats ['top_five_comp'] = comp_list
+
+    return stats
+
 
 def report(request) :
     repdata = get_repdata_in_session (request)
@@ -634,175 +791,63 @@ def report(request) :
         return render_to_response('reportselection.html',
                                  {'form':form,
                                   'menus' : get_user_menus (request.user,report),
-                                  'user' : request.user})
+                                  'user' : request.user,
+                                  'repdata' : repdata})
+
     elif request.method=="POST":
         postform = ReportForm(request.POST)
-        if postform.is_valid():
+        if 'initial_report' in request.POST:
             repdata = get_repdata_in_session (request)
-            repdata.strtdate = postform.cleaned_data ['stdate']
-            repdata.enddate = postform.cleaned_data ['endate']
+            now = datetime.now()
+            repdata.strtdate =  (now - timedelta (days = 60))
+            repdata.enddate = now
             repdata.save ()
 
-            stats = {'today' : repdata.enddate.strftime ("%d %B, %Y")}
+            stats = get_report_stats (repdata)
 
-            deptids     = [dept.id for dept in repdata.department.all()]
-            complaints = Complaint.objects.filter (latest = True, department__id__in = deptids)
+            return render_to_response ('report.html', {'stats' : stats,
+                                                       'flag'  : False,
+                                                       'staticdata' : repdata})
+        elif 'final_report' in request.POST:
+                stats = get_report_stats (repdata)
+                stats['keypts']        = request.POST ['keypoints']
+                stats['successtry'] = request.POST ['sucess_story']
+                request.session.flush()
+                return render_to_response ('report.html', {'stats'      : stats,
+                                                           'flag'       : True,
+                                                           'staticdata' : repdata})
+        elif 'removebutt' in request.POST:
+            data = {}
+            print " in remove loc", request.POST
+            postform = ReportForm(request.POST)
+            if "blk" in request.POST:
+                idval = request.POST['blk']
+                repdata = get_repdata_in_session (request)
+                newdata = repdata.block.get(id = idval)
+                repdata.block.remove(newdata)
+                repdata.save()
+            elif "gp" in request.POST:
+                idval = request.POST['gp']
+                repdata = get_repdata_in_session (request)
+                newdata = repdata.gp.get(id = idval)
+                repdata.gp.remove(newdata)
+                repdata.save()
+            elif "vill" in request.POST:
+                idval = request.POST['vill']
+                repdata = get_repdata_in_session (request)
+                newdata = repdata.village.get(id = idval)
+                repdata.village.remove(newdata)
+                repdata.save()
+            print "blocks: ", repdata.block.all()
+            print "GPs: ", repdata.gp.all()
+            print "villages: ", repdata.village.all()
+            return render_to_response('reportselection.html',
+                                      {'form'      : Report(repdata),
+                                       'errorpost' : postform,
+                                       'menus'     : get_user_menus (request.user,report),
+                                       'user'      : request.user,
+                                       'repdata'   : repdata})
 
-            if repdata.block.all ().count () != 0:
-                complaints = complaints.filter (location__grampanchayat__block__id__in = [b.id for b in repdata.block.all ()])
-
-            if repdata.gp.all ().count () != 0:
-                complaints = complaints.filter (location__grampanchayat__id__in = [b.id for b in repdata.gp.all ()])
-
-            if repdata.village.all ().count () != 0:
-                complaints = complaints.filter (location__id__in = [b.id for b in repdata.village.all ()])
-
-            # Complaints before the end date
-            end_complaints = complaints.filter (createdate__lte = repdata.enddate)
-
-
-            # report_health_check
-            end_new_complaints = end_complaints.filter (curstate = STATUS_NEW)
-            end_ack_complaints = end_complaints.filter (curstate = STATUS_ACK)
-            end_ope_complaints = end_complaints.filter (curstate = STATUS_OPEN)
-            end_res_complaints = end_complaints.filter (curstate = STATUS_RESOLVED)
-            end_clo_complaints = end_complaints.filter (curstate = STATUS_CLOSED)
-
-            stats ['new_count'] = end_new_complaints.count ()
-            stats ['ack_count'] = end_ack_complaints.count ()
-            stats ['ope_count'] = end_ope_complaints.count ()
-            stats ['res_count'] = end_res_complaints.count ()
-            stats ['clo_count'] = end_clo_complaints.count ()
-
-            # bar chart of ack and open complaints
-            bar_new_complaints = end_new_complaints.values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
-            bar_ack_complaints = end_ack_complaints.values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
-            bar_res_complaints = end_res_complaints.values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
-            bar_clo_complaints = end_clo_complaints.values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
-
-            bar_new_scheme_data = dict ([(bac ['complainttype__cclass'], bac ['count']) for bac in bar_new_complaints])
-            bar_ack_scheme_data = dict ([(bac ['complainttype__cclass'], bac ['count']) for bac in bar_ack_complaints])
-            bar_res_scheme_data = dict ([(brc ['complainttype__cclass'], brc ['count']) for brc in bar_res_complaints])
-            bar_clo_scheme_data = dict ([(bcc ['complainttype__cclass'], bcc ['count']) for bcc in bar_clo_complaints])
-
-            schemes     = list (set (bar_new_scheme_data.keys () + bar_ack_scheme_data.keys () + bar_res_scheme_data.keys () + bar_clo_scheme_data.keys ()))
-
-            def get_scheme_data (mydict, lschemes):
-                retdata = []
-                for cclass in lschemes:
-                    try:
-                        retdata.append (mydict [cclass])
-                    except KeyError:
-                        retdata.append (0)
-                return retdata
-
-            new_counts = get_scheme_data (bar_new_scheme_data, schemes)
-            ack_counts = get_scheme_data (bar_ack_scheme_data, schemes)
-            res_counts = get_scheme_data (bar_res_scheme_data, schemes)
-            clo_counts = get_scheme_data (bar_clo_scheme_data, schemes)
-
-            res_clo_counts = map (lambda x, y: x + y, res_counts, clo_counts)
-            scheme_data = [new_counts, ack_counts, res_clo_counts]
-
-            stats ['bar_chart'] = {'legends' : ['New', 'Acknowledged', 'Resolved/ Closed']}
-            stats ['bar_chart']['schemes'] = schemes
-            stats ['bar_chart']['scheme_data'] = scheme_data
-
-            # line graph for trends on selected schemes
-            line_range_data      = complaints.filter(createdate__gt = repdata.strtdate,
-                                                     createdate__lte = repdata.enddate).values ('complainttype__cclass',
-                                                                                                'createdate').annotate (count = Count ('createdate'))
-            schemelist = list (set ([lrd ['complainttype__cclass'] for lrd in line_range_data]))
-
-            line_prev_data = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_OPEN), createdate__lte = repdata.strtdate)
-            line_prev_data = line_prev_data.filter (complainttype__cclass__in = schemelist).values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
-            line_prev_data = [(lpd ['complainttype__cclass'], lpd ['count']) for lpd in line_prev_data]
-
-            ymax = max ([lpd [1] for lpd in line_prev_data] + [0])
-            line_prev_data = dict (line_prev_data)
-
-
-
-            last_date_data = {}
-            linescheme_data = {}
-            for scheme in schemelist:
-                if scheme in line_prev_data.keys ():
-                    linescheme_data [scheme] = [[repdata.strtdate.strftime ('%Y-%m-%d 1:00 AM'), line_prev_data [scheme]]]
-                else:
-                    linescheme_data [scheme] = [[repdata.strtdate.strftime ('%Y-%m-%d 1:00 AM'), 0]]
-                last_date_data [scheme] = linescheme_data [scheme][0][1]
-
-
-            line_range_data = [(lrd ['complainttype__cclass'], lrd ['createdate'], lrd ['count']) for lrd in line_range_data]
-
-            line_range_data = sorted (line_range_data, key = (lambda x : x [1]))
-
-            for lrd in line_range_data:
-                linescheme_data [lrd [0]].append ([lrd [1].strftime ('%Y-%m-%d 1:00 AM'), last_date_data [lrd[0]] + lrd [2]])
-                last_date_data[lrd[0]] += lrd[2]
-
-            range_last_datestr = repdata.enddate.strftime ('%Y-%m-%d 1:00 AM')
-            for schemename, lsd in linescheme_data.items ():
-                last_data_point = lsd [-1]
-                if last_data_point [0] != range_last_datestr:
-                    linescheme_data [schemename].append ([range_last_datestr, last_data_point [1]])
-
-            linescheme_datalist = []
-            for scheme in schemelist:
-                linescheme_datalist.append (linescheme_data [scheme])
-
-                ymax = max (ymax, max ([lsdp [1] for lsdp in linescheme_data [scheme]] + [0]))
-
-            stats ['line_graph'] = {'legends' : schemelist}
-            stats ['line_graph']['daterange'] = {"stdate":repdata.strtdate, "endate":repdata.enddate}
-            stats ['line_graph']['linescheme_data'] = linescheme_datalist
-            stats ['line_graph']['maxval'] = ymax * 1.4
-
-
-            # hot_issues section
-            hot_issues = end_complaints.values ('department__name', 'complainttype__cclass').annotate (count=Count ('complainttype__cclass'))
-            hot_issues = sorted (hot_issues, key = (lambda x : -x ['count']))
-
-            slno = 1
-            stats ['hot_issues'] = []
-            for hi in hot_issues [:5]:
-                stats ['hot_issues'].append ({'slno' : slno,
-                                              'count': hi ['count'],
-                                              'name' : hi ['department__name'],
-                                              'scheme' : hi ['complainttype__cclass']})
-                slno += 1
-
-
-
-            # Top five pending complaints based on time period
-            top_five_complaints = complaints.exclude (curstate = STATUS_CLOSED).exclude(curstate = STATUS_RESOLVED)
-
-            strt_date_complaints = min ([cdate.created for cdate in top_five_complaints])
-            from datetime import datetime, timedelta
-            now = datetime.now()
-
-            comp_list  = []
-            for complaint in top_five_complaints:
-                mdg = complaint.complainttype.complaintmdg_set.all()
-                if complaint.original != None:
-                    created = (now - complaint.original.created).days
-                    comp_list.append((created,complaint,mdg))
-                else:
-                    created = (now - complaint.created).days
-                    comp_list.append((created,complaint,mdg))
-
-
-
-            sorted_comp_list = sorted(comp_list, key = (lambda x : x [1]))
-
-
-            sorted_comp_list_data = sorted_comp_list
-            stats ['top_five_comp'] = sorted_comp_list_data
-
-            request.session.flush()
-
-            return render_to_response ('report.html',
-                                       {'stats' : stats})
         else:
             return render_to_response('reportselection.html',
                                       {'form'      : Report(repdata),
@@ -825,6 +870,7 @@ def storedata(request, identifier, codea, codeb, codec):
         repdata.block.add (blkobj)
         repdata.save()
         return HttpResponse()
+
     elif identifier == "GP":
         repdata         = get_repdata_in_session (request)
         blkobj          = Block.objects.get(id = codea)
@@ -849,3 +895,43 @@ def storedata(request, identifier, codea, codeb, codec):
         repdata.save()
         return HttpResponse()
 
+
+def removedata(request, identifier, codea, codeb, codec):
+    if identifier == "DEP":
+        repdata = get_repdata_in_session (request)
+        newdata = repdata.department.get(id = codea)
+        repdata.department.remove(newdata)
+        repdata.save()
+        return HttpResponse()
+
+def data(request, cat, idval):
+    if cat == "blk":
+        repdata = get_repdata_in_session (request)
+        newdata = repdata.block.get(id = idval)
+        repdata.block.remove(newdata)
+        repdata.save()
+        return HttpResponse()
+    elif cat == "gp":
+        repdata = get_repdata_in_session (request)
+        newdata = repdata.gp.get(id = idval)
+        repdata.gp.remove(newdata)
+        repdata.save()
+        return HttpResponse()
+    elif cat == "vill":
+        repdata = get_repdata_in_session (request)
+        newdata = repdata.village.get(id = idval)
+        repdata.village.remove(newdata)
+        repdata.save()
+        return HttpResponse()
+
+
+def savemapdata(request):
+    if request.POST['loctype'] == 'Block':
+        request.session['blkids'].append(request.POST ['locid'])
+        print "hello: ",request.session['blkids']
+#        request.session['blkids'] = ','.join (request.POST ['locid'])
+    elif request.POST['loctype'] == 'Gram Panchayat':
+        request.session['gpds'] = ','.join (request.session ['gpids'].split (',').append (request.POST ['locid']))
+    elif request.POST['loctype'] == 'Village':
+        request.session['villids'] = ','.join (request.session ['villids'].split (',').append (request.POST ['locid']))
+    return HttpResponse()

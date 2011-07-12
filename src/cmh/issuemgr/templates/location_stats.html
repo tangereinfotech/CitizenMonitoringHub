@@ -59,5 +59,12 @@
       <tbody>
     </table>
   </div>
+  <div style="float:right">
+    <form action="/complaint/savemapdata/" method="POST">
+      <input type="hidden" name="locid" value="{{ stats.locid }}">
+      <input type="hidden" name="loctype" value="{{stats.type}}">
+      <input type="submit" name="viewreport" value="Add to Report" class="mapaddreport">
+    </form>
+  </div>
 </div>
 

@@ -355,7 +355,11 @@ class ComplaintTrackForm (forms.Form):
                                    widget = forms.TextInput (attrs = {'size': '50',
                                                                       'autocomplete' : 'off'}))
 
-
+class DateIndex (forms.Form):
+    stdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
+                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
+    endate     = forms.DateField (input_formats = ('%d/%m/%Y',),
+                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
 class ComplaintDisplayParams (forms.Form):
     departments = MultiNumberIdField ()
     datalevel   = forms.ChoiceField (choices = (("villg", "villg"),
@@ -367,12 +371,6 @@ class ComplaintDisplayParams (forms.Form):
     endate      = FormattedDateField ();
 
 class Report (forms.Form):
-    stdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
-                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}),
-                                    required = False)
-    endate      = forms.DateField (input_formats = ('%d/%m/%Y',),
-                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}),
-                                    required = False)
     departments  = forms.ModelMultipleChoiceField(queryset = ComplaintDepartment.objects.all(),
                                                   label    = "Available Departments",
                                                   widget   = forms.Select (attrs = {'style' : 'width:300px;height:150px;',
@@ -401,7 +399,7 @@ class Report (forms.Form):
         if repdata != None:
             self.fields['departments'].queryset = ComplaintDepartment.objects.exclude(id__in = [d.id for d in repdata.department.all ()])
             self.fields['selecteddep'].queryset = repdata.department.all ()
-
+            self.fields['block'].queryset       = Block.objects.all().exclude(id__in = [b.id for b in repdata.block.all()])
 
 
 

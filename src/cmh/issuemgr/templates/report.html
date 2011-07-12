@@ -18,13 +18,132 @@
 <div style="clear:both;width:100%;text-align:center;font-size:24px">
   {{ stats.today }}
 </div>
-
-<center>
-  <table class="tabularlist" style="width:80%">
-    <thead>
+<div class="report_staticpart">
+  <fieldset>
+    <legend>
+      Selected
+    </legend>
+    <h3 style="font-size:10px;">
+      Duration
+    </h3>
+    <table style="font-size:10px;">
       <tr>
-        <th>Complaint Status</th>
-        <th>Number of complaints in status</th>
+        <th>
+          Start Date:
+        </th>
+        <td>
+          {{ staticdata.strtdate }}
+        </td>
+        <td></td>
+        <th>
+          End Date:
+        </th>
+        <td>
+          {{ staticdata.enddate }}
+        </td>
+      </tr>
+    </table>
+    <div class = "tables" style="font-size:10px;">
+      <div style="width:38%;float:left;border:2px solid #ccc;">
+        <h3 style="text-align:center">
+          Departments
+        </h3>
+        <div style="width:100%;height:210px;overflow:auto;">
+          <table class = "tabularlist" >
+            <tr>
+              <th>
+                Code
+              </th>
+              <th>
+                Name
+              </th>
+            </tr>
+            {% for dep in staticdata.department.all %}
+            <tr>
+              <td>
+                {{ dep.code }}
+              </td>
+              <td>
+                {{ dep.name }}
+              </td>
+            </tr>
+            {% endfor%}
+          </table>
+        </div>
+      </div>
+      <div style="width:58%;float:right;border:2px solid #ccc;">
+        <h3 style="text-align:center">
+          Locations
+        </h3>
+        <div style="width:100%;height:210px;overflow:auto;">
+          <table class = "tabularlist">
+            <tr>
+              <th>
+                Blocks
+              </th>
+              <th>
+                Gram Panchayats
+              </th>
+              <th>
+                Villages
+              </th>
+            </tr>
+            {% for blk in staticdata.block.all %}
+            <tr>
+              <td>
+                {{ blk }}
+              </td>
+              <td>
+                --------
+              </td>
+              <td>
+              --------
+              </td>
+            </tr>
+            {% endfor %}
+            {% for gp in staticdata.gp.all %}
+            <tr>
+              <td>
+                {{ gp.block }}
+              </td>
+              <td>
+                {{ gp }}
+              </td>
+              <td>
+                --------
+              </td>
+            </tr>
+            {% endfor %}
+            {% for vill in staticdata.village.all %}
+            <tr>
+              <td>
+                {{ vill.grampanchayat.block }}
+              </td>
+              <td>
+                {{ vill.grampanchayat }}
+              </td>
+              <td>
+                {{ vill }}
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+</div>
+<br/><br/>
+<fieldset>
+  <legend>
+    Report
+  </legend>
+  <center>
+    <table class="tabularlist" style="width:80%">
+      <thead>
+        <tr>
+          <th>Complaint Status</th>
+          <th>Number of complaints in status</th>
       </tr>
     </thead>
     <tbody>
@@ -111,12 +230,65 @@
         <td>{{e.location.name}}</td>
         <td>{{e.location.grampanchayat.name}}</td>
          <td>{{e.complainttype.summary}}</td>
-         <td>{{md.goalnum}}</td>
+         <td>{{md}}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  <form action="." method="post">
+  {% if flag %}
+  <div class="textboxes" width="100%">
+    <h2 align="left">
+      Key points and Suggested Follow-up Actions
+    </h2>
+    <div class = "text-content">
+      <p align = "justify">
+        {{ stats.keypts }}
+      </p>
+    </div>
+    <br />
+    <br /> <br />
+    <h2 align="left">
+      Success Story
+    </h2>
+    <div class = "text-content">
+      <p align = "justify">
+        {{ stats.successtry}}
+      </p>
+    </div>
+    </fieldset>
+    <br/>
+    <div class = "note-content">
+      <p align = "justify">
+        Note: MDGs (Millennium Development Goals) are set of 8 goals to be achieved by year
+        2015, covering issues of Poverty, Hunger, Education, Mother and Child Health, HIV,
+        Employment, Environment which were agreed to by 189 Government Leaders from all
+        over the world in year 2000.
+      </p>
+    </div>
+  </div>
 
+  {% else %}
+  <div class="textboxes" width="100%">
+    <h2 align="left">
+      Key points and Suggested Follow-up Actions
+    </h2>
+    <br />
+    <textarea rows="10" columns="80" name="keypoints" style="width:90%">
+    </textarea>
+    <br /> <br />
+    <h2 align="left">
+      Success Story
+    </h2>
+    <textarea rows="10" columns="80" name="sucess_story" style="width:90%;align:left">
+    </textarea>
+    <br />
+    <input type="submit" name="final_report" value="Final Report" class="btn" style="text-align:center;align:left">
+    </fieldset>
+  </div>
+  <form>
+
+  {% endif %}
 {% endblock %}
 
 {% block body_scripts %}
@@ -175,9 +347,12 @@
 
      $.jqplot('bargraph', {{ stats.bar_chart.scheme_data }},
               {
+
                   title : "OPEN COMPLAINTS",
                   series:[{% for legend in stats.bar_chart.legends %}
-                          {label: "{{ legend|safe }}", renderer : $.jqplot.BarRenderer}{% if not forloop.last %},{% endif %}
+                          {label: "{{ legend|safe }}",
+                           renderer : $.jqplot.BarRenderer,
+                           rendererOptions : {barWidth : {{ stats.bar_chart.width }} } }{% if not forloop.last %},{% endif %}
                           {% endfor %}],
                   axesDefaults: {
                       tickRenderer: $.jqplot.CanvasAxisTickRenderer,

@@ -15,178 +15,158 @@
 {% extends "basewithmenu.html" %}
 {% block page_content %}
 <div style="width:100%; text-align:center;">
-    <div class="report_form" align="center">
-      <form action="/complaint/report/" method="post">
-        {# {% csrf_token %} #}
-        <fieldset  style="width:750px;">
-          <legend>
-            Duration
-          </legend>
-          {% if errorpost %}
-          <table align="center">
-            <tr>
-              <td>
-                <div class="form-field">
-                  <label for="id_stdate" class="id_stdate">Starting Date:</label>
-                  {{ errorpost.stdate.errors }}
-                </div>
-                {{ errorpost.stdate }} <br/>
-              </td>
-              <td></td>
-              <td>
-                <div class="form-field">
-                  <label for="id_endate" class="id_endate">Ending Date:</label>
-                  {{ errorpost.endate.errors }}
-                </div>
-                {{ errorpost.endate }} <br/>
-              </td>
-              <td>
-              </td>
-            </tr>
-          </table>
-          {% else %}
-          <table align="center">
-            <tr>
-              <td>
-                <div class="form-field">
-                  <label for="id_stdate" class="id_stdate">Starting Date:</label>
-                  {{ form.stdate.errors }}
-                </div>
-                {{ form.stdate }} <br/>
-              </td>
-              <td></td>
-              <td>
-                <div class="form-field">
-                  <label for="id_endate" class="id_endate">Ending Date:</label>
-                  {{ form.endate.errors }}
-                </div>
-                {{ form.endate }} <br/>
-              </td>
-              <td>
-              </td>
-            </tr>
-          </table>
-          {% endif %}
-
-        </fieldset>
-        <fieldset  style="width:750px;">
-          <legend>
-            Department
-          </legend>
-          <table style="text-align:center;">
-            <tr>
-              <td>
-                Departments Available<br /><br/>
-                {{ form.departments }}
-              </td>
-              <td style="text-align:center">
-                <input type = "button" value="Add" id = "btnMoveRight" onclick = "fnMoveItems('id_departments','id_selecteddep')" class="btn" style="width:80px" name="hello"><br/>
-                <input type = "button" value="Remove" id = "btnMoveLeft" onclick = "fnMoveItems('id_selecteddep','id_departments')" class="btn" style="width:80px">
-              </td>
-              <td>
-                Departments Selected<br/><br/>
-                {{ form.selecteddep }}
-              </td>
-            </tr>
-          </table>
-        </fieldset>
-        <fieldset  style="width:750px;">
-          <legend>
-            Locations
-          </legend>
-        <table style="text-align:center;width:100%">
-          <tr>
-            <td style="text-align:left;width:20%">
-              Select Block
-            </td>
-            <td style="width:100%">
-              {{ form.block }}
-            </td>
-            <td style="text-align:center;width:10%">
-              <input type="button" value="Add" onclick="appendRow('blk')" class="btn" style="width:80px">
-            </td>
-          </tr>
-          <tr >
-            <td style="text-align:left;width:20%">
-              Select GramPanchayat
-            </td>
-            <td style="width:100%">
-              {{ form.gp }}
-            </td>
-            <td style="text-align:center;width:10%">
-              <input type="button" value="Add" onclick="appendRow('gp')" class="btn" style="width:80px">
-            </td>
-          </tr>
-          <tr>
-            <td style="text-align:left;width:20%">
-              Select Village
-            </td>
-            <td style="width:100%">
-              {{ form.village }}
-            </td>
-            <td style="text-align:center;width:10%">
-              <input type="button" value="Add" onclick="appendRow('vill')" class="btn" style="width:80px">
-            </td>
-          </tr>
-          <tr>
-            <td style="text-align:left;width:20%">
-              Selected Location Details
-            </td>
-            <td colspan="2" style="width:80%">
-              <table class="tabularlist" id="sel_loc">
-                <thead>
-                  <tr>
-                    <th>
-                      Block
-                    </th>
-                    <th>
-                      GramPanchayat
-                    </th>
-                    <th>
-                      Village
-                    </th>
+  <div class="report_form" align="center">
+    {# {% csrf_token %} #}
+    <fieldset  style="width:750px;">
+      <legend>
+        Duration
+      </legend>
+    <input type="text" id="id_stdate" name="stdate" value="01/05/2011" readonly="readonly">
+    <input type="text" id="id_endate" name="endate" value="08/07/2011" readonly="readonly">
+    </fieldset>
+    <fieldset  style="width:750px;">
+      <legend>
+        Department
+      </legend>
+      <table style="text-align:center;">
+        <tr>
+          <td>
+            Departments Available<br /><br/>
+            {{ form.departments }}
+          </td>
+          <td style="text-align:center">
+            <input type = "button" value="Add" id = "btnMoveRight" onclick = "fnMoveItems('id_departments','id_selecteddep','add')" class="btn" style="width:80px" name="hello"><br/>
+            <input type = "button" value="Remove" id = "btnMoveLeft" onclick = "fnMoveItems('id_selecteddep','id_departments','remove')" class="btn" style="width:80px">
+          </td>
+          <td>
+            Departments Selected<br/><br/>
+            {{ form.selecteddep }}
+          </td>
+        </tr>
+      </table>
+    </fieldset>
+    <fieldset  style="width:750px;">
+      <legend>
+        Locations
+      </legend>
+      <table style="text-align:center;width:100%">
+        <tr>
+          <td style="text-align:left;width:20%">
+            Select Block
+          </td>
+          <td style="width:100%">
+            {{ form.block }}
+          </td>
+          <td style="text-align:center;width:10%">
+            <input type="button" value="Add" onclick="appendRow('blk')" class="btn" style="width:80px">
+          </td>
+        </tr>
+        <tr >
+          <td style="text-align:left;width:20%">
+            Select GramPanchayat
+          </td>
+          <td style="width:100%">
+            {{ form.gp }}
+          </td>
+          <td style="text-align:center;width:10%">
+            <input type="button" value="Add" onclick="appendRow('gp')" class="btn" style="width:80px">
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align:left;width:20%">
+            Select Village
+          </td>
+          <td style="width:100%">
+            {{ form.village }}
+          </td>
+          <td style="text-align:center;width:10%">
+            <input type="button" value="Add" onclick="appendRow('vill')" class="btn" style="width:80px">
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align:left;width:20%">
+            Selected Location Details
+          </td>
+          <td colspan="2" style="width:80%">
+            <table class="tabularlist" id="sel_loc">
+              <thead>
+                <tr>
+                  <th>
+                    Block
+                  </th>
+                  <th>
+                    GramPanchayat
+                  </th>
+                  <th>
+                    Village
+                  </th>
+                  <th>
+                    Click to remove
+                  </th>
                 </tr>
-                </thead>
-                <tbody>
-                  {% for b in repdata.block.all %}
-                  <tr>
-                    <td> {{ b }} </td>
-                    <td/>
-                    <td/>
-                  </tr>
-                  {% endfor %}
-                  {% for g in repdata.gp.all %}
-                  <tr>
-                    <td> {{ g.block }} </td>
-                    <td> {{ g }} </td>
-                    <td/>
-                  </tr>
-                  {% endfor %}
-                  {% for v in repdata.village.all %}
-                  <tr>
-                    <td> {{ v.grampanchayat.block }} </td>
-                    <td> {{ v.grampanchayat }} </td>
-                    <td> {{ v }} </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        </table>
-        </fieldset>
-        <table align="center" style="text-align:center;width:830px;">
-          <tr>
-            <td colspan="3">
-              <input type="submit" value="View Report" class="btn" />
-            </td>
-          </tr>
-        </table>
-      </form>
-    </div>
+              </thead>
+              <tbody>
+                {% for b in repdata.block.all %}
+                <tr>
+                  <td> {{ b }} </td>
+                  <td/>
+                  <td/>
+                  <form action="/complaint/report/" method="POST" id="formloc-" + "{{ b.id }}">
+                    <td>
+                      <input type="hidden" value="{{ b.id }}" name="blk">
+                      <input type="submit" value="Remove" name="removebutt" onclick="doTableDelete (this.parentNode.parentNode.rowIndex, {{ b.id }})" class="btn" style="width:80px">
+                    </td>
+                  </form>
+                </tr>
+
+                {% endfor %}
+                {% for g in repdata.gp.all %}
+                <tr>
+                  <td> {{ g.block }} </td>
+                  <td> {{ g }} </td>
+                  <td/>
+                  <form action="/complaint/report/" method="POST" id="formloc-" + "{{ g.id }}">
+                    <td>
+                      <input type="hidden" value="{{ g.block.id }}" name="block">
+                      <input type="hidden" value="{{ g.id }}" name="gp">
+                      <input type="submit" value="Remove" name="removebutt" onclick="doTableDelete (this.parentNode.parentNode.rowIndex, {{ g.id }})" class="btn" style="width:80px">
+                    </td>
+                  </form>
+                </tr>
+                {% endfor %}
+                {% for v in repdata.village.all %}
+                <tr>
+                  <td> {{ v.grampanchayat.block }} </td>
+                  <td> {{ v.grampanchayat }} </td>
+                  <td> {{ v }} </td>
+                  <form action="/complaint/report/" method="POST"  id="formloc-" + "{{ v.id }}">
+                    <td>
+                      <input type="hidden" value="{{ v.grampanchayat.block.id }}" name="block">
+                      <input type="hidden" value="{{ v.grampanchayat.id }}" name="grampanchayat">
+                      <input type="hidden" value="{{ v.id }}" name="vill">
+                      <input type="submit" value="Remove" name="removebutt" onclick="doTableDelete (this.parentNode.parentNode.rowIndex, {{ v.id }})" class="btn" style="width:80px">
+                    </td>
+                  </form>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </fieldset>
+    <form action ="/complaint/report/" method="POST">
+      <table align="center" style="text-align:center;width:830px;">
+        <tr>
+          <td colspan="3">
+            <input type="submit" value="View Report" name="initial_report" class="btn" />
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
 </div>
 <script type="text/javascript" src="/static/js/DateTimeHandler.js"></script>
-<script type="text/javascript" src="/static/js/customAlert.js"></script>
 <script type="text/javascript" src="/static/js/reportSelectors.js"></script>
 <script type="text/javascript">
 $(document).ready (function () {

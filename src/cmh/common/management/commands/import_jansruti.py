@@ -17,7 +17,8 @@ import xlrd
 import sys
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
+from random import random
 
 from optparse import make_option, OptionParser
 from django.core.management.base import BaseCommand, CommandError
@@ -45,6 +46,13 @@ COL_GRAM_CODE = 4
 COL_CITI_NAME = 5
 COL_COMP_DESC = 6
 COL_COMP_REMK = 7
+
+now_time = datetime.now  ()
+NUM_DATES = 50
+AGOS = []
+for ds in range (NUM_DATES):
+    AGOS.append (now_time - timedelta (days = ds))
+
 
 class Command (BaseCommand):
     help = """This utility parses an Excel file for JanSruti complaints. The spreadsheet must comply to the format agreed upon earlier
@@ -148,6 +156,12 @@ class Command (BaseCommand):
                                           location = village,
                                           logdate = datetime.today ())
             update_complaint_sequence (c)
+
+            randpos  = int (random () * NUM_DATES)
+            backdate = AGOS [randpos]
+            c.created    = backdate
+            c.createdate = backdate
+            c.save ()
 
     def parse_complete (self):
         print "Done"

@@ -23,11 +23,18 @@ from cmh.common.models import ComplaintType, ComplaintDepartment
 
 from cmh.issuemgr.models import Complaint
 
+from cmh.issuemgr.forms import DateIndex
+
 def index (request):
     departments = ComplaintDepartment.objects.all ()
+    request.session ['blkids']  = []
+    request.session ['villids'] = []
+    request.session ['gpids']   = []
+    request.session ['depids']  = []
     return render_to_response ('index.html', {'menus' : get_user_menus (request.user,index),
-                                              'user' : request.user,
-                                              'map' : {'center_lat' : 23.10847,
+                                              'user'  : request.user,
+                                              'form'  : DateIndex(),
+                                              'map'   : {'center_lat' : 23.10847,
                                                        'center_long' : 76.989098},
                                               'departments' : departments})
 

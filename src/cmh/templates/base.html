@@ -26,6 +26,7 @@
     <script language="javascript" type="text/javascript" src="/static/jquery/js/excanvas.min.js"></script>
     <![endif]-->
     <script type="text/javascript" src="/static/jquery/js/jquery-1.6.1.min.js"></script>
+    <script type="text/javascript" src="/static/js/customAlert.js"></script>
     <script type="text/javascript" src="/static/jquery/js/jquery-ui-1.8.11.custom.min.js"></script>
     <script type="text/javascript" src="/static/jquery/js/jqplot/jquery.jqplot.min.js"></script>
     {% block extra_heads %} {% endblock %}
@@ -34,7 +35,11 @@
   <body {% block onload_block %}{%endblock%}>
     <div class="content_wrapper">
           <div class="aboutpanel">
-            <a href="aboutus">About Us</a>
+            <ul class="sysnav">
+              <li><a href="aboutus">About Us</a></li>
+              <li>|</li>
+              <li><a href="/">Home</a></li>
+            </ul>
           </div>
       {% block base_content %} {% endblock %}
     </div>

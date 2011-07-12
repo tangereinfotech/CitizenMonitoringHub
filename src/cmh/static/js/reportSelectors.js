@@ -1,9 +1,9 @@
 var blkcheckarray = new Array(), gpcheckarray = new Array(), vcheckarray = new Array();
 var blkcount=0, gpcount=0, vcount=0;
 
-function fnMoveItems(box1,box2) {
-    var varFromBox = document.all(box1);
-    var varToBox = document.all(box2);
+function fnMoveItems(box1,box2,identifier) {
+    var varFromBox = document.getElementById(box1);
+    var varToBox = document.getElementById(box2);
     if ((varFromBox != null) && (varToBox != null))
     {
         if(varFromBox.length < 1)
@@ -25,11 +25,21 @@ function fnMoveItems(box1,box2) {
             newOption.value = varFromBox.options[varFromBox.options.selectedIndex].value;
             varToBox.options[varToBox.length] = newOption; //Append the item in Target Listbox
 
-            $.post ("/complaint/storedata/DEP/"  + newOption.value + "/" + 0 + "/" + 0 +"/",
-                    {},
-                    function (data, textStatus, jqXHR) {
-                    })
+            if (identifier == 'add')
+            {
 
+                $.post ("/complaint/storedata/DEP/"  + newOption.value + "/" + 0 + "/" + 0 +"/",
+                        {},
+                        function (data, textStatus, jqXHR) {
+                        })
+            }
+            else if (identifier == 'remove')
+            {
+                $.post ("/complaint/removedata/DEP/"  + newOption.value + "/" + 0 + "/" + 0 +"/",
+                        {},
+                        function (data, textStatus, jqXHR) {
+                        })
+            }
 
             varFromBox.remove(varFromBox.options.selectedIndex); //Remove the item from Source Listbox
         }
@@ -43,6 +53,7 @@ function appendRow(val) {
     {
         var tbl = document.getElementById('sel_loc'); // table reference
         var flag=0;
+        var count=0;
         var textb = document.getElementById("id_block");
         var selectedval;
         if(textb.value != ''){
@@ -70,12 +81,22 @@ function appendRow(val) {
                         {
                             selectedval = textb.options[i].text;
                             createCell(row.insertCell(0), selectedval, 'row');
+                            break;
                         }
+                        count++;
                     }
-                    for (i = 1; i < tbl.rows[0].cells.length; i++)
+                    for (i = 1; i < (tbl.rows[0].cells.length)-1; i++)
                     {
                         createCell(row.insertCell(i), '-----' , 'row');
                     }
+                    var cell2 = row.insertCell((tbl.rows[0].cells.length)-1);
+		            var btnEl = document.createElement('input');
+		            btnEl.setAttribute('type', 'button');
+		            btnEl.setAttribute('value', 'Remove');
+		            btnEl.setAttribute('class', 'btn');
+		            btnEl.setAttribute('style', 'width:80px');
+		            btnEl.onclick =Redirector("BLK",textb.value, 0, 0, row);
+		            cell2.appendChild(btnEl);
                 }
                 blkcheckarray[blkcount] = textb.value;
                 blkcount++;
@@ -93,12 +114,22 @@ function appendRow(val) {
                     {
                         selectedval = textb.options[i].text;
                         createCell(row.insertCell(0), selectedval, 'row');
+                        break;
                     }
+                    count++;
                 }
-                for (i = 1; i < tbl.rows[0].cells.length; i++)
+                for (i = 1; i < (tbl.rows[0].cells.length)-1; i++)
                 {
                     createCell(row.insertCell(i), '-----' , 'row');
                 }
+                var cell2 = row.insertCell((tbl.rows[0].cells.length)-1);
+		        var btnEl = document.createElement('input');
+		        btnEl.setAttribute('type', 'button');
+		        btnEl.setAttribute('value', 'Remove');
+		        btnEl.setAttribute('class', 'btn');
+		        btnEl.setAttribute('style', 'width:80px');
+                btnEl.onclick =Redirector("BLK",textb.value, 0, 0, row);
+		        cell2.appendChild(btnEl);
                 blkcheckarray[blkcount] = textb.value;
                 blkcount++;
             }
@@ -106,13 +137,15 @@ function appendRow(val) {
         else{
             alert("Invalid Selection","Select a valid Block option");
         }
-
+        document.getElementById("id_block").options.remove(count);
+        document.getElementById("id_gp").options.length=1;
 
     }
     if (val == 'gp')
     {
         var tbl = document.getElementById('sel_loc'); // table reference
         var flag=0;
+        var count=0;
         var textc = document.getElementById("id_gp");
         var textb = document.getElementById("id_block");
         var selectedval;
@@ -150,12 +183,22 @@ function appendRow(val) {
                         {
                             selectedval = textc.options[i].text;
                             createCell(row.insertCell(1), selectedval, 'row');
+                            break;
                         }
+                        count++;
                     }
-                    for (i = 2; i < tbl.rows[0].cells.length; i++)
+                    for (i = 2; i < (tbl.rows[0].cells.length)-1; i++)
                     {
                         createCell(row.insertCell(i), '-----' , 'row');
                     }
+                    var cell2 = row.insertCell((tbl.rows[0].cells.length)-1);
+		            var btnEl = document.createElement('input');
+		            btnEl.setAttribute('type', 'button');
+		            btnEl.setAttribute('value', 'Remove');
+		            btnEl.setAttribute('class', 'btn');
+		            btnEl.setAttribute('style', 'width:80px');
+		            btnEl.onclick =Redirector("GP",textb.value, textc.value, 0, row);
+		            cell2.appendChild(btnEl);
                     gpcheckarray[gpcount] = textc.value;
                     gpcount++;
                 }
@@ -181,12 +224,22 @@ function appendRow(val) {
                     {
                         selectedval = textc.options[i].text;
                         createCell(row.insertCell(1), selectedval, 'row');
+                        break;
                     }
+                    count++;
                 }
-                for (i = 2; i < tbl.rows[0].cells.length; i++)
+                for (i = 2; i < (tbl.rows[0].cells.length)-1; i++)
                 {
                     createCell(row.insertCell(i), '-----' , 'row');
                 }
+                var cell2 = row.insertCell((tbl.rows[0].cells.length)-1);
+		        var btnEl = document.createElement('input');
+		        btnEl.setAttribute('type', 'button');
+		        btnEl.setAttribute('value', 'Remove');
+		        btnEl.setAttribute('class', 'btn');
+		        btnEl.setAttribute('style', 'width:80px');
+		        btnEl.onclick = Redirector("GP", textb.value, textc.value, 0, row);
+		        cell2.appendChild(btnEl);
                 gpcheckarray[gpcount] = textc.value;
                 gpcount++;
 
@@ -196,13 +249,15 @@ function appendRow(val) {
         {
             alert("Invalid Selection","Select a valid GramPanchayat");
         }
-
+        document.getElementById("id_gp").options.remove(count);
+        document.getElementById("id_village").options.length=1;
     }
 
     if (val == 'vill')
     {
         var tbl = document.getElementById('sel_loc'); // table reference
         var flag=0;
+        var count=0;
         var texta = document.getElementById("id_village");
         var textb = document.getElementById("id_gp");
         var textc = document.getElementById("id_block");
@@ -249,8 +304,18 @@ function appendRow(val) {
                         {
                             selectedval = texta.options[i].text;
                             createCell(row.insertCell(2), selectedval, 'row');
+                            break;
                         }
+                        count++;
                     }
+                    var cell2 = row.insertCell((tbl.rows[0].cells.length)-1);
+		            var btnEl = document.createElement('input');
+		            btnEl.setAttribute('type', 'button');
+		            btnEl.setAttribute('value', 'Remove');
+		            btnEl.setAttribute('class', 'btn');
+		            btnEl.setAttribute('style', 'width:80px');
+		            btnEl.onclick =Redirector("VILL", textc.value, textb.value, texta.value, row);
+		            cell2.appendChild(btnEl);
                     vcheckarray[vcount] = texta.value;
                     vcount++;
                 }
@@ -284,8 +349,18 @@ function appendRow(val) {
                     {
                         selectedval = texta.options[i].text;
                         createCell(row.insertCell(2), selectedval, 'row');
+                        break;
                     }
+                    count++;
                 }
+                var cell2 = row.insertCell((tbl.rows[0].cells.length)-1);
+		        var btnEl = document.createElement('input');
+		        btnEl.setAttribute('type', 'button');
+		        btnEl.setAttribute('value', 'Remove');
+		        btnEl.setAttribute('class', 'btn');
+		        btnEl.setAttribute('style', 'width:80px');
+		        btnEl.onclick = Redirector("VILL", textc.value, textb.value, texta.value,row);
+		        cell2.appendChild(btnEl);
                 vcheckarray[vcount] = texta.value;
                 vcount++;
             }
@@ -294,7 +369,7 @@ function appendRow(val) {
         {
             alert("Invalid Selection","Select a valid Village");
         }
-
+        document.getElementById("id_village").options.remove(count);
     }
 
 }
@@ -308,5 +383,78 @@ function createCell(cell, text, style) {
     div.setAttribute('className', style);    // set DIV class attribute for IE (?!)
     cell.appendChild(div);                   // append DIV to the table cell
 }
+function Redirector(cat, code1, code2, code3, obj)
+{
+    return function()
+    {
+        deleteRow(cat, code1, code2, code3, obj);
+    };
+}
+function deleteRow(category,bval,gpval,vval,obj)
+{
+    if (category == "BLK")
+    {
+        $.post ("/complaint/data/blk/"  + bval +"/",
+                {},
+                function (data, textStatus, jqXHR) {
+                })
 
+        for (var i=0; i<blkcheckarray.length; i++)
+        {
+
+            if(blkcheckarray[i]==bval)
+            {
+                blkcheckarray.splice(i,1);
+            }
+        }
+    }
+    else if (category == "GP")
+    {
+        $.post ("/complaint/data/gp/"  + gpval +"/",
+                {},
+                function (data, textStatus, jqXHR) {
+                })
+
+        for (var i=0; i<gpcheckarray.length; i++)
+        {
+
+            if(gpcheckarray[i]==gpval)
+            {
+                gpcheckarray.splice(i,1);
+            }
+        }
+
+    }
+    else if (category == "VILL")
+    {
+        $.post ("/complaint/data/vill/"  + vval +"/",
+                {},
+                function (data, textStatus, jqXHR) {
+                })
+
+        for (var i=0; i<vcheckarray.length; i++)
+        {
+
+            if(vcheckarray[i]==vval)
+            {
+                vcheckarray.splice(i,1);
+            }
+        }
+    }
+    var delrow=obj.rowIndex;
+    document.getElementById('sel_loc').deleteRow(delrow);
+}
+function doTableDelete (rowindex, id)
+{
+    var formid = "formloc-" + id;
+    var form = document.getElementById (formid);
+    form.submit ();
+    htmldelete (rowindex);
+
+}
+
+function htmldelete(obj)
+{
+    document.getElementById('sel_loc').deleteRow(obj);
+}
 

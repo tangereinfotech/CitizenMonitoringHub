@@ -32,6 +32,16 @@ img {
 fieldset {
    padding: 10px;
 }
+.mapaddreport{
+    text-decoration:underline;
+    border:0px;
+    padding:0px;
+    white-space:none;
+    background-color: white;
+    color:blue;
+    style:link;
+}
+
 
 .content_wrapper {
    padding: 2px 10px;
@@ -94,6 +104,17 @@ div.about-content{
     padding-right:125px;
     padding-top: 10px;
     padding-bottom: 10px;
+}
+div.note-content{
+    padding-left:60px;
+    padding-right:60px;
+}
+div.text-content{
+    padding-left:60px;
+    padding-right:60px;
+}
+div.tables{
+    display:inline;
 }
 div.userpanel {
    float: right;
@@ -654,4 +675,15 @@ font:0.7em verdana,arial;
 text-transform:uppercase;
 text-align:center;
 text-decoration:none;
+}
+
+ul.sysnav {
+    list-style-type : none;
+    display: inline;
+    margin: 0px;
+    padding: 0px;
+}
+
+ul.sysnav li {
+    display: inline;
 }
