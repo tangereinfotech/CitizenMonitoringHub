@@ -45,9 +45,7 @@
     </table>
     <div class = "tables" style="font-size:10px;">
       <div style="width:38%;float:left;border:2px solid #ccc;">
-        <h3 style="text-align:center">
-          Departments
-        </h3>
+        <h3 style="text-align:center"> Departments </h3>
         <div style="width:100%;height:210px;overflow:auto;">
           <table class = "tabularlist" >
             <tr>
@@ -131,6 +129,12 @@
         </div>
       </div>
     </div>
+    <div style="width:100%;text-align:right">
+      <form action="/complaint/report/" method="POST">
+        <input type="hidden" name="repdataid" value="{{ repdataid }}">
+        <input type="submit" name="edit" value="Edit Departments and Locations" class="btn">
+      </form>
+    </div>
   </fieldset>
 </div>
 <br/><br/>
@@ -144,9 +148,9 @@
         <tr>
           <th>Complaint Status</th>
           <th>Number of complaints in status</th>
-      </tr>
-    </thead>
-    <tbody>
+        </tr>
+      </thead>
+      <tbody>
       <tr>
         <td>New</td>
         <td>{{stats.new_count}}</td>
@@ -167,128 +171,120 @@
         <td>Closed</td>
         <td>{{stats.clo_count}}</td>
       </tr>
-    </tbody>
-  </table>
-</center>
-<br/><br/><br/>
-<center>
-  <div id="bargraph" style="width:90%;height:400px">
-  </div>
-</center>
-<br/><br/><br/>
-<center>
-  <div id="linegraph" style="width:90%;height:400px">
-  </div>
-</center>
+      </tbody>
+    </table>
+  </center>
+  <br/><br/><br/>
+  <center>
+    <div id="bargraph" style="width:90%;height:400px">
+    </div>
+  </center>
+  <br/><br/><br/>
+  <center>
+    <div id="linegraph" style="width:90%;height:400px">
+    </div>
+  </center>
 
-<div style="text-align:left">
-  <h2>Hot Issues</h2>
+  <div style="text-align:left">
+    <h2>Hot Issues</h2>
+  </div>
+  <center>
+    <table class="tabularlist">
+      <thead>
+        <tr>
+          <th>Sr.<br/>No.</th>
+          <th>Scheme</th>
+          <th>Department</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in stats.hot_issues %}
+        <tr>
+          <td>{{e.slno}}</td>
+          <td>{{e.scheme}}</td>
+          <td>{{e.name}}</td>
+          <td>{{e.count}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </center>
+
+  <div style="text-align:left">
+    <h2>Top Five Complaints</h2>
+  </div>
+  <center>
+    <table class="tabularlist">
+      <thead>
+        <tr>
+          <th>Time in<br/>System</th>
+          <th>Department<br/>code</th>
+          <th>Village</th>
+          <th>GP</th>
+          <th>Issue Details</th>
+          <th>MDGs*<br />Covered</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for dur,e,md in stats.top_five_comp %}
+        <tr>
+          <td>{{ dur }}</td>
+          <td>{{e.department.code}}</td>
+          <td>{{e.location.name}}</td>
+          <td>{{e.location.grampanchayat.name}}</td>
+          <td>{{e.complainttype.summary}}</td>
+          <td>{{md}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <form action="/complaint/report/" method="post">
+      {% if flag %}
+      <div class="textboxes" width="100%">
+        <h2 align="left"> Key points and Suggested Follow-up Actions </h2>
+        <div class = "text-content">
+          <p align = "justify">
+            {{ stats.keypts }}
+          </p>
+        </div>
+        <br />
+        <br /> <br />
+        <h2 align="left"> Success Story </h2>
+        <div class = "text-content">
+          <p align = "justify">
+            {{ stats.successtry}}
+          </p>
+        </div>
+        <br/>
+      </div>
+
+      {% else %}
+      <div class="textboxes" width="100%">
+        <h2 align="left"> Key points and Suggested Follow-up Actions </h2>
+        <br />
+        <textarea rows="10" columns="80" name="keypoints" style="width:90%"></textarea>
+        <br /> <br />
+        <h2 align="left"> Success Story </h2>
+        <textarea rows="10" columns="80" name="sucess_story" style="width:90%;align:left"></textarea>
+        <br />
+        <input type="hidden" name="repdataid" value="{{repdataid}}">
+        <input type="submit" name="final_report" value="Final Report" class="btn" style="text-align:center;align:left">
+      </div>
+      {% endif %}
+    </form>
+  </center>
+</fieldset>
+{% if flag %}
+<div class = "note-content">
+  <p align = "justify">
+    Note: MDGs (Millennium Development Goals) are set of 8 goals to be achieved by year
+    2015, covering issues of Poverty, Hunger, Education, Mother and Child Health, HIV,
+    Employment, Environment which were agreed to by 189 Government Leaders from all
+    over the world in year 2000.
+  </p>
 </div>
-<center>
-  <table class="tabularlist">
-    <thead>
-      <tr>
-        <th>Sr.<br/>No.</th>
-        <th>Scheme</th>
-        <th>Department</th>
-        <th>Count</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for e in stats.hot_issues %}
-      <tr>
-        <td>{{e.slno}}</td>
-        <td>{{e.scheme}}</td>
-        <td>{{e.name}}</td>
-        <td>{{e.count}}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</center>
-
- <div style="text-align:left">
-  <h2>Top Five Complaints</h2>
-</div>
- <center>
-  <table class="tabularlist">
-    <thead>
-      <tr>
-        <th>Time in<br/>System</th>
-        <th>Department<br/>code</th>
-        <th>Village</th>
-        <th>GP</th>
-        <th>Issue Details</th>
-        <th>MDGs*<br />Covered</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for dur,e,md in stats.top_five_comp %}
-      <tr>
-        <td>{{ dur }}</td>
-        <td>{{e.department.code}}</td>
-        <td>{{e.location.name}}</td>
-        <td>{{e.location.grampanchayat.name}}</td>
-         <td>{{e.complainttype.summary}}</td>
-         <td>{{md}}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <form action="." method="post">
-  {% if flag %}
-  <div class="textboxes" width="100%">
-    <h2 align="left">
-      Key points and Suggested Follow-up Actions
-    </h2>
-    <div class = "text-content">
-      <p align = "justify">
-        {{ stats.keypts }}
-      </p>
-    </div>
-    <br />
-    <br /> <br />
-    <h2 align="left">
-      Success Story
-    </h2>
-    <div class = "text-content">
-      <p align = "justify">
-        {{ stats.successtry}}
-      </p>
-    </div>
-    </fieldset>
-    <br/>
-    <div class = "note-content">
-      <p align = "justify">
-        Note: MDGs (Millennium Development Goals) are set of 8 goals to be achieved by year
-        2015, covering issues of Poverty, Hunger, Education, Mother and Child Health, HIV,
-        Employment, Environment which were agreed to by 189 Government Leaders from all
-        over the world in year 2000.
-      </p>
-    </div>
-  </div>
-
-  {% else %}
-  <div class="textboxes" width="100%">
-    <h2 align="left">
-      Key points and Suggested Follow-up Actions
-    </h2>
-    <br />
-    <textarea rows="10" columns="80" name="keypoints" style="width:90%">
-    </textarea>
-    <br /> <br />
-    <h2 align="left">
-      Success Story
-    </h2>
-    <textarea rows="10" columns="80" name="sucess_story" style="width:90%;align:left">
-    </textarea>
-    <br />
-    <input type="submit" name="final_report" value="Final Report" class="btn" style="text-align:center;align:left">
-    </fieldset>
-  </div>
-  <form>
-
-  {% endif %}
+{% endif %}
 {% endblock %}
 
 {% block body_scripts %}

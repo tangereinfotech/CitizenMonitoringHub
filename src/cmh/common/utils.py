@@ -297,3 +297,13 @@ def get_datatables_records(request, querySet, columnIndexNameMap, jsonTemplatePa
     #prevent from caching datatables result
     add_never_cache_headers(response)
     return response
+
+
+def get_session_data (request, key):
+    try:
+        return request.session [key]
+    except KeyError:
+        return ""
+
+def set_session_data (request, key, value):
+    request.session [key] = value

@@ -415,3 +415,9 @@ class ReportForm(forms.Form):
     endate = forms.DateField (input_formats = ('%d/%m/%Y',),
                               widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
     deptids = MultiNumberIdField ()
+
+class ReportDataValid(forms.Form):
+    deptids = MultiNumberIdField ()
+    blkid   = MultiNumberIdField (required=False)
+    gpid    = MultiNumberIdField (required=False)
+    villid  = MultiNumberIdField (required=False)

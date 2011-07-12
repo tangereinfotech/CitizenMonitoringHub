@@ -21,8 +21,8 @@
       <legend>
         Duration
       </legend>
-    <input type="text" id="id_stdate" name="stdate" value="01/05/2011" readonly="readonly">
-    <input type="text" id="id_endate" name="endate" value="08/07/2011" readonly="readonly">
+      <input type="text" id="id_stdate" name="stdate" value="{{repdata.strtdate|date:'d/m/Y'}}" readonly="readonly">
+      <input type="text" id="id_endate" name="endate" value="{{repdata.enddate|date:'d/m/Y'}}" readonly="readonly">
     </fieldset>
     <fieldset  style="width:750px;">
       <legend>
@@ -35,8 +35,8 @@
             {{ form.departments }}
           </td>
           <td style="text-align:center">
-            <input type = "button" value="Add" id = "btnMoveRight" onclick = "fnMoveItems('id_departments','id_selecteddep','add')" class="btn" style="width:80px" name="hello"><br/>
-            <input type = "button" value="Remove" id = "btnMoveLeft" onclick = "fnMoveItems('id_selecteddep','id_departments','remove')" class="btn" style="width:80px">
+            <input type = "button" value="Add" id = "btnMoveRight" onclick = "fnMoveItems('id_departments','id_selecteddep','add', {{ repdata.id }})" class="btn" style="width:80px" name="hello"><br/>
+            <input type = "button" value="Remove" id = "btnMoveLeft" onclick = "fnMoveItems('id_selecteddep','id_departments','remove', {{ repdata.id }})" class="btn" style="width:80px">
           </td>
           <td>
             Departments Selected<br/><br/>
@@ -58,7 +58,7 @@
             {{ form.block }}
           </td>
           <td style="text-align:center;width:10%">
-            <input type="button" value="Add" onclick="appendRow('blk')" class="btn" style="width:80px">
+            <input type="button" value="Add" onclick="appendRow('blk', {{ repdata.id }})" class="btn" style="width:80px">
           </td>
         </tr>
         <tr >
@@ -69,7 +69,7 @@
             {{ form.gp }}
           </td>
           <td style="text-align:center;width:10%">
-            <input type="button" value="Add" onclick="appendRow('gp')" class="btn" style="width:80px">
+            <input type="button" value="Add" onclick="appendRow('gp', {{ repdata.id }})" class="btn" style="width:80px">
           </td>
         </tr>
         <tr>
@@ -80,7 +80,7 @@
             {{ form.village }}
           </td>
           <td style="text-align:center;width:10%">
-            <input type="button" value="Add" onclick="appendRow('vill')" class="btn" style="width:80px">
+            <input type="button" value="Add" onclick="appendRow('vill', {{ repdata.id }})" class="btn" style="width:80px">
           </td>
         </tr>
         <tr>
@@ -113,6 +113,7 @@
                   <td/>
                   <form action="/complaint/report/" method="POST" id="formloc-" + "{{ b.id }}">
                     <td>
+                      <input type="hidden" value="{{ repdata.id }}" name="repdataid">
                       <input type="hidden" value="{{ b.id }}" name="blk">
                       <input type="submit" value="Remove" name="removebutt" onclick="doTableDelete (this.parentNode.parentNode.rowIndex, {{ b.id }})" class="btn" style="width:80px">
                     </td>
@@ -127,7 +128,7 @@
                   <td/>
                   <form action="/complaint/report/" method="POST" id="formloc-" + "{{ g.id }}">
                     <td>
-                      <input type="hidden" value="{{ g.block.id }}" name="block">
+                      <input type="hidden" value="{{ repdata.id }}" name="repdataid">
                       <input type="hidden" value="{{ g.id }}" name="gp">
                       <input type="submit" value="Remove" name="removebutt" onclick="doTableDelete (this.parentNode.parentNode.rowIndex, {{ g.id }})" class="btn" style="width:80px">
                     </td>
@@ -141,8 +142,7 @@
                   <td> {{ v }} </td>
                   <form action="/complaint/report/" method="POST"  id="formloc-" + "{{ v.id }}">
                     <td>
-                      <input type="hidden" value="{{ v.grampanchayat.block.id }}" name="block">
-                      <input type="hidden" value="{{ v.grampanchayat.id }}" name="grampanchayat">
+                      <input type="hidden" value="{{ repdata.id }}" name="repdataid">
                       <input type="hidden" value="{{ v.id }}" name="vill">
                       <input type="submit" value="Remove" name="removebutt" onclick="doTableDelete (this.parentNode.parentNode.rowIndex, {{ v.id }})" class="btn" style="width:80px">
                     </td>
@@ -155,10 +155,11 @@
         </tr>
       </table>
     </fieldset>
-    <form action ="/complaint/report/" method="POST">
+    <form action ="/complaint/edit_report/" method="POST">
       <table align="center" style="text-align:center;width:830px;">
         <tr>
           <td colspan="3">
+            <input type="hidden" name="repdataid" value="{{ repdata.id }}">
             <input type="submit" value="View Report" name="initial_report" class="btn" />
           </td>
         </tr>
@@ -166,12 +167,9 @@
     </form>
   </div>
 </div>
-<script type="text/javascript" src="/static/js/DateTimeHandler.js"></script>
 <script type="text/javascript" src="/static/js/reportSelectors.js"></script>
 <script type="text/javascript">
 $(document).ready (function () {
-    $("#id_stdate").datepicker ({dateFormat : 'dd/mm/yy'});
-    $("#id_endate").datepicker ({dateFormat : 'dd/mm/yy'});
     $("#id_block").change(function(){
         $.getJSON ("/masters/getgpinblocks/",
                    {blockid : $(this).val ()},

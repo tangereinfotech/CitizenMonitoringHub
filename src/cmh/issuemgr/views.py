@@ -34,6 +34,7 @@ from cmh.common.models import AppRole, ComplaintDepartment
 
 from cmh.common.utils import debug, daterange
 from cmh.common.utils import get_datatables_records
+from cmh.common.utils import get_session_data, set_session_data
 
 from cmh.issuemgr.constants import STATUS_NEW, STATUS_REOPEN, STATUS_ACK
 from cmh.issuemgr.constants import STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED
@@ -41,7 +42,7 @@ from cmh.issuemgr.constants import HotComplaintPeriod
 
 from cmh.issuemgr.models import Complaint
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox, Report
-from cmh.issuemgr.forms import ComplaintTrackForm, LocationStatsForm, ReportForm
+from cmh.issuemgr.forms import ComplaintTrackForm, LocationStatsForm, ReportForm, ReportDataValid
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX, ComplaintDisplayParams
 
@@ -52,7 +53,6 @@ from cmh.usermgr.utils import get_user_menus
 
 
 def index (request):
-    print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++", request.session['blkids']
     if request.method == 'GET':
         try:
             form = ComplaintForm ()
@@ -615,37 +615,42 @@ def combine_dept_data (cstats, drange):
 
 
 from cmh.issuemgr.models import ReportData
-SESSION_REPORT_ID = 'report-id'
-
-def get_repdata_in_session (request):
-    if SESSION_REPORT_ID in request.session:
-        repdata = ReportData.objects.get (id = int (request.session [SESSION_REPORT_ID]))
-    else:
-        repdata = ReportData.objects.create ()
-        request.session [SESSION_REPORT_ID] = str (repdata.id)
-
-    print "repdata.id ", repdata.id
-
-    return repdata
 
 def get_report_stats (repdata):
+    def get_scheme_data (mydict, lschemes):
+        retdata = []
+        for cclass in lschemes:
+            try:
+                retdata.append (mydict [cclass])
+            except KeyError:
+                retdata.append (0)
+        return retdata
+
     stats = {'today' : repdata.enddate.strftime ("%d %B, %Y")}
 
     deptids     = [dept.id for dept in repdata.department.all()]
     complaints = Complaint.objects.filter (latest = True, department__id__in = deptids)
 
+    locq = None
     if repdata.block.all ().count () != 0:
-        complaints = complaints.filter (location__grampanchayat__block__id__in = [b.id for b in repdata.block.all ()])
+        locq = Q (location__grampanchayat__block__id__in = [b.id for b in repdata.block.all ()])
 
     if repdata.gp.all ().count () != 0:
-        complaints = complaints.filter (location__grampanchayat__id__in = [b.id for b in repdata.gp.all ()])
+        if locq != None:
+            locq = locq | Q (location__grampanchayat__id__in = [b.id for b in repdata.gp.all ()])
+        else:
+            locq = Q (location__grampanchayat__id__in = [b.id for b in repdata.gp.all ()])
 
     if repdata.village.all ().count () != 0:
-        complaints = complaints.filter (location__id__in = [b.id for b in repdata.village.all ()])
+        if locq != None:
+            locq = locq | Q (location__id__in = [b.id for b in repdata.village.all ()])
+        else:
+            locq = Q (location__id__in = [b.id for b in repdata.village.all ()])
+
+    complaints = complaints.filter (locq)
 
     #Complaints before the end date
     end_complaints = complaints.filter (createdate__lte = repdata.enddate)
-
 
     #report_health_check
     end_new_complaints = end_complaints.filter (curstate = STATUS_NEW)
@@ -672,15 +677,6 @@ def get_report_stats (repdata):
     bar_clo_scheme_data = dict ([(bcc ['complainttype__cclass'], bcc ['count']) for bcc in bar_clo_complaints])
 
     schemes     = list (set (bar_new_scheme_data.keys () + bar_ack_scheme_data.keys () + bar_res_scheme_data.keys () + bar_clo_scheme_data.keys ()))
-
-    def get_scheme_data (mydict, lschemes):
-        retdata = []
-        for cclass in lschemes:
-            try:
-                retdata.append (mydict [cclass])
-            except KeyError:
-                retdata.append (0)
-        return retdata
 
     new_counts = get_scheme_data (bar_new_scheme_data, schemes)
     ack_counts = get_scheme_data (bar_ack_scheme_data, schemes)
@@ -714,8 +710,6 @@ def get_report_stats (repdata):
 
     ymax = max ([lpd [1] for lpd in line_prev_data] + [0])
     line_prev_data = dict (line_prev_data)
-
-
 
     last_date_data = {}
     linescheme_data = {}
@@ -797,9 +791,9 @@ def initial_report (request):
         else:
             depts = ComplaintDepartment.objects.filter (id__in = deptids)
 
-        blkids  = request.session ['blkids']
-        gpids   = request.session ['gpids']
-        villids = request.session ['villids']
+        blkids  = get_session_data (request, 'blkids')
+        gpids   = get_session_data (request, 'gpids')
+        villids = get_session_data (request, 'villids')
 
         request.session.flush ()
 
@@ -819,139 +813,101 @@ def initial_report (request):
         repdata.save ()
 
         stats = get_report_stats (repdata)
-
         return render_to_response ('report.html', {'stats' : stats,
                                                    'flag'  : False,
+                                                   'repdataid'  : repdata.id,
                                                    'staticdata' : repdata})
-    else:
-        print form.errors
+
+def edit_report (request):
+    repdata = ReportData.objects.get (id = request.POST ['repdataid'])
+    stats = get_report_stats (repdata)
+    return render_to_response ('report.html', {'stats' : stats,
+                                               'flag'  : False,
+                                               'repdataid'  : repdata.id,
+                                               'staticdata' : repdata})
 
 
 
 def report(request) :
-    repdata = get_repdata_in_session (request)
-    if request.method=="GET" :
-        form = Report (repdata)
-        return render_to_response('reportselection.html',
-                                 {'form':form,
-                                  'menus' : get_user_menus (request.user,report),
-                                  'user' : request.user,
-                                  'repdata' : repdata})
+    if request.method=="POST":
+        if 'edit' in request.POST:
+            repdata = ReportData.objects.get (id = request.POST ['repdataid'])
+            form = Report (repdata)
 
-    elif request.method=="POST":
-        postform = ReportForm(request.POST)
-        if 'final_report' in request.POST:
+            return render_to_response('reportselection.html',
+                                      {'form':form,
+                                       'menus' : get_user_menus (request.user, report),
+                                       'user' : request.user,
+                                       'repdata' : repdata})
+
+        elif 'final_report' in request.POST:
+            repdata = ReportData.objects.get (id = request.POST ['repdataid'])
             stats = get_report_stats (repdata)
-            stats['keypts']        = request.POST ['keypoints']
+            stats['keypts']     = request.POST ['keypoints']
             stats['successtry'] = request.POST ['sucess_story']
-            request.session.flush()
             return render_to_response ('report.html', {'stats'      : stats,
                                                        'flag'       : True,
                                                        'staticdata' : repdata})
         elif 'removebutt' in request.POST:
-            data = {}
-            print " in remove loc", request.POST
-            postform = ReportForm(request.POST)
+            repdata = ReportData.objects.get (id = request.POST ['repdataid'])
             if "blk" in request.POST:
                 idval = request.POST['blk']
-                repdata = get_repdata_in_session (request)
                 newdata = repdata.block.get(id = idval)
                 repdata.block.remove(newdata)
-                repdata.save()
             elif "gp" in request.POST:
                 idval = request.POST['gp']
-                repdata = get_repdata_in_session (request)
                 newdata = repdata.gp.get(id = idval)
                 repdata.gp.remove(newdata)
-                repdata.save()
             elif "vill" in request.POST:
                 idval = request.POST['vill']
-                repdata = get_repdata_in_session (request)
                 newdata = repdata.village.get(id = idval)
                 repdata.village.remove(newdata)
-                repdata.save()
-            print "blocks: ", repdata.block.all()
-            print "GPs: ", repdata.gp.all()
-            print "villages: ", repdata.village.all()
+            repdata.save()
             return render_to_response('reportselection.html',
                                       {'form'      : Report(repdata),
-                                       'errorpost' : postform,
                                        'menus'     : get_user_menus (request.user,report),
                                        'user'      : request.user,
                                        'repdata'   : repdata})
 
-        else:
-            return render_to_response('reportselection.html',
-                                      {'form'      : Report(repdata),
-                                       'errorpost' : postform,
-                                       'menus'     : get_user_menus (request.user,report),
-                                       'user'      : request.user,
-                                       'repdata' : repdata})
 
-def storedata(request, identifier, codea, codeb, codec):
+def storedata(request, repdataid, identifier, codea, codeb, codec):
+    repdata = ReportData.objects.get (id = repdataid)
     if identifier == "DEP":
-        repdata            = get_repdata_in_session (request)
-        depobj             = ComplaintDepartment.objects.get(id = codea)
+        depobj = ComplaintDepartment.objects.get(id = codea)
         repdata.department.add (depobj)
-        repdata.save()
-        return HttpResponse()
-
     elif identifier == "BLK":
-        repdata         = get_repdata_in_session (request)
-        blkobj          = Block.objects.get(id = codea)
+        blkobj = Block.objects.get(id = codea)
         repdata.block.add (blkobj)
-        repdata.save()
-        return HttpResponse()
-
     elif identifier == "GP":
-        repdata         = get_repdata_in_session (request)
-        blkobj          = Block.objects.get(id = codea)
-        gpobj           = GramPanchayat.objects.get(id = codeb)
-
-        repdata.block.add (blkobj)
+        gpobj  = GramPanchayat.objects.get(id = codeb)
         repdata.gp.add (gpobj)
-
-        repdata.save()
-        return HttpResponse()
     elif identifier == "VILL":
-        repdata         = get_repdata_in_session (request)
-        blkobj          = Block.objects.get(id = codea)
-        gpobj           = GramPanchayat.objects.get(id = codeb)
-        try:
-            villobj         = Village.objects.get(id = codec)
-            repdata.village.add (villobj)
-        except Village.DoesNotExist:
-            pass
-        repdata.block.add (blkobj)
-        repdata.gp.add (gpobj)
-        repdata.save()
-        return HttpResponse()
+        villobj = Village.objects.get(id = codec)
+        repdata.village.add (villobj)
+    repdata.save()
+    return HttpResponse()
 
 
-def removedata(request, identifier, codea, codeb, codec):
+def removedata(request, repdataid, identifier, codea, codeb, codec):
+    repdata = ReportData.objects.get (id = repdataid)
     if identifier == "DEP":
-        repdata = get_repdata_in_session (request)
         newdata = repdata.department.get(id = codea)
         repdata.department.remove(newdata)
         repdata.save()
-        return HttpResponse()
+    return HttpResponse()
 
-def data(request, cat, idval):
+def data(request, repdataid, cat, idval):
+    repdata = ReportData.objects.get (id = repdataid)
     if cat == "blk":
-        repdata = get_repdata_in_session (request)
         newdata = repdata.block.get(id = idval)
         repdata.block.remove(newdata)
-        repdata.save()
-        return HttpResponse()
     elif cat == "gp":
-        repdata = get_repdata_in_session (request)
         newdata = repdata.gp.get(id = idval)
         repdata.gp.remove(newdata)
-        repdata.save()
-        return HttpResponse()
     elif cat == "vill":
-        repdata = get_repdata_in_session (request)
         newdata = repdata.village.get(id = idval)
         repdata.village.remove(newdata)
-        repdata.save()
-        return HttpResponse()
+    repdata.save()
+    return HttpResponse()
+
+

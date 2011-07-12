@@ -61,8 +61,6 @@ def index (request):
                 sdata = session_data.split (',')
                 sdata.append ("%d" % (locid))
                 request.session [session_var] = ",".join (set (sdata))
-
-            print request.session [session_var]
         else:
             pass
         return HttpResponse ("")

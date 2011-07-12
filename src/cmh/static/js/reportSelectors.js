@@ -1,7 +1,7 @@
 var blkcheckarray = new Array(), gpcheckarray = new Array(), vcheckarray = new Array();
 var blkcount=0, gpcount=0, vcount=0;
 
-function fnMoveItems(box1,box2,identifier) {
+function fnMoveItems(box1,box2,identifier, repdataid) {
     var varFromBox = document.getElementById(box1);
     var varToBox = document.getElementById(box2);
     if ((varFromBox != null) && (varToBox != null))
@@ -28,14 +28,14 @@ function fnMoveItems(box1,box2,identifier) {
             if (identifier == 'add')
             {
 
-                $.post ("/complaint/storedata/DEP/"  + newOption.value + "/" + 0 + "/" + 0 +"/",
+                $.post ("/complaint/storedata/" + repdataid + "/DEP/"  + newOption.value + "/" + 0 + "/" + 0 +"/",
                         {},
                         function (data, textStatus, jqXHR) {
                         })
             }
             else if (identifier == 'remove')
             {
-                $.post ("/complaint/removedata/DEP/"  + newOption.value + "/" + 0 + "/" + 0 +"/",
+                $.post ("/complaint/removedata/" + repdataid + "/DEP/"  + newOption.value + "/" + 0 + "/" + 0 +"/",
                         {},
                         function (data, textStatus, jqXHR) {
                         })
@@ -48,7 +48,7 @@ function fnMoveItems(box1,box2,identifier) {
 }
 
 // append row to the HTML table
-function appendRow(val) {
+function appendRow(val, repdataid) {
     if (val == 'blk')
     {
         var tbl = document.getElementById('sel_loc'); // table reference
@@ -71,7 +71,7 @@ function appendRow(val) {
                 if (!flag)
                 {
                     var row = tbl.insertRow(tbl.rows.length);      // append table row
-                    $.post ("/complaint/storedata/" + "BLK" + "/"  + textb.value + "/" + 0 + "/" + 0 +"/",
+                    $.post ("/complaint/storedata/" + repdataid + "/BLK/"  + textb.value + "/" + 0 + "/" + 0 +"/",
                             {},
                             function (data, textStatus, jqXHR) {
                             })
@@ -95,7 +95,7 @@ function appendRow(val) {
 		            btnEl.setAttribute('value', 'Remove');
 		            btnEl.setAttribute('class', 'btn');
 		            btnEl.setAttribute('style', 'width:80px');
-		            btnEl.onclick =Redirector("BLK",textb.value, 0, 0, row);
+		            btnEl.onclick =Redirector("BLK", repdataid, textb.value, 0, 0, row);
 		            cell2.appendChild(btnEl);
                 }
                 blkcheckarray[blkcount] = textb.value;
@@ -104,7 +104,7 @@ function appendRow(val) {
             else
             {
                 var row = tbl.insertRow(tbl.rows.length);      // append table row
-                $.post ("/complaint/storedata/" + "BLK" + "/"  + textb.value + "/" + 0 + "/" + 0 +"/",
+                $.post ("/complaint/storedata/" + repdataid + "/BLK/"  + textb.value + "/" + 0 + "/" + 0 +"/",
                         {},
                         function (data, textStatus, jqXHR) {
                         })
@@ -128,7 +128,7 @@ function appendRow(val) {
 		        btnEl.setAttribute('value', 'Remove');
 		        btnEl.setAttribute('class', 'btn');
 		        btnEl.setAttribute('style', 'width:80px');
-                btnEl.onclick =Redirector("BLK",textb.value, 0, 0, row);
+                btnEl.onclick =Redirector("BLK",repdataid, textb.value, 0, 0, row);
 		        cell2.appendChild(btnEl);
                 blkcheckarray[blkcount] = textb.value;
                 blkcount++;
@@ -165,7 +165,7 @@ function appendRow(val) {
                 if (!flag)
                 {
                     var row = tbl.insertRow(tbl.rows.length);      // append table row
-                    $.post ("/complaint/storedata/" + "GP" + "/"  + textb.value + "/" + textc.value + "/" + 0 +"/",
+                    $.post ("/complaint/storedata/" + repdataid + "/GP/"  + textb.value + "/" + textc.value + "/" + 0 +"/",
                             {},
                             function (data, textStatus, jqXHR) {
                             })
@@ -197,7 +197,7 @@ function appendRow(val) {
 		            btnEl.setAttribute('value', 'Remove');
 		            btnEl.setAttribute('class', 'btn');
 		            btnEl.setAttribute('style', 'width:80px');
-		            btnEl.onclick =Redirector("GP",textb.value, textc.value, 0, row);
+		            btnEl.onclick =Redirector("GP",repdataid, textb.value, textc.value, 0, row);
 		            cell2.appendChild(btnEl);
                     gpcheckarray[gpcount] = textc.value;
                     gpcount++;
@@ -206,7 +206,7 @@ function appendRow(val) {
             else
             {
                 var row = tbl.insertRow(tbl.rows.length);      // append table row
-                $.post ("/complaint/storedata/" + "GP" + "/"  + textb.value + "/" + textc.value + "/" + 0 +"/",
+                $.post ("/complaint/storedata/" + repdataid + "/GP/"  + textb.value + "/" + textc.value + "/" + 0 +"/",
                         {},
                         function (data, textStatus, jqXHR) {
                         })
@@ -238,7 +238,7 @@ function appendRow(val) {
 		        btnEl.setAttribute('value', 'Remove');
 		        btnEl.setAttribute('class', 'btn');
 		        btnEl.setAttribute('style', 'width:80px');
-		        btnEl.onclick = Redirector("GP", textb.value, textc.value, 0, row);
+		        btnEl.onclick = Redirector("GP", repdataid, textb.value, textc.value, 0, row);
 		        cell2.appendChild(btnEl);
                 gpcheckarray[gpcount] = textc.value;
                 gpcount++;
@@ -278,7 +278,7 @@ function appendRow(val) {
                 if (!flag)
                 {
                     var row = tbl.insertRow(tbl.rows.length);      // append table row
-                    $.post ("/complaint/storedata/" + "VILL" + "/"  + textc.value + "/" + textb.value + "/" + texta.value +"/",
+                    $.post ("/complaint/storedata/" + repdataid + "/VILL/"  + textc.value + "/" + textb.value + "/" + texta.value +"/",
                             {},
                             function (data, textStatus, jqXHR) {
                             })
@@ -314,7 +314,7 @@ function appendRow(val) {
 		            btnEl.setAttribute('value', 'Remove');
 		            btnEl.setAttribute('class', 'btn');
 		            btnEl.setAttribute('style', 'width:80px');
-		            btnEl.onclick =Redirector("VILL", textc.value, textb.value, texta.value, row);
+		            btnEl.onclick =Redirector("VILL", repdataid, textc.value, textb.value, texta.value, row);
 		            cell2.appendChild(btnEl);
                     vcheckarray[vcount] = texta.value;
                     vcount++;
@@ -323,7 +323,7 @@ function appendRow(val) {
             else
             {
                 var row = tbl.insertRow(tbl.rows.length);      // append table row
-                $.post ("/complaint/storedata/" + "VILL" + "/"  + textc.value + "/" + textb.value + "/" + texta.value +"/",
+                $.post ("/complaint/storedata/" + repdataid + "/VILL/"  + textc.value + "/" + textb.value + "/" + texta.value +"/",
                         {},
                         function (data, textStatus, jqXHR) {
                         })
@@ -359,7 +359,7 @@ function appendRow(val) {
 		        btnEl.setAttribute('value', 'Remove');
 		        btnEl.setAttribute('class', 'btn');
 		        btnEl.setAttribute('style', 'width:80px');
-		        btnEl.onclick = Redirector("VILL", textc.value, textb.value, texta.value,row);
+		        btnEl.onclick = Redirector("VILL", repdataid, textc.value, textb.value, texta.value,row);
 		        cell2.appendChild(btnEl);
                 vcheckarray[vcount] = texta.value;
                 vcount++;
@@ -383,18 +383,18 @@ function createCell(cell, text, style) {
     div.setAttribute('className', style);    // set DIV class attribute for IE (?!)
     cell.appendChild(div);                   // append DIV to the table cell
 }
-function Redirector(cat, code1, code2, code3, obj)
+function Redirector(cat, repdataid, code1, code2, code3, obj)
 {
     return function()
     {
-        deleteRow(cat, code1, code2, code3, obj);
+        deleteRow(cat, repdataid, code1, code2, code3, obj);
     };
 }
-function deleteRow(category,bval,gpval,vval,obj)
+function deleteRow(category, repdataid, bval,gpval,vval,obj)
 {
     if (category == "BLK")
     {
-        $.post ("/complaint/data/blk/"  + bval +"/",
+        $.post ("/complaint/data/" + repdataid + "/blk/"  + bval +"/",
                 {},
                 function (data, textStatus, jqXHR) {
                 })
@@ -410,7 +410,7 @@ function deleteRow(category,bval,gpval,vval,obj)
     }
     else if (category == "GP")
     {
-        $.post ("/complaint/data/gp/"  + gpval +"/",
+        $.post ("/complaint/data/"+ repdataid + "/gp/"  + gpval +"/",
                 {},
                 function (data, textStatus, jqXHR) {
                 })
@@ -427,7 +427,7 @@ function deleteRow(category,bval,gpval,vval,obj)
     }
     else if (category == "VILL")
     {
-        $.post ("/complaint/data/vill/"  + vval +"/",
+        $.post ("/complaint/data/"+ repdataid + "/vill/"  + vval +"/",
                 {},
                 function (data, textStatus, jqXHR) {
                 })
