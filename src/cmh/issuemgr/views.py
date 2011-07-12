@@ -785,41 +785,47 @@ def initial_report (request):
     form  = ReportForm (request.POST)
 
     if form.is_valid ():
-        stdate  = form.cleaned_data ['stdate']
-        endate  = form.cleaned_data ['endate']
-        deptids = form.cleaned_data ['deptids']
+        try:
+            stdate  = form.cleaned_data ['stdate']
+            endate  = form.cleaned_data ['endate']
+            deptids = form.cleaned_data ['deptids']
 
-        if ALL_DEPT_ID in deptids:
-            depts = ComplaintDepartment.objects.all ()
-        else:
-            depts = ComplaintDepartment.objects.filter (id__in = deptids)
+            if ALL_DEPT_ID in deptids:
+                depts = ComplaintDepartment.objects.all ()
+            else:
+                depts = ComplaintDepartment.objects.filter (id__in = deptids)
 
-        blkids  = get_session_data (request, 'blkids')
-        gpids   = get_session_data (request, 'gpids')
-        villids = get_session_data (request, 'villids')
+            blkids  = get_session_data (request, 'blkids')
+            gpids   = get_session_data (request, 'gpids')
+            villids = get_session_data (request, 'villids')
 
-        request.session.flush ()
+            request.session.flush ()
 
-        repdata = ReportData.objects.create (strtdate = stdate, enddate = endate)
+            repdata = ReportData.objects.create (strtdate = stdate, enddate = endate)
 
-        for d in depts: repdata.department.add (d)
+            for d in depts: repdata.department.add (d)
 
-        if len (blkids.strip ()) != 0:
-            for bid in blkids.split (','): repdata.block.add (Block.objects.get (id = bid))
+            if len (blkids.strip ()) != 0:
+                for bid in blkids.split (','): repdata.block.add (Block.objects.get (id = bid))
 
-        if len (gpids.strip ()) != 0:
-            for gpid in gpids.split (','): repdata.gp.add (GramPanchayat.objects.get (id = gpid))
+            if len (gpids.strip ()) != 0:
+                for gpid in gpids.split (','): repdata.gp.add (GramPanchayat.objects.get (id = gpid))
 
-        if len (villids.strip ()) != 0:
-            for vid in villids.split (','): repdata.village.add (Village.objects.get (id = vid))
+            if len (villids.strip ()) != 0:
+                for vid in villids.split (','): repdata.village.add (Village.objects.get (id = vid))
 
-        repdata.save ()
+            repdata.save ()
 
-        stats = get_report_stats (repdata)
-        return render_to_response ('report.html', {'stats' : stats,
-                                                   'flag'  : False,
-                                                   'repdataid'  : repdata.id,
-                                                   'staticdata' : repdata})
+            stats = get_report_stats (repdata)
+            return render_to_response ('report.html', {'stats' : stats,
+                                                       'flag'  : False,
+                                                       'repdataid'  : repdata.id,
+                                                       'staticdata' : repdata})
+        except:
+            import traceback
+            traceback.print_exc ()
+    else:
+        return HttpResponseRedirect ("/")
 
 def edit_report (request):
     repdata = ReportData.objects.get (id = request.POST ['repdataid'])
