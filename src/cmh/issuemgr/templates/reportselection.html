@@ -169,32 +169,44 @@
 </div>
 <script type="text/javascript" src="/static/js/reportSelectors.js"></script>
 <script type="text/javascript">
-$(document).ready (function () {
-    $("#id_block").change(function(){
-        $.getJSON ("/masters/getgpinblocks/",
-                   {blockid : $(this).val ()},
-                   function (data, status, jqXHR) {
-                       var gp_dom_html = "<option value='0'>-------</option>"
-                           var village_dom_html = "<option value='0'>-------</option>"
-                               $.each (data.gps, function (index, gpdata) {
-                                   gp_dom_html += "<option value='" + gpdata.id + "'>" + gpdata.name + "</option>"
-                               });
-                       $("#id_gp").html (gp_dom_html);
-                       $("#id_village").html (village_dom_html);
-                   });
-    });
-    $("#id_gp").change(function(){
-        $.getJSON ("/masters/getvillingps/",
-                   {gpid : $(this).val ()},
-                   function (data, status, jqXHR) {
-                       var vill_dom_html = "<option value='0'>-------</option>"
-                           $.each (data.vills, function (index, villdata) {
-                               vill_dom_html += "<option value='" + villdata.id + "'>" + villdata.name + "</option>"
+ $(document).ready (
+    function () {
+        $("#id_block").change(
+            function(){
+                $.getJSON ("/masters/getgpinblocks/",
+                           {
+                               repdataid : {{ repdata.id }},
+                               blockid : $(this).val ()
+                           },
+                           function (data, status, jqXHR) {
+                               var gp_dom_html = "<option value='0'>-------</option>"
+                               var village_dom_html = "<option value='0'>-------</option>"
+                               $.each (data.gps,
+                                       function (index, gpdata) {
+                                           gp_dom_html += "<option value='" + gpdata.id + "'>" + gpdata.name + "</option>"
+                                       });
+                               $("#id_gp").html (gp_dom_html);
+                               $("#id_village").html (village_dom_html);
                            });
-                       $("#id_village").html (vill_dom_html);
-                   });
-    });
-});
+            });
+        $("#id_gp").change(
+            function() {
+                $.getJSON ("/masters/getvillingps/",
+                           {
+                               repdataid : {{ repdata.id }},
+                               gpid : $(this).val ()
+                           },
+                           function (data, status, jqXHR) {
+                               var vill_dom_html = "<option value='0'>-------</option>"
+                               $.each (data.vills,
+                                       function (index, villdata) {
+                                           vill_dom_html += "<option value='" + villdata.id + "'>" + villdata.name + "</option>"
+                                       });
+                               $("#id_village").html (vill_dom_html);
+                           });
+            });
+    }
+ );
 </script>
 
 {% endblock %}
