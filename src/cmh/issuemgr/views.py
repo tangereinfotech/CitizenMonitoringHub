@@ -603,8 +603,11 @@ def combine_dept_data (cstats, drange):
         elif curdate == cstat_date:
             prevcount += cstat_count
             deptdata.append ([curdate.strftime ('%Y-%m-%d 1:00 AM'), prevcount])
-            curdate = drange [dcounter]
-            dcounter += 1
+            if curdate != drange [-1]:
+                curdate = drange [dcounter]
+                dcounter += 1
+            else:
+                break
 
 
     while curdate <= drange [-1]:
