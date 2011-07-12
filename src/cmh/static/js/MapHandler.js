@@ -223,7 +223,7 @@ var MapHandler = {
                                                                           var infowindow  = new google.maps.InfoWindow ({
                                                                                                                             content : data,
                                                                                                                             position : place_latlong,
-                                                                                                                            maxWidth: 350,
+                                                                                                                            maxWidth: 400,
                                                                                                                         });
                                                                           
                                                                           infowindow.open (MapHandler.map);

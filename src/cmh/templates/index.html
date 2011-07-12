@@ -16,40 +16,51 @@
 {% block extra_heads %}
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false" ></script>
 <meta name="viewport" content="initial-scale=0.1, user-scalable=no" />
+<meta http-equiv="expires" content="0">
 {% endblock %}
-4
 {% block page_content %}
 <div id="department-list">
-  <form method="post" action=".">
-    <fieldset>
-      <legend>
-        Time Period
-      </legend>
-      <table style="width:100%">
-        <tr>
-          <td>
-            Start Date
-        </td>
-          <td>
-            {{ form.stdate }}
-          </td>
-        </tr>
-        <tr>
-          <td>
-            End Date
-          </td>
-          <td>
-            {{ form.endate }}
-          </td>
-        </tr>
-      </table>
-    </fieldset>
-    <table style="width:100%">
+  <fieldset>
+    <legend>
+      Time Period
+    </legend>
+    <table align="center">
       <tr>
-        <th colspan="2" align="center">
-          <h2> Departments </h2>
-        </th>
+        <td style="text-align:center">
+          Start Date
+        </td>
+        <td style="text-align:center">
+          End Date
+        </td>
+        <td/>
       </tr>
+      <tr>
+        <td style="text-align:right">
+          {{ form.stdate }}
+        </td>
+        <td style="text-align:left">
+          {{ form.endate }}
+        </td>
+        <td>
+          <button type="button" class="btn" onclick="update_maps ();">Apply</button>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3" style="text-align:center">
+          <button type="button" class="btn" onclick="callReport ();">Generate Report</button>
+        </td>
+      </tr>
+    </table>
+  </fieldset>
+  <table style="width:100%;">
+    <tr>
+      <th colspan="2" align="center">
+        <h2> Departments </h2>
+      </th>
+    </tr>
+  </table>
+  <div style="width:100%;height:320px;overflow:auto;">
+    <table style="width:100%">
       <tr class="department_row">
         <td>
           <input type="checkbox" class="selector all" name="deptid" value="0">
@@ -73,53 +84,28 @@
       </tr>
       {% endfor %}
     </table>
-  </form>
-</div>
-<div id="report" style="float:right">
-<input type="submit" value="View Report" name="report" class="btn" onclick="callReport()" id="report">
+  </div>
 </div>
 <div id="base_map"></div>
 <div id="trending-issues-section">
   <div class="section-title">
     <f> Trends </f>
-   <div class="reportlink">
-    <a href="/complaint/report"> Report </a>
   </div>
-  </div>
-
-  <ul class="period-right">
-    <li>Last:</li>
-    <li><a href="javascript:update_maps (1);">Week</a></li>
-    <li><a href="javascript:update_maps (2);">Month</a></li>
-    <li><a href="javascript:update_maps (3);">3 Months</a></li>
-  </ul>
   <div id="trending-issues-chart"></div>
 </div>
 <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.dateAxisRenderer.js"></script>
 <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.pointLabels.min.js"></script>
 <script type="text/javascript" src="/static/jquery/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="/static/js/CountLabel.js"></script>
+<script type="text/javascript" src="/static/js/String.js"></script>
 <script type="text/javascript" src="/static/js/Label.js"></script>
 <script type="text/javascript" src="/static/js/MapHandler.js"></script>
 <script type="text/javascript" src="/static/js/complainthandler.js"></script>
 <script type="text/javascript" src="/static/js/department_selector.js"></script>
 <script type="text/javascript">
- function update_maps (period) {
-     switch (period) {
-     case 1:
-         ndays = 7;
-         break;
-     case 2:
-         ndays = 30;
-         break;
-     case 3:
-         ndays = 90;
-         break;
-     }
-     now = new Date ();
-     en_date = dateFormat (now);
-     st_date = dateFormat (daysBefore (now, ndays));
-
+ function update_maps () {
+     en_date = $("#id_endate").val ();
+     st_date = $("#id_stdate").val ();
      update_issues_maps (MapHandler.departments, MapHandler.map.getZoom (), MapHandler.data_level, st_date, en_date);
  }
 
@@ -132,6 +118,7 @@
      dateObj.setDate (dateObj.getDate () - ndays);
      return dateObj;
  }
+
  function callReport ()
  {
      var selected_dept_ids = $('.selector:checked').map (
@@ -139,27 +126,64 @@
              return $(this).val ();
          }
      ).get ().join (',');
-     alert('hey',selected_dept_ids );
+
+     var form = document.createElement ("form");
+     form.action = "/complaint/initial_report/";
+     form.method = "post";
+
+     var hstdate = document.createElement ("input");
+     hstdate.name = "stdate";
+     hstdate.type = "hidden";
+     hstdate.value = $("#id_stdate").val ();
+
+     var hendate = document.createElement ("input");
+     hendate.name = "endate";
+     hendate.type = "hidden";
+     hendate.value = $("#id_endate").val ();
+
+     var deptids = document.createElement ("input");
+     deptids.name = "deptids";
+     deptids.type = "hidden";
+     deptids.value = selected_dept_ids;
+
+     form.appendChild (hstdate);
+     form.appendChild (hendate);
+     form.appendChild (deptids);
+
+     form.submit ();
  }
 
 
  function dateFormat (date)
  {
-     return date.getDate () + "/" + (date.getMonth () + 1) + "/" + date.getFullYear ();
+     return '%02d/%02d/%04d'.sprintf(date.getDate (),(date.getMonth () + 1),date.getFullYear ());
  }
 
- $(document).ready (function () {
-     now = new Date ();
-     en_date = dateFormat (now);
-     st_date = dateFormat (daysBefore (now, 30));
+ $(document).ready (
+     function () {
+         now = new Date ();
+         en_date = dateFormat (now);
+         st_date = dateFormat (daysBefore (now, 30));
 
-     $("#id_stdate").datepicker ({dateFormat : 'dd/mm/yy'});
-     $("#id_endate").datepicker ({dateFormat : 'dd/mm/yy'});
-     department_selector ('/complaint/get_category_map_update/');
-     $(".selector").attr ("checked", true);
-     MapHandler.init ('base_map', {{ map.center_lat }}, {{ map.center_long }}, function () {
-         update_issues_maps ('0', MapHandler.VILLG_ZOOM, 'villg', st_date, en_date);
+         $("#id_endate").val (en_date);
+         $("#id_stdate").val (st_date);
+
+
+         $("#id_stdate").datepicker ({dateFormat : 'dd/mm/yy'});
+         $("#id_endate").datepicker ({dateFormat : 'dd/mm/yy'});
+         department_selector ('/complaint/get_category_map_update/');
+         $(".selector").attr ("checked", true);
+         MapHandler.init ('base_map', {{ map.center_lat }}, {{ map.center_long }}, function () {
+                              update_issues_maps ('0', MapHandler.VILLG_ZOOM, 'villg', st_date, en_date);
+                          });
      });
- });
+
+ function addtoreport (loctype, locid) {
+     $.post ("/",
+             {'loctype' : loctype,
+              'locid' : locid},
+             function (data, status, jqXHR) {
+             });
+ }
  </script>
 {% endblock %}

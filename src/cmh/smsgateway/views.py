@@ -56,6 +56,10 @@ def gateway (request):
             sender_phone = receivedform.cleaned_data ['from']
             message      = receivedform.cleaned_data ['message']
 
+            rtm = ReceivedTextMessage.objects.create (sender = sender_phone,
+                                                      valid = False,
+                                                      message = message)
+
             try:
                 message_fields = message.split ()
                 location = message_fields [0]
@@ -80,6 +84,14 @@ def gateway (request):
 
                 update_complaint_sequence (compl)
 
+                # If we reach this point, the message was properly formatted
+                rtm.valid = True
+                rtm.save ()
+
+                # Remove the user from blacklist in case he is there
+                for sbl in SenderBlacklist.objects.filter (sender = rtm.sender):
+                    sbl.delete ()
+
                 # HACK ALERT - complaint type is not known so just pick any complaint type and pick its defsmsnew
                 message = ComplaintType.objects.all ()[0].defsmsnew.replace ('____', compl.complaintno)
                 TextMessage.objects.queue_text_message (citizen.mobile, message)
@@ -88,8 +100,12 @@ def gateway (request):
             except:
                 import traceback
                 traceback.print_exc ()
-                text_message = "Complaint could not be logged. Please check format."
-                TextMessage.objects.queue_text_message (sender_phone, text_message)
+                # Improperly formatted
+                # check if the user is black listed, keep the sender black listed and don't respond
+                if not is_blacklisted (rtm.sender):
+                    if not new_blacklist (rtm.sender):
+                        text_message = "Complaint could not be logged. Please check format."
+                        TextMessage.objects.queue_text_message (sender_phone, text_message)
                 return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
         else:
             # In this case, we can safely assume that the message is not coming from
@@ -98,3 +114,34 @@ def gateway (request):
     else:
         return HttpResponseForbidden
 
+
+def is_blacklisted (sender):
+    if SenderBlacklist.objects.filter (sender = sender).count () == 0:
+        return False
+    else:
+        return True
+
+
+
+def new_blacklist (sender):
+    def get_message_valid (msglist, index):
+        try:
+            msg = msglist [index]
+            valid = msg.valid
+        except:
+            valid = True
+        return valid
+
+    sender_messages = ReceivedTextMessage.objects.filter (sender = sender)[-3:]
+
+    msg0valid = get_message_valid (sender_messages, 0)
+    msg1valid = get_message_valid (sender_messages, 1)
+    msg2valid = get_message_valid (sender_messages, 2)
+
+    if (msg0valid == False and msg1valid == False and msg2valid == False):
+        # Blacklist the user in case he is not blacklisted yet
+        if SenderBlacklist.objects.filter (sender = sender).count () == 0:
+            SenderBlacklist.objects.create (sender = sender)
+        return True
+    else:
+        return False

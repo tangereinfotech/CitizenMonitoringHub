@@ -356,10 +356,13 @@ class ComplaintTrackForm (forms.Form):
                                                                       'autocomplete' : 'off'}))
 
 class DateIndex (forms.Form):
-    stdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
-                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
-    endate     = forms.DateField (input_formats = ('%d/%m/%Y',),
-                                    widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
+    stdate = forms.DateField (input_formats = ('%d/%m/%Y',),
+                              widget = forms.TextInput (attrs = {'autocomplete': 'off',
+                                                                 'style' : 'width:100px'}))
+    endate = forms.DateField (input_formats = ('%d/%m/%Y',),
+                              widget = forms.TextInput (attrs = {'autocomplete': 'off',
+                                                                 'style' : 'width:100px'}))
+
 class ComplaintDisplayParams (forms.Form):
     departments = MultiNumberIdField ()
     datalevel   = forms.ChoiceField (choices = (("villg", "villg"),
@@ -411,3 +414,4 @@ class ReportForm(forms.Form):
                               widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
     endate = forms.DateField (input_formats = ('%d/%m/%Y',),
                               widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
+    deptids = MultiNumberIdField ()

@@ -35,5 +35,5 @@ urlpatterns = patterns ('cmh.issuemgr.views',
                         (r'^storedata/(?P<identifier>\w+)/(?P<codea>\d+)/(?P<codeb>\d+)/(?P<codec>\d+)/$','storedata'),
                         (r'^removedata/(?P<identifier>\w+)/(?P<codea>\d+)/(?P<codeb>\d+)/(?P<codec>\d+)/$','removedata'),
                         (r'data/(?P<cat>\w+)/(?P<idval>\d+)/$','data'),
-                        (r'^savemapdata/$','savemapdata'),
+                        (r'^initial_report/$', 'initial_report'),
                         )

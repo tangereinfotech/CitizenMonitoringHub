@@ -784,6 +784,50 @@ def get_report_stats (repdata):
     return stats
 
 
+def initial_report (request):
+    form  = ReportForm (request.POST)
+
+    if form.is_valid ():
+        stdate  = form.cleaned_data ['stdate']
+        endate  = form.cleaned_data ['endate']
+        deptids = form.cleaned_data ['deptids']
+
+        if ALL_DEPT_ID in deptids:
+            depts = ComplaintDepartment.objects.all ()
+        else:
+            depts = ComplaintDepartment.objects.filter (id__in = deptids)
+
+        blkids  = request.session ['blkids']
+        gpids   = request.session ['gpids']
+        villids = request.session ['villids']
+
+        request.session.flush ()
+
+        repdata = ReportData.objects.create (strtdate = stdate, enddate = endate)
+
+        for d in depts: repdata.department.add (d)
+
+        if len (blkids.strip ()) != 0:
+            for bid in blkids.split (','): repdata.block.add (Block.objects.get (id = bid))
+
+        if len (gpids.strip ()) != 0:
+            for gpid in gpids.split (','): repdata.gp.add (GramPanchayat.objects.get (id = gpid))
+
+        if len (villids.strip ()) != 0:
+            for vid in villids.split (','): repdata.village.add (Village.objects.get (id = vid))
+
+        repdata.save ()
+
+        stats = get_report_stats (repdata)
+
+        return render_to_response ('report.html', {'stats' : stats,
+                                                   'flag'  : False,
+                                                   'staticdata' : repdata})
+    else:
+        print form.errors
+
+
+
 def report(request) :
     repdata = get_repdata_in_session (request)
     if request.method=="GET" :
@@ -796,26 +840,14 @@ def report(request) :
 
     elif request.method=="POST":
         postform = ReportForm(request.POST)
-        if 'initial_report' in request.POST:
-            repdata = get_repdata_in_session (request)
-            now = datetime.now()
-            repdata.strtdate =  (now - timedelta (days = 60))
-            repdata.enddate = now
-            repdata.save ()
-
+        if 'final_report' in request.POST:
             stats = get_report_stats (repdata)
-
-            return render_to_response ('report.html', {'stats' : stats,
-                                                       'flag'  : False,
+            stats['keypts']        = request.POST ['keypoints']
+            stats['successtry'] = request.POST ['sucess_story']
+            request.session.flush()
+            return render_to_response ('report.html', {'stats'      : stats,
+                                                       'flag'       : True,
                                                        'staticdata' : repdata})
-        elif 'final_report' in request.POST:
-                stats = get_report_stats (repdata)
-                stats['keypts']        = request.POST ['keypoints']
-                stats['successtry'] = request.POST ['sucess_story']
-                request.session.flush()
-                return render_to_response ('report.html', {'stats'      : stats,
-                                                           'flag'       : True,
-                                                           'staticdata' : repdata})
         elif 'removebutt' in request.POST:
             data = {}
             print " in remove loc", request.POST
@@ -923,15 +955,3 @@ def data(request, cat, idval):
         repdata.village.remove(newdata)
         repdata.save()
         return HttpResponse()
-
-
-def savemapdata(request):
-    if request.POST['loctype'] == 'Block':
-        request.session['blkids'].append(request.POST ['locid'])
-        print "hello: ",request.session['blkids']
-#        request.session['blkids'] = ','.join (request.POST ['locid'])
-    elif request.POST['loctype'] == 'Gram Panchayat':
-        request.session['gpds'] = ','.join (request.session ['gpids'].split (',').append (request.POST ['locid']))
-    elif request.POST['loctype'] == 'Village':
-        request.session['villids'] = ','.join (request.session ['villids'].split (',').append (request.POST ['locid']))
-    return HttpResponse()

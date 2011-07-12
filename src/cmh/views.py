@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django import forms
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.db.models import Q
@@ -20,24 +21,61 @@ from django.db.models import Q
 from cmh.usermgr.utils import get_user_menus
 
 from cmh.common.models import ComplaintType, ComplaintDepartment
+from cmh.common.constants import DeployDistrict
 
 from cmh.issuemgr.models import Complaint
 
 from cmh.issuemgr.forms import DateIndex
 
 def index (request):
-    departments = ComplaintDepartment.objects.all ()
-    request.session ['blkids']  = []
-    request.session ['villids'] = []
-    request.session ['gpids']   = []
-    request.session ['depids']  = []
-    return render_to_response ('index.html', {'menus' : get_user_menus (request.user,index),
-                                              'user'  : request.user,
-                                              'form'  : DateIndex(),
-                                              'map'   : {'center_lat' : 23.10847,
-                                                       'center_long' : 76.989098},
-                                              'departments' : departments})
+    if request.method == 'GET':
+        departments = ComplaintDepartment.objects.all ()
+        request.session ['blkids']  = ""
+        request.session ['villids'] = ""
+        request.session ['gpids']   = ""
+        request.session ['depids']  = ""
+        init_lattd = DeployDistrict.DISTRICT.lattd
+        init_longd = DeployDistrict.DISTRICT.longd
+        return render_to_response ('index.html',
+                                   {'menus' : get_user_menus (request.user,index),
+                                    'user'  : request.user,
+                                    'form'  : DateIndex(),
+                                    'map'   : {'center_lat' : init_lattd,
+                                               'center_long' : init_longd},
+                                    'departments' : departments})
+    elif request.method == 'POST':
+        form = SaveMapDataForm (request.POST)
+        if form.is_valid ():
+            loctype = form.cleaned_data ['loctype']
+            locid = form.cleaned_data ['locid']
+
+            session_var = {'Block' : 'blkids',
+                           'Gram Panchayat' : 'gpids',
+                           'Village' : 'villids'} [loctype]
+            session_data = request.session [session_var]
+            session_data = session_data.strip ()
+
+            if len (session_data) == 0:
+                request.session [session_var] = "%d" % (locid)
+            else:
+                sdata = session_data.split (',')
+                sdata.append ("%d" % (locid))
+                request.session [session_var] = ",".join (set (sdata))
+
+            print request.session [session_var]
+        else:
+            pass
+        return HttpResponse ("")
+    else:
+        return HttpResponseRedirect ('/')
 
 def aboutus (request):
     return render_to_response ('aboutus.html', {'menus' : get_user_menus (request.user,index),
                                               'user' : request.user},)
+
+
+class SaveMapDataForm (forms.Form):
+    loctype = forms.ChoiceField (choices = (('Block', 'Block'),
+                                            ('Gram Panchayat', 'Gram Panchayat'),
+                                            ('Village', 'Village')))
+    locid   = forms.IntegerField ()

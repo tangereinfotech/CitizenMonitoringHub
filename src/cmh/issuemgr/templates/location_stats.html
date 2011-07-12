@@ -12,6 +12,11 @@
 {# See the License for the specific language governing permissions and          #}
 {# limitations under the License.                                               #}
 
+<div style="text-align:right;width:100%">
+  <a href="javascript:addtoreport ('{{ stats.type }}', '{{ stats.locid }}');">
+    Add To Report
+  </a>
+</div>
 <div>
   <center>
       <table>
@@ -59,12 +64,5 @@
       <tbody>
     </table>
   </div>
-  <div style="float:right">
-    <form action="/complaint/savemapdata/" method="POST">
-      <input type="hidden" name="locid" value="{{ stats.locid }}">
-      <input type="hidden" name="loctype" value="{{stats.type}}">
-      <input type="submit" name="viewreport" value="Add to Report" class="mapaddreport">
-    </form>
   </div>
-</div>
 
