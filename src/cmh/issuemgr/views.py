@@ -694,7 +694,7 @@ def get_report_stats (repdata):
         wid = 30
     elif ((len(schemes) > 10) and (len(schemes) <= 20)):
         wid = 25
-    elif len(schemes) <= 20:
+    else
         wid = 10
 
     stats ['bar_chart']                = {'legends' : ['New', 'Acknowledged', 'Resolved/ Closed']}
