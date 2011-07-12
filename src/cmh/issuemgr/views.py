@@ -650,7 +650,8 @@ def get_report_stats (repdata):
         else:
             locq = Q (location__id__in = [b.id for b in repdata.village.all ()])
 
-    complaints = complaints.filter (locq)
+    if locq != None:
+        complaints = complaints.filter (locq)
 
     #Complaints before the end date
     end_complaints = complaints.filter (createdate__lte = repdata.enddate)
