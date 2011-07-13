@@ -173,7 +173,7 @@ def getstats (request):
             uptype = 'Gram Panchayat'
             upname = location.grampanchayat.name
         elif datalevel == 'gramp':
-            loctype = "Gram Panchayat"
+            loctype = "gramp"
             location = GramPanchayat.objects.get (id = locid)
             complaints = complaints.filter (location__grampanchayat__id = locid)
             uptype = 'Block'

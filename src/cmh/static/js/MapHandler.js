@@ -231,9 +231,23 @@ var MapHandler = {
                                                                           google.maps.event.addListenerOnce(infowindow,
                                                                                                             "domready",
                                                                                                             function() {
-                                                                                                                $("#infoclose-" + data.loctype + "-" + data.locid).click (function (event) {
+                                                                                                                elem_id = "#infoclose-" + data.loctype + "-" + data.locid;
+                                                                                                                $(elem_id).click (function (event) {
+                                                                                                                    var message = "Location has been added to report";
+                                                                                                                    $('#notification-part').html(message);
+                                                                                                                    $('#notification-part').html(function() {
+                                                                                                                        setTimeout (function () {
+                                                                                                                            $('#notification-part').html ('');
+                                                                                                                        }, 1500);
+                                                                                                                    });
+                                                                                                                    $.post ("/",
+                                                                                                                            {'loctype' : data.loctype,
+                                                                                                                             'locid' : data.locid},
+                                                                                                                            function (data, status,jqXHR) {});
                                                                                                                     infowindow.close ();
+                                                                                                                    return false;
                                                                                                                 });
+
                                                                                                             });
                                                                       });
                                                           });

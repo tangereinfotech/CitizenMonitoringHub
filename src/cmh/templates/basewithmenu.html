@@ -16,8 +16,16 @@
 {% block base_content %}
 <div class="top_panel">
   <div class="system_panel">
+    <div class="aboutpanel">
+      <ul class="sysnav">
+        <li><a href="aboutus">About Us</a></li>
+        <li>|</li>
+        <li><a href="/">Home</a></li>
+      </ul>
+    </div>
+    <div style="width:67%;float:right">
+      <span id="notification-part"></span>
       {% if user.is_authenticated %}
-    <div class="userpanel">
       <ul class="sys-panel">
         <li> Hello {{ user.username }} </li>
         <li> | </li>
@@ -25,10 +33,10 @@
         <li> | </li>
         <li> <a href="/user/logout/">Sign out</a> </li>
       </ul>
-    </div>
       {% else %}
       <a href="/user/login"> Sign in </a>
       {% endif %}
+    </div>
   </div>
   <div class="logo_top_menu">
     <div class="logo">

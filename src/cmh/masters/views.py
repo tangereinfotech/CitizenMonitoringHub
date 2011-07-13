@@ -40,6 +40,7 @@ from cmh.masters.forms import AddBlock, AddComplaint, AddGramPanchayat, AddDep
 from cmh.masters.forms import AddVillage, AddDistrict, AddState
 from cmh.masters.forms import EditGp, EditVillage, EditDep, EditComp, EditBlk, EditOfficial, EditCso
 
+from cmh.issuemgr.models import ReportData
 @login_required
 def masters (request):
     # Ensure CmhUser model instance exists for all User's

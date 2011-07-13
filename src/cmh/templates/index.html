@@ -176,14 +176,7 @@
          MapHandler.init ('base_map', {{ map.center_lat }}, {{ map.center_long }}, function () {
                               update_issues_maps ('0', MapHandler.VILLG_ZOOM, 'villg', st_date, en_date);
                           });
-     });
-
- function addtoreport (loctype, locid) {
-     $.post ("/",
-             {'loctype' : loctype,
-              'locid' : locid},
-             function (data, status, jqXHR) {
-             });
- }
- </script>
+     }
+ );
+</script>
 {% endblock %}

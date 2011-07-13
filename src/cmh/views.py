@@ -50,7 +50,7 @@ def index (request):
             locid = form.cleaned_data ['locid']
 
             session_var = {'Block' : 'blkids',
-                           'Gram Panchayat' : 'gpids',
+                           'gramp' : 'gpids',
                            'Village' : 'villids'} [loctype]
             session_data = request.session [session_var]
             session_data = session_data.strip ()
@@ -74,6 +74,6 @@ def aboutus (request):
 
 class SaveMapDataForm (forms.Form):
     loctype = forms.ChoiceField (choices = (('Block', 'Block'),
-                                            ('Gram Panchayat', 'Gram Panchayat'),
+                                            ('gramp', 'Gram Panchayat'),
                                             ('Village', 'Village')))
     locid   = forms.IntegerField ()
