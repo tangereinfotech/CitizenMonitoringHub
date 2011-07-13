@@ -26,6 +26,7 @@ from django.utils import simplejson as json
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Avg, Max, Min, Count, Q
 from django.contrib.auth.decorators import login_required
+from django.template import loader
 
 from cmh.common.models import Country, State, District
 from cmh.common.models import Block, GramPanchayat, Village
@@ -209,8 +210,10 @@ def getstats (request):
                  'departments': dept_complaints,
                  'uptype'     : uptype,
                  'upname'     : upname}
-        return render_to_response ('location_stats.html', {'stats' : stats})
-
+        infowindow_data = loader.render_to_string ('location_stats.html', {'stats' : stats})
+        return HttpResponse (json.dumps ({'infowindow_data' : infowindow_data,
+                                          'loctype' : loctype,
+                                          'locid' : location.id}))
     else:
         return HttpResponse ("");
 

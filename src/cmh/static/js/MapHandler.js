@@ -220,16 +220,21 @@ var MapHandler = {
                                                                           'locid' : value.id
                                                                       },
                                                                       function (data, textStatus, jqXHR) {
+                                                                          data = $.parseJSON (data);
                                                                           var infowindow  = new google.maps.InfoWindow ({
-                                                                              content : data,
+                                                                              content : data.infowindow_data,
                                                                               position : place_latlong,
                                                                               maxWidth: 400,
                                                                           });
 
                                                                           infowindow.open (MapHandler.map);
-                                                                          $(".infoclose").click (function (event) {
-                                                                              infowindow.close ();
-                                                                          });
+                                                                          google.maps.event.addListenerOnce(infowindow,
+                                                                                                            "domready",
+                                                                                                            function() {
+                                                                                                                $("#infoclose-" + data.loctype + "-" + data.locid).click (function (event) {
+                                                                                                                    infowindow.close ();
+                                                                                                                });
+                                                                                                            });
                                                                       });
                                                           });
                         }
