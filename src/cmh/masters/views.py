@@ -563,6 +563,10 @@ def addcomp(request):
                                         'user'  : request.user})
 
 def getgpinblocks (request):
+<<<<<<< HEAD
+=======
+    repdata = ReportData.objects.get (id = request.GET.get ('repdataid'))
+>>>>>>> 43a1c9c03fd19e5df70ae85a53bad5599150d39f
     blockid = request.GET['blockid']
     try:
         gps = Block.objects.get (id = blockid).grampanchayat_set.all ().exclude(id__in = [gp.id for gp in repdata.gp.all()])
@@ -573,6 +577,10 @@ def getgpinblocks (request):
 
 
 def getvillingps (request):
+<<<<<<< HEAD
+=======
+    repdata = ReportData.objects.get (id = request.GET.get ('repdataid'))
+>>>>>>> 43a1c9c03fd19e5df70ae85a53bad5599150d39f
     gpid = request.GET['gpid']
     try:
         vills = GramPanchayat.objects.get (id = gpid).village_set.all ().exclude(id__in = [v.id for v in repdata.village.all()])
