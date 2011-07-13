@@ -42,6 +42,14 @@ fieldset {
     style:link;
 }
 
+div.reportform{
+    width:100%;
+}
+
+div.reportform #id_block, #id_gp, #id_village{
+    width:100%;
+}
+
 
 .content_wrapper {
    padding: 2px 10px;

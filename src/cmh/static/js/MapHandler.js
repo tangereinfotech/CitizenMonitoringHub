@@ -84,8 +84,8 @@ var MapHandler = {
                                        function () {
                                            MapHandler.renderWithinBounds ();
                                        });
-        
-	    google.maps.event.addListenerOnce (this.map, "bounds_changed", 
+
+	    google.maps.event.addListenerOnce (this.map, "bounds_changed",
 					                       function () {
 					                           donecallback ();
 					                       });
@@ -209,8 +209,8 @@ var MapHandler = {
                             MapHandler.circleOverlays.push (circle);
                             MapHandler.nameOverlays.push (nlabel);
                             MapHandler.countOverlays.push (clabel);
-
-                            google.maps.event.addListener(circle, 'click', function() {
+                            google.maps.event.addListener(circle, 'click',
+                                                          function() {
                                                               $.post ("/complaint/getstats/",
                                                                       {
                                                                           'departments' : MapHandler.departments,
@@ -221,12 +221,15 @@ var MapHandler = {
                                                                       },
                                                                       function (data, textStatus, jqXHR) {
                                                                           var infowindow  = new google.maps.InfoWindow ({
-                                                                                                                            content : data,
-                                                                                                                            position : place_latlong,
-                                                                                                                            maxWidth: 400,
-                                                                                                                        });
-                                                                          
+                                                                              content : data,
+                                                                              position : place_latlong,
+                                                                              maxWidth: 400,
+                                                                          });
+
                                                                           infowindow.open (MapHandler.map);
+                                                                          $(".infoclose").click (function (event) {
+                                                                              infowindow.close ();
+                                                                          });
                                                                       });
                                                           });
                         }
