@@ -131,9 +131,10 @@ div.tables{
 }
 
 ul.sys-panel {
-    display:inline;
-    list-style-type: none;
-    float: right;
+   display:inline;
+   list-style-type: none;
+   float: right;
+   margin-top: 0px;
 }
 
 ul.sys-panel li {

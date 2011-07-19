@@ -338,8 +338,10 @@ class ComplaintUpdateForm (forms.Form):
             message = None
 
         if message != None:
-            debug ("Queuing message on change of status")
             queue_complaint_update_sms (newver.filedby.mobile, message, newver)
+        else:
+            debug ("[%s]{%s}: " % (newver.complaintno, str (newver.curstate)) +
+                   "Message is empty -- not queueing >> from forms.py: issuemgr")
 
         return newver
 

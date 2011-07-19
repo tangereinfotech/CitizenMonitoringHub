@@ -20,7 +20,8 @@ def queue_complaint_update_sms (mobile, complaint_message, complaint):
     if len (complaint_message.strip ()) != 0:
         complaint_message = complaint_message.replace ('____', complaint.complaintno)
         TextMessage.objects.queue_text_message (mobile, complaint_message)
-        debug ("Queued message [[%s]] for mobile [%s]" %
+        debug ("[%s]{%s}" % (complaint.complaintno, str (complaint.curstate))
+               + ", Queued message [[%s]] for mobile [%s]" %
                (complaint_message, str (mobile)))
     else:
         debug ("Message empty - so not queueing")
