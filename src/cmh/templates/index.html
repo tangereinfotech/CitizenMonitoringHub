@@ -174,7 +174,7 @@
          department_selector ('/complaint/get_category_map_update/');
          $(".selector").attr ("checked", true);
          MapHandler.init ('base_map', {{ map.center_lat }}, {{ map.center_long }}, function () {
-                              update_issues_maps ('0', MapHandler.VILLG_ZOOM, 'villg', st_date, en_date);
+                              update_issues_maps ('0', MapHandler.DISTT_ZOOM, 'distt', st_date, en_date);
                           });
      }
  );

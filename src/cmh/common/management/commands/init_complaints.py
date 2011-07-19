@@ -63,7 +63,7 @@ class Command (BaseCommand):
         ep.process (bookname, sheetname, True,
                     [EP.CELL_TEXT,
                      EP.CELL_TEXT,
-                     EP.CELL_INT,
+                     EP.CELL_TEXT,
                      EP.CELL_TEXT,
                      EP.CELL_TEXT,
                      EP.CELL_TEXT,
@@ -74,49 +74,46 @@ class Command (BaseCommand):
                      EP.CELL_TEXT])
 
     def save_data (self, rowid, cells):
-        if None in cells [: -1] :
-            print "Skipping row number: ", rowid, ", due to empty cells"
-        else:
-            dept_name = cells [COL_DEPT_NAME]
-            dept_code = cells [COL_DEPT_CODE]
-            comp_code = cells [COL_COMP_CODE]
-            comp_summ = cells [COL_COMP_SUMM]
-            comp_clss = cells [COL_COMP_CLSS]
-            comp_smsnew = cells [COL_COMP_SMSNEW]
-            comp_smsack = cells [COL_COMP_SMSACK]
-            comp_smsopn = cells [COL_COMP_SMSOPN]
-            comp_smsrsl = cells [COL_COMP_SMSRSL]
-            comp_smsclo = cells [COL_COMP_SMSCLO]
-            comp_mdgs   = cells [COL_COMP_MDGS]
+        dept_name = cells [COL_DEPT_NAME]
+        dept_code = cells [COL_DEPT_CODE]
+        comp_code = cells [COL_COMP_CODE]
+        comp_summ = cells [COL_COMP_SUMM]
+        comp_clss = cells [COL_COMP_CLSS]
+        comp_smsnew = cells [COL_COMP_SMSNEW]
+        comp_smsack = cells [COL_COMP_SMSACK]
+        comp_smsopn = cells [COL_COMP_SMSOPN]
+        comp_smsrsl = cells [COL_COMP_SMSRSL]
+        comp_smsclo = cells [COL_COMP_SMSCLO]
+        comp_mdgs   = cells [COL_COMP_MDGS]
 
-            try:
-                department = ComplaintDepartment.objects.get (code = dept_code,
-                                                              name = dept_name)
-            except ComplaintDepartment.DoesNotExist:
-                department = ComplaintDepartment.objects.create (code = dept_code,
-                                                                 name = dept_name,
-                                                                 district = DeployDistrict.DISTRICT)
+        try:
+            department = ComplaintDepartment.objects.get (code = dept_code,
+                                                          name = dept_name)
+        except ComplaintDepartment.DoesNotExist:
+            department = ComplaintDepartment.objects.create (code = dept_code,
+                                                             name = dept_name,
+                                                             district = DeployDistrict.DISTRICT)
 
-            comp_code = "%s.%03d" % (dept_code, comp_code)
-            try:
-                complaint = ComplaintType.objects.get (code = comp_code)
-            except ComplaintType.DoesNotExist:
-                search_str = "%s;%s" % (comp_summ.lower (), comp_clss.lower ())
-                complaint = ComplaintType.objects.create (code = comp_code,
-                                                          summary = comp_summ,
-                                                          department = department,
-                                                          cclass = comp_clss,
-                                                          defsmsnew = comp_smsnew,
-                                                          defsmsack = comp_smsack,
-                                                          defsmsopen = comp_smsopn,
-                                                          defsmsres = comp_smsrsl,
-                                                          defsmsclo = comp_smsclo,
-                                                          search = search_str)
-                if comp_mdgs != None:
-                    for mdg in comp_mdgs.split (','):
-                        g = mdg.strip ()
-                        if len (g) != 0:
-                            ComplaintMDG.objects.create (complainttype = complaint, goalnum = g)
+        comp_code = "%s.%s" % (dept_code, comp_code)
+        try:
+            complaint = ComplaintType.objects.get (code = comp_code)
+        except ComplaintType.DoesNotExist:
+            search_str = "%s;%s" % (comp_summ.lower (), comp_clss.lower ())
+            complaint = ComplaintType.objects.create (code = comp_code,
+                                                      summary = comp_summ,
+                                                      department = department,
+                                                      cclass = comp_clss,
+                                                      defsmsnew = comp_smsnew,
+                                                      defsmsack = comp_smsack,
+                                                      defsmsopen = comp_smsopn,
+                                                      defsmsres = comp_smsrsl,
+                                                      defsmsclo = comp_smsclo,
+                                                      search = search_str)
+            if comp_mdgs != None:
+                for mdg in comp_mdgs.split (','):
+                    g = mdg.strip ()
+                    if len (g) != 0:
+                        ComplaintMDG.objects.create (complainttype = complaint, goalnum = g)
 
     def parse_complete (self):
         pass
