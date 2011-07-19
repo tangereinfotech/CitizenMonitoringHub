@@ -19,7 +19,7 @@ LOCATION_REGEX = r'^ *(?P<village>\w+) *\[(?P<gp>\w+), *(?P<block>\w+)\] *$|^ *(
 
 from datetime import datetime
 
-from cmh.smsgateway.models import TextMessage
+from cmh.smsgateway.utils import queue_complaint_update_sms
 
 from cmh.common.models import Country, State, District
 from cmh.common.models import Block, GramPanchayat, Village
@@ -167,8 +167,8 @@ class AcceptComplaintForm (forms.Form):
         accept_cpl.curstate = STATUS_ACK
         accept_cpl.save ()
 
-        message = cpl.complainttype.defsmsack.replace ('____', cpl.filedby.mobile)
-        TextMessage.objects.queue_text_message (cpl.filedby.mobile, message)
+
+        queue_complaint_update_sms (cpl.filedby.mobile, cpl.complainttype.defsmsack, cpl)
 
         return accept_cpl
 
@@ -325,21 +325,21 @@ class ComplaintUpdateForm (forms.Form):
             original.save ()
 
         if newver.curstate == STATUS_ACK:
-            message = newver.complainttype.defsmsack.replace ('____', newver.complaintno)
+            message = newver.complainttype.defsmsack
         elif newver.curstate == STATUS_OPEN:
-            message = newver.complainttype.defsmsopen.replace ('____', newver.complaintno)
+            message = newver.complainttype.defsmsopen
         elif newver.curstate == STATUS_RESOLVED:
-            message = newver.complainttype.defsmsres.replace ('____', newver.complaintno)
+            message = newver.complainttype.defsmsres
         elif newver.curstate == STATUS_CLOSED:
-            message = newver.complainttype.defsmsclo.replace ('____', newver.complaintno)
+            message = newver.complainttype.defsmsclo
         elif newver.curstate == STATUS_REOPEN:
-            message = newver.complainttype.defsmsnew.replace ('____', newver.complaintno)
+            message = newver.complainttype.defsmsnew
         else:
             message = None
 
         if message != None:
             debug ("Queuing message on change of status")
-            TextMessage.objects.queue_text_message (newver.filedby.mobile, message)
+            queue_complaint_update_sms (newver.filedby.mobile, message, newver)
 
         return newver
 

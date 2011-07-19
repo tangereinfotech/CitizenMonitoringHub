@@ -30,7 +30,7 @@ from cmh.common.constants import UserRoles
 
 from cmh.usermgr.models import CmhUser, Official
 
-from cmh.smsgateway.models import TextMessage
+from cmh.smsgateway.utils import queue_sms
 from cmh.common.utils import get_random_string, debug
 
 from cmh.common.constants import PASSWORD_LEN, PASSWORD_MSG, DeployDistrict
@@ -55,8 +55,7 @@ class AddCSOMember (forms.Form):
         cmhuser.set_user_role (UserRoles.CSO)
 
         message = PASSWORD_MSG % (cmhuser.user.username, password)
-        debug (message)
-        TextMessage.objects.queue_text_message (cmhuser.phone, message)
+        queue_sms (cmhuser.phone, message)
 
         return cmhuser
 
@@ -82,8 +81,7 @@ class RegisterDM (forms.Form):
         cmhuser.set_user_role (UserRoles.DM)
 
         message = PASSWORD_MSG % (cmhuser.user.username, password)
-        debug (message)
-        TextMessage.objects.queue_text_message (cmhuser.phone, message)
+        queue_sms (cmhuser.phone, message)
 
         return cmhuser
 
@@ -132,8 +130,7 @@ class EditDM (forms.Form):
         dm.save ()
 
         message = PASSWORD_MSG % (dm.phone, password)
-        debug (message)
-        TextMessage.objects.queue_text_message (dm.phone, message)
+        queue_sms (dm.phone, message)
 
 
 class AddEditOfficial (forms.Form):
@@ -198,8 +195,7 @@ class AddEditOfficial (forms.Form):
         cmhuser.save ()
 
         message = PASSWORD_MSG % (cmhuser.user.username, password)
-        debug (message)
-        TextMessage.objects.queue_text_message (cmhuser.phone, message)
+        queue_sms (cmhuser.phone, message)
 
         official = Official.objects.create (user = user, supervisor = supervisor)
 
@@ -248,8 +244,7 @@ class EditOfficial (forms.Form):
         cmhuser.save ()
 
         message = PASSWORD_MSG % (cmhuser.user.username, password)
-        debug (message)
-        TextMessage.objects.queue_text_message (cmhuser.phone, message)
+        queue_sms (cmhuser.phone, message)
 
         return official
 
@@ -284,8 +279,7 @@ class EditCso (forms.Form):
         cmhuser.save ()
 
         message = PASSWORD_MSG % (cmhuser.user.username, password)
-        debug (message)
-        TextMessage.objects.queue_text_message (cmhuser.phone, message)
+        queue_sms (cmhuser.phone, message)
 
         return cmhuser
 

@@ -47,7 +47,7 @@ from cmh.issuemgr.forms import ComplaintTrackForm, LocationStatsForm, ReportForm
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX, ComplaintDisplayParams
 
-from cmh.smsgateway.models import TextMessage
+from cmh.smsgateway.utils import queue_complaint_update_sms
 
 from cmh.common.constants import UserRoles
 from cmh.usermgr.utils import get_user_menus
@@ -75,8 +75,9 @@ def index (request):
             debug ("Sending message for complaint acceptance")
 
             # HACK ALERT - complaint type is not known so just pick any complaint type and pick its defsmsnew
-            message = ComplaintType.objects.all ()[0].defsmsnew.replace ('____', complaint.complaintno)
-            TextMessage.objects.queue_text_message (complaint.filedby.mobile, message)
+            queue_complaint_update_sms (complaint.filedby.mobile,
+                                        ComplaintType.objects.all ()[0].defsmsnew,
+                                        complaint)
 
             return render_to_response ('complaint_submitted.html',
                                        {'menus' : get_user_menus (request.user,index),

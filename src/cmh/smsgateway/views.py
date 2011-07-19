@@ -21,6 +21,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 
 from cmh.smsgateway.forms import SMSTransferReqFormat, SMSReceivedFormat
 from cmh.smsgateway.models import TextMessage
+from cmh.smsgateway.utils import queue_complaint_update_sms, queue_sms
 
 from cmh.issuemgr.utils import update_complaint_sequence
 from cmh.issuemgr.utils import get_location_attr
@@ -93,8 +94,9 @@ def gateway (request):
                     sbl.delete ()
 
                 # HACK ALERT - complaint type is not known so just pick any complaint type and pick its defsmsnew
-                message = ComplaintType.objects.all ()[0].defsmsnew.replace ('____', compl.complaintno)
-                TextMessage.objects.queue_text_message (citizen.mobile, message)
+                queue_complaint_update_sms (citizen.mobile,
+                                            ComplaintType.objects.all ()[0].defsmsnew,
+                                            compl)
 
                 return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
             except:
@@ -105,7 +107,7 @@ def gateway (request):
                 if not is_blacklisted (rtm.sender):
                     if not new_blacklist (rtm.sender):
                         text_message = "Complaint could not be logged. Please check format."
-                        TextMessage.objects.queue_text_message (sender_phone, text_message)
+                        queue_sms (sender_phone, text_message)
                 return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
         else:
             # In this case, we can safely assume that the message is not coming from
