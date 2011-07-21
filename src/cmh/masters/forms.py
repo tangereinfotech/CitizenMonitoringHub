@@ -138,7 +138,7 @@ class AddEditOfficial (forms.Form):
     name       = StripCharField (widget=AutoCompleteOffTextInput ())
     phone      = PhoneNumberField (widget=AutoCompleteOffTextInput ())
     department = DefaultChoiceField (widget = SpacedSelectInput ())
-    supervisor = DefaultChoiceField (widget = SpacedSelectInput ())
+    supervisor = DefaultChoiceField (widget = SpacedSelectInput (), required = False)
 
     def __init__ (self, *args, **kwargs):
         if 'departments' in kwargs:

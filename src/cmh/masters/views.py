@@ -252,7 +252,7 @@ def department_selected (request):
         debug (form)
         try:
             dept_id = form.cleaned_data ['department']
-            supervisors = Official.objects.filter (departments__id = dept_id,
+            supervisors = Official.objects.filter (department__id = dept_id,
                                                    supervisor = None)
             sups = [(supervisor.id, supervisor.user.cmhuser.get_desc_name ())
                     for supervisor in supervisors]
@@ -261,6 +261,8 @@ def department_selected (request):
             request.session ['pos_supervisors'] = serialized
             return HttpResponse (serialized)
         except:
+            import traceback
+            traceback.print_exc ()
             return HttpResponse ([])
     else:
         return HttpResponse ([])
