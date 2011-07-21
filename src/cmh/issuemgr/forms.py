@@ -233,11 +233,6 @@ class ComplaintUpdateForm (forms.Form):
             self.fields ['revcategorydesc'] = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:100%'}),
                                                                required = False,
                                                                initial = complaint.complainttype.summary)
-        self.fields ['comment'] = forms.CharField (widget = forms.Textarea (attrs = {'style' : 'width:100%',
-                                                                 'cols' : '40',
-                                                                 'rows' : '6'}),
-                                                   required = True,
-                                                   initial = complaint.description)
 
 
     def clean_revlocationid (self):
