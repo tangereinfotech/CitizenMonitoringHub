@@ -57,6 +57,7 @@ class ComplaintForm (forms.Form):
     categorydesc = forms.CharField (required = False,
                                     widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                        'autocomplete' : 'off'}))
+    filename    = forms.FileField (label = "Upload Evidence:", required = False)
 
     def clean_locationid (self):
         try:
@@ -123,6 +124,8 @@ class AcceptComplaintForm (forms.Form):
 
     community       = forms.CharField (widget = forms.RadioSelect (choices = COMMUNITY_CHOICES), required = False, initial = 'Unspecified')
 
+    filename        = forms.FileField (label = "Upload Evidence:", required = False)
+
     def clean_locationid (self):
         try:
             village = Village.objects.get (id = self.cleaned_data ['locationid'])
@@ -168,7 +171,17 @@ class AcceptComplaintForm (forms.Form):
         accept_cpl.save ()
 
 
-        queue_complaint_update_sms (cpl.filedby.mobile, cpl.complainttype.defsmsack, cpl)
+        message = None
+        ct = cpl.complainttype
+        if ct.defsmsack != None and len (ct.defsmsack.strip ()) != 0:
+            message = ct.defsmsnew
+
+        if message == None:
+            if ct.defsmsnew != None and len (ct.defsmsnew.strip ()) != 0:
+                message = ct.defsmsnew
+
+        if message != None:
+            queue_complaint_update_sms (cpl.filedby.mobile, message, cpl)
 
         return accept_cpl
 
@@ -210,6 +223,7 @@ class ComplaintUpdateForm (forms.Form):
                                        required = False,
                                        initial = 'Unspecified')
 
+    filename        = forms.FileField (label = "Upload Evidence:", required = False)
 
     def __init__ (self, complaint, newstates, *args, **kwargs):
         super (ComplaintUpdateForm, self).__init__ (*args, **kwargs)

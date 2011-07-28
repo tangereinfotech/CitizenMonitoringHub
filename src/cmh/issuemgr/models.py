@@ -58,6 +58,8 @@ class Complaint(models.Model):
     community     = models.CharField(max_length = 20, blank = True, null = True, choices = COMMUNITY_CHOICES, default = 'Unspecified')
     gender        = models.CharField(max_length = 20, choices = GENDER_CHOICES, blank = True, null = True, default = 'Unspecified')
 
+    evidences     = models.ManyToManyField ('ComplaintEvidence', blank = True, null = True)
+
     ###################################
     # Custom field for analytics only #
     ###################################
@@ -102,6 +104,11 @@ class Complaint(models.Model):
         else:
             return "----"
 
+
+class ComplaintEvidence (models.Model):
+    evfile    = models.CharField (max_length = 2000) # Absolute path name
+    filename  = models.CharField (max_length = 500)  # Filename to display
+    url       = models.CharField (max_length = 2000) # URL to display
 
 
 class ReportData(models.Model):

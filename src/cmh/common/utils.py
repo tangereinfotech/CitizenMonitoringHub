@@ -307,3 +307,8 @@ def get_session_data (request, key):
 
 def set_session_data (request, key, value):
     request.session [key] = value
+
+def get_evidence_url (unique_filename):
+    return "/complaint/evidences/" + unique_filename
+
+

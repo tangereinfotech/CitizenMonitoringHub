@@ -37,4 +37,5 @@ urlpatterns = patterns ('cmh.issuemgr.views',
                         (r'^data/(?P<repdataid>\d+)/(?P<cat>\w+)/(?P<idval>\d+)/$','data'),
                         (r'^initial_report/$', 'initial_report'),
                         (r'^edit_report/$', 'edit_report'),
+                        (r'^evidences/(?P<filename>.*)$', 'get_evidence'),
                         )

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import re
+import re, os
 
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
@@ -27,6 +27,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Avg, Max, Min, Count, Q
 from django.contrib.auth.decorators import login_required
 from django.template import loader
+from django.conf import settings
 
 from cmh.common.models import Country, State, District
 from cmh.common.models import Block, GramPanchayat, Village
@@ -36,12 +37,13 @@ from cmh.common.models import AppRole, ComplaintDepartment
 from cmh.common.utils import debug, daterange
 from cmh.common.utils import get_datatables_records
 from cmh.common.utils import get_session_data, set_session_data
+from cmh.common.utils import get_evidence_url
 
 from cmh.issuemgr.constants import STATUS_NEW, STATUS_REOPEN, STATUS_ACK
 from cmh.issuemgr.constants import STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED
 from cmh.issuemgr.constants import HotComplaintPeriod
 
-from cmh.issuemgr.models import Complaint
+from cmh.issuemgr.models import Complaint, ComplaintEvidence
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox, Report
 from cmh.issuemgr.forms import ComplaintTrackForm, LocationStatsForm, ReportForm, ReportDataValid
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
@@ -61,22 +63,24 @@ def index (request):
                                        {'form' : form,
                                         'menus' : get_user_menus (request.user,index),
                                         'user' : request.user,
-                                        'post_url' : reverse (index),
-                                        'map' : {'center_lat' : 23.20119,
-                                                 'center_long' : 77.081795,
-                                                 'zoom_level' : 13}})
+                                        'post_url' : reverse (index)})
         except:
             import traceback
             traceback.print_exc ()
     elif request.method == 'POST':
-        form = ComplaintForm (request.POST)
+        form = ComplaintForm (request.POST, request.FILES)
         if form.is_valid ():
             complaint = form.save (None)
+
+            # Handle files
+            if 'filename' in request.FILES and request.FILES ['filename'] != None:
+                _handle_evidence_upload (complaint, request.FILES ['filename'])
+
             debug ("Sending message for complaint acceptance")
 
             # HACK ALERT - complaint type is not known so just pick any complaint type and pick its defsmsnew
             queue_complaint_update_sms (complaint.filedby.mobile,
-                                        ComplaintType.objects.all ()[0].defsmsnew,
+                                        ComplaintType.objects.exclude (Q (defsmsnew = '') | Q (defsmsnew = None))[0].defsmsnew,
                                         complaint)
 
             return render_to_response ('complaint_submitted.html',
@@ -85,14 +89,11 @@ def index (request):
                                         'complaint' : complaint})
         else:
             return render_to_response ('complaint.html',
-                                       {'form': form,
+                                       {'form' : form,
                                         'errors' : form.errors,
                                         'menus' : get_user_menus (request.user,index),
                                         'user' : request.user,
-                                        'post_url' : reverse (index),
-                                        'map' : {'center_lat' : 23.20119,
-                                                 'center_long' : 77.081795,
-                                                 'zoom_level' : 13}})
+                                        'post_url' : reverse (index)})
     else:
         return HttpResponse ()
 
@@ -300,14 +301,15 @@ def accept (request):
         return render_to_response ('complaint.html', {'form' : form,
                                                       'menus' : get_user_menus (request.user,accept),
                                                       'user' : request.user,
-                                                      'post_url' : reverse (accept),
-                                                      'map' : {'center_lat' : 23.20119,
-                                                               'center_long' : 77.081795,
-                                                               'zoom_level' : 13}})
+                                                      'post_url' : reverse (accept)})
     elif request.method == 'POST':
-        form = AcceptComplaintForm (request.POST)
+        form = AcceptComplaintForm (request.POST, request.FILES)
         if form.is_valid ():
             complaint = form.save (request.user)
+
+            if 'filename' in request.FILES and request.FILES ['filename'] != None:
+                _handle_evidence_upload (complaint.original, request.FILES ['filename'])
+
             return render_to_response ('complaint_submitted.html',
                                        {'menus' : get_user_menus (request.user,accept),
                                         'user' : request.user,
@@ -317,10 +319,7 @@ def accept (request):
                                        {'form': form,
                                         'menus' : get_user_menus (request.user,accept),
                                         'user' : request.user,
-                                        'post_url' : reverse (accept),
-                                        'map' : {'center_lat' : 23.20119,
-                                                 'center_long' : 77.081795,
-                                                 'zoom_level' : 13}})
+                                        'post_url' : reverse (accept)})
     else:
         pass
 
@@ -414,9 +413,14 @@ def update (request, complaintno):
                 prev_page = reverse (track_issues, args = [complaintno])
 
             if request.POST.has_key ('save'):
-                form = ComplaintUpdateForm (current, newstatuses, request.POST)
+                form = ComplaintUpdateForm (current, newstatuses, request.POST, request.FILES)
                 if form.is_valid ():
                     form.save (request.user)
+
+                    # Handle files
+                    if 'filename' in request.FILES and request.FILES ['filename']:
+                        _handle_evidence_upload (base, request.FILES ['filename'])
+
                     return HttpResponseRedirect (prev_page)
                 else:
                     return render_to_response ('update.html',
@@ -462,6 +466,8 @@ def track_issues (request, complaintno):
                                     'user' : request.user,
                                     'complaintno' : complaintno})
     except:
+        import traceback
+        traceback.print_exc ()
         return render_to_response ('error.html',
                                    {'menus' : get_user_menus (request.user,track_issues),
                                     'user' : request.user})
@@ -922,5 +928,36 @@ def data(request, repdataid, cat, idval):
         repdata.village.remove(newdata)
     repdata.save()
     return HttpResponse()
+
+from django.views.static import serve as serve_static_file
+
+@login_required
+def get_evidence (request, filename):
+    role = AppRole.objects.get_user_role (request.user)
+    if role == UserRoles.ROLE_CSO or role == UserRoles.ROLE_DM:
+        return serve_static_file (request,
+                                  filename,
+                                  document_root = settings.EVIDENCE_DIR,
+                                  show_indexes = False)
+    else:
+        return render_to_response ('error.html',
+                                   {'error' : 'Unauthorized access to evidence. Will be reported',
+                                    'menus' : get_user_menus (request.user,track_issues),
+                                    'user' : request.user})
+
+def _handle_evidence_upload (complaint, temp_file):
+    ufname = temp_file.name
+    ufunique = "%s_%d_%s" % (complaint.complaintno, complaint.id, ufname)
+    ufpath = os.path.join (settings.EVIDENCE_DIR, ufunique)
+    destfile = open (ufpath, 'wb+')
+    for chunk in temp_file:
+        destfile.write (chunk)
+    destfile.close ()
+
+    ce = ComplaintEvidence.objects.create (evfile = ufpath,
+                                           filename = ufname,
+                                           url = get_evidence_url (ufunique))
+    complaint.evidences.add (ce)
+    complaint.save ()
 
 

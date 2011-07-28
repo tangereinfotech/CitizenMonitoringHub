@@ -97,11 +97,16 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'cmh.urls'
 
+FILE_UPLOAD_HANDLERS = ("django.core.files.uploadhandler.MemoryFileUploadHandler",
+                        "django.core.files.uploadhandler.TemporaryFileUploadHandler",)
+
 TEMPLATE_DIRS = (
     os.path.join (CMH_APP_DIR, "cmh", "templates"),
     os.path.join (CMH_APP_DIR, "cmh", "usermgr", "templates"),
     os.path.join (CMH_APP_DIR, "cmh", "issuemgr", "templates"),
 )
+
+EVIDENCE_DIR = os.path.abspath (os.path.join (CMH_APP_DIR, "..", 'evidences'))
 
 INSTALLED_APPS = (
     'django.contrib.admin',

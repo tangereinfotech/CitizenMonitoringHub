@@ -21,7 +21,7 @@
   </div>
   <center>
     <div class="complaint_form">
-      <form action="{{ post_url }}" method="post">
+      <form action="{{ post_url }}" method="post" enctype="multipart/form-data">
         {# {% csrf_token %} #}
         <div class="right_section">
           <fieldset>
@@ -72,6 +72,11 @@
               {{ form.community }}
             </div>
             {% endif %}
+            <div class="form-field">
+              <label for="id_file">Upload Evidence:</label>
+              {{ form.filename.errors }}
+            </div>
+            {{ form.filename }} <br/>
             <div style="text-align:center;width:100%;">
               <input type="submit" value="Submit Complaint" class="btn"/>
             </div>

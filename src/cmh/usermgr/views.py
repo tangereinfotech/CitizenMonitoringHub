@@ -35,33 +35,13 @@ def dologin (request):
     if request.method == 'POST':
         form = UserLoginForm (request.POST)
         if form.is_valid ():
-            username = form.cleaned_data ['username']
-            password = form.cleaned_data ['password']
-            try:
-                debug ("authenticating user : " + username)
-                user = authenticate(username=username, password=password)
-
-                if user is not None:
-                    debug ("User auth successful")
-                    if user.is_active:
-                        debug ("User is active")
-                        login (request, user)
-                        request.session.set_expiry (0)
-                        return HttpResponseRedirect (settings.LOGIN_REDIRECT_URL)
-            except Exception, e:
-                debug ("Exception occurred in user-auth")
-                import traceback
-                traceback.print_exc ()
-
-        return render_to_response ('login.html',
-                                   {'form': form,
-                                    'menus' : get_user_menus (request.user, dologin),
-                                    'user' : request.user})
-    else:
-        return render_to_response ('login.html',
-                                   {'form': form,
-                                    'menus' : get_user_menus (request.user, dologin),
-                                    'user' : request.user})
+            login (request, form.valid_user)
+            request.session.set_expiry (0)
+            return HttpResponseRedirect (settings.LOGIN_REDIRECT_URL)
+    return render_to_response ('login.html',
+                               {'form': form,
+                                'menus' : get_user_menus (request.user, dologin),
+                                'user' : request.user})
 
 @login_required
 def gotomyprofile (request):

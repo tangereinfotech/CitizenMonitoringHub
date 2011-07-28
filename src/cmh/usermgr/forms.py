@@ -19,13 +19,30 @@ from cmh.common.fields import PhoneNumberField
 
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 from cmh.captcha.fields import CaptchaField
 import re
 
 class UserLoginForm (forms.Form):
-    username = forms.CharField(label="Username", max_length=30, widget=forms.TextInput (attrs = {'tabindex' : '1'}))
-    password = forms.CharField(label="Password", widget=forms.PasswordInput (attrs = {'tabindex' : '2'}))
-    #captcha  = CaptchaField()
+    username = forms.CharField(label="Username",
+                               max_length=30,
+                               widget=forms.TextInput (attrs = {'tabindex' : '1'}))
+    password = forms.CharField(label="Password",
+                               widget=forms.PasswordInput (attrs = {'tabindex' : '2'}))
+    def clean (self):
+        uname = self.cleaned_data ['username']
+        user = authenticate (username = uname,
+                             password = self.cleaned_data ['password'])
+        if user is None:
+            if User.objects.filter (username = uname).count () != 0:
+                raise forms.ValidationError ('Username / Password does not match')
+            else:
+                raise forms.ValidationError ('Username is not registered')
+        elif user.is_active == False:
+            raise forms.ValidationError ('Account  suspended. Contact Administrator')
+
+        self.valid_user = user
+        return self.cleaned_data
 
 class UserRegisterForm(forms.Form):
     username        = forms.CharField(label="username", max_length=30)

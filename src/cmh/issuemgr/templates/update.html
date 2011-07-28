@@ -14,8 +14,10 @@
 
 {% extends "basewithmenu.html" %}
 
+{% load complaint_extras %}
+
 {% block page_content %}
-<form action="." method="post">
+<form action="." method="post" enctype="multipart/form-data">
   <fieldset>
     <legend>Details</legend>
     <input type="hidden" name="prev" value="{{ prev }}">
@@ -117,6 +119,16 @@
                     readonly="readonly">{{ base.description }}</textarea>
         </td>
       </tr>
+      {% if base.evidences.all.count != 0 %}
+      <tr>
+        <td>Evidences:</td>
+        <td colspan="4">
+          {% for ev in base.evidences.all %}
+          {{ ev|get_evidence_display:user|safe }}
+          {% endfor %}
+        </td>
+      </tr>
+      {% endif %}
     </table>
   </fieldset>
   {% if current.curstate.name == 'New' %}
@@ -213,6 +225,15 @@
           {{ form.comment }}
         </td>
       </tr>
+      {% if current|can_add_evidence:user %}
+      <tr>
+        <td>Evidence:</td>
+        <td colspan="4">
+          {{ form.filename.errors }}
+          {{ form.filename }}
+        </td>
+      </tr>
+      {% endif %}
       <tr>
         <td/>
         <td style="text-align:right"> <input type="submit" name="save" value="Save" style="width:100px" class="btn"> </td>

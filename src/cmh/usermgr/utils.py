@@ -21,9 +21,10 @@ from cmh.common.constants import UserRoles
 from cmh.usermgr.models import Citizen
 
 def get_or_create_citizen (mobile, name):
-    try:
-        citizen = Citizen.objects.get (mobile = mobile)
-    except Citizen.DoesNotExist:
+    citizens = Citizen.objects.filter (mobile = mobile)
+    if citizens.count () != 0:
+        citizen = citizens [0]
+    else:
         citizen = Citizen.objects.create (mobile = mobile, name = name)
 
     return citizen

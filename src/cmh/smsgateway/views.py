@@ -20,7 +20,7 @@ from django.utils import simplejson as json
 from django.http import HttpResponse, HttpResponseForbidden
 
 from cmh.smsgateway.forms import SMSTransferReqFormat, SMSReceivedFormat
-from cmh.smsgateway.models import TextMessage
+from cmh.smsgateway.models import TextMessage, ReceivedTextMessage, SenderBlacklist
 from cmh.smsgateway.utils import queue_complaint_update_sms, queue_sms
 
 from cmh.issuemgr.utils import update_complaint_sequence
@@ -53,15 +53,15 @@ def gateway (request):
         receivedform = SMSReceivedFormat (request.POST)
         debug ("Received from: " + str (receivedform))
         if receivedform.is_valid ():
-            debug ("Form is valid")
-            sender_phone = receivedform.cleaned_data ['from']
-            message      = receivedform.cleaned_data ['message']
-
-            rtm = ReceivedTextMessage.objects.create (sender = sender_phone,
-                                                      valid = False,
-                                                      message = message)
-
             try:
+                debug ("Form is valid")
+                sender_phone = receivedform.cleaned_data ['from']
+                message      = receivedform.cleaned_data ['message']
+
+                rtm = ReceivedTextMessage.objects.create (sender = sender_phone,
+                                                          valid = False,
+                                                          message = message)
+
                 message_fields = message.split ()
                 location = message_fields [0]
                 sender_name = message_fields [1]
@@ -91,13 +91,13 @@ def gateway (request):
 
                 # Remove the user from blacklist in case he is there
                 for sbl in SenderBlacklist.objects.filter (sender = rtm.sender):
+                    debug ("Removing sender from blacklist: " + str (rtm.sender))
                     sbl.delete ()
 
                 # HACK ALERT - complaint type is not known so just pick any complaint type and pick its defsmsnew
                 queue_complaint_update_sms (citizen.mobile,
                                             ComplaintType.objects.all ()[0].defsmsnew,
                                             compl)
-
                 return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
             except:
                 import traceback
@@ -108,6 +108,8 @@ def gateway (request):
                     if not new_blacklist (rtm.sender):
                         text_message = "Complaint could not be logged. Please check format."
                         queue_sms (sender_phone, text_message)
+                else:
+                    debug ("Sender is blacklisted. Not sending ack: " + str (rtm.sender))
                 return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
         else:
             # In this case, we can safely assume that the message is not coming from
@@ -134,7 +136,15 @@ def new_blacklist (sender):
             valid = True
         return valid
 
-    sender_messages = ReceivedTextMessage.objects.filter (sender = sender)[-3:]
+    sender_messages = ReceivedTextMessage.objects.filter (sender = sender)
+
+    all_count = sender_messages.count ()
+    if all_count > 3:
+        beg_index = all_count - 3
+    else:
+        beg_index = 0
+
+    sender_messages = sender_messages [beg_index:]
 
     msg0valid = get_message_valid (sender_messages, 0)
     msg1valid = get_message_valid (sender_messages, 1)
@@ -143,6 +153,7 @@ def new_blacklist (sender):
     if (msg0valid == False and msg1valid == False and msg2valid == False):
         # Blacklist the user in case he is not blacklisted yet
         if SenderBlacklist.objects.filter (sender = sender).count () == 0:
+            debug ("Blacklisting sender : " + str (sender))
             SenderBlacklist.objects.create (sender = sender)
         return True
     else:
