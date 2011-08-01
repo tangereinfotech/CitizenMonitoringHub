@@ -19,8 +19,8 @@
     "aaData":[
         {% for comp in querySet %}
         [
-            "{{comp.get_code}}",
             "{{comp.get_department}}",
+            "{{comp.get_code}}",
             "{{comp.summary}}",
             "{{comp.cclass}}"
         ]
