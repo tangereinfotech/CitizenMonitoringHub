@@ -68,6 +68,7 @@
                                             var form = document.createElement ("form");
                                             form.action = "/masters/edit_dep/" + tds.first ().text() + "/";
                                             form.method = "GET";
+                                            document.body.appendChild (form);
                                             form.submit ();
                                          });
         }

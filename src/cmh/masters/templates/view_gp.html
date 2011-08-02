@@ -94,6 +94,7 @@
                                             var form = document.createElement ("form");
                                             form.action = "/masters/edit_gp/" + tds.first ().text() + "/" +tds.eq(2).text () + "/";
                                             form.method = "GET";
+                                            document.body.appendChild (form);
                                             form.submit ();
                                          });
         }

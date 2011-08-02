@@ -97,6 +97,7 @@
                                             var tds = $(el).find ("td");
                                             var form = document.createElement ("form");
                                             form.action = "/masters/edit_vill/" +tds.first ().text() + "/" +tds.eq(2).text ()+ "/" +tds.eq(4).text () +"/";
+                                            document.body.appendChild (form);
                                             form.submit ();
                                          });
         }

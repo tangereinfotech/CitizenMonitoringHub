@@ -69,7 +69,8 @@
                                          function (action, el, pos) {
                                             var tds = $(el).find ("td");
                                             var form = document.createElement ("form");
-                                            form.action = "/masters/edit_c/" +tds.first ().text() + "/" +tds.eq(1).text() + "/";
+                                            form.action = "/masters/edit_c/" +tds.eq(1).text() + "/" + tds.first ().text() + "/" ;
+                                            document.body.appendChild (form);
                                             form.submit ();
                                          });
         }
