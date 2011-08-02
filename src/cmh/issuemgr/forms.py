@@ -255,9 +255,7 @@ class ComplaintUpdateForm (forms.Form):
                 village = Village.objects.get (id = self.cleaned_data ['revlocationid'])
             except:
                 raise forms.ValidationError ("Location code is not correct")
-            return self.cleaned_data ['revlocationid']
-        else:
-            return None
+        return self.cleaned_data ['revlocationid']
 
     def clean_revcategoryid (self):
         if self.cleaned_data ['revcategoryid'] != None:
@@ -265,9 +263,7 @@ class ComplaintUpdateForm (forms.Form):
                 ct = ComplaintType.objects.get (id = self.cleaned_data ['revcategoryid'])
             except:
                 raise forms.ValidationError ('Complaint Category is not correct')
-            return self.cleaned_data ['revcategoryid']
-        else:
-            return None
+        return self.cleaned_data ['revcategoryid']
 
     def clean_comment (self):
         if len (self.cleaned_data ['comment']) == 0:
@@ -292,6 +288,19 @@ class ComplaintUpdateForm (forms.Form):
         else:
              raise forms.ValidationError ("Please select a valid next status")
         return self.cleaned_data ['newstatus']
+
+    def clean (self):
+        try:
+            complaint = Complaint.objects.get (complaintno = self.cleaned_data ['complaintno'], latest = True)
+        except:
+            raise forms.ValidationError ('Complaint number is invalid')
+
+        if self.cleaned_data ['revcategoryid'] == None:
+            if ((complaint.original != None and complaint.original.complainttype == None) or
+                (complaint.complainttype == None)):
+                raise forms.ValidationError ("Complaint Type is mandatory")
+        return self.cleaned_data
+
 
     def save (self, user):
         complaint = Complaint.objects.get (complaintno = self.cleaned_data ['complaintno'], latest = True)

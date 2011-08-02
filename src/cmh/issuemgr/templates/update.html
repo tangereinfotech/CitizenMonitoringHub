@@ -178,6 +178,13 @@
   {% endif %}
   <fieldset>
     <legend>Update</legend>
+    {% if form.non_field_errors %}
+    <div style="width:100%;text-align:center">
+      {% for e in form.non_field_errors %}
+      <span style="color:red">{{ e }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
     <table width = "100%">
       <tr>
         <td> New Status </td>
