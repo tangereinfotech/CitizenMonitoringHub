@@ -33,7 +33,7 @@ class UserLoginForm (forms.Form):
         if 'username' in self.cleaned_data and 'password' in self.cleaned_data:
             username = self.cleaned_data ['username']
             password = self.cleaned_data ['password']
-            user = authenticate (username = uname, password = password)
+            user = authenticate (username = username, password = password)
             if user is None:
                 if User.objects.filter (username = username).count () != 0:
                     raise forms.ValidationError ('Username / Password does not match')
