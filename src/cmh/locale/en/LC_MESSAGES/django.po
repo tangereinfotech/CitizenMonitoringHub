@@ -1,0 +1,77 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-08-03 10:39+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: views.py:76 issuemgr/views.py:184
+msgid "Block"
+msgstr ""
+
+#: views.py:77 issuemgr/views.py:178
+msgid "gramp"
+msgstr ""
+
+#: views.py:77 issuemgr/views.py:175
+msgid "Gram Panchayat"
+msgstr ""
+
+#: views.py:78 issuemgr/views.py:172
+msgid "Village"
+msgstr ""
+
+#: captcha/fields.py:56
+msgid "Play captcha as audio file"
+msgstr ""
+
+#: captcha/fields.py:71 captcha/fields.py:96 captcha/tests/__init__.py:70
+msgid "Invalid CAPTCHA"
+msgstr ""
+
+#: captcha/tests/__init__.py:97
+msgid "This field is required."
+msgstr ""
+
+#: templates/index.html:48
+msgid "Apply"
+msgstr ""
+
+#: templates/index.html:53
+msgid "Generate Report"
+msgstr ""
+
+#: usermgr/forms.py:30
+msgid "Username:"
+msgstr ""
+
+#: usermgr/forms.py:31
+msgid "Password:"
+msgstr ""
+
+#: usermgr/forms.py:35
+msgid "This field is mandatory"
+msgstr ""
+
+#: usermgr/forms.py:43
+msgid "Username / Password does not match"
+msgstr ""
+
+#: usermgr/forms.py:45
+msgid "Username is not registered"
+msgstr ""
+
+#: usermgr/forms.py:47
+msgid "Account  suspended. Contact Administrator"
+msgstr ""

@@ -17,7 +17,7 @@ from django import forms
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.db.models import Q
-
+from django.utils.translation import ugettext as _
 from cmh.usermgr.utils import get_user_menus
 
 from cmh.common.models import ComplaintType, ComplaintDepartment
@@ -69,11 +69,11 @@ def index (request):
 
 def aboutus (request):
     return render_to_response ('aboutus.html', {'menus' : get_user_menus (request.user,index),
-                                              'user' : request.user},)
+                                                'user' : request.user},)
 
 
 class SaveMapDataForm (forms.Form):
-    loctype = forms.ChoiceField (choices = (('Block', 'Block'),
-                                            ('gramp', 'Gram Panchayat'),
-                                            ('Village', 'Village')))
+    loctype = forms.ChoiceField (choices = ((_('Block'), _('Block')),
+                                            (_('gramp'), _('Gram Panchayat')),
+                                            (_('Village'), _('Village'))))
     locid   = forms.IntegerField ()

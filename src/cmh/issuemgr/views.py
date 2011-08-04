@@ -169,19 +169,19 @@ def getstats (request):
         locid = form.cleaned_data ['locid']
 
         if datalevel == 'villg':
-            loctype = "Village"
+            loctype = _("Village")
             location = Village.objects.get (id = locid)
             complaints = complaints.filter (location__id = locid)
-            uptype = 'Gram Panchayat'
+            uptype = _('Gram Panchayat')
             upname = location.grampanchayat.name
         elif datalevel == 'gramp':
-            loctype = "gramp"
+            loctype = _("gramp")
             location = GramPanchayat.objects.get (id = locid)
             complaints = complaints.filter (location__grampanchayat__id = locid)
             uptype = 'Block'
             upname = location.block.name
         elif datalevel == 'block':
-            loctype = "Block"
+            loctype = _("Block")
             location = Block.objects.get (id = locid)
             complaints = complaints.filter (location__grampanchayat__block__id = locid)
             uptype = 'District'

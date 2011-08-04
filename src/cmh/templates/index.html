@@ -13,6 +13,9 @@
 {# limitations under the License.                                               #}
 
 {% extends "signinbase.html" %}
+
+{% load i18n %}
+
 {% block extra_heads %}
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false" ></script>
 <meta name="viewport" content="initial-scale=0.1, user-scalable=no" />
@@ -42,12 +45,12 @@
           {{ form.endate }}
         </td>
         <td>
-          <button type="button" class="btn" onclick="update_maps ();">Apply</button>
+          <button type="button" class="btn" onclick="update_maps ();">{% trans "Apply" %}</button>
         </td>
       </tr>
       <tr>
         <td colspan="3" style="text-align:center">
-          <button type="button" class="btn" onclick="callReport ();">Generate Report</button>
+          <button type="button" class="btn" onclick="callReport ();">{% trans "Generate Report" %}</button>
         </td>
       </tr>
     </table>

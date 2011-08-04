@@ -18,7 +18,7 @@ from django.contrib.auth.views import password_change
 
 urlpatterns = patterns ('cmh.usermgr.views',
                         (r'^login/$',             'dologin'),
-                        (r'^myprofile/$',            'gotomyprofile'),
+                        (r'^myprofile/$',         'gotomyprofile'),
                         (r'^logout/$',            'dologout'),
                         # (r'^register/$',           'doregister'),
                         #(r'^forgot/$',            'forgot'),
