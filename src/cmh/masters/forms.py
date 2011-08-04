@@ -376,7 +376,7 @@ class AddGramPanchayat (forms.Form):
     def clean (self) :
         super (AddGramPanchayat, self).clean ()
 
-        if 'gpcode' in self.cleaned_data:
+        if 'gpcode' in self.cleaned_data and 'block' in self.cleaned_data:
             try:
                 gpcode = int (self.cleaned_data['gpcode'])
             except ValueError:
@@ -423,7 +423,7 @@ class AddVillage (forms.Form):
 
     def clean (self) :
         super (AddVillage, self).clean ()
-        if 'vcode' in self.cleaned_data:
+        if 'vcode' in self.cleaned_data and 'gp' in self.cleaned_data:
             try:
                 vcode = int (self.cleaned_data['vcode'])
             except ValueError:
@@ -446,31 +446,27 @@ class AddVillage (forms.Form):
 
 
 class AddComplaint (forms.Form):
-    code        = forms.CharField (label="Complaint Code")
-    summary     = forms.CharField (max_length = 2000, label = "Summary")
-    cclass      = forms.CharField (max_length = 500, label = "Classification")
-    defsmsnew   = forms.CharField (max_length = 2000, label = "Default SMS New")
-    defsmsack   = forms.CharField (max_length = 2000, label = "Default SMS Acknowledge")
-    defsmsopen  = forms.CharField (max_length = 2000, label = "Default SMS Open")
-    defsmsres   = forms.CharField (max_length = 2000, label = "Default SMS Resolved")
-    defsmsclo   = forms.CharField (max_length = 2000, label = "Default SMS Closed")
-    mdg         = forms.CharField (max_length = 10,   label = "MDG Goals")
+    code        = SpacedTextField (label="Complaint Code")
+    summary     = SpacedTextField (max_length = 2000, label = "Summary")
+    cclass      = SpacedTextField (max_length = 500, label = "Classification")
+    defsmsnew   = SpacedTextField (max_length = 2000, label = "Default SMS New")
+    defsmsack   = SpacedTextField (max_length = 2000, label = "Default SMS Acknowledge")
+    defsmsopen  = SpacedTextField (max_length = 2000, label = "Default SMS Open")
+    defsmsres   = SpacedTextField (max_length = 2000, label = "Default SMS Resolved")
+    defsmsclo   = SpacedTextField (max_length = 2000, label = "Default SMS Closed")
+    mdg         = SpacedTextField (max_length = 10,   label = "MDG Goals")
     department  = forms.ModelChoiceField (label = "Department",
                                           queryset = ComplaintDepartment.objects.all(),
-                                          empty_label = "------")
+                                          empty_label = "------",
+                                          widget=forms.Select (attrs = {'style' : 'width:100%'}))
 
     def clean (self) :
-        super (AddComplaint, self).clean ()
-        try:
-            code = int (self.cleaned_data['code'])
-        except ValueError:
-            raise forms.ValidationError ("Complaint code must be a number")
+        if 'code' in self.cleaned_data and 'department' in self.cleaned_data:
+            compcode = "%s.%s" % (self.cleaned_data['department'].code, self.cleaned_data ['code'])
+            if ComplaintType.objects.filter (code = compcode).count () != 0:
+                raise forms.ValidationError ("Complaint code already exists")
 
-        compcode = "%s.%03d" % (self.cleaned_data['department'].code, code)
-        if ComplaintType.objects.filter (code = compcode).count () != 0:
-            raise forms.ValidationError ("Complaint code already exists")
-
-        self.cleaned_data ['code'] = compcode
+            self.cleaned_data ['code'] = compcode
         return self.cleaned_data
 
     def save (self):
@@ -509,16 +505,17 @@ class EditBlk (forms.Form):
             self.fields ['longd'].initial = blkobj.longd
 
     def clean (self):
-        try:
-            orgblkobj = Block.objects.get (id = self.cleaned_data['objid'])
-            real_blkcode = "%s.%03s" % (DeployDistrict.DISTRICT.code, self.cleaned_data ['bcode'])
-            if real_blkcode != orgblkobj.code:
-                blkobj = Block.objects.get (code = real_blkcode)
+        if 'objid' in self.cleaned_data and 'bcode' in self.cleaned_data:
+            try:
+                orgblkobj = Block.objects.get (id = self.cleaned_data['objid'])
+                real_blkcode = "%s.%03s" % (DeployDistrict.DISTRICT.code, self.cleaned_data ['bcode'])
+                if real_blkcode != orgblkobj.code:
+                    blkobj = Block.objects.get (code = real_blkcode)
+                    raise forms.ValidationError ("This code can't be used. Block with this code already exists")
+            except Block.DoesNotExist:
+                pass
+            except Block.MultipleObjectsReturned:
                 raise forms.ValidationError ("This code can't be used. Block with this code already exists")
-        except Block.DoesNotExist:
-            pass
-        except Block.MultipleObjectsReturned:
-            raise forms.ValidationError ("This code can't be used. Block with this code already exists")
         return self.cleaned_data
 
 
@@ -575,16 +572,17 @@ class EditGp (forms.Form):
             self.fields ['longd'].initial = gpobj.longd
 
     def clean (self):
-        try:
-            orggpobj = GramPanchayat.objects.get (id = self.cleaned_data['objid'])
-            real_gpcode = "%s.%03s.%03s" % (DeployDistrict.DISTRICT.code, self.cleaned_data ['bcode'], self.cleaned_data ['gpcode'])
-            if real_gpcode != orggpobj.code:
-                gpobj = GramPanchayat.objects.get (code = real_gpcode)
+        if 'objid' in self.cleaned_data and 'bcode' in self.cleaned_data and 'gpcode' in self.cleaned_data:
+            try:
+                orggpobj = GramPanchayat.objects.get (id = self.cleaned_data['objid'])
+                real_gpcode = "%s.%03s.%03s" % (DeployDistrict.DISTRICT.code, self.cleaned_data ['bcode'], self.cleaned_data ['gpcode'])
+                if real_gpcode != orggpobj.code:
+                    gpobj = GramPanchayat.objects.get (code = real_gpcode)
+                    raise forms.ValidationError ("This code can't be used. Gram Panchayat with this code exists within block")
+            except GramPanchayat.DoesNotExist:
+                pass
+            except GramPanchayat.MultipleObjectsReturned:
                 raise forms.ValidationError ("This code can't be used. Gram Panchayat with this code exists within block")
-        except GramPanchayat.DoesNotExist:
-            pass
-        except GramPanchayat.MultipleObjectsReturned:
-            raise forms.ValidationError ("This code can't be used. Gram Panchayat with this code exists within block")
         return self.cleaned_data
 
 
@@ -640,7 +638,7 @@ class EditVillage (forms.Form):
             self.fields ['longd'].initial = villobj.longd
 
     def clean (self):
-        if 'vcode' in self.cleaned_data:
+        if 'vcode' in self.cleaned_data and 'objid' in self.cleaned_data and 'bcode' in self.cleaned_data and 'gpcode' in self.cleaned_data:
             try:
                 orgvillobj = Village.objects.get (id = self.cleaned_data['objid'])
                 real_vcode = "%s.%03s.%03s.%03s" % (DeployDistrict.DISTRICT.code, self.cleaned_data ['bcode'], self.cleaned_data ['gpcode'],self.cleaned_data['vcode'])
@@ -682,16 +680,17 @@ class EditDep (forms.Form):
             self.fields ['dcode'].initial = depobj.code
 
     def clean (self):
-        try:
-            orgdepobj = ComplaintDepartment.objects.get (id = self.cleaned_data['objid'])
-            real_depcode =  self.cleaned_data ['dcode']
-            if real_depcode != orgdepobj.code:
-                depobj = ComplaintDepartment.objects.get (code = real_depcode)
+        if 'objid' in self.cleaned_data and 'dcode' in self.cleaned_data:
+            try:
+                orgdepobj = ComplaintDepartment.objects.get (id = self.cleaned_data['objid'])
+                real_depcode =  self.cleaned_data ['dcode']
+                if real_depcode != orgdepobj.code:
+                    depobj = ComplaintDepartment.objects.get (code = real_depcode)
+                    raise forms.ValidationError ("Department code already exists please enter non-existing department code")
+            except ComplaintDepartment.DoesNotExist:
+                pass
+            except ComplaintDepartment.MultipleObjectsReturned:
                 raise forms.ValidationError ("Department code already exists please enter non-existing department code")
-        except ComplaintDepartment.DoesNotExist:
-            pass
-        except ComplaintDepartment.MultipleObjectsReturned:
-            raise forms.ValidationError ("Department code already exists please enter non-existing department code")
         return self.cleaned_data
 
 
@@ -736,22 +735,23 @@ class EditComp (forms.Form):
             self.fields ['defsmsclo'].initial   = compobj.defsmsclo
 
     def clean (self):
-        try:
-            orgcompobj = ComplaintType.objects.get (id = self.cleaned_data['objid'])
-            real_compcode =  "%s.%03s" % (self.cleaned_data['hcode'],self.cleaned_data ['code'])
-            if real_compcode != orgcompobj.code:
-                compobj = ComplaintType.objects.get (code = real_compcode)
+        if 'objid' in self.cleaned_data and 'hcode' in self.cleaned_data and 'code' in self.cleaned_data:
+            try:
+                orgcompobj = ComplaintType.objects.get (id = self.cleaned_data['objid'])
+                real_compcode =  "%s.%03s" % (self.cleaned_data['hcode'],self.cleaned_data ['code'])
+                if real_compcode != orgcompobj.code:
+                    compobj = ComplaintType.objects.get (code = real_compcode)
+                    raise forms.ValidationError ("Complaint code already exists please enter non-existing complaint code")
+            except ComplaintType.DoesNotExist:
+                pass
+            except ComplaintType.MultipleObjectsReturned:
                 raise forms.ValidationError ("Complaint code already exists please enter non-existing complaint code")
-        except ComplaintType.DoesNotExist:
-            pass
-        except ComplaintType.MultipleObjectsReturned:
-            raise forms.ValidationError ("Complaint code already exists please enter non-existing complaint code")
         return self.cleaned_data
 
 
     def save (self):
         comp              = ComplaintType.objects.get(id = self.cleaned_data['objid'])
-        comp.code         = "%s.%03s" % (self.cleaned_data['hcode'],self.cleaned_data ['code'])
+        comp.code         = "%s.%s" % (self.cleaned_data['hcode'],self.cleaned_data ['code'])
         comp.summary      = self.cleaned_data['summary']
         comp.cclass       = self.cleaned_data['cclass']
         comp.defsmsnew    = self.cleaned_data['defsmsnew']

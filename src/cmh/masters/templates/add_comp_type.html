@@ -17,55 +17,82 @@
 {% block master_section %}
 <div style="text-align:center">
   <h2>Add Complaint</h2>
-  <form action="." method="post" style="width:400px;margin:0px auto">
-    <table width="150%" >
+  <form action="." method="post" style="width:700px;margin:0px auto">
+    <table width="100%" >
       {% if trial.non_field_errors %}
       <tr>
         <th align="left" colspan="2">{{ trial.non_field_errors }}</th>
       </tr>
       {% endif %}
       <tr>
-        <th align="left">{{ trial.code.label }}</th>
-        <td align="left">
+        <th align="left" style="width:250px">{{ trial.code.label }}</th>
+        <td align="left" style="width:450px">
           {{ trial.code.errors }}
           {{ trial.code }}
         </td>
       </tr>
       <tr>
         <th align="left">{{ trial.summary.label }}</th>
-        <td align="left">{{ trial.summary }}</td>
+        <td align="left">
+          {{ trial.summary.errors }}
+          {{ trial.summary }}
+        </td>
       </tr>
       <tr>
         <th align="left">{{ trial.department.label }}</th>
-        <td align="left" width="100%">{{ trial.department }}</td>
+        <td align="left">
+          {{ trial.department.errors }}
+          {{ trial.department }}
+        </td>
       </tr>
       <tr>
         <th align="left">{{ trial.cclass.label }}</th>
-        <td align="left">{{ trial.cclass }}</td>
+        <td align="left">
+          {{ trial.cclass.errors }}
+          {{ trial.cclass }}
+        </td>
       </tr>
       <tr>
         <th align="left">{{ trial.defsmsnew.label }}</th>
-        <td align="left">{{ trial.defsmsnew }}</td>
+        <td align="left">
+          {{ trial.defsmsnew.errors }}
+          {{ trial.defsmsnew }}
+        </td>
       </tr>
       <tr>
-        <th align="left" width="80%">{{ trial.defsmsack.label }}</th>
-        <td align="left">{{ trial.defsmsack }}</td>
+        <th align="left">{{ trial.defsmsack.label }}</th>
+        <td align="left">
+          {{ trial.defsmsack.errors }}
+          {{ trial.defsmsack }}
+        </td>
       </tr>
       <tr>
         <th align="left">{{ trial.defsmsopen.label }}</th>
-        <td align="left">{{ trial.defsmsopen }}</td>
+        <td align="left">
+          {{ trial.defsmsopen.errors }}
+          {{ trial.defsmsopen }}
+        </td>
       </tr>
       <tr>
         <th align="left">{{ trial.defsmsres.label }}</th>
-        <td align="left">{{ trial.defsmsres }}</td>
+        <td align="left">
+          {{ trial.defsmsres.errors }}
+          {{ trial.defsmsres }}
+        </td>
       </tr>
       <tr>
         <th align="left">{{ trial.defsmsclo.label }}</th>
-        <td align="left">{{ trial.defsmsclo }}</td>
+        <td align="left">
+          {{ trial.defsmsclo.errors }}
+          {{ trial.defsmsclo }}
+        </td>
       </tr>
       <tr>
         <th align="left">{{ trial.mdg.label }}</th>
-        <td align="left">{{ trial.mdg }}</td>
+        <td align="left">
+          {{ trial.mdg.errors }}
+          {{ trial.mdg }}
+        </td>
       </tr>
       <tr>
         <td></td>
