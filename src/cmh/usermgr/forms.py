@@ -30,18 +30,19 @@ class UserLoginForm (forms.Form):
     password = forms.CharField(label="Password",
                                widget=forms.PasswordInput (attrs = {'tabindex' : '2'}))
     def clean (self):
-        uname = self.cleaned_data ['username']
-        user = authenticate (username = uname,
-                             password = self.cleaned_data ['password'])
-        if user is None:
-            if User.objects.filter (username = uname).count () != 0:
-                raise forms.ValidationError ('Username / Password does not match')
-            else:
-                raise forms.ValidationError ('Username is not registered')
-        elif user.is_active == False:
-            raise forms.ValidationError ('Account  suspended. Contact Administrator')
+        if 'username' in self.cleaned_data and 'password' in self.cleaned_data:
+            username = self.cleaned_data ['username']
+            password = self.cleaned_data ['password']
+            user = authenticate (username = uname, password = password)
+            if user is None:
+                if User.objects.filter (username = username).count () != 0:
+                    raise forms.ValidationError ('Username / Password does not match')
+                else:
+                    raise forms.ValidationError ('Username is not registered')
+            elif user.is_active == False:
+                raise forms.ValidationError ('Account  suspended. Contact Administrator')
 
-        self.valid_user = user
+            self.valid_user = user
         return self.cleaned_data
 
 class UserRegisterForm(forms.Form):
