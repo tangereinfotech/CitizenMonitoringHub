@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-03 10:39+0530\n"
+"POT-Creation-Date: 2011-08-04 13:32+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,34 +44,82 @@ msgstr ""
 msgid "This field is required."
 msgstr ""
 
+#: issuemgr/templates/track_issues.html:23
+msgid "Complaint Number:"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:32
+msgid "Current Status:"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:42
+msgid "Filed By:"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:51
+msgid "Location:"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:61
+msgid "Filed On:"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:70
+msgid "Issue Date:"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:80
+msgid "Complaint Summary:"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:90
+msgid "Assigned To:"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:99
+msgid "Department:"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:111
+msgid "Description"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:123
+msgid "Evidences:"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:136
+msgid "History for Complaint No. "
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:139
+msgid "Update"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:146
+msgid "Changed On"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:147
+msgid "Department"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:148
+msgid "Status"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:149
+msgid "Comment"
+msgstr ""
+
+#: issuemgr/templates/track_issues.html:150
+msgid "Changed by"
+msgstr ""
+
 #: templates/index.html:48
 msgid "Apply"
 msgstr ""
 
 #: templates/index.html:53
 msgid "Generate Report"
-msgstr ""
-
-#: usermgr/forms.py:30
-msgid "Username:"
-msgstr ""
-
-#: usermgr/forms.py:31
-msgid "Password:"
-msgstr ""
-
-#: usermgr/forms.py:35
-msgid "This field is mandatory"
-msgstr ""
-
-#: usermgr/forms.py:43
-msgid "Username / Password does not match"
-msgstr ""
-
-#: usermgr/forms.py:45
-msgid "Username is not registered"
-msgstr ""
-
-#: usermgr/forms.py:47
-msgid "Account  suspended. Contact Administrator"
 msgstr ""

@@ -23,7 +23,7 @@
         [
             "{{issue.complaintno}}",
             "{{issue.logdate}}",
-            "{{issue.description|linebreaksbr|escapejs}}",
+            "{{issue|description_with_reminder:request.user|escapejs|linebreaksbr}}",
             "{{issue.curstate}}",
             "{{issue.created}}",
             {% if issue|is_updatable:request.user %} "true" {% else %} "false" {% endif %}

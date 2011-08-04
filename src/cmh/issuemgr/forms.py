@@ -18,6 +18,7 @@ from django import forms
 LOCATION_REGEX = r'^ *(?P<village>\w+) *\[(?P<gp>\w+), *(?P<block>\w+)\] *$|^ *(?P<full>\w+) *$'
 
 from datetime import datetime
+from django.utils.translation import ugettext as _
 
 from cmh.smsgateway.utils import queue_complaint_update_sms
 
@@ -106,20 +107,20 @@ class ComplaintForm (forms.Form):
 
 class AcceptComplaintForm (forms.Form):
     logdate         = forms.DateField (input_formats = ('%d/%m/%Y',),
-                                   widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
+                                       widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
     description     = forms.CharField (widget=forms.Textarea ( attrs = {'style' :
-                                                                    "width:348px;border-style:inset;",
-                                                                    "rows" : "6"}))
+                                                                        "width:348px;border-style:inset;",
+                                                                        "rows" : "6"}))
     locationid      = forms.IntegerField (widget = forms.HiddenInput ())
     locationdesc    = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
-                                                                       'autocomplete' : 'off'}))
+                                                                          'autocomplete' : 'off'}))
     yourname        = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
-                                                                      'maxlength' : '100'}))
+                                                                          'maxlength' : '100'}))
     yourmobile      = forms.IntegerField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
-                                                                         'maxlenght' : '15'}))
+                                                                             'maxlenght' : '15'}))
     categoryid      = forms.IntegerField (widget = forms.HiddenInput ())
     categorydesc    = forms.CharField (widget = forms.TextInput (attrs = {'style' : 'width:348px',
-                                                                       'autocomplete' : 'off'}))
+                                                                          'autocomplete' : 'off'}))
     gender          = forms.CharField (widget = forms.RadioSelect (choices = GENDER_CHOICES), required = False, initial = 'Unspecified')
 
     community       = forms.CharField (widget = forms.RadioSelect (choices = COMMUNITY_CHOICES), required = False, initial = 'Unspecified')
@@ -441,3 +442,16 @@ class ReportDataValid(forms.Form):
     blkid   = MultiNumberIdField (required=False)
     gpid    = MultiNumberIdField (required=False)
     villid  = MultiNumberIdField (required=False)
+
+
+class SetComplaintReminder (forms.Form):
+    complaintno = forms.CharField (widget = forms.HiddenInput())
+    reminderon  = forms.DateField (input_formats = ('%d/%m/%Y',),
+                                   widget = forms.TextInput (attrs = {'autocomplete' : 'off',
+                                                                      'size' : '10'}),
+                                   label = _("On:"))
+
+    def __init__ (self, complaint, *args, **kwargs):
+        super (SetComplaintReminder, self).__init__ (*args, **kwargs)
+        self.fields ['complaintno'].initial = complaint.complaintno
+

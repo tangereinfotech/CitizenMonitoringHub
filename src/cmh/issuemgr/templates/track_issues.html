@@ -15,11 +15,18 @@
 {% extends "basewithmenu.html" %}
 
 {% load complaint_extras %}
+{% load i18n %}
+
+{% block extra_heads %}
+{{ block.super }}
+<link type="text/css" href="/static/jquery/js/fancybox/jquery.fancybox-1.3.4.css"
+      rel="stylesheet" media="screen" />
+{% endblock %}
 
 {% block page_content %}
 <table width="100%">
   <tr>
-    <td style="width:15%"> Complaint Number: </td>
+    <td style="width:15%"> {% trans "Complaint Number:" %} </td>
     <td style="width:33%">
       <input id="id_complaintno"
              name="complaintno"
@@ -28,7 +35,7 @@
              style="width:100%">
     </td>
     <td style="width:4%"/>
-    <td style="width:15%"> Current Status </td>
+    <td style="width:15%"> {% trans "Current Status:" %}</td>
     <td style="width:33%">
       <input id="id_curstate"
              name="curstate"
@@ -38,7 +45,7 @@
     </td>
   </tr>
   <tr>
-    <td> Filed By: </td>
+    <td> {% trans "Filed By:" %} </td>
     <td>
       <input id="id_filedby"
              name="filedby"
@@ -47,7 +54,7 @@
              style="width:100%">
     </td>
     <td/>
-    <td>Location: </td>
+    <td>{% trans "Location:" %} </td>
     <td>
       <input id="id_location"
              name="location"
@@ -57,7 +64,7 @@
     </td>
   </tr>
   <tr>
-    <td> Filed On: </td>
+    <td> {% trans "Filed On:" %} </td>
     <td>
       <input id="id_created"
              name="created"
@@ -66,7 +73,7 @@
              style="width:100%">
     </td>
     <td/>
-    <td> Issue Date: </td>
+    <td> {% trans "Issue Date:" %} </td>
     <td>
       <input id="id_loggedon"
              name="loggedon"
@@ -76,7 +83,7 @@
     </td>
   </tr>
   <tr>
-    <td> Complaint Summary:</td>
+    <td> {% trans "Complaint Summary:" %}</td>
     <td colspan="4">
         <input id="id_complaintsummary"
                name="complaintsummary"
@@ -86,7 +93,7 @@
     </td>
   </tr>
   <tr>
-    <td> Assigned To: </td>
+    <td> {% trans "Assigned To:" %} </td>
     <td>
       <input id="id_assignto"
              name="assignto"
@@ -95,7 +102,7 @@
              style="width:100%">
     </td>
     <td/>
-    <td> Department: </td>
+    <td> {% trans "Department:" %} </td>
     <td>
       <input id="id_department"
              name="department"
@@ -107,7 +114,7 @@
     </td>
   </tr>
   <tr>
-    <td>Description</td>
+    <td>{% trans "Description" %}</td>
     <td colspan="4">
       <textarea name="description"
                 cols="40"
@@ -119,7 +126,7 @@
   </tr>
   {% if base.evidences.all.count != 0 %}
   <tr>
-    <td>Evidences:</td>
+    <td>{% trans "Evidences:" %}</td>
     <td colspan="4">
     {% for ev in base.evidences.all %}
     {{ ev|get_evidence_display:user|safe }}
@@ -132,21 +139,37 @@
   {% endif %}
 </table>
 <div class="complaint-history-banner">
-  History for Complaint No. {{ base.complaintno }}
+  {% trans "History for Complaint No. " %}{{ base.complaintno }}
   {% if updatable %}
   <div style="float:right;padding-right:20px;">
-    <a href="/complaint/update/{{current.complaintno}}/">Update</a>
+    <ul class="complaint-updates">
+      {% if base.complaintno|can_set_reminder:user %}
+      <li>
+        <a id="setreminder" href="#set_reminder">{% trans "Set Reminder" %}</a>
+      </li>
+      {% else %}
+      {% if base.complaintno|can_del_reminder:user %}
+      <li>
+        <a id="delreminder" href="/complaint/del_reminder/{{current.complaintno}}/">{% trans "Remove Reminder " %}[{{ base.complaintno|get_reminder:user }}]</a>
+      </li>
+      {% endif %}
+      {% endif %}
+      <li>
+        <a href="/complaint/update/{{current.complaintno}}/">{% trans "Update" %}</a>
+      </li>
+    </ul>
+    <div style="clear:both;"></div>
   </div>
   {% endif %}
 </div>
 <table class="tabularlist">
   <thead>
     <tr>
-      <th style="width:12%"> Changed On </th>
-      <th style="width:12%"> Department </th>
-      <th style="width:12%"> Status </th>
-      <th style="width:40%"> Comment </th>
-      <th style="width:24%"> Changed by </th>
+      <th style="width:12%"> {% trans "Changed On" %} </th>
+      <th style="width:12%"> {% trans "Department" %} </th>
+      <th style="width:12%"> {% trans "Status" %} </th>
+      <th style="width:40%"> {% trans "Comment" %} </th>
+      <th style="width:24%"> {% trans "Changed by" %} </th>
     </tr>
   </thead>
   <tbody>
@@ -161,6 +184,29 @@
     {% endfor %}
   </tbody>
 </table>
+<div style="display:none">
+  <div id="set_reminder">
+    <div style="display: table;height:150px; #position: relative; overflow: hidden; width:700px;border:5px solid #cecece;">
+      <div style="#position:absolute;#top:50%;display:table-cell; vertical-align: middle">
+        <div style="#position: relative; #top: -50%; text-align:center">
+          {% trans "Setting Reminder for Complaint # " %}{{ base.complaintno }}
+          <form method="post" action="/complaint/set_reminder/{{ base.complaintno }}/" style="display:inline">
+            {{ reminderform }}
+            <input type="submit" value="{% trans 'Set' %}" id="set_reminder_submit">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-
+{% endblock %}
+{% block body_scripts %}
+<script type="text/javascript" src="/static/jquery/js/fancybox/jquery.fancybox-1.3.4.js"></script>
+<script type="text/javascript">
+  $(document).ready (function () {
+    $("a#setreminder").fancybox ();
+    $("#id_reminderon").datepicker ({'dateFormat' : 'dd/mm/yy'});
+  });
+</script>
 {% endblock %}

@@ -724,3 +724,14 @@ ul.sysnav {
 ul.sysnav li {
     display: inline;
 }
+
+ul.complaint-updates {
+   list-style-type:none;
+   margin:0px;
+   padding:0px;
+}
+
+ul.complaint-updates li {
+   display: inline;
+   padding: 0px 5px;
+}

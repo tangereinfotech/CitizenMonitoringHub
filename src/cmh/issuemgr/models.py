@@ -118,3 +118,8 @@ class ReportData(models.Model):
     gp          = models.ManyToManyField (GramPanchayat, blank = True, null = True)
     village     = models.ManyToManyField (Village, blank = True, null = True)
     department  = models.ManyToManyField (ComplaintDepartment, blank = True, null = True)
+
+class ComplaintReminder (models.Model):
+    user        = models.ForeignKey (User)
+    complaintno = models.CharField (max_length = 200)
+    reminderon  = models.DateField ()

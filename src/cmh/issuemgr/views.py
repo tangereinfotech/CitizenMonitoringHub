@@ -28,6 +28,7 @@ from django.db.models import Avg, Max, Min, Count, Q
 from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.conf import settings
+from django.utils.translation import ugettext as _
 
 from cmh.common.models import Country, State, District
 from cmh.common.models import Block, GramPanchayat, Village
@@ -43,11 +44,12 @@ from cmh.issuemgr.constants import STATUS_NEW, STATUS_REOPEN, STATUS_ACK
 from cmh.issuemgr.constants import STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED
 from cmh.issuemgr.constants import HotComplaintPeriod
 
-from cmh.issuemgr.models import Complaint, ComplaintEvidence
+from cmh.issuemgr.models import Complaint, ComplaintEvidence, ComplaintReminder
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox, Report
 from cmh.issuemgr.forms import ComplaintTrackForm, LocationStatsForm, ReportForm, ReportDataValid
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX, ComplaintDisplayParams
+from cmh.issuemgr.forms import SetComplaintReminder
 
 from cmh.smsgateway.utils import queue_complaint_update_sms
 
@@ -351,28 +353,22 @@ def my_issues (request):
 
 @login_required
 def my_issues_list (request):
-    try:
-        role = AppRole.objects.get_user_role (request.user)
-        statuses = StatusTransition.objects.get_changeable_statuses (role)
-        querySet = Complaint.objects.get_latest_complaints ().filter (curstate__in = statuses).order_by ('-created')
+    role = AppRole.objects.get_user_role (request.user)
+    statuses = StatusTransition.objects.get_changeable_statuses (role)
+    querySet = Complaint.objects.get_latest_complaints ().filter (curstate__in = statuses).order_by ('-created')
 
-        role = request.user.cmhuser.get_user_role ()
-        if role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE:
-            official = request.user.official
-            querySet = querySet.filter (department = official.department)
+    role = request.user.cmhuser.get_user_role ()
+    if role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE:
+        official = request.user.official
+        querySet = querySet.filter (department = official.department)
 
-        columnIndexNameMap = { 0: 'complaintno',
-                               1: 'logdate',
-                               2: 'description',
-                               3: 'curstate',
-                               4: 'created'}
+    columnIndexNameMap = { 0: 'complaintno',
+                           1: 'logdate',
+                           2: 'description',
+                           3: 'curstate',
+                           4: 'created'}
 
-        x = get_datatables_records (request, querySet, columnIndexNameMap, 'issue_entity_datatable.html')
-    except:
-        import traceback
-        traceback.print_exc ()
-
-    return x
+    return get_datatables_records (request, querySet, columnIndexNameMap, 'issue_entity_datatable.html')
 
 
 def update (request, complaintno):
@@ -457,9 +453,10 @@ def track_issues (request, complaintno):
                                    {'base' : base,
                                     'current' : current,
                                     'complaints' : complaints,
-                                    'menus' : get_user_menus (request.user,track_issues),
+                                    'menus' : get_user_menus (request.user, track_issues),
                                     'user' : request.user,
-                                    'updatable' : updatable})
+                                    'updatable' : updatable,
+                                    'reminderform' : SetComplaintReminder (base)})
     except Complaint.DoesNotExist:
         return render_to_response ('track_issues_not_found.html',
                                    {'menus' : get_user_menus (request.user,track_issues),
@@ -961,3 +958,33 @@ def _handle_evidence_upload (complaint, temp_file):
     complaint.save ()
 
 
+@login_required
+def set_reminder (request, complaintno):
+    if request.method == 'POST':
+        complaint = Complaint.objects.get (complaintno = complaintno, latest=True)
+        form = SetComplaintReminder (complaint, request.POST)
+        if form.is_valid ():
+            try:
+                cr = ComplaintReminder.objects.get (user = request.user,
+                                                    complaintno = complaint.complaintno)
+                cr.reminderon  = form.cleaned_data ['reminderon']
+                cr.save ()
+            except ComplaintReminder.DoesNotExist:
+                cr = ComplaintReminder.objects.create (user = request.user,
+                                                       complaintno = complaint.complaintno,
+                                                       reminderon = form.cleaned_data ['reminderon'])
+            except ComplaintReminder.MultipleObjectsReturned:
+                ComplaintReminder.objects.filter (user = request.user,
+                                                  copmlaintno = complaint.complaintno).delete ()
+                cr = ComplaintReminder.objects.create (user = request.user,
+                                                       complaintno = complaint.complaintno,
+                                                       reminderon = form.cleaned_data ['reminderon'])
+
+        return HttpResponseRedirect (reverse (track_issues, args = [complaint.complaintno]))
+    else:
+        return HttpResponseRedirect ("/")
+
+@login_required
+def del_reminder (request, complaintno):
+    ComplaintReminder.objects.filter (user = request.user, complaintno = complaintno).delete ()
+    return HttpResponseRedirect (reverse (track_issues, args = [complaintno]))

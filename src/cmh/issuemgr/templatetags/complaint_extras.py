@@ -1,4 +1,5 @@
 from django import template
+from datetime import datetime
 
 from cmh.common.models import AppRole
 from cmh.common.models import StatusTransition
@@ -6,6 +7,8 @@ from cmh.common.models import StatusTransition
 from cmh.common.constants import UserRoles
 
 from cmh.issuemgr.constants import STATUS_NEW, STATUS_ACK
+
+from cmh.issuemgr.models import Complaint, ComplaintReminder
 
 register = template.Library ()
 
@@ -32,6 +35,36 @@ def can_add_evidence (complaint, user):
             return True
     return False
 
+def can_set_reminder (complaintno, user):
+    if ComplaintReminder.objects.filter (user = user, complaintno = complaintno).count () != 0:
+        return False
+    return True
+
+def can_del_reminder (complaintno, user):
+    if ComplaintReminder.objects.filter (user = user, complaintno = complaintno).count () != 0:
+        return True
+    return False
+
+def get_reminder (complaintno, user):
+    try:
+        cr = ComplaintReminder.objects.get (user = user, complaintno = complaintno)
+        return cr.reminderon
+    except:
+        return "No Reminder"
+
+def description_with_reminder (complaint, user):
+    description = complaint.description
+    crs = ComplaintReminder.objects.filter (user = user, complaintno = complaint.complaintno).order_by ('reminderon')
+    if crs.count () != 0:
+        cr = crs [0]
+        if cr.reminderon <= datetime.today ().date ():
+            description = "<span style='color:#ff3333;font-style:italic'>" + description + " </span>"
+    return description
+
 register.filter ('is_updatable', is_updatable)
 register.filter ('get_evidence_display', get_evidence_display)
 register.filter ('can_add_evidence', can_add_evidence)
+register.filter ('can_set_reminder', can_set_reminder)
+register.filter ('can_del_reminder', can_del_reminder)
+register.filter ('get_reminder', get_reminder)
+register.filter ('description_with_reminder', description_with_reminder)
