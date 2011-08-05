@@ -96,7 +96,7 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                                                        }
                                                    },
                                                    seriesDefaults : {
-                                                       showMarker : true,
+                                                       showMarker : false,
                                                        pointLabels: {
                                                            show:false,
                                                            ypadding: 3,

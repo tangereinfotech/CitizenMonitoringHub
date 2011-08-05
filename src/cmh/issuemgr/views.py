@@ -56,6 +56,9 @@ from cmh.smsgateway.utils import queue_complaint_update_sms
 from cmh.common.constants import UserRoles
 from cmh.usermgr.utils import get_user_menus
 
+MY_ISSUES_MODE  = 'my-issues-mode'
+ALL_ISSUES_MODE = 'all-issues-mode'
+
 
 def index (request):
     if request.method == 'GET':
@@ -328,13 +331,29 @@ def accept (request):
 
 @login_required
 def all_issues (request):
+    set_session_data (request, ALL_ISSUES_MODE, 'ALL')
     return render_to_response ('all_issues.html',
                                {'menus' : get_user_menus (request.user,all_issues),
-                                'user' : request.user})
+                                'user' : request.user,
+                                'mode' : 'all'})
+@login_required
+def all_mode_issues (request, mode):
+    set_session_data (request, ALL_ISSUES_MODE, mode.upper ())
+    return render_to_response ('all_issues.html',
+                               {'menus' : get_user_menus (request.user,all_issues),
+                                'user' : request.user,
+                                'mode' : mode.lower ()})
 
 @login_required
 def all_issues_list (request):
-    querySet = Complaint.objects.get_latest_complaints ().order_by ('-created')
+    querySet = Complaint.objects.get_latest_complaints ()
+
+    mode = get_session_data (request, ALL_ISSUES_MODE)
+    if mode.lower () == 'rem':
+        comp_reminders = ComplaintReminder.objects.filter (user = request.user, reminderon__lte = datetime.today ().date ())
+        querySet = querySet.filter (complaintno__in = [c.complaintno for c in comp_reminders])
+
+    querySet = querySet.order_by ('-created')
 
     columnIndexNameMap = { 0: 'complaintno',
                            1: 'logdate',
@@ -346,16 +365,33 @@ def all_issues_list (request):
 
 @login_required
 def my_issues (request):
+    set_session_data (request, MY_ISSUES_MODE, 'ALL')
     return render_to_response ('my_issues.html',
                                {'menus' : get_user_menus (request.user, my_issues),
-                                'user' : request.user})
+                                'user' : request.user,
+                                'mode' : 'all'})
+
+@login_required
+def my_mode_issues (request, mode):
+    set_session_data (request, MY_ISSUES_MODE, mode.upper ())
+    return render_to_response ('my_issues.html',
+                               {'menus' : get_user_menus (request.user, my_issues),
+                                'user' : request.user,
+                                'mode' : mode.lower ()})
 
 
 @login_required
 def my_issues_list (request):
     role = AppRole.objects.get_user_role (request.user)
     statuses = StatusTransition.objects.get_changeable_statuses (role)
-    querySet = Complaint.objects.get_latest_complaints ().filter (curstate__in = statuses).order_by ('-created')
+    querySet = Complaint.objects.get_latest_complaints ().filter (curstate__in = statuses)
+
+    mode = get_session_data (request, MY_ISSUES_MODE)
+    if mode.lower () == 'rem':
+        comp_reminders = ComplaintReminder.objects.filter (user = request.user, reminderon__lte = datetime.today ().date ())
+        querySet = querySet.filter (complaintno__in = [c.complaintno for c in comp_reminders])
+
+    querySet = querySet.order_by ('-created')
 
     role = request.user.cmhuser.get_user_role ()
     if role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE:
@@ -369,7 +405,6 @@ def my_issues_list (request):
                            4: 'created'}
 
     return get_datatables_records (request, querySet, columnIndexNameMap, 'issue_entity_datatable.html')
-
 
 def update (request, complaintno):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
@@ -532,7 +567,9 @@ def hot_complaints (request):
     return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : [], 'departments' : []}))
 
 def get_complaint_data (deptids, stdate, endate):
-    complaints = Complaint.objects.filter (createdate__lte = endate, latest = True, department__id__in = deptids)
+    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, department__id__in = deptids, curstate = STATUS_NEW)
+    cnos = [c.complaintno for c in complaints]
+    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, latest = True, department__id__in = deptids, complaintno__in = cnos)
     open_complaints = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_REOPEN) | Q (curstate = STATUS_OPEN))
     clos_complaints = complaints.filter (Q (curstate = STATUS_RESOLVED) | Q (curstate = STATUS_CLOSED))
 

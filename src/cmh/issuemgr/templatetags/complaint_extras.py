@@ -54,11 +54,11 @@ def get_reminder (complaintno, user):
 
 def description_with_reminder (complaint, user):
     description = complaint.description
-    crs = ComplaintReminder.objects.filter (user = user, complaintno = complaint.complaintno).order_by ('reminderon')
+    crs = ComplaintReminder.objects.filter (user = user,
+                                            complaintno = complaint.complaintno,
+                                            reminderon__lte = datetime.today ().date ()).order_by ('reminderon')
     if crs.count () != 0:
-        cr = crs [0]
-        if cr.reminderon <= datetime.today ().date ():
-            description = "<span style='color:#ff3333;font-style:italic'>" + description + " </span>"
+        description = "<span style='color:#ff3333;font-style:italic'>" + description + " </span>"
     return description
 
 register.filter ('is_updatable', is_updatable)

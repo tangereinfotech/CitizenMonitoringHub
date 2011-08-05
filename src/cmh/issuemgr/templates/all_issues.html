@@ -15,6 +15,7 @@
 {% extends "basewithmenu.html" %}
 
 {% load complaint_extras %}
+{% load i18n %}
 
 {% block extra_heads %}
 <link type="text/css" href="/static/jquery/css/jquery.contextMenu.css" rel="stylesheet" media="screen">
@@ -22,7 +23,14 @@
 
 {% block page_content %}
 <div style="text-align:center;">
-  <h2>All Issues</h2>
+  <div style="padding:14px 0px 14px 50px">
+    <span style="font-size:16.2px;font-weight:bold;">{% trans "My Issues" %}</span>
+    <div style="float:right;padding-right:20px">
+      {% trans "View Issues:" %}
+      <input id="view_all" type="radio" name="mode" value="all" {% if mode == "all" %} checked {% endif %}>{% trans "All"%}
+      <input id="view_rem" type="radio" name="mode" value="all" {% if mode == "rem" %} checked {% endif %}>{% trans "Reminders"%}
+    </div>
+  </div>
   <table id="issues_list" class="tabularlist">
     <colgroup>
       <col align="left">
@@ -88,7 +96,23 @@
             { "bSearchable": false, "bVisible" : false},
         ],
         "fnDrawCallback" : showMyContextMenu
-     });
+    });
+
+    $("#view_all").click (function () {
+      var form = document.createElement ("form");
+      form.action = "/complaint/all_issues/all/";
+      form.method = "get";
+      document.body.appendChild (form);
+      form.submit ();
+    });
+
+    $("#view_rem").click (function () {
+      var form = document.createElement ("form");
+      form.action = "/complaint/all_issues/rem/";
+      form.method = "get";
+      document.body.appendChild (form);
+      form.submit ();
+    });
   });
 
   function showMyContextMenu () {
