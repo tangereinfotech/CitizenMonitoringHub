@@ -566,10 +566,15 @@ def addcomp(request):
                                         'user'  : request.user})
 
 def getgpinblocks (request):
-    repdata = ReportData.objects.get (id = request.GET.get ('repdataid'))
+    if 'repdataid' in request.GET:
+        repdata = ReportData.objects.get (id = request.GET.get ('repdataid'))
+    else:
+        repdata = None
     blockid = request.GET['blockid']
     try:
-        gps = Block.objects.get (id = blockid).grampanchayat_set.all ().exclude(id__in = [gp.id for gp in repdata.gp.all()])
+        gps = Block.objects.get (id = blockid).grampanchayat_set.all ()
+        if repdata != None:
+            gps = gps.exclude(id__in = [gp.id for gp in repdata.gp.all()])
     except Block.DoesNotExist:
         gps = []
     retdata = [{'id' : gp.id, 'name' : str (gp)} for gp in gps]
@@ -577,10 +582,16 @@ def getgpinblocks (request):
 
 
 def getvillingps (request):
-    repdata = ReportData.objects.get (id = request.GET.get ('repdataid'))
+    if 'repdataid' in request.GET:
+        repdata = ReportData.objects.get (id = request.GET.get ('repdataid'))
+    else:
+        repdata = None
+
     gpid = request.GET['gpid']
     try:
-        vills = GramPanchayat.objects.get (id = gpid).village_set.all ().exclude(id__in = [v.id for v in repdata.village.all()])
+        vills = GramPanchayat.objects.get (id = gpid).village_set.all ()
+        if repdata != None:
+            vills = vills.exclude(id__in = [v.id for v in repdata.village.all()])
     except GramPanchayat.DoesNotExist:
         vills = []
     retdata = [{'id' : vill.id, 'name' : str (vill)} for vill in vills]
