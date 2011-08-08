@@ -80,6 +80,16 @@ class SpacedTextInput (forms.TextInput):
             kwargs ['attrs'] = {'style' : 'width:100%'}
         super (SpacedTextInput, self).__init__ (*args, **kwargs)
 
+class SpacedTextAreaInput (forms.Textarea):
+    def __init__ (self, *args, **kwargs):
+        if 'attrs' in kwargs:
+            kwargs ['attrs'].update ({'style' : 'width:100%', 'rows' : 2})
+        else:
+            kwargs ['attrs'] = {'style' : 'width:100%',
+                                'class' : 'boxsizingBorder',
+                                'rows' : 2}
+        super (SpacedTextAreaInput, self).__init__ (*args, **kwargs)
+
 class SpacedROTextInput (forms.TextInput):
     def __init__ (self, *args, **kwargs):
         if 'attrs' in kwargs:
@@ -87,6 +97,7 @@ class SpacedROTextInput (forms.TextInput):
         else:
             kwargs ['attrs'] = {'style' : 'width:100%', 'readonly' : 'readonly'}
         super (SpacedROTextInput, self).__init__ (*args, **kwargs)
+
 
 class AutoCompleteOffTextInput (SpacedTextInput):
     def __init__ (self, *args, **kwargs):
@@ -96,10 +107,18 @@ class AutoCompleteOffTextInput (SpacedTextInput):
             kwargs ['attrs'] = {'autocomplete' : 'off', 'style' : 'width:100%'}
         super (AutoCompleteOffTextInput, self).__init__ (*args, **kwargs)
 
+
 class SpacedTextField (forms.CharField):
     def __init__ (self, *args, **kwargs):
         kwargs ['widget'] = SpacedTextInput ()
         super (SpacedTextField, self).__init__ (*args, **kwargs)
+
+
+class SpacedTextAreaField (forms.CharField):
+    def __init__ (self, *args, **kwargs):
+        kwargs ['widget'] = SpacedTextAreaInput ()
+        super (SpacedTextAreaField, self).__init__ (*args, **kwargs)
+
 
 class SpacedROTextField (forms.CharField):
     def __init__ (self, *args, **kwargs):
@@ -116,17 +135,15 @@ class LatLongField (forms.DecimalField):
 
 
 class MultiNumberIdField (forms.CharField):
-    def to_python (self, value):
-        if not value: return []
-        return [int (x) for x in value.split (',')]
-
-    def validate (self, value_list):
-        super (MultiNumberIdField, self).validate (value_list)
-        for number in value_list:
+    def clean (self, data):
+        super (MultiNumberIdField, self).clean (data)
+        values = []
+        for x in data.split (','):
             try:
-                n = int (number)
+                values.append (int (x))
             except ValueError:
-                raise forms.ValidationError ("Non number in MultiNumberIdField")
+                raise forms.ValidationError ("Only comma separated integers are allowed")
+        return values
 
 class FormattedDateField (forms.CharField):
     def clean (self, value):

@@ -61,6 +61,9 @@ def description_with_reminder (complaint, user):
         description = "<span style='color:#ff3333;font-style:italic'>" + description + " </span>"
     return description
 
+def get_mdgs (comptype):
+    return ", ".join (sorted ([m.goalnum for m in comptype.complaintmdg_set.all ()]))
+
 register.filter ('is_updatable', is_updatable)
 register.filter ('get_evidence_display', get_evidence_display)
 register.filter ('can_add_evidence', can_add_evidence)
@@ -68,3 +71,4 @@ register.filter ('can_set_reminder', can_set_reminder)
 register.filter ('can_del_reminder', can_del_reminder)
 register.filter ('get_reminder', get_reminder)
 register.filter ('description_with_reminder', description_with_reminder)
+register.filter ('get_mdgs', get_mdgs)

@@ -735,3 +735,9 @@ ul.complaint-updates li {
    display: inline;
    padding: 0px 5px;
 }
+
+.boxsizingBorder {
+   box-sizing: border-box;
+   -webkit-box-sizing:border-box;
+   -moz-box-sizing: border-box;
+}

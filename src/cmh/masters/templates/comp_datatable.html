@@ -12,6 +12,8 @@
 {# See the License for the specific language governing permissions and          #}
 {# limitations under the License.                                               #}
 
+{% load complaint_extras %}
+
 {
     "sEcho": {{sEcho}},
     "iTotalRecords": {{iTotalRecords}},
@@ -22,7 +24,8 @@
             "{{comp.get_department}}",
             "{{comp.get_code}}",
             "{{comp.summary}}",
-            "{{comp.cclass}}"
+            "{{comp.cclass}}",
+            "{{comp|get_mdgs}}"
         ]
         {% if not forloop.last %},{% endif %}
         {% endfor %}

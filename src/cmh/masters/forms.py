@@ -23,7 +23,8 @@ from cmh.common.fields import UsernameField
 from cmh.common.fields import AutoCompleteOffTextInput, SpacedSelectInput
 from cmh.common.fields import SpacedTextInput, SpacedROTextInput
 from cmh.common.fields import SpacedTextField, SpacedROTextField
-from cmh.common.fields import LatLongField
+from cmh.common.fields import LatLongField, MultiNumberIdField
+from cmh.common.fields import SpacedTextAreaField
 
 from cmh.common.models import ComplaintDepartment
 from cmh.common.constants import UserRoles
@@ -449,12 +450,12 @@ class AddComplaint (forms.Form):
     code        = SpacedTextField (label="Complaint Code")
     summary     = SpacedTextField (max_length = 2000, label = "Summary")
     cclass      = SpacedTextField (max_length = 500, label = "Classification")
-    defsmsnew   = SpacedTextField (max_length = 2000, label = "Default SMS New")
-    defsmsack   = SpacedTextField (max_length = 2000, label = "Default SMS Acknowledge")
-    defsmsopen  = SpacedTextField (max_length = 2000, label = "Default SMS Open")
-    defsmsres   = SpacedTextField (max_length = 2000, label = "Default SMS Resolved")
-    defsmsclo   = SpacedTextField (max_length = 2000, label = "Default SMS Closed")
-    mdg         = SpacedTextField (max_length = 10,   label = "MDG Goals")
+    defsmsnew   = SpacedTextAreaField (max_length = 2000, label = "Default SMS New", required = False)
+    defsmsack   = SpacedTextAreaField (max_length = 2000, label = "Default SMS Acknowledge", required = False)
+    defsmsopen  = SpacedTextAreaField (max_length = 2000, label = "Default SMS Open", required = False)
+    defsmsres   = SpacedTextAreaField (max_length = 2000, label = "Default SMS Resolved", required = False)
+    defsmsclo   = SpacedTextAreaField (max_length = 2000, label = "Default SMS Closed", required = False)
+    mdg         = MultiNumberIdField (max_length = 20,   label = "MDG Goals", required = False)
     department  = forms.ModelChoiceField (label = "Department",
                                           queryset = ComplaintDepartment.objects.all(),
                                           empty_label = "------",
@@ -477,10 +478,10 @@ class AddComplaint (forms.Form):
                                             defsmsack    = self.cleaned_data['defsmsack'],
                                             defsmsres    = self.cleaned_data['defsmsres'],
                                             defsmsclo    = self.cleaned_data['defsmsclo'],
-                                            department   = self.cleaned_data['department'],
-                                            )
-        compMDG = ComplaintMDG.objects.create(goalnum       = self.cleaned_data['mdg'],
-                                           complainttype = comp)
+                                            department   = self.cleaned_data['department'])
+
+        for mdg in self.cleaned_data ['mdg']:
+            ComplaintMDG.objects.create (complainttype = comp, goalnum = mdg)
 
 
 class EditBlk (forms.Form):
@@ -706,18 +707,34 @@ class EditDep (forms.Form):
             comp.save()
 
 
+    code        = SpacedTextField (label="Complaint Code")
+    summary     = SpacedTextField (max_length = 2000, label = "Summary")
+    cclass      = SpacedTextField (max_length = 500, label = "Classification")
+    defsmsnew   = SpacedTextField (max_length = 2000, label = "Default SMS New", required = False)
+    defsmsack   = SpacedTextField (max_length = 2000, label = "Default SMS Acknowledge", required = False)
+    defsmsopen  = SpacedTextField (max_length = 2000, label = "Default SMS Open", required = False)
+    defsmsres   = SpacedTextField (max_length = 2000, label = "Default SMS Resolved", required = False)
+    defsmsclo   = SpacedTextField (max_length = 2000, label = "Default SMS Closed", required = False)
+    mdg         = MultiNumberIdField (max_length = 20,   label = "MDG Goals", required = False)
+    department  = forms.ModelChoiceField (label = "Department",
+                                          queryset = ComplaintDepartment.objects.all(),
+                                          empty_label = "------",
+                                          widget=forms.Select (attrs = {'style' : 'width:100%'}))
+
+
 class EditComp (forms.Form):
     dname       = SpacedROTextField (label = "Department")
     objid       = forms.CharField (widget = forms.HiddenInput ())
     hcode       = forms.CharField (widget = forms.HiddenInput ())
-    code        = forms.CharField (label="Complaint Code")
-    summary     = forms.CharField (max_length = 2000, label = "Summary")
-    cclass      = forms.CharField (max_length = 500, label = "Classification")
-    defsmsnew   = forms.CharField (max_length = 2000, label = "Default SMS New")
-    defsmsack   = forms.CharField (max_length = 2000, label = "Default SMS Acknowledge")
-    defsmsopen  = forms.CharField (max_length = 2000, label = "Default SMS Open")
-    defsmsres   = forms.CharField (max_length = 2000, label = "Default SMS Resolved")
-    defsmsclo   = forms.CharField (max_length = 2000, label = "Default SMS Closed")
+    code        = SpacedTextField (label="Complaint Code")
+    summary     = SpacedTextField (max_length = 2000, label = "Summary")
+    cclass      = SpacedTextField (max_length = 500, label = "Classification")
+    defsmsnew   = SpacedTextAreaField (max_length = 2000, label = "Default SMS New", required = False)
+    defsmsack   = SpacedTextAreaField (max_length = 2000, label = "Default SMS Acknowledge", required = False)
+    defsmsopen  = SpacedTextAreaField (max_length = 2000, label = "Default SMS Open", required = False)
+    defsmsres   = SpacedTextAreaField (max_length = 2000, label = "Default SMS Resolved", required = False)
+    defsmsclo   = SpacedTextAreaField (max_length = 2000, label = "Default SMS Closed", required = False)
+    mdg         = MultiNumberIdField (max_length = 20,   label = "MDG Goals", required = False)
 
     def __init__(self, compobj, *args, **kwargs) :
         super(EditComp, self).__init__(*args,**kwargs)
@@ -733,6 +750,7 @@ class EditComp (forms.Form):
             self.fields ['defsmsopen'].initial  = compobj.defsmsopen
             self.fields ['defsmsres'].initial   = compobj.defsmsres
             self.fields ['defsmsclo'].initial   = compobj.defsmsclo
+            self.fields ['mdg'].initial         = ', '.join (sorted ([str (m.goalnum) for m in compobj.complaintmdg_set.all ()]))
 
     def clean (self):
         if 'objid' in self.cleaned_data and 'hcode' in self.cleaned_data and 'code' in self.cleaned_data:
@@ -760,4 +778,20 @@ class EditComp (forms.Form):
         comp.defsmsclo    = self.cleaned_data['defsmsclo']
         comp.save()
 
+        compmdg_ids = [m.id for m in comp.complaintmdg_set.all ()]
+        foundmdgs = []
+        for mdg in self.cleaned_data ['mdg']:
+            try:
+                mdgobj = comp.complaintmdg_set.get (goalnum = mdg)
+                foundmdgs.append (mdgobj.id)
+            except ComplaintMDG.DoesNotExist:
+                mdgobj = ComplaintMDG.objects.create (complainttype = comp, goalnum = mdg)
+
+        for objid in compmdg_ids:
+            if objid in foundmdgs:
+                pass
+            else:
+                comp.complaintmdg_set.get (id = objid).delete ()
+
+        return comp
 
