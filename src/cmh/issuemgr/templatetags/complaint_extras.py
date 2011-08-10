@@ -64,6 +64,44 @@ def description_with_reminder (complaint, user):
 def get_mdgs (comptype):
     return ", ".join (sorted ([m.goalnum for m in comptype.complaintmdg_set.all ()]))
 
+
+def complaintno_with_reminder (complaint, user):
+    retval = complaint.complaintno
+    crs = ComplaintReminder.objects.filter (user = user,
+                                            complaintno = complaint.complaintno,
+                                            reminderon__lte = datetime.today ().date ()).order_by ('reminderon')
+    if crs.count () != 0:
+        retval = "<span style='color:#ff3333;font-style:italic'>" + retval + "</span>"
+    return retval
+
+def logdate_with_reminder (complaint, user):
+    retval = complaint.logdate.strftime ("%b %d, %Y")
+    crs = ComplaintReminder.objects.filter (user = user,
+                                            complaintno = complaint.complaintno,
+                                            reminderon__lte = datetime.today ().date ()).order_by ('reminderon')
+    if crs.count () != 0:
+        retval = "<span style='color:#ff3333;font-style:italic'>" + retval + "</span>"
+    return retval
+
+def curstate_with_reminder (complaint, user):
+    retval = str (complaint.curstate)
+    crs = ComplaintReminder.objects.filter (user = user,
+                                            complaintno = complaint.complaintno,
+                                            reminderon__lte = datetime.today ().date ()).order_by ('reminderon')
+    if crs.count () != 0:
+        retval = "<span style='color:#ff3333;font-style:italic'>" + retval + "</span>"
+    return retval
+
+def created_with_reminder (complaint, user):
+    retval = complaint.created.strftime ("%b %d, %Y, %I:%M %p")
+    crs = ComplaintReminder.objects.filter (user = user,
+                                            complaintno = complaint.complaintno,
+                                            reminderon__lte = datetime.today ().date ()).order_by ('reminderon')
+    if crs.count () != 0:
+        retval = "<span style='color:#ff3333;font-style:italic'>" + retval + "</span>"
+    return retval
+
+
 register.filter ('is_updatable', is_updatable)
 register.filter ('get_evidence_display', get_evidence_display)
 register.filter ('can_add_evidence', can_add_evidence)
@@ -72,3 +110,8 @@ register.filter ('can_del_reminder', can_del_reminder)
 register.filter ('get_reminder', get_reminder)
 register.filter ('description_with_reminder', description_with_reminder)
 register.filter ('get_mdgs', get_mdgs)
+register.filter ('complaintno_with_reminder', complaintno_with_reminder)
+register.filter ('logdate_with_reminder',     logdate_with_reminder)
+register.filter ('curstate_with_reminder',    curstate_with_reminder)
+register.filter ('created_with_reminder',     created_with_reminder)
+

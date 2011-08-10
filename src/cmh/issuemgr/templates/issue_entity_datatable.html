@@ -21,11 +21,11 @@
     "aaData":[
         {% for issue in querySet %}
         [
-            "{{issue.complaintno}}",
-            "{{issue.logdate}}",
+            "{{issue|complaintno_with_reminder:request.user|escapejs}}",
+            "{{issue|logdate_with_reminder:request.user|escapejs}}",
             "{{issue|description_with_reminder:request.user|escapejs|linebreaksbr}}",
-            "{{issue.curstate}}",
-            "{{issue.created}}",
+            "{{issue|curstate_with_reminder:request.user|escapejs}}",
+            "{{issue|created_with_reminder:request.user|escapejs}}",
             {% if issue|is_updatable:request.user %} "true" {% else %} "false" {% endif %}
         ]
         {% if not forloop.last %},{% endif %}
