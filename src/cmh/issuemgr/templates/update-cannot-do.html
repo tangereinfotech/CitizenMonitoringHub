@@ -13,12 +13,12 @@
 {# limitations under the License.                                               #}
 
 {% extends "basewithmenu.html" %}
-
+{% load i18n %}
 {% block page_content %}
 <div style="display: table;height:400px; #position: relative; overflow: hidden; width:100%">
   <div style="#position:absolute;#top:50%;display:table-cell; vertical-align: middle">
     <div style="#position: relative; #top: -50%; text-align:center">
-      This issue cannot be updated.
+      {% trans "This issue cannot be updated." %}
     </div>
   </div>
 </div>

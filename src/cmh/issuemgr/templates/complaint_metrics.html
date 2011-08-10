@@ -13,32 +13,35 @@
 {# limitations under the License.                                               #}
 
 {% extends "signinbase.html" %}
+
+{% load i18n %}
+
 {% block extra_heads %}
 <meta name="viewport" content="initial-scale=0.1, user-scalable=no" />
 {% endblock %}
 
 {% block page_content %}
 <center>
-  <h2>Complaint Metrics</h2>
+  <h2>{% trans "Complaint Metrics" %}</h2>
   <ul class="period-right">
     <li>Last:</li>
-    <li><a href="#">Week</a></li>
-    <li><a href="#">Month</a></li>
-    <li><a href="#">3 Months</a></li>
+    <li><a href="#">{% trans "Week" %}</a></li>
+    <li><a href="#">{% trans "Month" %}</a></li>
+    <li><a href="#">{% trans "3 Months" %}</a></li>
   </ul>
   <div id="issue-type-summary">
     <table id="metrics" class="tabularlist">
       <thead>
         <tr>
-          <th rowspan="2" style="width:35%">Complaint Type</th>
-          <th colspan="5">Number of complaint in status:</th>
+          <th rowspan="2" style="width:35%">{% trans "Complaint Type" %}</th>
+          <th colspan="5">{% trans "Number of complaint in status:" %}</th>
         </tr>
         <tr>
-          <th style="width:13%">New / Reopened </th>
-          <th style="width:13%">Acknowledged </th>
-          <th style="width:13%">Opened (In&nbsp;Progress) </th>
-          <th style="width:13%">Resolved </th>
-          <th style="width:13%">Closed </th>
+          <th style="width:13%">{% trans "New / Reopened" %} </th>
+          <th style="width:13%">{% trans "Acknowledged" %} </th>
+          <th style="width:13%">{% trans "Opened (In Progress)" %} </th>
+          <th style="width:13%">{% trans "Resolved" %} </th>
+          <th style="width:13%">{% trans "Closed" %} </th>
         </tr>
       </thead>
       <tbody>

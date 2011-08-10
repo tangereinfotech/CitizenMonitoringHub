@@ -14,66 +14,67 @@
 
 {% extends "basewithmenu.html" %}
 
+{% load i18n %}
+
 {% block page_content %}
 <div style="width:100%; text-align:center;">
   <div style="width:100%; text-align: center">
-    <h2> Submit Your Complaint </h2>
+    <h2> {% trans "Submit Your Complaint" %} </h2>
   </div>
   <center>
     <div class="complaint_form">
       <form action="{{ post_url }}" method="post" enctype="multipart/form-data">
-        {# {% csrf_token %} #}
         <div class="right_section">
           <fieldset>
-            <legend>Details</legend>
+            <legend>{% trans "Details" %}</legend>
             <div class="form-field">
-              <label for="id_date" class="id_date">Date:</label>
+              <label for="id_date" class="id_date">{% trans "Date:" %}</label>
               {{ form.logdate.errors }}
             </div>
             {{ form.logdate }} <br/>
 
             <div class="form-field">
-              <label for="id_description">Description:</label>
+              <label for="id_description">{% trans "Description:" %}</label>
               {{ form.description.errors }}
             </div>
             {{ form.description }} <br/>
 
             <div class="form-field">
-              <label for="id_location">Location:</label>
+              <label for="id_location">{% trans "Location:" %}</label>
               {{ form.locationdesc.errors }}
             </div>
             {{ form.locationid }} {{ form.locationdesc }}
             <div id="id_location_detail"></div>
 
             <div class="form-field">
-              <label for="your_name">Your Name:</label>
+              <label for="your_name">{% trans "Your Name:" %}</label>
               {{ form.yourname.errors }}
             </div>
             {{ form.yourname }} <br/>
 
             <div class="form-field">
-              <label for="your_mobile">Your Mobile Number:</label>
+              <label for="your_mobile">{% trans "Your Mobile Number:" %}</label>
               {{ form.yourmobile.errors }}
             </div>
             {{ form.yourmobile }} <br/>
 
             <div class="form-field">
-              <label for="id_category">Categorize Your Complaint</label>
+              <label for="id_category">{% trans "Categorize Your Complaint" %}</label>
               {{ form.categoryid.errors }}
             </div>
             {{ form.categoryid }} {{ form.categorydesc }}
             <div id="id_category_detail" style="margin:0"></div>
             {% if user.is_authenticated %}
             <div class="gendercaste">
-              Gender:<br/>
+              {% trans "Gender:" %}<br/>
               {{ form.gender }}
               <br/>
-              Community:<br/>
+              {% trans "Community:" %}<br/>
               {{ form.community }}
             </div>
             {% endif %}
             <div class="form-field">
-              <label for="id_file">Upload Evidence:</label>
+              <label for="id_file">{% trans "Upload Evidence:" %}</label>
               {{ form.filename.errors }}
             </div>
             {{ form.filename }} <br/>

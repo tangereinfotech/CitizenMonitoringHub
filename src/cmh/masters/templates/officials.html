@@ -14,6 +14,8 @@
 
 {% extends "masters.html" %}
 
+{% load i18n %}
+
 {% block extra_heads %}
 <link type="text/css" href="/static/jquery/css/jquery.contextMenu.css" rel="stylesheet" media="screen">
 {% endblock %}
@@ -21,18 +23,18 @@
 
 {% block master_section %}
 <div style="text-align:center;">
-  <h2>List of Officials</h2>
+  <h2>{% trans "List of Officials" %}</h2>
 </div>
 
-<a href="/masters/add_official/">Add New</a>
+<a href="/masters/add_official/">{% trans "Add New" %}</a>
 <table class="tabularlist" id="offlist">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Role</th>
-      <th>Phone</th>
-      <th>Department</th>
-      <th>Supervisor</th>
+      <th>{% trans "Name" %}</th>
+      <th>{% trans "Role" %}</th>
+      <th>{% trans "Phone" %}</th>
+      <th>{% trans "Department" %}</th>
+      <th>{% trans "Supervisor" %}</th>
       <th style="display:none">
     </tr>
   </thead>
@@ -41,7 +43,7 @@
 </table>
 
 <ul id="updateMenu" class="contextMenu">
-  <li><a href="#update">Update</a></li>
+  <li><a href="#update">{% trans "Update" %}</a></li>
 </ul>
 
 <script type="text/javascript" src="/static/jquery/js/jquery.simplemodal-1.1.1.js"></script>

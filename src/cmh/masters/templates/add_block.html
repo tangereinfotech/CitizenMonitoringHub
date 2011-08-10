@@ -14,9 +14,11 @@
 
 {% extends "masters.html" %}
 
+{% load i18n %}
+
 {% block master_section %}
 <div style="text-align:center">
-  <h2>Add Block</h2>
+  <h2>{% trans "Add Block" %}</h2>
   <form action="." method="post" style="width:500px;margin:0px auto">
     <table width="100%">
       <tr>
@@ -65,7 +67,7 @@
       </tr>
       <tr>
         <td style="text-align:center" colspan="2">
-          <input type="submit" value="Add" name="add" class="btn">
+          <input type="submit" value={% trans "Add" %} name="add" class="btn">
         </td>
       </tr>
     </table>

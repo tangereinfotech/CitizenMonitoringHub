@@ -23,6 +23,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.utils.cache import add_never_cache_headers
 from django.utils import simplejson
+from django.utils.translation import ugettext as _
 
 class InvalidDataException (Exception):
     pass
@@ -79,9 +80,9 @@ class ExcelProcessor ():
             elif newtype == ExcelProcessor.CELL_FLOAT:
                 return float (data.strip ())
             elif newtype == ExcelProcessor.CELL_DATE:
-                raise InvalidDataException ("Conversion to Date Type not supported")
+                raise InvalidDataException (_("Conversion to Date Type not supported"))
             else:
-                raise InvalidDataException ("Invalid target datatype:"+str(newtype))
+                raise InvalidDataException (_("Invalid target datatype:") + unicode (newtype))
 
         elif curtype == xlrd.XL_CELL_NUMBER:
             if newtype == ExcelProcessor.CELL_TEXT:
@@ -91,14 +92,14 @@ class ExcelProcessor ():
             elif newtype == ExcelProcessor.CELL_FLOAT:
                 return float (data)
             elif newtype == ExcelProcessor.CELL_DATE:
-                raise InvalidDataException ("Conversion to Date Type not supported")
+                raise InvalidDataException (_("Conversion to Date Type not supported"))
             else:
-                raise InvalidDataException ("Invalid target datatype : " +
+                raise InvalidDataException (_("Invalid target datatype : ") +
                                             str (newtype))
         elif curtype == xlrd.XL_CELL_DATE:
-            raise InvalidDataException ("Conversion from Date Type not supported")
+            raise InvalidDataException (_("Conversion from Date Type not supported"))
         else:
-            raise InvalidDataException ("Invalid source datatype : " + str (curtype))
+            raise InvalidDataException (_("Invalid source datatype : ") + str (curtype))
 
 
 

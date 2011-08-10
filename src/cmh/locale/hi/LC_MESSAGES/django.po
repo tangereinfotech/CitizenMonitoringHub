@@ -1,3 +1,4 @@
+# encoding: utf-8
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
@@ -18,7 +19,7 @@ msgstr ""
 
 #: settings.py:57
 msgid "English"
-msgstr ""
+msgstr "English"
 
 #: settings.py:58
 msgid "Hindi"
@@ -1036,15 +1037,16 @@ msgstr ""
 
 #: masters/templates/officials.html:26
 msgid "List of Officials"
-msgstr ""
+msgstr "अधिकारियों की सूची"
 
 #: masters/templates/officials.html:37
 msgid "Supervisor"
-msgstr ""
+msgstr "सुपरवाइज़र"
 
 #: masters/templates/view_block.html:26
+#, fuzzy
 msgid "List of Blocks"
-msgstr ""
+msgstr "अधिकारियों की सूची"
 
 #: masters/templates/view_block.html:27
 msgid "Block belonging to"
@@ -1122,8 +1124,9 @@ msgid "Lattitude"
 msgstr ""
 
 #: masters/templates/view_village.html:25
+#, fuzzy
 msgid "List of Villages"
-msgstr ""
+msgstr "अधिकारियों की सूची"
 
 #: masters/templates/view_village.html:26
 msgid "Village belongs to"
@@ -1285,11 +1288,11 @@ msgstr ""
 
 #: templates/basewithmenu.html:24 templates/reportbase.html:41
 msgid "About Us"
-msgstr ""
+msgstr "हमारे विषय में"
 
 #: templates/basewithmenu.html:26 templates/reportbase.html:43
 msgid "Home"
-msgstr ""
+msgstr "होमपेज"
 
 #: templates/basewithmenu.html:31
 msgid "Language Selection:"

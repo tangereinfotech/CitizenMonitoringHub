@@ -16,6 +16,7 @@
 import sys, traceback
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext as _
 
 from cmh.common.models import ComplaintDepartment, ComplaintType, AppRole
 from cmh.common.utils import get_random_string
@@ -25,7 +26,7 @@ class Citizen(models.Model):
     mobile = models.CharField (max_length = 15, blank=True,null=True)
 
     def __unicode__(self):
-        return "Citizen: " + self.name
+        return _("Citizen: ") + self.name
 
 
 class CmhUser (models.Model):

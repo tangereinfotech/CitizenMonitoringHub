@@ -14,6 +14,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext as _
 
 class Location (models.Model):
     code = models.CharField (max_length = 200)
@@ -102,7 +103,7 @@ class AppRoleManager (models.Manager):
             try:
                 return AppRole.objects.get (users = user)
             except AppRole.MultipleObjectsReturned:
-                raise RoleException ("Multiple Roles for user: " + user.username)
+                raise RoleException (_("Multiple Roles for user: ") + user.username)
             except AppRole.DoesNotExist:
                 UserRoles.ROLE_ANONYMOUS.users.add (user)
                 return UserRoles.ROLE_ANONYMOUS

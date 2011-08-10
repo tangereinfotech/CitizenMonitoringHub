@@ -12,10 +12,12 @@
 {# See the License for the specific language governing permissions and          #}
 {# limitations under the License.                                               #}
 
+{% load i18n %}
+
 <div style="text-align:right;width:100%">
   <br/>
   <a id="infoclose-{{stats.type}}-{{stats.locid}}" href="#">
-    Add To Report
+    {% trans "Add To Report" %}
   </a>
 </div>
 <div>
@@ -51,7 +53,7 @@
     <table class='locstatlist'>
       <thead>
         <tr>
-          <th style="width:60%">Complaints:</th>
+          <th style="width:60%">{% trans "Complaints:" %}</th>
           <th style="width:40%">{{stats.count}}</th>
         </tr>
       </thead>

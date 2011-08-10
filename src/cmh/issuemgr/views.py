@@ -234,9 +234,10 @@ def locations (request):
             g = matches.groups ()
             villages = Village.objects.filter (search__icontains = term.lower ())
             names = [{'display' : village.name,
-                      'detail' : ('Gram Panchayat: %s<br/>Block: %s' %
-                                  (village.grampanchayat.name,
-                                   village.grampanchayat.block.name)),
+                      'detail' : (_('Gram Panchayat:')
+                                  + village.grampanchayat.name +
+                                  '<br/>' + _('Block: ') +
+                                   village.grampanchayat.block.name),
                       'id' : village.id}
                      for village in Village.objects.filter (search__icontains
                                                             = term.lower ())]
@@ -264,9 +265,8 @@ def categories (request):
 
             for cpl_type in complaint_types:
                 retvals.append ({'display' : cpl_type.summary,
-                                 'detail' : ('%s<br/>Department: %s' %
-                                             (cpl_type.cclass,
-                                              cpl_type.department.name)),
+                                 'detail' : (cpl_type.cclass + '<br/>' + _('Department: ') +
+                                              cpl_type.department.name),
                                  'id' : cpl_type.id})
             return HttpResponse (json.dumps (retvals))
     except:
@@ -740,7 +740,7 @@ def get_report_stats (repdata):
     else:
         wid = 10
 
-    stats ['bar_chart']                = {'legends' : ['New', 'Acknowledged', 'Resolved/ Closed']}
+    stats ['bar_chart']                = {'legends' : [_('New'), _('Acknowledged'), _('Resolved/ Closed')]}
     stats ['bar_chart']['schemes']     = schemes
     stats ['bar_chart']['scheme_data'] = scheme_data
     stats ['bar_chart']['width']       = wid
@@ -975,7 +975,7 @@ def get_evidence (request, filename):
                                   show_indexes = False)
     else:
         return render_to_response ('error.html',
-                                   {'error' : 'Unauthorized access to evidence. Will be reported',
+                                   {'error' : _('Unauthorized access to evidence. Will be reported'),
                                     'menus' : get_user_menus (request.user,track_issues),
                                     'user' : request.user})
 

@@ -31,6 +31,7 @@ urlpatterns = patterns('',
                        (r'^smsg/', include ('cmh.smsgateway.urls')),
                        (r'^masters/', include ('cmh.masters.urls')),
                        url(r'^captcha/', include('cmh.captcha.urls')),
+                       (r'^i18n/', include('django.conf.urls.i18n')),
                        )
 
 if settings.DEBUG:
@@ -42,7 +43,7 @@ if settings.DEBUG:
                                                                'static')}),
                              )
 
-urlpatterns += patterns ("", 
+urlpatterns += patterns ("",
                          (r'^$', 'cmh.views.index'),
                          (r'aboutus$','cmh.views.aboutus'))
 

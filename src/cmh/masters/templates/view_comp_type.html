@@ -14,6 +14,8 @@
 
 {% extends "masters.html" %}
 
+{% load i18n %}
+
 {% block extra_heads %}
 <link type="text/css" href="/static/jquery/css/jquery.contextMenu.css" rel="stylesheet" media="screen">
 {% endblock %}
@@ -21,28 +23,28 @@
 
 {% block master_section %}
 <div class="content-heading">
-  <h2 style="text-align:center;">List of Complaints and Complaint Types</h2>
+  <h2 style="text-align:center;">{% trans "List of Complaints and Complaint Types" %}</h2>
 </div>
 
 <div class="pagination">
-  <a href="/masters/add_comp_type">Add New</a>
+  <a href="/masters/add_comp_type">{% trans "Add New" %}</a>
 </div>
 
 <table id="clist" class="tabularlist">
   <thead>
   <tr>
-    <th>Department Code</th>
-    <th>Complaint Code</th>
-    <th>Complaint Department</th>
-    <th>Complaint Classification</th>
-    <th>MDGs</th>
+    <th>{% trans "Department Code" %}</th>
+    <th>{% trans "Complaint Code" %}</th>
+    <th>{% trans "Complaint Department" %}</th>
+    <th>{% trans "Complaint Classification" %}</th>
+    <th>{% trans "MDGs" %}</th>
   </tr>
   </thead>
   <tbody>
   </tbody>
 </table>
 <ul id="updateMenu" class="contextMenu">
-  <li><a href="#update">Update</a></li>
+  <li><a href="#update">{% trans "Update" %}</a></li>
 </ul>
 
 <script type="text/javascript" src="/static/jquery/js/jquery.simplemodal-1.1.1.js"></script>

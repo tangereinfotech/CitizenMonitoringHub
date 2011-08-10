@@ -14,6 +14,8 @@
 
 {% extends "basewithmenu.html" %}
 
+{% load i18n %}
+
 {% block page_content %}
 <div style="display: table;height:200px; #position: relative; overflow: hidden; width:100%">
   <div style="#position:absolute;#top:50%;display:table-cell; vertical-align: middle">
@@ -22,14 +24,16 @@
         <div style="text-align:center">
           <table>
             <tbody>
-              {{form.as_table}}
+              {% blocktrans with form.as_table as loginform %}
+              {{ loginform }}
+              {% endblocktrans %}
               <tr>
                 <td>&nbsp;</td>
                 <td colspan="2">
                   <input type="hidden" name="next" value="{{ next_url }}" />
-                  <input tabindex="3" type="submit" value="Login" class="btn"/>
+                  <input tabindex="3" type="submit" value={% trans "Login" %} class="btn"/>
                   &nbsp;&nbsp;&nbsp;
-                  <a id="ref-link" href="/user/forgot/" tabindex="4">&raquo; Forgot Password</a>
+                  <a id="ref-link" href="/user/forgot/" tabindex="4">&raquo; {% trans "Forgot Password" %}</a>
                 </td>
               </tr>
             </tbody>

@@ -58,13 +58,13 @@ class ComplaintForm (forms.Form):
     categorydesc = forms.CharField (required = False,
                                     widget = forms.TextInput (attrs = {'style' : 'width:348px',
                                                                        'autocomplete' : 'off'}))
-    filename    = forms.FileField (label = "Upload Evidence:", required = False)
+    filename    = forms.FileField (label = _("Upload Evidence:"), required = False)
 
     def clean_locationid (self):
         try:
             village = Village.objects.get (id = self.cleaned_data ['locationid'])
         except:
-            raise forms.ValidationError ("Location code is not correct")
+            raise forms.ValidationError (_("Location code is not correct"))
         return self.cleaned_data ['locationid']
 
     def clean_categoryid (self):
@@ -72,7 +72,7 @@ class ComplaintForm (forms.Form):
             try:
                 category = ComplaintType.objects.get (id = self.cleaned_data ['categoryid'])
             except:
-                raise forms.ValidationError ("Complaint Type is not correct")
+                raise forms.ValidationError (_("Complaint Type is not correct"))
         return self.cleaned_data ['categoryid']
 
     def save (self, user):
@@ -125,20 +125,20 @@ class AcceptComplaintForm (forms.Form):
 
     community       = forms.CharField (widget = forms.RadioSelect (choices = COMMUNITY_CHOICES), required = False, initial = 'Unspecified')
 
-    filename        = forms.FileField (label = "Upload Evidence:", required = False)
+    filename        = forms.FileField (label = _("Upload Evidence:"), required = False)
 
     def clean_locationid (self):
         try:
             village = Village.objects.get (id = self.cleaned_data ['locationid'])
         except:
-            raise forms.ValidationError ("Location code is not correct")
+            raise forms.ValidationError (_("Location code is not correct"))
         return self.cleaned_data ['locationid']
 
     def clean_categoryid (self):
         try:
             category = ComplaintType.objects.get (id = self.cleaned_data ['categoryid'])
         except:
-            raise forms.ValidationError ("Complaint Type is not correct")
+            raise forms.ValidationError (_("Complaint Type is not correct"))
         return self.cleaned_data ['categoryid']
 
     def save (self, user):
@@ -212,19 +212,19 @@ class ComplaintUpdateForm (forms.Form):
                                                                  'cols' : '40',
                                                                  'rows' : '6'}),
                                required = True)
-    gender          = forms.CharField (widget = forms.RadioSelect (choices = (('Male', 'Male'),
-                                                                              ('Female', 'Female'),
-                                                                              ('Unspecified','Unspecified'))),
+    gender          = forms.CharField (widget = forms.RadioSelect (choices = ((_('Male'), _('Male')),
+                                                                              (_('Female'), _('Female')),
+                                                                              (_('Unspecified'),_('Unspecified')))),
                                        required = False,
-                                       initial = 'Unspecified')
+                                       initial = _('Unspecified'))
 
-    community       = forms.CharField (widget = forms.RadioSelect (choices = (('SC/ST', 'SC / ST'),
-                                                                              ('Others', 'Others'),
-                                                                              ('Unspecified','Unspecified'))),
+    community       = forms.CharField (widget = forms.RadioSelect (choices = ((_('SC/ST'), _('SC / ST')),
+                                                                              (_('Others'), _('Others')),
+                                                                              (_('Unspecified'),_('Unspecified')))),
                                        required = False,
-                                       initial = 'Unspecified')
+                                       initial = _('Unspecified'))
 
-    filename        = forms.FileField (label = "Upload Evidence:", required = False)
+    filename        = forms.FileField (label = _("Upload Evidence:"), required = False)
 
     def __init__ (self, complaint, newstates, *args, **kwargs):
         super (ComplaintUpdateForm, self).__init__ (*args, **kwargs)
@@ -255,7 +255,7 @@ class ComplaintUpdateForm (forms.Form):
             try:
                 village = Village.objects.get (id = self.cleaned_data ['revlocationid'])
             except:
-                raise forms.ValidationError ("Location code is not correct")
+                raise forms.ValidationError (_("Location code is not correct"))
         return self.cleaned_data ['revlocationid']
 
     def clean_revcategoryid (self):
@@ -263,12 +263,12 @@ class ComplaintUpdateForm (forms.Form):
             try:
                 ct = ComplaintType.objects.get (id = self.cleaned_data ['revcategoryid'])
             except:
-                raise forms.ValidationError ('Complaint Category is not correct')
+                raise forms.ValidationError (_('Complaint Category is not correct'))
         return self.cleaned_data ['revcategoryid']
 
     def clean_comment (self):
         if len (self.cleaned_data ['comment']) == 0:
-            raise forms.ValidationError ("Comment is mandatory")
+            raise forms.ValidationError (_("Comment is mandatory"))
         return self.cleaned_data ['comment']
 
     def clean_newstatus (self):
@@ -276,30 +276,30 @@ class ComplaintUpdateForm (forms.Form):
             complaint = Complaint.objects.get (complaintno = self.cleaned_data ['complaintno'],
                                                latest = True)
         except:
-            raise forms.ValidationError ('Complaint number is invalid')
+            raise forms.ValidationError (_('Complaint number is invalid'))
 
         if self.cleaned_data ['newstatus'] != "-1":
             try:
                 checkstatus = ComplaintStatus.objects.get (id = self.cleaned_data ['newstatus'])
                 is_valid = self.newstates.get (id = checkstatus.id)
             except ComplaintStatus.DoesNotExist:
-                raise forms.ValidationError ("New status is not a valid status code")
+                raise forms.ValidationError (_("New status is not a valid status code"))
             except StatusTransition.DoesNotExist:
-                raise forms.ValidationError ("That status transition is not allowed")
+                raise forms.ValidationError (_("That status transition is not allowed"))
         else:
-             raise forms.ValidationError ("Please select a valid next status")
+             raise forms.ValidationError (_("Please select a valid next status"))
         return self.cleaned_data ['newstatus']
 
     def clean (self):
         try:
             complaint = Complaint.objects.get (complaintno = self.cleaned_data ['complaintno'], latest = True)
         except:
-            raise forms.ValidationError ('Complaint number is invalid')
+            raise forms.ValidationError (_('Complaint number is invalid'))
 
         if self.cleaned_data ['revcategoryid'] == None:
             if ((complaint.original != None and complaint.original.complainttype == None) or
                 (complaint.complainttype == None)):
-                raise forms.ValidationError ("Complaint Type is mandatory")
+                raise forms.ValidationError (_("Complaint Type is mandatory"))
         return self.cleaned_data
 
 
@@ -372,7 +372,7 @@ class HotComplaintForm (forms.Form):
 
 
 class ComplaintTrackForm (forms.Form):
-    complaintno = forms.CharField (label="Complaint No.",
+    complaintno = forms.CharField (label=_("Complaint No."),
                                    widget = forms.TextInput (attrs = {'size': '50',
                                                                       'autocomplete' : 'off'}))
 
@@ -396,17 +396,17 @@ class ComplaintDisplayParams (forms.Form):
 
 class Report (forms.Form):
     departments  = forms.ModelMultipleChoiceField(queryset = ComplaintDepartment.objects.all(),
-                                                  label    = "Available Departments",
+                                                  label    = _("Available Departments"),
                                                   widget   = forms.Select (attrs = {'style' : 'width:300px;height:150px;',
-                                                                                  'multiple' : 'multiple',}),
+                                                                                    'multiple' : 'multiple',}),
                                                   required = False)
     selecteddep  = forms.ModelMultipleChoiceField(queryset = ComplaintDepartment.objects.none(),
-                                                  label    = "Selected Departments",
+                                                  label    = _("Selected Departments"),
                                                   widget   = forms.Select (attrs = {'style' : 'width:300px;height:150px;',
-                                                                                  'multiple' : 'multiple',}),
+                                                                                    'multiple' : 'multiple',}),
                                                   required = False)
     sel_loc      = forms.MultipleChoiceField( widget = forms.Select (attrs = {'style' : 'width:300px;height:150px;',
-                                                                                  'multiple' : 'multiple',}),
+                                                                              'multiple' : 'multiple',}),
                                               required = False)
     block        = forms.ModelChoiceField(queryset = Block.objects.all(), empty_label = "------",
                                           widget   = forms.Select (attrs = { 'style' : 'width:100%'}),

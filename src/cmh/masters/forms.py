@@ -17,6 +17,7 @@ import re
 
 from django import forms
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext as _
 
 from cmh.common.fields import PhoneNumberField, DefaultChoiceField, StripCharField
 from cmh.common.fields import UsernameField
@@ -104,9 +105,9 @@ class EditDM (forms.Form):
         try:
             dm = CmhUser.objects.get (user__approle__role = UserRoles.DM, id = self.cleaned_data ['dmid'])
         except CmhUser.DoesNotExist:
-            raise forms.ValidationError ("Invalid DM Object")
+            raise forms.ValidationError (_("Invalid DM Object"))
         except CmhUser.MultipleObjectsReturned:
-            raise forms.ValidationError ("Multiple DM Objects should not be present")
+            raise forms.ValidationError (_("Multiple DM Objects should not be present"))
         return self.cleaned_data ['dmid']
 
 
@@ -170,7 +171,7 @@ class AddEditOfficial (forms.Form):
 
     def clean_department (self):
         if self.cleaned_data ['department'] == -1:
-            raise forms.ValidationError ("Department is mandatory")
+            raise forms.ValidationError (_("Department is mandatory"))
         return self.cleaned_data ['department']
 
     def save (self):
@@ -209,10 +210,10 @@ class AddEditOfficial (forms.Form):
 class EditOfficial (forms.Form):
     objid       = forms.CharField (widget = forms.HiddenInput ())
     depid       = forms.CharField (widget = forms.HiddenInput ())
-    username    = SpacedROTextField (label = "UserName")
-    name        = SpacedTextField (widget=AutoCompleteOffTextInput (), label = "Name")
-    phone       = PhoneNumberField (widget=AutoCompleteOffTextInput (), label ="Phone Number")
-    department  = forms.ModelChoiceField (queryset = ComplaintDepartment.objects.all(), empty_label = "------", label="Department")
+    username    = SpacedROTextField (label = _("UserName"))
+    name        = SpacedTextField (widget=AutoCompleteOffTextInput (), label = _("Name"))
+    phone       = PhoneNumberField (widget=AutoCompleteOffTextInput (), label =_("Phone Number"))
+    department  = forms.ModelChoiceField (queryset = ComplaintDepartment.objects.all(), empty_label = "------", label=_("Department"))
     def __init__(self, offobj, *args, **kwargs) :
         super(EditOfficial, self).__init__(*args,**kwargs)
         if offobj != None:
@@ -288,10 +289,10 @@ class DepartmentSelected (forms.Form):
     department = forms.IntegerField ()
 
 class AddState (forms.Form):
-    sname       = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
-    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code())
-    lattd       = LatLongField (label  = "Latitude", initial = DeployDistrict.DISTRICT.state.lattd)
-    longd       = LatLongField (label  = "Longitude", initial = DeployDistrict.DISTRICT.state.longd)
+    sname       = SpacedROTextField (label = _("State Name"), initial = DeployDistrict.DISTRICT.state.name)
+    scode       = SpacedROTextField (label = _("State Code"), initial = DeployDistrict.DISTRICT.state.get_code())
+    lattd       = LatLongField (label  = _("Latitude"), initial = DeployDistrict.DISTRICT.state.lattd)
+    longd       = LatLongField (label  = _("Longitude"), initial = DeployDistrict.DISTRICT.state.longd)
 
     def save (self):
         state = DeployDistrict.DISTRICT.state
@@ -300,12 +301,12 @@ class AddState (forms.Form):
         state.save()
 
 class AddDistrict (forms.Form):
-    sname       = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
-    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code())
-    dname       = SpacedROTextField (label = "District Name", initial = DeployDistrict.DISTRICT.name)
-    dcode       = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.get_code())
-    lattd       = LatLongField (label  = "District Latitude", initial = DeployDistrict.DISTRICT.lattd)
-    longd       = LatLongField (label  = "District Longitude", initial = DeployDistrict.DISTRICT.longd)
+    sname       = SpacedROTextField (label = _("State Name"), initial = DeployDistrict.DISTRICT.state.name)
+    scode       = SpacedROTextField (label = _("State Code"), initial = DeployDistrict.DISTRICT.state.get_code())
+    dname       = SpacedROTextField (label = _("District Name"), initial = DeployDistrict.DISTRICT.name)
+    dcode       = SpacedROTextField (label = _("District Code"), initial = DeployDistrict.DISTRICT.get_code())
+    lattd       = LatLongField (label  = _("District Latitude"), initial = DeployDistrict.DISTRICT.lattd)
+    longd       = LatLongField (label  = _("District Longitude"), initial = DeployDistrict.DISTRICT.longd)
     def save (self):
         dist = DeployDistrict.DISTRICT
         dist.lattd = self.cleaned_data['lattd']
@@ -315,16 +316,16 @@ class AddDistrict (forms.Form):
 
 
 class AddDep (forms.Form):
-    depname       = SpacedTextField (label = "Department Name")
-    depcode       = SpacedTextField (label = "Department Code")
+    depname       = SpacedTextField (label = _("Department Name"))
+    depcode       = SpacedTextField (label = _("Department Code"))
 
     def clean_depcode(self) :
         dcode = self.cleaned_data ['depcode']
         if ComplaintDepartment.objects.filter (code = dcode).count () != 0:
-            raise forms.ValidationError ("Department code already exists")
+            raise forms.ValidationError (_("Department code already exists"))
 
         if dcode.isupper() == False:
-            raise forms.ValidationError ("Department code must be a string with all CAPTIAL LETTERS")
+            raise forms.ValidationError (_("Department code must be a string with all CAPTIAL LETTERS"))
         return dcode
 
     def save (self):
@@ -334,24 +335,24 @@ class AddDep (forms.Form):
         dep.save()
 
 class AddBlock (forms.Form):
-    sname       = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
-    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code ())
-    dname       = SpacedROTextField (label = "District Name", initial = DeployDistrict.DISTRICT.name)
-    dcode       = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.get_code ())
-    bname       = SpacedTextField (label="Block Name")
-    bcode       = SpacedTextField (label="Block Code")
-    lattd       = LatLongField (label  = "Block Latitude")
-    longd       = LatLongField (label  = "Block Longitude")
+    sname       = SpacedROTextField (label = _("State Name"), initial = DeployDistrict.DISTRICT.state.name)
+    scode       = SpacedROTextField (label = _("State Code"), initial = DeployDistrict.DISTRICT.state.get_code ())
+    dname       = SpacedROTextField (label = _("District Name"), initial = DeployDistrict.DISTRICT.name)
+    dcode       = SpacedROTextField (label = _("District Code"), initial = DeployDistrict.DISTRICT.get_code ())
+    bname       = SpacedTextField (label=_("Block Name"))
+    bcode       = SpacedTextField (label=_("Block Code"))
+    lattd       = LatLongField (label  = _("Block Latitude"))
+    longd       = LatLongField (label  = _("Block Longitude"))
 
     def clean_bcode(self) :
         try:
             bcode = int (self.cleaned_data ['bcode'])
         except ValueError:
-            raise forms.ValidationError ("Block code must be a number")
+            raise forms.ValidationError (_("Block code must be a number"))
 
         comp_bcode = "%s.%03d" % (DeployDistrict.DISTRICT.code, bcode)
         if Block.objects.filter (code = comp_bcode).count () != 0:
-            raise forms.ValidationError ("Block code already exists")
+            raise forms.ValidationError (_("Block code already exists"))
         return comp_bcode
 
     def save (self):
@@ -363,16 +364,16 @@ class AddBlock (forms.Form):
 
 
 class AddGramPanchayat (forms.Form):
-    sname       = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
-    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code ())
-    dname       = SpacedROTextField (label = "District Name", initial = DeployDistrict.DISTRICT.name)
-    dcode       = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.get_code ())
-    lattd       = LatLongField (label  = "Gram Panchayat Latitude")
-    longd       = LatLongField (label  = "Gram Panchayat Longitude")
+    sname       = SpacedROTextField (label = _("State Name"), initial = DeployDistrict.DISTRICT.state.name)
+    scode       = SpacedROTextField (label = _("State Code"), initial = DeployDistrict.DISTRICT.state.get_code ())
+    dname       = SpacedROTextField (label = _("District Name"), initial = DeployDistrict.DISTRICT.name)
+    dcode       = SpacedROTextField (label = _("District Code"), initial = DeployDistrict.DISTRICT.get_code ())
+    lattd       = LatLongField (label  = _("Gram Panchayat Latitude"))
+    longd       = LatLongField (label  = _("Gram Panchayat Longitude"))
 
-    block       = forms.ModelChoiceField (queryset = Block.objects.filter(district=DeployDistrict.DISTRICT), empty_label = "------", label="Block")
-    gpname      = SpacedTextField (label="Gram Panchayat Name")
-    gpcode      = SpacedTextField (label="Gram Panchayat Code")
+    block       = forms.ModelChoiceField (queryset = Block.objects.filter(district=DeployDistrict.DISTRICT), empty_label = "------", label=_("Block"))
+    gpname      = SpacedTextField (label=_("Gram Panchayat Name"))
+    gpcode      = SpacedTextField (label=_("Gram Panchayat Code"))
 
     def clean (self) :
         super (AddGramPanchayat, self).clean ()
@@ -381,11 +382,11 @@ class AddGramPanchayat (forms.Form):
             try:
                 gpcode = int (self.cleaned_data['gpcode'])
             except ValueError:
-                raise forms.ValidationError ("Gram Panchayat code must be a number")
+                raise forms.ValidationError (_("Gram Panchayat code must be a number"))
 
             comp_gpcode = "%s.%03d" % (self.cleaned_data['block'].code, gpcode)
             if GramPanchayat.objects.filter (code = comp_gpcode).count () != 0:
-                raise forms.ValidationError ("Gram Panchayat code already exists")
+                raise forms.ValidationError (_("Gram Panchayat code already exists"))
 
             self.cleaned_data ['gpcode'] = comp_gpcode
         return self.cleaned_data
@@ -399,16 +400,16 @@ class AddGramPanchayat (forms.Form):
 
 
 class AddVillage (forms.Form):
-    sname       = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
-    scode       = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code ())
-    dname       = SpacedROTextField (label = "District Name", initial = DeployDistrict.DISTRICT.name)
-    dcode       = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.get_code ())
-    vname       = SpacedTextField (label   = "Village Name")
-    vcode       = SpacedTextField (label   = "Village Code")
-    lattd       = LatLongField (label  = "Village Latitude")
-    longd       = LatLongField (label  = "Village Longitude")
-    blockdata   = forms.ModelChoiceField (queryset = Block.objects.filter(district=DeployDistrict.DISTRICT), empty_label = "------", label="Block")
-    gp          = forms.ModelChoiceField (queryset = GramPanchayat.objects.none (), empty_label = '------', label="Gram Panchayat")
+    sname       = SpacedROTextField (label = _("State Name"), initial = DeployDistrict.DISTRICT.state.name)
+    scode       = SpacedROTextField (label = _("State Code"), initial = DeployDistrict.DISTRICT.state.get_code ())
+    dname       = SpacedROTextField (label = _("District Name"), initial = DeployDistrict.DISTRICT.name)
+    dcode       = SpacedROTextField (label = _("District Code"), initial = DeployDistrict.DISTRICT.get_code ())
+    vname       = SpacedTextField (label   = _("Village Name"))
+    vcode       = SpacedTextField (label   = _("Village Code"))
+    lattd       = LatLongField (label  = _("Village Latitude"))
+    longd       = LatLongField (label  = _("Village Longitude"))
+    blockdata   = forms.ModelChoiceField (queryset = Block.objects.filter(district=DeployDistrict.DISTRICT), empty_label = "------", label=_("Block"))
+    gp          = forms.ModelChoiceField (queryset = GramPanchayat.objects.none (), empty_label = '------', label=_("Gram Panchayat"))
 
     def __init__ (self, *args, **kwargs):
         super (AddVillage, self).__init__ (*args, **kwargs)
@@ -428,11 +429,11 @@ class AddVillage (forms.Form):
             try:
                 vcode = int (self.cleaned_data['vcode'])
             except ValueError:
-                raise forms.ValidationError ("Village code must be a number")
+                raise forms.ValidationError (_("Village code must be a number"))
 
             comp_vcode = "%s.%03d" % (self.cleaned_data['gp'].code, vcode)
             if Village.objects.filter (code = comp_vcode).count () != 0:
-                raise forms.ValidationError ("Village code already exists")
+                raise forms.ValidationError (_("Village code already exists"))
 
             self.cleaned_data ['vcode'] = comp_vcode
         return self.cleaned_data
@@ -447,16 +448,16 @@ class AddVillage (forms.Form):
 
 
 class AddComplaint (forms.Form):
-    code        = SpacedTextField (label="Complaint Code")
-    summary     = SpacedTextField (max_length = 2000, label = "Summary")
-    cclass      = SpacedTextField (max_length = 500, label = "Classification")
-    defsmsnew   = SpacedTextAreaField (max_length = 2000, label = "Default SMS New", required = False)
-    defsmsack   = SpacedTextAreaField (max_length = 2000, label = "Default SMS Acknowledge", required = False)
-    defsmsopen  = SpacedTextAreaField (max_length = 2000, label = "Default SMS Open", required = False)
-    defsmsres   = SpacedTextAreaField (max_length = 2000, label = "Default SMS Resolved", required = False)
-    defsmsclo   = SpacedTextAreaField (max_length = 2000, label = "Default SMS Closed", required = False)
-    mdg         = MultiNumberIdField (max_length = 20,   label = "MDG Goals", required = False)
-    department  = forms.ModelChoiceField (label = "Department",
+    code        = SpacedTextField (label=_("Complaint Code"))
+    summary     = SpacedTextField (max_length = 2000, label = _("Summary"))
+    cclass      = SpacedTextField (max_length = 500, label = _("Classification"))
+    defsmsnew   = SpacedTextAreaField (max_length = 2000, label = _("Default SMS New"), required = False)
+    defsmsack   = SpacedTextAreaField (max_length = 2000, label = _("Default SMS Acknowledge"), required = False)
+    defsmsopen  = SpacedTextAreaField (max_length = 2000, label = _("Default SMS Open"), required = False)
+    defsmsres   = SpacedTextAreaField (max_length = 2000, label = _("Default SMS Resolved"), required = False)
+    defsmsclo   = SpacedTextAreaField (max_length = 2000, label = _("Default SMS Closed"), required = False)
+    mdg         = MultiNumberIdField (max_length = 20,   label = _("MDG Goals"), required = False)
+    department  = forms.ModelChoiceField (label = _("Department"),
                                           queryset = ComplaintDepartment.objects.all(),
                                           empty_label = "------",
                                           widget=forms.Select (attrs = {'style' : 'width:100%'}))
@@ -465,7 +466,7 @@ class AddComplaint (forms.Form):
         if 'code' in self.cleaned_data and 'department' in self.cleaned_data:
             compcode = "%s.%s" % (self.cleaned_data['department'].code, self.cleaned_data ['code'])
             if ComplaintType.objects.filter (code = compcode).count () != 0:
-                raise forms.ValidationError ("Complaint code already exists")
+                raise forms.ValidationError (_("Complaint code already exists"))
 
             self.cleaned_data ['code'] = compcode
         return self.cleaned_data
@@ -486,15 +487,15 @@ class AddComplaint (forms.Form):
 
 class EditBlk (forms.Form):
     objid  = forms.CharField (widget = forms.HiddenInput ())
-    sname  = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
-    scode  = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code ())
-    dname  = SpacedROTextField (label = "District Name", initial = DeployDistrict.DISTRICT.name)
-    dcode  = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.get_code ())
-    lattd  = forms.DecimalField (label  = "Gram Panchayat Latitude", max_value = 180, min_value = -180)
-    longd  = forms.DecimalField (label  = "Gram Panchayat Longitude", max_value = 180, min_value = -180)
+    sname  = SpacedROTextField (label = _("State Name"), initial = DeployDistrict.DISTRICT.state.name)
+    scode  = SpacedROTextField (label = _("State Code"), initial = DeployDistrict.DISTRICT.state.get_code ())
+    dname  = SpacedROTextField (label = _("District Name"), initial = DeployDistrict.DISTRICT.name)
+    dcode  = SpacedROTextField (label = _("District Code"), initial = DeployDistrict.DISTRICT.get_code ())
+    lattd  = forms.DecimalField (label  = _("Gram Panchayat Latitude"), max_value = 180, min_value = -180)
+    longd  = forms.DecimalField (label  = _("Gram Panchayat Longitude"), max_value = 180, min_value = -180)
 
-    bname  = SpacedTextField (label="Block Name")
-    bcode  = SpacedTextField (label="Block Code")
+    bname  = SpacedTextField (label=_("Block Name"))
+    bcode  = SpacedTextField (label=_("Block Code"))
 
     def __init__(self, blkobj, *args, **kwargs) :
         super(EditBlk, self).__init__(*args,**kwargs)
@@ -512,11 +513,11 @@ class EditBlk (forms.Form):
                 real_blkcode = "%s.%03s" % (DeployDistrict.DISTRICT.code, self.cleaned_data ['bcode'])
                 if real_blkcode != orgblkobj.code:
                     blkobj = Block.objects.get (code = real_blkcode)
-                    raise forms.ValidationError ("This code can't be used. Block with this code already exists")
+                    raise forms.ValidationError (_("This code can't be used. Block with this code already exists"))
             except Block.DoesNotExist:
                 pass
             except Block.MultipleObjectsReturned:
-                raise forms.ValidationError ("This code can't be used. Block with this code already exists")
+                raise forms.ValidationError (_("This code can't be used. Block with this code already exists"))
         return self.cleaned_data
 
 
@@ -549,17 +550,17 @@ class EditBlk (forms.Form):
 
 class EditGp (forms.Form):
     objid  = forms.CharField (widget = forms.HiddenInput ())
-    sname  = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
-    scode  = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code ())
-    dname  = SpacedROTextField (label = "District Name", initial = DeployDistrict.DISTRICT.name)
-    dcode  = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.get_code ())
-    lattd  = forms.DecimalField (label  = "Gram Panchayat Latitude", max_value = 180, min_value = -180)
-    longd  = forms.DecimalField (label  = "Gram Panchayat Longitude", max_value = 180, min_value = -180)
+    sname  = SpacedROTextField (label = _("State Name"), initial = DeployDistrict.DISTRICT.state.name)
+    scode  = SpacedROTextField (label = _("State Code"), initial = DeployDistrict.DISTRICT.state.get_code ())
+    dname  = SpacedROTextField (label = _("District Name"), initial = DeployDistrict.DISTRICT.name)
+    dcode  = SpacedROTextField (label = _("District Code"), initial = DeployDistrict.DISTRICT.get_code ())
+    lattd  = forms.DecimalField (label  = _("Gram Panchayat Latitude"), max_value = 180, min_value = -180)
+    longd  = forms.DecimalField (label  = _("Gram Panchayat Longitude"), max_value = 180, min_value = -180)
 
-    bname  = SpacedROTextField (label="Block Name")
-    bcode  = SpacedROTextField (label="Block Code")
-    gpname = SpacedTextField (label="Gram Panchayat Name")
-    gpcode = SpacedTextField (label="Gram Panchayat Code")
+    bname  = SpacedROTextField (label=_("Block Name"))
+    bcode  = SpacedROTextField (label=_("Block Code"))
+    gpname = SpacedTextField (label=_("Gram Panchayat Name"))
+    gpcode = SpacedTextField (label=_("Gram Panchayat Code"))
 
     def __init__(self, gpobj, *args, **kwargs) :
         super(EditGp, self).__init__(*args,**kwargs)
@@ -579,11 +580,11 @@ class EditGp (forms.Form):
                 real_gpcode = "%s.%03s.%03s" % (DeployDistrict.DISTRICT.code, self.cleaned_data ['bcode'], self.cleaned_data ['gpcode'])
                 if real_gpcode != orggpobj.code:
                     gpobj = GramPanchayat.objects.get (code = real_gpcode)
-                    raise forms.ValidationError ("This code can't be used. Gram Panchayat with this code exists within block")
+                    raise forms.ValidationError (_("This code can't be used. Gram Panchayat with this code exists within block"))
             except GramPanchayat.DoesNotExist:
                 pass
             except GramPanchayat.MultipleObjectsReturned:
-                raise forms.ValidationError ("This code can't be used. Gram Panchayat with this code exists within block")
+                raise forms.ValidationError (_("This code can't be used. Gram Panchayat with this code exists within block"))
         return self.cleaned_data
 
 
@@ -610,19 +611,19 @@ class EditGp (forms.Form):
 
 class EditVillage (forms.Form):
     objid  = forms.CharField (widget  = forms.HiddenInput ())
-    sname  = SpacedROTextField (label = "State Name", initial = DeployDistrict.DISTRICT.state.name)
-    scode  = SpacedROTextField (label = "State Code", initial = DeployDistrict.DISTRICT.state.get_code ())
-    dname  = SpacedROTextField (label = "District Name", initial = DeployDistrict.DISTRICT.name)
-    dcode  = SpacedROTextField (label = "District Code", initial = DeployDistrict.DISTRICT.get_code ())
-    bname  = SpacedROTextField (label ="Block Name")
-    bcode  = SpacedROTextField (label ="Block Code")
-    gpname = SpacedROTextField (label ="Gram Panchayat Name")
-    gpcode = SpacedROTextField (label ="Gram Panchayat Code")
+    sname  = SpacedROTextField (label = _("State Name"), initial = DeployDistrict.DISTRICT.state.name)
+    scode  = SpacedROTextField (label = _("State Code"), initial = DeployDistrict.DISTRICT.state.get_code ())
+    dname  = SpacedROTextField (label = _("District Name"), initial = DeployDistrict.DISTRICT.name)
+    dcode  = SpacedROTextField (label = _("District Code"), initial = DeployDistrict.DISTRICT.get_code ())
+    bname  = SpacedROTextField (label =_("Block Name"))
+    bcode  = SpacedROTextField (label =_("Block Code"))
+    gpname = SpacedROTextField (label =_("Gram Panchayat Name"))
+    gpcode = SpacedROTextField (label =_("Gram Panchayat Code"))
 
-    vname  = SpacedTextField (label   = "Village Name")
-    vcode  = SpacedTextField (label   = "Village Code")
-    lattd  = forms.DecimalField (label= "Village Latitude", max_value = 180, min_value = -180)
-    longd  = forms.DecimalField (label= "Village Longitude", max_value = 180, min_value = -180)
+    vname  = SpacedTextField (label   = _("Village Name"))
+    vcode  = SpacedTextField (label   = _("Village Code"))
+    lattd  = forms.DecimalField (label= _("Village Latitude"), max_value = 180, min_value = -180)
+    longd  = forms.DecimalField (label= _("Village Longitude"), max_value = 180, min_value = -180)
 
 
     def __init__(self, villobj, *args, **kwargs) :
@@ -645,11 +646,11 @@ class EditVillage (forms.Form):
                 real_vcode = "%s.%03s.%03s.%03s" % (DeployDistrict.DISTRICT.code, self.cleaned_data ['bcode'], self.cleaned_data ['gpcode'],self.cleaned_data['vcode'])
                 if real_vcode != orgvillobj.code:
                     villobj = Village.objects.get (code = real_vcode)
-                    raise forms.ValidationError ("This code can't be used. Village with this code exists within Gram Panchayat")
+                    raise forms.ValidationError (_("This code can't be used. Village with this code exists within Gram Panchayat"))
             except Village.DoesNotExist:
                 pass
             except Village.MultipleObjectsReturned:
-                raise forms.ValidationError ("This code can't be used. Village with this code exists within Gram Panchayat")
+                raise forms.ValidationError (_("This code can't be used. Village with this code exists within Gram Panchayat"))
 
         return self.cleaned_data
 
@@ -669,8 +670,8 @@ class EditVillage (forms.Form):
 
 
 class EditDep (forms.Form):
-    dname  = SpacedTextField (label = "Department Name")
-    dcode  = SpacedTextField (label = "Department Code")
+    dname  = SpacedTextField (label = _("Department Name"))
+    dcode  = SpacedTextField (label = _("Department Code"))
     objid  = forms.CharField (widget = forms.HiddenInput ())
 
     def __init__(self, depobj, *args, **kwargs) :
@@ -687,11 +688,11 @@ class EditDep (forms.Form):
                 real_depcode =  self.cleaned_data ['dcode']
                 if real_depcode != orgdepobj.code:
                     depobj = ComplaintDepartment.objects.get (code = real_depcode)
-                    raise forms.ValidationError ("Department code already exists please enter non-existing department code")
+                    raise forms.ValidationError (_("Department code already exists please enter non-existing department code"))
             except ComplaintDepartment.DoesNotExist:
                 pass
             except ComplaintDepartment.MultipleObjectsReturned:
-                raise forms.ValidationError ("Department code already exists please enter non-existing department code")
+                raise forms.ValidationError (_("Department code already exists please enter non-existing department code"))
         return self.cleaned_data
 
 
@@ -707,34 +708,34 @@ class EditDep (forms.Form):
             comp.save()
 
 
-    code        = SpacedTextField (label="Complaint Code")
-    summary     = SpacedTextField (max_length = 2000, label = "Summary")
-    cclass      = SpacedTextField (max_length = 500, label = "Classification")
-    defsmsnew   = SpacedTextField (max_length = 2000, label = "Default SMS New", required = False)
-    defsmsack   = SpacedTextField (max_length = 2000, label = "Default SMS Acknowledge", required = False)
-    defsmsopen  = SpacedTextField (max_length = 2000, label = "Default SMS Open", required = False)
-    defsmsres   = SpacedTextField (max_length = 2000, label = "Default SMS Resolved", required = False)
-    defsmsclo   = SpacedTextField (max_length = 2000, label = "Default SMS Closed", required = False)
-    mdg         = MultiNumberIdField (max_length = 20,   label = "MDG Goals", required = False)
-    department  = forms.ModelChoiceField (label = "Department",
+    code        = SpacedTextField (label=_("Complaint Code"))
+    summary     = SpacedTextField (max_length = 2000, label = _("Summary"))
+    cclass      = SpacedTextField (max_length = 500, label = _("Classification"))
+    defsmsnew   = SpacedTextField (max_length = 2000, label = _("Default SMS New"), required = False)
+    defsmsack   = SpacedTextField (max_length = 2000, label = _("Default SMS Acknowledge"), required = False)
+    defsmsopen  = SpacedTextField (max_length = 2000, label = _("Default SMS Open"), required = False)
+    defsmsres   = SpacedTextField (max_length = 2000, label = _("Default SMS Resolved"), required = False)
+    defsmsclo   = SpacedTextField (max_length = 2000, label = _("Default SMS Closed"), required = False)
+    mdg         = MultiNumberIdField (max_length = 20,   label = _("MDG Goals"), required = False)
+    department  = forms.ModelChoiceField (label = _("Department"),
                                           queryset = ComplaintDepartment.objects.all(),
                                           empty_label = "------",
                                           widget=forms.Select (attrs = {'style' : 'width:100%'}))
 
 
 class EditComp (forms.Form):
-    dname       = SpacedROTextField (label = "Department")
+    dname       = SpacedROTextField (label = _("Department"))
     objid       = forms.CharField (widget = forms.HiddenInput ())
     hcode       = forms.CharField (widget = forms.HiddenInput ())
-    code        = SpacedTextField (label="Complaint Code")
-    summary     = SpacedTextField (max_length = 2000, label = "Summary")
-    cclass      = SpacedTextField (max_length = 500, label = "Classification")
-    defsmsnew   = SpacedTextAreaField (max_length = 2000, label = "Default SMS New", required = False)
-    defsmsack   = SpacedTextAreaField (max_length = 2000, label = "Default SMS Acknowledge", required = False)
-    defsmsopen  = SpacedTextAreaField (max_length = 2000, label = "Default SMS Open", required = False)
-    defsmsres   = SpacedTextAreaField (max_length = 2000, label = "Default SMS Resolved", required = False)
-    defsmsclo   = SpacedTextAreaField (max_length = 2000, label = "Default SMS Closed", required = False)
-    mdg         = MultiNumberIdField (max_length = 20,   label = "MDG Goals", required = False)
+    code        = SpacedTextField (label=_("Complaint Code"))
+    summary     = SpacedTextField (max_length = 2000, label = _("Summary"))
+    cclass      = SpacedTextField (max_length = 500, label = _("Classification"))
+    defsmsnew   = SpacedTextAreaField (max_length = 2000, label = _("Default SMS New"), required = False)
+    defsmsack   = SpacedTextAreaField (max_length = 2000, label = _("Default SMS Acknowledge"), required = False)
+    defsmsopen  = SpacedTextAreaField (max_length = 2000, label = _("Default SMS Open"), required = False)
+    defsmsres   = SpacedTextAreaField (max_length = 2000, label = _("Default SMS Resolved"), required = False)
+    defsmsclo   = SpacedTextAreaField (max_length = 2000, label = _("Default SMS Closed"), required = False)
+    mdg         = MultiNumberIdField (max_length = 20,   label = _("MDG Goals"), required = False)
 
     def __init__(self, compobj, *args, **kwargs) :
         super(EditComp, self).__init__(*args,**kwargs)
@@ -759,11 +760,11 @@ class EditComp (forms.Form):
                 real_compcode =  "%s.%03s" % (self.cleaned_data['hcode'],self.cleaned_data ['code'])
                 if real_compcode != orgcompobj.code:
                     compobj = ComplaintType.objects.get (code = real_compcode)
-                    raise forms.ValidationError ("Complaint code already exists please enter non-existing complaint code")
+                    raise forms.ValidationError (_("Complaint code already exists please enter non-existing complaint code"))
             except ComplaintType.DoesNotExist:
                 pass
             except ComplaintType.MultipleObjectsReturned:
-                raise forms.ValidationError ("Complaint code already exists please enter non-existing complaint code")
+                raise forms.ValidationError (_("Complaint code already exists please enter non-existing complaint code"))
         return self.cleaned_data
 
 

@@ -20,14 +20,16 @@ from cmh.common.fields import PhoneNumberField
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.utils.translation import ugettext as _
+
 from cmh.captcha.fields import CaptchaField
 import re
 
 class UserLoginForm (forms.Form):
-    username = forms.CharField(label="Username",
+    username = forms.CharField(label=_("Username"),
                                max_length=30,
                                widget=forms.TextInput (attrs = {'tabindex' : '1'}))
-    password = forms.CharField(label="Password",
+    password = forms.CharField(label=_("Password"),
                                widget=forms.PasswordInput (attrs = {'tabindex' : '2'}))
     def clean (self):
         if 'username' in self.cleaned_data and 'password' in self.cleaned_data:
@@ -36,28 +38,28 @@ class UserLoginForm (forms.Form):
             user = authenticate (username = username, password = password)
             if user is None:
                 if User.objects.filter (username = username).count () != 0:
-                    raise forms.ValidationError ('Username / Password does not match')
+                    raise forms.ValidationError (_('Username / Password does not match'))
                 else:
-                    raise forms.ValidationError ('Username is not registered')
+                    raise forms.ValidationError (_('Username is not registered'))
             elif user.is_active == False:
-                raise forms.ValidationError ('Account  suspended. Contact Administrator')
+                raise forms.ValidationError (_('Account  suspended. Contact Administrator'))
         self.valid_user = user
         return self.cleaned_data
 
 class UserRegisterForm(forms.Form):
-    username        = forms.CharField(label="username", max_length=30)
-    password        = forms.CharField(label="password", widget=forms.PasswordInput)
-    repassword      = forms.CharField(label="repassword", widget=forms.PasswordInput)
-    fname           = forms.CharField(label="fname", max_length=30)
-    lname           = forms.CharField(label="lname", max_length=30)
-    streetaddress   = forms.CharField(label="streetaddress", max_length=100)
-    town            = forms.CharField(label="town", max_length=50)
-    district        = forms.CharField(label="district", max_length=50)
-    state           = forms.CharField(label="state", max_length=50)
-    pincode         = forms.IntegerField(label="pincode")
-    phone           = forms.CharField(label="phone"  ,max_length=15)
-    mobile          = forms.CharField(label="mobile" ,max_length=15)
-    email           = forms.EmailField(label="email")
+    username        = forms.CharField(label=_("username"), max_length=30)
+    password        = forms.CharField(label=_("password"), widget=forms.PasswordInput)
+    repassword      = forms.CharField(label=_("repassword"), widget=forms.PasswordInput)
+    fname           = forms.CharField(label=_("fname"), max_length=30)
+    lname           = forms.CharField(label=_("lname"), max_length=30)
+    streetaddress   = forms.CharField(label=_("streetaddress"), max_length=100)
+    town            = forms.CharField(label=_("town"), max_length=50)
+    district        = forms.CharField(label=_("district"), max_length=50)
+    state           = forms.CharField(label=_("state"), max_length=50)
+    pincode         = forms.IntegerField(label=_("pincode"))
+    phone           = forms.CharField(label=_("phone")  ,max_length=15)
+    mobile          = forms.CharField(label=_("mobile") ,max_length=15)
+    email           = forms.EmailField(label=_("email"))
     captcha  = CaptchaField()
 
     def clean_username(self):
@@ -65,11 +67,11 @@ class UserRegisterForm(forms.Form):
         if (re.match('^([a-zA-Z_0-9]|[_.])+$',username) !=None):
             try:
                 user = User.objects.get(username=username)
-                raise forms.ValidationError("Username already Exist")
+                raise forms.ValidationError(_("Username already Exist"))
             except User.DoesNotExist:
                 return username
         else:
-            raise forms.ValidationError("Username format is invalid")
+            raise forms.ValidationError(_("Username format is invalid"))
 
 
     def clean_mobile(self):
@@ -77,14 +79,14 @@ class UserRegisterForm(forms.Form):
         if (re.match('^\+?\d{4,15}$',mobile) !=None):
             return mobile
         else:
-            raise forms.ValidationError("Mobile number format is invalid")
+            raise forms.ValidationError(_("Mobile number format is invalid"))
 
     def clean_phone(self):
         phone = self.cleaned_data['phone']
         if (re.match('^\+?\d{4,15}$',phone) !=None):
             return phone
         else:
-            raise forms.ValidationError("Phone number format is invalid")
+            raise forms.ValidationError(_("Phone number format is invalid"))
 
 class ProfileEditForm (forms.Form):
     name     = forms.CharField(max_length= 200)
@@ -93,12 +95,9 @@ class ProfileEditForm (forms.Form):
 
 
 class PasswordUpdateForm(forms.Form):
-    oldpassword = forms.CharField (label="Old password:",
-                                   widget=forms.PasswordInput)
-    newpassword1 = forms.CharField (label="New password:",
-                                    widget=forms.PasswordInput)
-    newpassword2 = forms.CharField (label="Confirm Password:",
-                                    widget=forms.PasswordInput)
+    oldpassword = forms.CharField (label=_("Old password:"), widget=forms.PasswordInput)
+    newpassword1 = forms.CharField (label=_("New password:"), widget=forms.PasswordInput)
+    newpassword2 = forms.CharField (label=_("Confirm Password:"), widget=forms.PasswordInput)
 
     def __init__ (self, user, *args, **kwargs):
         self.user = user
@@ -106,7 +105,7 @@ class PasswordUpdateForm(forms.Form):
 
     def clean_oldpassword (self):
         if self.user.check_password (self.cleaned_data ['oldpassword']) == False:
-            raise forms.ValidationError ("Old password is wrong")
+            raise forms.ValidationError (_("Old password is wrong"))
         return self.cleaned_data ['oldpassword']
 
     def clean_newpassword2 (self):
@@ -114,7 +113,7 @@ class PasswordUpdateForm(forms.Form):
         np2 = self.cleaned_data ['newpassword2']
 
         if np1 != np2:
-            raise forms.ValidationError ("Passwords do not match")
+            raise forms.ValidationError (_("Passwords do not match"))
 
         return np2
 

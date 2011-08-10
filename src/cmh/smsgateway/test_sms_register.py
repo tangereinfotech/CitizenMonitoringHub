@@ -16,7 +16,7 @@
 import urllib
 import urllib2
 
-params = urllib.urlencode({'from' : '9980836967', 'secret' : '0123456789', 'message' : '1-5-1 Apurva This is a complaint'})
+params = urllib.urlencode({'from' : '9980836967', 'secret' : '0123456789', 'message' : '5.3.3 Apurva This is a complaint'})
 headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 req = urllib2.Request ("http://localhost:8000/smsg/", params, headers)
 response = urllib2.urlopen (req)

@@ -13,49 +13,50 @@
 {# limitations under the License.                                               #}
 
 {% extends "masters.html" %}
+
+{% load i18n %}
+
 {% block extra_heads %}
 <link type="text/css" href="/static/jquery/css/jquery.contextMenu.css" rel="stylesheet" media="screen">
 {% endblock %}
 
 {% block master_section %}
 <div class="content-heading">
-  <h2 style="text-align:center;">List of Villages</h2>
-  <h4 style="text-align:center;">
-    Village belongs to
-  </h4>
+  <h2 style="text-align:center;">{% trans "List of Villages" %}</h2>
+  <h4 style="text-align:center;"> {% trans "Village belongs to" %} </h4>
 <table id="state" align="center">
   <tr>
-    <td> State: </td>
+    <td> {% trans "State:" %} </td>
     <td>{{ statename }} </td>
     <td></td><td></td>
-    <td> State Code:</td>
+    <td> {% trans "State Code:" %}</td>
     <td> {{ statecode }} </td>
   </tr>
   <tr>
-    <td> District: </td>
+    <td> {% trans "District:" %} </td>
     <td> {{ disname }} </td>
     <td></td><td></td>
-    <td> District Code:</td>
+    <td> {% trans "District Code:" %}</td>
     <td>{{ discode }} </td>
   </tr>
 </table>
 </div>
 
 <div class="pagination">
-  <a href="/masters/add_village/">Add New</a>
+  <a href="/masters/add_village/">{% trans "Add New" %}</a>
 </div>
 
 <table id="villist" class="tabularlist">
   <thead>
   <tr>
-    <th>Block Code</th>
-    <th>Block Name</th>
-    <th>Gram Panchayat Code</th>
-    <th>Gram Panchayat Name</th>
-    <th>Village Code</th>
-    <th>Village Name</th>
-    <th>Lattitude</th>
-    <th>Longitude</th>
+    <th>{% trans "Block Code" %}</th>
+    <th>{% trans "Block Name" %}</th>
+    <th>{% trans "Gram Panchayat Code" %}</th>
+    <th>{% trans "Gram Panchayat Name" %}</th>
+    <th>{% trans "Village Code" %}</th>
+    <th>{% trans "Village Name" %}</th>
+    <th>{% trans "Lattitude" %}</th>
+    <th>{% trans "Longitude" %}</th>
   </tr>
   </thead>
   <tbody>
@@ -64,7 +65,7 @@
 
 
 <ul id="updateMenu" class="contextMenu">
-  <li><a href="#update">Update</a></li>
+  <li><a href="#update">{% trans "Update" %}</a></li>
 </ul>
 
 <script type="text/javascript" src="/static/jquery/js/jquery.simplemodal-1.1.1.js"></script>

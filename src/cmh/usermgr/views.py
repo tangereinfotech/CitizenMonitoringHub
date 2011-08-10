@@ -18,6 +18,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import ugettext as _
 
 from cmh.common.utils import check_email, check_phone, check_mobile
 from cmh.usermgr.forms import ProfileEditForm, UserLoginForm, UserRegisterForm

@@ -14,22 +14,24 @@
 
 {% extends "masters.html" %}
 
+{% load i18n %}
+
 {% block master_section %}
 <div style="text-align:center;">
-  <h2>District</h2>
+  <h2>{% trans "District" %}</h2>
 </div>
 
 <div class="pagination">
-  <a href="/masters/add_district/">Edit</a>
+  <a href="/masters/add_district/">{% trans "Edit" %}</a>
 </div>
 
 <table class="tabularlist">
   <thead>
   <tr>
-    <th>District Code</th>
-    <th>District Name</th>
-    <th>Latitude</th>
-    <th>Longitude</th>
+    <th>{% trans "District Code" %}</th>
+    <th>{% trans "District Name" %}</th>
+    <th>{% trans "Latitude" %}</th>
+    <th>{% trans "Longitude" %}</th>
   </tr>
   </thead>
   {% for district in districts %}

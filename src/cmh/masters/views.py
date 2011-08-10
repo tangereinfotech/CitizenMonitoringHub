@@ -18,6 +18,7 @@ from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.utils import simplejson as json
+from django.utils.translation import ugettext as _
 
 from django.contrib.auth.decorators import login_required
 
@@ -189,7 +190,7 @@ def edit_off(request, offid):
 
         if (off.get_user_role () != UserRoles.ROLE_OFFICIAL and
             off.get_user_role () != UserRoles.ROLE_DELEGATE):
-            raise Exception("Wrong data passed! The data passed doesnot belong to any official Please go back and click again")
+            raise Exception(_("Wrong data passed! The data passed doesnot belong to any official Please go back and click again"))
         else:
             return render_to_response ('edit_official.html',
                                        {'trial' : EditOfficial (offobj = off ),
@@ -307,7 +308,7 @@ def edit_cso(request, csoid):
         cso = CmhUser.objects.get (id = csoid)
 
         if (cso.get_user_role () != UserRoles.ROLE_CSO):
-            raise Exception("Wrong data passed! The data passed doesnot belong to any cso Please go back and click again")
+            raise Exception(_("Wrong data passed! The data passed doesnot belong to any cso Please go back and click again"))
         else:
             return render_to_response ('edit_cso.html',
                                        {'trial' : EditCso (csoobj = cso ),

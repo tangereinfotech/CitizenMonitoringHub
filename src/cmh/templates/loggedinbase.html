@@ -13,8 +13,9 @@
 {# limitations under the License.                                               #}
 
 {% extends "basewithmenu.html" %}
+{% load i18n %}
 {% block system_panel %}
 <div class="userpanel">
-   Hello {{ user.username }} | <a href="/user/logout/"> Sign out </a>
+   {% trans "Hello" %}{{ user.username }} | <a href="/user/logout/"> {% trans "Sign out" %} </a>
 </div>
 {% endblock %}

@@ -14,22 +14,24 @@
 
 {% extends "masters.html" %}
 
+{% load i18n %}
+
 {% block master_section %}
 <div style="text-align:center;">
-  <h2>State</h2>
+  <h2>{% trans "State" %}</h2>
 </div>
 
 <div class="pagination">
-  <a href="/masters/add_state/">Edit</a>
+  <a href="/masters/add_state/">{% trans "Edit" %}</a>
 </div>
 
 <table class="tabularlist">
   <thead>
   <tr>
-    <th>State Code</th>
-    <th>State Name</th>
-    <th>Latitude</th>
-    <th>Longitude</th>
+    <th>{% trans "State Code" %}</th>
+    <th>{% trans "State Name" %}</th>
+    <th>{% trans "Latitude" %}</th>
+    <th>{% trans "Longitude" %}</th>
   </tr>
   </thead>
   <tbody>

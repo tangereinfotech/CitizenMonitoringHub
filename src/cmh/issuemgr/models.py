@@ -17,6 +17,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from cmh.common.models import Block, GramPanchayat, Village
 from cmh.common.models import ComplaintDepartment
+
 GENDER_CHOICES = (
     ('Male', 'Male'),
     ('Female', 'Female'),

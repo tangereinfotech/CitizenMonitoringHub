@@ -17,7 +17,7 @@ import re
 from django import forms
 from django.contrib.auth.models import User
 from datetime import datetime, date
-
+from django.utils.translation import ugettext as _
 
 class StripCharField (forms.CharField):
     def clean (self, value):
@@ -36,7 +36,7 @@ class UsernameField (forms.CharField):
         value = super (UsernameField, self).clean (value)
         if self.check:
             if User.objects.filter (username = value).count () != 0:
-                raise forms.ValidationError ("Username is already registered")
+                raise forms.ValidationError (_("Username is already registered"))
         return value
 
 
@@ -49,8 +49,7 @@ class PhoneNumberField (forms.CharField):
         if value != None:
             value = value.strip ()
             if re.match (r'^(\+91)?[1-9][0-9]{9}$', value) == None:
-                raise forms.ValidationError ("Please enter a valid Indian " +
-                                             "phone number")
+                raise forms.ValidationError (_("Please enter a valid Indian phone number"))
             return value
         else:
             return ''
@@ -142,7 +141,7 @@ class MultiNumberIdField (forms.CharField):
             try:
                 values.append (int (x))
             except ValueError:
-                raise forms.ValidationError ("Only comma separated integers are allowed")
+                raise forms.ValidationError (_("Only comma separated integers are allowed"))
         return values
 
 class FormattedDateField (forms.CharField):
@@ -155,13 +154,13 @@ class FormattedDateField (forms.CharField):
             year = int (year)
 
             if (month < 1 and month > 12) or (year < 1970 and year > datetime.now ().year):
-                raise forms.ValidationError ("Invalid Date - month / year: " + value)
+                raise forms.ValidationError (_("Invalid Date - month / year: ") + value)
 
             days = [31, self.get_feb_days (year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
             if (day < 1 and day > days [month - 1]):
-                raise forms.ValidationError ("Invalid Date - date: " + value)
+                raise forms.ValidationError (_("Invalid Date - date: ") + value)
         except:
-            raise forms.ValidationError ("Invalid date - general failure : " + value)
+            raise forms.ValidationError (_("Invalid date - general failure : ") + value)
         return self.to_python (value)
 
     def to_python (self, value):

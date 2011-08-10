@@ -42,11 +42,11 @@
     </colgroup>
     <thead>
       <tr>
-        <th style="width:16%;">Complaint #</th>
-        <th style="width:12%;">Filed On</th>
-        <th style="width:42%;">Description</th>
-        <th style="width:15%;text-align:center;">Status</th>
-        <th style="width:15%;">Updated On</th>
+        <th style="width:16%;">{% trans "Complaint #" %}</th>
+        <th style="width:12%;">{% trans "Filed On" %}</th>
+        <th style="width:42%;">{% trans "Description" %}</th>
+        <th style="width:15%;text-align:center;">{% trans "Status" %}</th>
+        <th style="width:15%;">{% trans "Updated On" %}</th>
         <th style="display:none;"/>
       </tr>
     </thead>
@@ -57,12 +57,12 @@
 <div style="clear:both"></div>
 
 <ul id="updateMenu" class="contextMenu">
-  <li><a href="#update">Update</a></li>
-  <li><a href="#track">Track</a></li>
+  <li><a href="#update">{% trans "Update" %}</a></li>
+  <li><a href="#track">{% trans "Track" %}</a></li>
 </ul>
 
 <ul id="trackMenu" class="contextMenu">
-  <li><a href="#track">Track</a></li>
+  <li><a href="#track">{% trans "Track" %}</a></li>
 </ul>
 {% endblock %}
 

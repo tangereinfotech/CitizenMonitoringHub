@@ -14,22 +14,24 @@
 
 {% extends "masters.html" %}
 
+{% load i18n %}
+
 {% block master_section %}
 <div style="text-align:center">
-  <h2>District Magistrate</h2>
+  <h2>{% trans "District Magistrate" %}</h2>
   <form action="." method="post" style="width:300px;margin:0px auto">
     <input type="hidden" value="{{dm.id}}" name="dmid">
     <table width="100%">
       <tr>
-        <th width="35%" align="left">Username:</th>
+        <th width="35%" align="left">{% trans "Username:" %}</th>
         <td width="65%" align="left">{{ dm.user.username }}</td>
       </tr>
       <tr>
-        <th width="35%" align="left">Name:</th>
+        <th width="35%" align="left">{% trans "Name:" %}</th>
         <td width="65%" align="left">{{ dm.user.get_full_name }}</td>
       </tr>
       <tr>
-        <th width="35%" align="left">Phone:</th>
+        <th width="35%" align="left">{% trans "Phone:" %}</th>
         <td width="65%" align="left">{{ dm.phone }}</td>
       </tr>
       <tr>

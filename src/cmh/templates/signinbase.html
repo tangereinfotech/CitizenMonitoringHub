@@ -13,8 +13,10 @@
 {# limitations under the License.                                               #}
 
 {% extends "basewithmenu.html" %}
+{% load i18n %}
+
 {% block system_panel %}
 <div class="userpanel">
-   <a href="/user/login/"> Sign in </a>
+   <a href="/user/login/"> {% trans "Sign in" %} </a>
 </div>
 {% endblock %}

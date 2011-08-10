@@ -13,11 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
+import sys, re
 from datetime import datetime
 
 from django.utils import simplejson as json
 from django.http import HttpResponse, HttpResponseForbidden
+from django.utils.translation import ugettext as _
 
 from cmh.smsgateway.forms import SMSTransferReqFormat, SMSReceivedFormat
 from cmh.smsgateway.models import TextMessage, ReceivedTextMessage, SenderBlacklist
@@ -33,6 +34,12 @@ from cmh.common.models import ComplaintType
 from cmh.usermgr.utils import get_or_create_citizen
 from cmh.common.utils import debug
 
+REGEX_SEP = r"[\. ,;\-_:]+"
+
+FORMAT = r"^(?P<block>\d+)" + REGEX_SEP + r"(?P<gramp>\d+)" + REGEX_SEP + r"(?P<villg>\d+)" + REGEX_SEP + r"(?P<name>\w+)" + REGEX_SEP + r"(?P<complaint>.+$)"
+
+class InvalidMessageException (Exception):
+    pass
 
 def gateway (request):
     if request.method == 'GET':
@@ -62,15 +69,19 @@ def gateway (request):
                                                           valid = False,
                                                           message = message)
 
-                message_fields = message.split ()
-                location = message_fields [0]
-                sender_name = message_fields [1]
-                issue_desc = ' '.join (message_fields [2:])
-                (block_no, gp_no, vill_no) = location.split ('-')
+                matches = re.match (FORMAT, message)
+                if matches != None:
+                    block = str (int (matches.group ('block')))
+                    gramp = str (int (matches.group ('gramp')))
+                    villg = str (int (matches.group ('villg')))
+                    sender_name  = matches.group ('name')
+                    issue_desc = matches.group ('complaint')
+                else:
+                    raise InvalidMessageException ("Message is not formatted correctly")
 
                 citizen = get_or_create_citizen (sender_phone, sender_name)
 
-                location = get_location_attr (block_no, gp_no, vill_no)
+                location = get_location_attr (block, gramp, villg)
 
                 compl = Complaint.objects.create (complainttype = None,
                                                   complaintno = None,

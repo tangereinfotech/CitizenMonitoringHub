@@ -14,34 +14,36 @@
 
 {% extends "basewithmenu.html" %}
 
+{% load i18n %}
+
 {% block page_content %}
 <div class="master-menu">
   <ul>
-    <li class="clikppl">People</li>
+    <li class="clikppl">{% trans "People" %}</li>
     <div class="slideppl">
       <ul>
-        <a href="/masters/dm/">District Magistrate</a><br/>
-        <a href="/masters/officials/">Officials</a><br/>
-        <a href="/masters/csomembers/">CSO Members</a><br/>
+        <a href="/masters/dm/">{% trans "District Magistrate" %}</a><br/>
+        <a href="/masters/officials/">{% trans "Officials" %}</a><br/>
+        <a href="/masters/csomembers/">{% trans "CSO Members" %}</a><br/>
       </ul>
     </div>
 
-    <li class="clik">Locations</li>
+    <li class="clik">{% trans "Locations" %}</li>
     <div class="slide">
       <ul>
-          <a href="/masters/state">State</a></br>
-          <a href="/masters/district">District</a></br>
-          <a href="/masters/block">Block</a></br>
-          <a href="/masters/gp">Gram Panchayat</a></br>
-          <a href="/masters/village">Village</a>
+          <a href="/masters/state">{% trans "State" %}</a></br>
+          <a href="/masters/district">{% trans "District" %}</a></br>
+          <a href="/masters/block">{% trans "Block" %}</a></br>
+          <a href="/masters/gp">{% trans "Gram Panchayat" %}</a></br>
+          <a href="/masters/village">{% trans "Village" %}</a>
       </ul>
     </div>
 
-    <li class="clikcomp">Complaints</li>
+    <li class="clikcomp">{% trans "Complaints" %}</li>
       <div class="slidecomp">
         <ul>
-          <a href="/masters/department">Departments</a></br>
-          <a href="/masters/complainttype">Complaint Type</a></br>
+          <a href="/masters/department">{% trans "Departments" %}</a></br>
+          <a href="/masters/complainttype">{% trans "Complaint Type" %}</a></br>
         </ul>
       </div>
 
@@ -50,7 +52,7 @@
 <div class="master-content">
   {% block master_section %}
   <div style="text-align: center;">
-    <h2> Registered Users </h2>
+    <h2> {% trans "Registered Users" %} </h2>
   </div>
   <div class="pagination">
     <span class="step-links">
@@ -78,10 +80,10 @@
   </div>
   <table class="tabularlist">
     <tr>
-      <th>Name</th>
-      <th>Role</th>
-      <th>Phone</th>
-      <th>Email</th>
+      <th>{% trans "Name" %}</th>
+      <th>{% trans "Role" %}</th>
+      <th>{% trans "Phone" %}</th>
+      <th>{% trans "Email" %}</th>
     </tr>
     {% for cmhuser in cmhusers.object_list %}
     <tr>

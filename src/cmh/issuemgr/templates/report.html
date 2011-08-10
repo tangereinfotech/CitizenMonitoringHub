@@ -14,6 +14,8 @@
 
 {% extends "reportbase.html" %}
 
+{% load i18n %}
+
 {% block base_content %}
 <div style="clear:both;width:100%;text-align:center;font-size:24px">
   {{ stats.today }}
@@ -23,18 +25,18 @@
     <legend>
       Selected
     </legend>
-    <h3 style="font-size:10px;"> Duration </h3>
+    <h3 style="font-size:10px;"> {% trans "Duration" %} </h3>
     <table style="font-size:10px;">
       <tr>
         <th>
-          Start Date:
+          {% trans "Start Date:" %}
         </th>
         <td>
           {{ staticdata.strtdate }}
         </td>
         <td></td>
         <th>
-          End Date:
+          {% trans "End Date:" %}
         </th>
         <td>
           {{ staticdata.enddate }}
@@ -43,15 +45,15 @@
     </table>
     <div class = "tables" style="font-size:10px;">
       <div style="width:38%;float:left;border:2px solid #ccc;">
-        <h3 style="text-align:center"> Departments </h3>
+        <h3 style="text-align:center"> {% trans "Departments" %} </h3>
         <div style="width:100%;height:210px;overflow:auto;">
           <table class = "tabularlist" >
             <tr>
               <th>
-                Code
+                {% trans "Code" %}
               </th>
               <th>
-                Name
+                {% trans "Name" %}
               </th>
             </tr>
             {% for dep in staticdata.department.all %}
@@ -68,18 +70,18 @@
         </div>
       </div>
       <div style="width:58%;float:right;border:2px solid #ccc;">
-        <h3 style="text-align:center"> Locations </h3>
+        <h3 style="text-align:center">{% trans "Locations" %} </h3>
         <div style="width:100%;height:210px;overflow:auto;">
           <table class = "tabularlist">
             <tr>
               <th>
-                Blocks
+                {% trans "Blocks" %}
               </th>
               <th>
-                Gram Panchayats
+                {% trans "Gram Panchayats" %}
               </th>
               <th>
-                Villages
+                {% trans "Villages" %}
               </th>
             </tr>
             {% for blk in staticdata.block.all %}
@@ -91,7 +93,7 @@
                 --------
               </td>
               <td>
-              --------
+                --------
               </td>
             </tr>
             {% endfor %}
@@ -138,35 +140,35 @@
 <br/><br/>
 <fieldset>
   <legend>
-    Report
+    {% trans "Report" %}
   </legend>
   <center>
     <table class="tabularlist" style="width:80%">
       <thead>
         <tr>
-          <th>Complaint Status</th>
-          <th>Number of complaints in status</th>
+          <th>{% trans "Complaint Status" %}</th>
+          <th>{% trans "Number of complaints in status" %}</th>
         </tr>
       </thead>
       <tbody>
       <tr>
-        <td>New</td>
+        <td>{% trans "New" %}</td>
         <td>{{stats.new_count}}</td>
       </tr>
       <tr>
-        <td>Acknowledged</td>
+        <td>{% trans "Acknowledged" %}</td>
         <td>{{stats.ack_count}}</td>
       </tr>
       <tr>
-        <td>Opened</td>
+        <td>{% trans "Opened" %}</td>
         <td>{{stats.ope_count}}</td>
       </tr>
       <tr>
-        <td>Resolved</td>
+        <td>{% trans "Resolved" %}</td>
         <td>{{stats.res_count}}</td>
       </tr>
       <tr>
-        <td>Closed</td>
+        <td>{% trans "Closed" %}</td>
         <td>{{stats.clo_count}}</td>
       </tr>
       </tbody>
@@ -184,16 +186,16 @@
   </center>
 
   <div style="text-align:left">
-    <h2>Hot Issues</h2>
+    <h2>{% trans "Hot Issues" %}</h2>
   </div>
   <center>
     <table class="tabularlist">
       <thead>
         <tr>
-          <th>Sr.<br/>No.</th>
-          <th>Scheme</th>
-          <th>Department</th>
-          <th>Count</th>
+          <th>{% trans "Sr.No." %}</th>
+          <th>{% trans "Scheme" %}</th>
+          <th>{% trans "Department" %}</th>
+          <th>{% trans "Count" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -210,18 +212,18 @@
   </center>
 
   <div style="text-align:left">
-    <h2>Top Five Complaints</h2>
+    <h2>{% trans "Top Five Complaints" %}</h2>
   </div>
   <center>
     <table class="tabularlist">
       <thead>
         <tr>
-          <th>Time in<br/>System</th>
-          <th>Department<br/>code</th>
-          <th>Village</th>
-          <th>GP</th>
-          <th>Issue Details</th>
-          <th>MDGs*<br />Covered</th>
+          <th>{% trans "Time in System" %}</th>
+          <th>{% trans "Department code" %}</th>
+          <th>{% trans "Village" %}</th>
+          <th>{% trans "GP" %}</th>
+          <th>{% trans "Issue Details" %}</th>
+          <th>{% trans "MDGs* Covered" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -240,7 +242,7 @@
     <form action="/complaint/report/" method="post">
       {% if flag %}
       <div class="textboxes" width="100%">
-        <h2 align="left"> Key points and Suggested Follow-up Actions </h2>
+        <h2 align="left">{% trans "Key points and Suggested Follow-up Actions" %} </h2>
         <div class = "text-content">
           <p align = "justify">
             {{ stats.keypts }}
@@ -248,7 +250,7 @@
         </div>
         <br />
         <br /> <br />
-        <h2 align="left"> Success Story </h2>
+        <h2 align="left"> {% trans "Success Story" %} </h2>
         <div class = "text-content">
           <p align = "justify">
             {{ stats.successtry}}
@@ -259,11 +261,11 @@
 
       {% else %}
       <div class="textboxes" width="100%">
-        <h2 align="left"> Key points and Suggested Follow-up Actions </h2>
+        <h2 align="left"> {% trans "Key points and Suggested Follow-up Actions" %} </h2>
         <br />
         <textarea rows="10" columns="80" name="keypoints" style="width:90%"></textarea>
         <br /> <br />
-        <h2 align="left"> Success Story </h2>
+        <h2 align="left"> {% trans "Success Story" %} </h2>
         <textarea rows="10" columns="80" name="sucess_story" style="width:90%;align:left"></textarea>
         <br />
         <input type="hidden" name="repdataid" value="{{repdataid}}">
@@ -276,10 +278,7 @@
 {% if flag %}
 <div class = "note-content">
   <p align = "justify">
-    Note: MDGs (Millennium Development Goals) are set of 8 goals to be achieved by year
-    2015, covering issues of Poverty, Hunger, Education, Mother and Child Health, HIV,
-    Employment, Environment which were agreed to by 189 Government Leaders from all
-    over the world in year 2000.
+    {% trans " Note: MDGs (Millennium Development Goals) are set of 8 goals to be achieved by year 2015, covering issues of Poverty, Hunger, Education, Mother and Child Health, HIV, Employment, Environment which were agreed to by 189 Government Leaders from all over the world in year 2000." %}
   </p>
 </div>
 {% endif %}

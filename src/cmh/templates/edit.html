@@ -1,11 +1,12 @@
 {% extends "basewithmenu.html" %}
+{% load i18n %}
 {% block page_content %}
 <center>
-  <h2> Editing User Profile </h2>
+  <h2> {% trans "Editing User Profile" %} </h2>
   <form action="." method="POST">
     <table>
       <tr>
-        <td>Username:</td>
+        <td>{% trans "Username:" %}</td>
         <td>
           <input type="text"
                  name="username"
@@ -14,11 +15,11 @@
         </td>
       </tr>
       <tr>
-        <td>Name:</td>
+        <td>{% trans "Name:" %}</td>
         <td><input type="text" name="name" value="{{ obj.user.first_name }}"></td>
       </tr>
       <tr>
-        <td>Phone Number</td>
+        <td>{% trans "Phone Number" %}</td>
         <td><input type="text" name="phone" value="{{ obj.phone }}"></td>
       </tr>
       <tr>

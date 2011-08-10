@@ -15,15 +15,16 @@
 {% extends "basewithmenu.html" %}
 
 {% load complaint_extras %}
+{% load i18n %}
 
 {% block page_content %}
 <form action="." method="post" enctype="multipart/form-data">
   <fieldset>
-    <legend>Details</legend>
+    <legend>{% trans "Details" %}</legend>
     <input type="hidden" name="prev" value="{{ prev }}">
     <table width="100%">
       <tr>
-        <td style="width:15%"> Complaint Number: </td>
+        <td style="width:15%"> {% trans "Complaint Number:" %} </td>
         <td style="width:33%">
           <input id="id_complaintno"
                  name="complaintno"
@@ -32,7 +33,7 @@
                  style="width:100%">
         </td>
         <td style="width:4%"></td>
-        <td style="width:15%"> Current Status </td>
+        <td style="width:15%"> {% trans "Current Status" %} </td>
         <td style="width:33%">
           <input id="id_curstate"
                  name="curstate"
@@ -42,7 +43,7 @@
         </td>
       </tr>
       <tr>
-        <td> Filed By: </td>
+        <td> {% trans "Filed By:" %} </td>
         <td>
           <input id="id_filedby"
                  name="filedby"
@@ -51,7 +52,7 @@
                  style="width:100%">
         </td>
         <td/>
-        <td>Location: </td>
+        <td>{% trans "Location:" %} </td>
         <td>
           <input id="id_location"
                  name="location"
@@ -61,7 +62,7 @@
         </td>
       </tr>
       <tr>
-        <td> Filed On: </td>
+        <td> {% trans "Filed On:" %} </td>
         <td>
           <input id="id_created"
                  name="created"
@@ -70,7 +71,7 @@
                  style="width:100%">
         </td>
         <td/>
-        <td> Issue Date: </td>
+        <td> {% trans "Issue Date:" %} </td>
         <td>
           <input id="id_loggedon"
                  name="loggedon"
@@ -80,7 +81,7 @@
         </td>
       </tr>
       <tr>
-        <td> Complaint Summary:</td>
+        <td> {% trans "Complaint Summary:" %}</td>
         <td colspan="4">
           <input id="id_complaintsummary"
                  name="complaintsummary"
@@ -90,7 +91,7 @@
         </td>
       </tr>
       <tr>
-        <td> Assigned To: </td>
+        <td> {% trans "Assigned To:" %} </td>
         <td>
           <input id="id_assignto"
                  name="assignto"
@@ -99,7 +100,7 @@
                  style="width:100%">
         </td>
         <td/>
-        <td> Department: </td>
+        <td> {% trans "Department:" %} </td>
         <td>
           <input id="id_department"
                  name="department"
@@ -109,7 +110,7 @@
         </td>
       </tr>
       <tr>
-        <td>Description:</td>
+        <td>{% trans "Description:" %}</td>
         <td colspan="4">
           <textarea name="description"
                     cols="40"
@@ -121,7 +122,7 @@
       </tr>
       {% if base.evidences.all.count != 0 %}
       <tr>
-        <td>Evidences:</td>
+        <td>{% trans "Evidences:" %}</td>
         <td colspan="4">
           {% for ev in base.evidences.all %}
           {{ ev|get_evidence_display:user|safe }}
@@ -133,13 +134,13 @@
   </fieldset>
   {% if current.curstate.name == 'New' %}
   <fieldset>
-      <legend>Optional</legend>
+      <legend>{% trans "Optional" %}</legend>
       <table width = "100%">
         <tr>
-          <td>Personal Details:</td>
+          <td>{% trans "Personal Details:" %}</td>
           <td>
             <div class="gendercaste">
-              Gender        :<br/>
+              {% trans "Gender        :" %}<br/>
               {{ form.gender }}
             </div>
           </td>
@@ -147,7 +148,7 @@
           <td></td>
           <td>
             <div class="gendercaste">
-              Community     : <br/>
+              {% trans "Community     :" %} <br/>
               {{ form.community }}
             </div>
           </td>
@@ -156,20 +157,20 @@
   </fieldset>
   {% else %}
   <fieldset>
-    <legend>Optional</legend>
+    <legend>{% trans "Optional" %}</legend>
     <table width = "100%">
       <tr>
-        <td>Personal Details:</td>
+        <td>{% trans "Personal Details:" %}</td>
         <td>
           <div id="id_revcategory_detail">
-            Gender        : {{ current.gender }}
+            {% trans "Gender        :" %} {{ current.gender }}
           </div>
         </td>
         <td></td>
         <td></td>
         <td>
           <div id="id_revcategory_detail">
-            Community     : {{ current.community }}
+            {% trans "Community     :" %} {{ current.community }}
           </div>
         </td>
       </tr>
@@ -177,7 +178,7 @@
   </fieldset>
   {% endif %}
   <fieldset>
-    <legend>Update</legend>
+    <legend>{% trans "Update" %}</legend>
     {% if form.non_field_errors %}
     <div style="width:100%;text-align:center">
       {% for e in form.non_field_errors %}
@@ -187,7 +188,7 @@
     {% endif %}
     <table width = "100%">
       <tr>
-        <td> New Status </td>
+        <td> {% trans "New Status" %} </td>
         <td>
           {{ form.newstatus.errors }}
           {{ form.newstatus }}
@@ -196,20 +197,20 @@
 
       {% if current.curstate.name == 'New' %}
       <tr>
-        <td> Location (Revised) </td>
+        <td> {% trans "Location (Revised)" %} </td>
         <td>
           {{ form.revlocationid.errors }}
           {{ form.revlocationid }}
           {{ form.revlocationdesc }}
           <div id="id_revlocation_detail">
             {% if current.location %}
-            Gram Panchayat: {{ current.location.grampanchayat.name }}<br/>
-            Block: {{ current.location.grampanchayat.block.name }}
+            {% trans "Gram Panchayat:" %} {{ current.location.grampanchayat.name }}<br/>
+            {% trans "Block:" %} {{ current.location.grampanchayat.block.name }}
             {% endif %}
           </div>
         </td>
         <td/>
-        <td> Complaint Type (Revised) </td>
+        <td> {% trans "Complaint Type (Revised)" %} </td>
         <td>
           {{ form.revcategoryid.errors }}
           {{ form.revcategoryid }}
@@ -217,7 +218,7 @@
           <div id="id_revcategory_detail">
             {% if current.complainttype %}
             {{ current.complainttype.cclass }}<br/>
-            Department: {{ current.department.name  }}<br/>
+            {% trans "Department:" %} {{ current.department.name  }}<br/>
             {% endif %}
           </div>
         </td>
@@ -226,7 +227,7 @@
       {% endif %}
 
       <tr>
-        <td>Comment:</td>
+        <td>{% trans "Comment:" %}</td>
         <td colspan="4">
           {{ form.comment.errors }}
           {{ form.comment }}
@@ -234,7 +235,7 @@
       </tr>
       {% if current|can_add_evidence:user %}
       <tr>
-        <td>Evidence:</td>
+        <td>{% trans "Evidence:" %}</td>
         <td colspan="4">
           {{ form.filename.errors }}
           {{ form.filename }}
@@ -251,16 +252,16 @@
   </fieldset>
 </form>
 <div class="complaint-history-banner">
-  History for Complaint No. {{ base.complaintno }}
+  {% trans "History for Complaint No." %} {{ base.complaintno }}
 </div>
 <table class="tabularlist">
   <thead>
     <tr>
-      <th style="width:12%"> Changed On </th>
-      <th style="width:12%"> Department </th>
-      <th style="width:12%"> Status </th>
-      <th style="width:40%"> Comment </th>
-      <th style="width:24%"> Changed by </th>
+      <th style="width:12%"> {% trans "Changed On" %} </th>
+      <th style="width:12%"> {% trans "Department" %} </th>
+      <th style="width:12%"> {% trans "Status" %} </th>
+      <th style="width:40%"> {% trans "Comment" %} </th>
+      <th style="width:24%"> {% trans "Changed by" %} </th>
     </tr>
   </thead>
   <tbody>

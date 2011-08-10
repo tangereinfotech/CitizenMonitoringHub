@@ -1,25 +1,26 @@
 {% extends "basewithmenu.html" %}
+{% load i18n %}
 {% block page_content %}
 <center>
-  <h2> User Profile </h2>
+  <h2> {% trans "User Profile" %} </h2>
   <form action="." method="POST">
     <table>
       <tr>
-        <th style="text-align:left">Username:</th>
+        <th style="text-align:left">{% trans "Username:" %}</th>
         <td>{{ obj.user.username }}</td>
       </tr>
       <tr>
-        <th style="text-align:left">Name:</th>
+        <th style="text-align:left">{% trans "Name:" %}</th>
         <td>{{ obj.user.first_name }}</td>
       </tr>
       <tr>
-        <th style="text-align:left">Phone Number:</th>
+        <th style="text-align:left">{% trans "Phone Number:" %}</th>
         <td>{{ obj.phone }}</td>
       </tr>
       <tr>
         <td colspan="2">
-          <input type="submit" name="edit" value="Edit Profile" class="btn">
-          <input type="submit" name="reset" value="Change Password" class="btn">
+          <input type="submit" name="edit" value={% trans "Edit Profile" %} class="btn">
+          <input type="submit" name="reset" value={% trans "Change Password" %} class="btn">
         </td>
     </table>
   </form>

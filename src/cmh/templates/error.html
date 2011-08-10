@@ -13,14 +13,14 @@
 {# limitations under the License.                                               #}
 
 {% extends "basewithmenu.html" %}
-
+{% load i18n %}
 {% block page_content %}
 <center>
   <h2>
     {% if error %}
     {{ error }}
     {% else %}
-    General failure performing the requested operation. Please contact system administrator.
+    {% trans "General failure performing the requested operation. Please contact system administrator." %}
     {% endif %}
   </h2>
 </center>
