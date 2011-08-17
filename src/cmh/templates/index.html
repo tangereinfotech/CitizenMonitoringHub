@@ -22,47 +22,45 @@
 <meta http-equiv="expires" content="0">
 {% endblock %}
 {% block page_content %}
-<div id="department-list">
-  <fieldset>
-    <legend>
-      {% trans "Time Period" %}
-    </legend>
-    <table align="center" style="width-100">
-      <tr>
-        <td style="text-align:center">
-          {% trans "Start Date" %}
-        </td>
-        <td style="text-align:center">
-          {% trans "End Date" %}
-        </td>
-        <td/>
-      </tr>
-      <tr>
-        <td style="text-align:right">
-          {{ form.stdate }}
-        </td>
-        <td style="text-align:left">
-          {{ form.endate }}
-        </td>
-        <td>
-          <button type="button" width="120px" class="btn" onclick="update_maps ();">{% trans "Apply" %}</button>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="3" style="text-align:center">
-          <button type="button" class="btn" onclick="callReport ();">{% trans "Generate Report" %}</button>
-        </td>
-      </tr>
-    </table>
-  </fieldset>
-  <table style="width:100%;">
+<div id="department-list" style="border-right: 5px solid #4f6228">
+  <table>
     <tr>
-      <th colspan="2" align="center">
-        <h2>{% trans "Departments" %} </h2>
-      </th>
+      <td colspan="2" align="center">
+        {% trans "Choose Period" %}
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:right">
+        {{ form.stdate }}
+      </td>
+      <td style="text-align:left">
+        {{ form.endate }}
+      </td>
+      <td rowspan="2">
+        <button type="button" class="btn" onclick="update_maps ();" style="padding:4px 14px;">
+          <span style="font-size:16px; font-weight:bold">{% trans "Update Map, Graph and Stats" %} <br/>{% trans "for Period" %}</span>
+        </button>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:center">
+        {% trans "Start Date" %}
+      </td>
+      <td style="text-align:center">
+        {% trans "End Date" %}
+      </td>
+      <td/>
+    </tr>
+    <tr>
+      <td colspan="3" style="text-align:center">
+      </td>
     </tr>
   </table>
-  <div style="width:100%;height:320px;overflow:auto;">
+  <div class="width_100 text-center" style="border-top:5px solid #4f6228">
+    <span style="font-size:16px;font-weight:bold;color:#376091">{% trans "Select Departments" %}</span><br/>
+    <span style="color:#376091">{% trans "(Map, Graph and Stats update automatically)" %}</span>
+  </div>
+  <div style="width:100%;height:190px;overflow:auto;">
     <table style="width:100%">
       <tr class="department_row">
         <td>
@@ -88,14 +86,119 @@
       {% endfor %}
     </table>
   </div>
+  <div style="border-top:5px solid #4f6228;padding:5px" class="width_100">
+    {% trans "Click on Locations with number displayed on map. A bubble would pop up. Choose Add to report in the bubble. Select as many locations as desired" %}
+  </div>
+  <div class="width_100 text-center">
+    <button type="button" class="btn" style="width:80%" onclick="callReport ();">
+      <span style="font-size:16px; font-weight:bold">
+        {% trans "Generate Report for Selected Period, Locations and Departments" %}
+      </span>
+    </button>
+  </div>
 </div>
 <div id="base_map"></div>
-<div id="trending-issues-section">
-  <div class="section-title">
-    <f> {% trans "Complaint Pendency" %} </f>
-  </div>
-  <div id="trending-issues-chart"></div>
+<div style="clear:both" class="section-title">
 </div>
+<div id="vital-stats">
+  <div style="padding: 0px 20px 10px">
+    <div class="width_100 text-center">
+      {% trans "Vital Statistics" %}<br/>
+      {% trans "(For complaints filed in the report period)" %}
+    </div>
+    <table class="tabularlist" style="border-collapse: collapse;">
+      <tr>
+        <td class="vital-stats-data" style="text-align:right;">
+          <span id="comps_new">
+          </span>
+        </td>
+        <td>
+          <div style="padding-left:30px">
+            {% trans "complaints filed" %}
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="vital-stats-data" style="text-align:right">
+          <span id="comps_ack">
+          </span>
+        </td>
+        <td>
+          <div style="padding-left:30px">
+            {% trans "were acknowledged" %}
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="vital-stats-data" style="text-align:right">
+          <span id="comps_ope">
+          </span>
+        </td>
+        <td>
+          <div style="padding-left:30px">
+            {% trans "were opened" %}
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="vital-stats-data" style="text-align:right">
+          <span id="comps_res">
+          </span>
+        </td>
+        <td>
+          <div style="padding-left:30px">
+            {% trans "were resolved" %}
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="vital-stats-data" style="text-align:right">
+          <span id="comps_clo">
+          </span>
+        </td>
+        <td>
+          <div style="padding-left:30px">
+            {% trans "Closed" %}
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="vital-stats-data" style="text-align:right">
+          <span id="comps_pen">
+          </span>
+        </td>
+        <td>
+          <div style="padding-left:30px">
+            {% trans "Awaiting Confirmation" %}
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="vital-stats-data" style="text-align:right">
+          <span id="comps_reo">
+          </span>
+        </td>
+        <td>
+          <div style="padding-left:30px">
+            {% trans "Require further attention" %}
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+<div id="trending-issues-section">
+  <div class="width_100 text-center">
+    {% trans "Department wise Open Complaints Trend" %}<br/>
+    {% trans "(For all complaints filed in report period)" %}
+  </div>
+  <div style="width:100%">
+    <center>
+      <div id="trending-issues-chart"></div>
+    </center>
+  </div>
+</div>
+<div style="clear:both"></div>
 <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.dateAxisRenderer.js"></script>
 <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.pointLabels.min.js"></script>
 <script type="text/javascript" src="/static/jquery/js/jquery.dataTables.min.js"></script>

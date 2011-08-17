@@ -49,6 +49,13 @@ var MapHandler = {
         var myOptions  = {
             mapTypeId : google.maps.MapTypeId.ROADMAP,
             zoom : MapHandler.DISTT_ZOOM,
+            mapTypeControl : false,
+            panControl : false,
+            streetViewControl : false,
+            zoomControl : true,
+            zoomControlOptions : {
+                style : google.maps.ZoomControlStyle.SMALL
+            },
             center : new google.maps.LatLng (center_lat, center_long)
         };
 

@@ -78,31 +78,39 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                        $('#' + chart_id).empty ();
                    }
                    var series = data.datapoints [0];
-                   var min_date = series [0][0];
-                   var max_date = series [series.length - 1][0];
-                   plots [chart_id] = $.jqplot(chart_id, data.datapoints,
-                                               {
-                                                   seriesColors : ncolors,
-                                                   axes : {
-                                                       xaxis : {
-                                                           renderer:$.jqplot.DateAxisRenderer,
-                                                           tickOptions: {formatString: '%b %#d'},
-                                                           min : min_date,
-                                                           max : max_date
+                   if (series.length !== 0) {
+                       var min_date = series [0][0];
+                       var max_date = series [series.length - 1][0];
+                       plots [chart_id] = $.jqplot(chart_id, data.datapoints,
+                                                   {
+                                                       seriesColors : ncolors,
+                                                       axes : {
+                                                           xaxis : {
+                                                               renderer:$.jqplot.DateAxisRenderer,
+                                                               tickOptions: {formatString: '%b %#d'}
+                                                           },
+                                                           yaxis : {
+                                                               min: 0,
+                                                               tickOptions: {formatString: '%d'}
+
+                                                           }
                                                        },
-                                                       yaxis : {
-                                                           min: 0,
-                                                           tickOptions: {formatString: '%d'}
+                                                       seriesDefaults : {
+                                                           showMarker : false,
+                                                           pointLabels: {
+                                                               show:false,
+                                                               ypadding: 3,
+                                                               edgeTolerance: 4
+                                                           }
                                                        }
-                                                   },
-                                                   seriesDefaults : {
-                                                       showMarker : false,
-                                                       pointLabels: {
-                                                           show:false,
-                                                           ypadding: 3,
-                                                           edgeTolerance: 4
-                                                       }
-                                                   }
-                                               });
+                                                   });
+                   }
+                   $('#comps_new').html (data.vital_stats.new);
+                   $('#comps_ack').html (data.vital_stats.ack);
+                   $('#comps_ope').html (data.vital_stats.ope);
+                   $('#comps_res').html (data.vital_stats.res);
+                   $('#comps_clo').html (data.vital_stats.clo);
+                   $('#comps_reo').html (data.vital_stats.reo);
+                   $('#comps_pen').html (data.vital_stats.pen);
                });
 };

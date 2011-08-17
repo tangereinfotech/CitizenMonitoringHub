@@ -559,13 +559,42 @@ def hot_complaints (request):
                 deptinfo.append ([dept.id, pos])
                 names.append (dept.name)
 
-            data  = get_complaint_data (deptids, stdate, endate)
+            data = get_complaint_data (deptids, stdate, endate)
+            vital_stats = get_vital_stats (deptids, stdate, endate)
 
-            return HttpResponse (json.dumps ({'datapoints' : data, 'names' : names, 'departments' : deptinfo}))
+            return HttpResponse (json.dumps ({'datapoints' : data, 'names' : names, 'departments' : deptinfo, 'vital_stats' : vital_stats}))
     except:
         import traceback
         traceback.print_exc ()
-    return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : [], 'departments' : []}))
+    vital_stats = {'new' : 0,
+                   'ack' : 0,
+                   'ope' : 0,
+                   'res' : 0,
+                   'clo' : 0,
+                   'reo' : 0,
+                   'pen' : 0}
+    return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : [], 'departments' : [], 'vital_stats' : vital_stats}))
+
+def get_vital_stats (deptids, stdate, endate):
+    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, department__in = deptids)
+
+    new_complaints = complaints.filter (curstate = STATUS_NEW)
+    ack_complaints = complaints.filter (curstate = STATUS_ACK)
+    ope_complaints = complaints.filter (curstate = STATUS_OPEN)
+    res_complaints = complaints.filter (curstate = STATUS_RESOLVED)
+    clo_complaints = complaints.filter (curstate = STATUS_CLOSED)
+    reo_complaints = complaints.filter (curstate = STATUS_REOPEN)
+    pen_complaints = res_complaints.exclude (complaintno__in = [c.complaintno for c in clo_complaints] + [c.complaintno for c in reo_complaints])
+
+    vital_stats = {'new' : len (set ([c.complaintno for c in new_complaints])),
+                   'ack' : len (set ([c.complaintno for c in ack_complaints])),
+                   'ope' : len (set ([c.complaintno for c in ope_complaints])),
+                   'res' : len (set ([c.complaintno for c in res_complaints])),
+                   'clo' : len (set ([c.complaintno for c in clo_complaints])),
+                   'reo' : len (set ([c.complaintno for c in reo_complaints])),
+                   'pen' : len (set ([c.complaintno for c in pen_complaints]))}
+    return vital_stats
+
 
 def get_complaint_data (deptids, stdate, endate):
     complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, department__id__in = deptids, curstate = STATUS_NEW)
