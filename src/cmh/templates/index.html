@@ -214,8 +214,10 @@
  var blocks = new Array ();
  var gramps = new Array ();
  var villgs = new Array ();
+ var locadded = false;
 
  function add_location_selection (type, code) {
+     locadded = true;
      if (type === 'state') {
          states.push (code);
      } else if (type === 'distt') {
@@ -245,70 +247,73 @@
      return dateObj;
  }
 
- function callReport ()
- {
-     var selected_dept_ids = $('.selector:checked').map (
-         function () {
-             return $(this).val ();
-         }
-     ).get ().join (',');
+ function callReport () {
+     if (locadded == false) {
+         alert ('{% trans "Locations" %}', '{% trans "Select locations before trying to generate report" %}');
+     } else {
+         var selected_dept_ids = $('.selector:checked').map (
+             function () {
+                 return $(this).val ();
+             }
+         ).get ().join (',');
 
-     var form = document.createElement ("form");
-     form.action = "/complaint/initial_report/";
-     form.method = "post";
+         var form = document.createElement ("form");
+         form.action = "/complaint/initial_report/";
+         form.method = "post";
 
-     var hstdate = document.createElement ("input");
-     hstdate.name = "stdate";
-     hstdate.type = "text";
-     hstdate.value = $("#id_stdate").val ();
+         var hstdate = document.createElement ("input");
+         hstdate.name = "stdate";
+         hstdate.type = "text";
+         hstdate.value = $("#id_stdate").val ();
 
-     var hendate = document.createElement ("input");
-     hendate.name = "endate";
-     hendate.type = "text";
-     hendate.value = $("#id_endate").val ();
+         var hendate = document.createElement ("input");
+         hendate.name = "endate";
+         hendate.type = "text";
+         hendate.value = $("#id_endate").val ();
 
-     var deptids = document.createElement ("input");
-     deptids.name = "deptids";
-     deptids.type = "text";
-     deptids.value = selected_dept_ids;
+         var deptids = document.createElement ("input");
+         deptids.name = "deptids";
+         deptids.type = "text";
+         deptids.value = selected_dept_ids;
 
-     var stateids = document.createElement ('input');
-     stateids.name = 'stateids';
-     stateids.type = 'text';
-     stateids.value = states.join (",");
+         var stateids = document.createElement ('input');
+         stateids.name = 'stateids';
+         stateids.type = 'text';
+         stateids.value = states.join (",");
 
-     var disttids = document.createElement ('input');
-     disttids.name = 'disttids';
-     disttids.type = 'text';
-     disttids.value = distts.join (",");
+         var disttids = document.createElement ('input');
+         disttids.name = 'disttids';
+         disttids.type = 'text';
+         disttids.value = distts.join (",");
 
-     var blockids = document.createElement ('input');
-     blockids.name = 'blockids';
-     blockids.type = 'text';
-     blockids.value = blocks.join (",");
+         var blockids = document.createElement ('input');
+         blockids.name = 'blockids';
+         blockids.type = 'text';
+         blockids.value = blocks.join (",");
 
-     var grampids = document.createElement ('input');
-     grampids.name = 'grampids';
-     grampids.type = 'text';
-     grampids.value = gramps.join (",");
+         var grampids = document.createElement ('input');
+         grampids.name = 'grampids';
+         grampids.type = 'text';
+         grampids.value = gramps.join (",");
 
-     var villgids = document.createElement ('input');
-     villgids.name = 'villgids';
-     villgids.type = 'text';
-     villgids.value = villgs.join (",");
+         var villgids = document.createElement ('input');
+         villgids.name = 'villgids';
+         villgids.type = 'text';
+         villgids.value = villgs.join (",");
 
-     form.appendChild (hstdate);
-     form.appendChild (hendate);
-     form.appendChild (deptids);
-     form.appendChild (stateids);
-     form.appendChild (disttids);
-     form.appendChild (blockids);
-     form.appendChild (grampids);
-     form.appendChild (villgids);
+         form.appendChild (hstdate);
+         form.appendChild (hendate);
+         form.appendChild (deptids);
+         form.appendChild (stateids);
+         form.appendChild (disttids);
+         form.appendChild (blockids);
+         form.appendChild (grampids);
+         form.appendChild (villgids);
 
-     document.body.appendChild (form);
+         document.body.appendChild (form);
 
-     form.submit ();
+         form.submit ();
+     }
  }
 
 
