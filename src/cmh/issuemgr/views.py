@@ -858,8 +858,6 @@ def get_report_stats (stdate, endate,
     # MDG Graph
     stats ['mdgs'] = [[new_complaints.filter (complainttype__complaintmdg__mdg__goalnum = x).count ()] for x in range (1, 8)]
 
-    print stats ['mdgs']
-
     return stats
 
 
@@ -900,7 +898,6 @@ def initial_report (request):
             import traceback
             traceback.print_exc ()
     else:
-        print form
         return HttpResponseRedirect ("/")
 
 
