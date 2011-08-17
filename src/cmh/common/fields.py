@@ -137,11 +137,13 @@ class MultiNumberIdField (forms.CharField):
     def clean (self, data):
         super (MultiNumberIdField, self).clean (data)
         values = []
-        for x in data.split (','):
-            try:
-                values.append (int (x))
-            except ValueError:
-                raise forms.ValidationError (_("Only comma separated integers are allowed"))
+        if data != None:
+            for x in data.split (','):
+                if len (x.strip ()) != 0:
+                    try:
+                        values.append (int (x))
+                    except ValueError:
+                        raise forms.ValidationError (_("Only comma separated integers are allowed"))
         return values
 
 class FormattedDateField (forms.CharField):

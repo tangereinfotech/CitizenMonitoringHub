@@ -14,363 +14,582 @@
 
 {% extends "reportbase.html" %}
 
+{% load complaint_extras %}
 {% load i18n %}
 
 {% block base_content %}
-<div style="clear:both;width:100%;text-align:center;font-size:24px">
-  {{ stats.today }}
+<div style="clear:both"></div>
+<div class="page-header" style="text-align:center;width:100%;">
+  {% trans  "Complaint status report for chosen departments, locations and period" %}
 </div>
-<div class="report_staticpart">
+<fieldset>
+  <legend>
+    {% trans "Selections" %}
+  </legend>
+  <table width="100%">
+    <tr>
+      <td style="width:200px">
+        <span class="subsection-header" style="font-size:16px;font-weight:bold">{% trans "Report Period" %}</span>
+      </td>
+      <td colspan="2">
+        <table width="50%">
+          <tr>
+            <td>
+              <span style="font-weight:bold">{% trans "Start Date:" %}</span> {{ stats.stdate_show }}
+            </td>
+            <td width="40px"/>
+            <td>
+              <span style="font-weight:bold">{% trans "End Date:" %}</span> {{ stats.endate_show }}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="subsection-header" style="font-size:16px;font-weight:bold">{% trans "Selected Departments" %}</span>
+      </td>
+      <td>
+        {% trans "See" %} <a href="#sel_departments">{% trans "Selected Departments" %}</a> {% trans "section for detailed listing" %}
+      </td>
+      <td>
+        {% if not final %}
+        <button class="btn" name="edit_selection">Modify Selection</button>
+        {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="subsection-header" style="font-size:16px;font-weight:bold">{% trans "Selected Locations" %}</span>
+      </td>
+      <td>
+        {% trans "See" %} <a href="#sel_locations">{% trans "Selected Locations" %}</a> {% trans "section for detailed listing" %}
+      </td>
+      <td>
+        {% if not final %}
+        <button class="btn" name="edit_selection">Modify Selection</button>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+</fieldset>
+<form action="." method="post">
   <fieldset>
     <legend>
-      Selected
+      {% trans "Report" %}
     </legend>
-    <h3 style="font-size:10px;"> {% trans "Duration" %} </h3>
-    <table style="font-size:10px;">
+    <table width="100%">
       <tr>
-        <th>
-          {% trans "Start Date:" %}
-        </th>
-        <td>
-          {{ staticdata.strtdate }}
+        <td width="50%">
+          <div class="section-header" style="text-align:center;">
+            {% trans "Statistics for all complaints in report period" %}
+          </div>
+          <table>
+            <tr>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.all_complaints.new }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "New complaints were filed" %}</div>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.all_complaints.ack }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "Complaints were acknowledged" %}</div>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.all_complaints.ope }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "Complaints were opened for action" %}</div>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.all_complaints.res }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "Complaints were resolved" %}</div>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.all_complaints.clo }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "Complaints were closed during the period" %}</div>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.all_complaints.reo }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "Complaints were reported for further attention" %}</div>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.all_complaints.pen }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "Resolved Complaints are awaiting complainant feedback" %}</div>
+              </td>
+            </tr>
+          </table>
         </td>
-        <td></td>
-        <th>
-          {% trans "End Date:" %}
-        </th>
-        <td>
-          {{ staticdata.enddate }}
+        <td width="50%">
+          <div class="section-header" style="text-align:center;">
+            {% trans "Statistics for new complaints in report period" %}
+          </div>
+          <table>
+            <tr>
+              <td>
+                <div style="padding-right:15px;font-weight:bold">{% trans "Out of" %}</div>
+              </td>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.new_complaints.new }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "complaints were filed in this period" %}</div>
+              </td>
+            </tr>
+            <tr>
+              <td/>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.new_complaints.ack }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "Complaints were acknowledged" %}</div>
+              </td>
+            </tr>
+            <tr>
+              <td/>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.new_complaints.ope }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "Complaints were opened for action" %}</div>
+              </td>
+            </tr>
+            <tr>
+              <td/>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.new_complaints.res }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "Complaints were resolved" %}</div>
+              </td>
+            </tr>
+            <tr>
+              <td/>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.new_complaints.clo }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "Complaints were closed during the period" %}</div>
+              </td>
+            </tr>
+            <tr>
+              <td/>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.new_complaints.reo }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "Complaints were reported for further attention" %}</div>
+              </td>
+            </tr>
+            <tr>
+              <td/>
+              <td align="right">
+                <span style="color:#aecf00">{{ stats.new_complaints.pen }}</span>
+              </td>
+              <td>
+                <div style="padding-left:30px">{% trans "Resolved Complaints are awaiting complainant feedback" %}</div>
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
     </table>
-    <div class = "tables" style="font-size:10px;">
-      <div style="width:38%;float:left;border:2px solid #ccc;">
-        <h3 style="text-align:center"> {% trans "Departments" %} </h3>
-        <div style="width:100%;height:210px;overflow:auto;">
-          <table class = "tabularlist" >
-            <tr>
-              <th>
-                {% trans "Code" %}
-              </th>
-              <th>
-                {% trans "Name" %}
-              </th>
-            </tr>
-            {% for dep in staticdata.department.all %}
-            <tr>
-              <td>
-                {{ dep.code }}
-              </td>
-              <td>
-                {{ dep.name }}
-              </td>
-            </tr>
-            {% endfor%}
-          </table>
-        </div>
-      </div>
-      <div style="width:58%;float:right;border:2px solid #ccc;">
-        <h3 style="text-align:center">{% trans "Locations" %} </h3>
-        <div style="width:100%;height:210px;overflow:auto;">
-          <table class = "tabularlist">
-            <tr>
-              <th>
-                {% trans "Blocks" %}
-              </th>
-              <th>
-                {% trans "Gram Panchayats" %}
-              </th>
-              <th>
-                {% trans "Villages" %}
-              </th>
-            </tr>
-            {% for blk in staticdata.block.all %}
-            <tr>
-              <td>
-                {{ blk }}
-              </td>
-              <td>
-                --------
-              </td>
-              <td>
-                --------
-              </td>
-            </tr>
-            {% endfor %}
-            {% for gp in staticdata.gp.all %}
-            <tr>
-              <td>
-                {{ gp.block }}
-              </td>
-              <td>
-                {{ gp }}
-              </td>
-              <td>
-                --------
-              </td>
-            </tr>
-            {% endfor %}
-            {% for vill in staticdata.village.all %}
-            <tr>
-              <td>
-                {{ vill.grampanchayat.block }}
-              </td>
-              <td>
-                {{ vill.grampanchayat }}
-              </td>
-              <td>
-                {{ vill }}
-              </td>
-            </tr>
-            {% endfor %}
-          </table>
-        </div>
-      </div>
+    <div class="section-header width-100 text-center pad-top">
+      {% trans "Category wise split of Complaints organized by Department (Complaints filed in report period)" %}
     </div>
-    {% if not flag %}
-    <div style="width:100%;text-align:right">
-      <form action="/complaint/report/" method="POST">
-        <input type="hidden" name="repdataid" value="{{ repdataid }}">
-        <input type="submit" name="edit" value="Edit Departments and Locations" class="btn">
-      </form>
+    <table class="width-100 text-center">
+      <tr>
+        <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response Volume" %}</span></td>
+        <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response time" %}</span></td>
+      </tr>
+      <tr>
+        <td class="width-50 pad-top text-left">
+          <div style="padding-left:50px">
+            <div><b>{% trans "Legend" %}</b></div>
+            <div style="width:90px;height:25px;background-color:#948b54;float:left;"></div>
+            <div style="float:left;padding-left:20px;">
+              {% trans "Acknowledged" %}
+            </div>
+          </div>
+          <div style="clear:both;padding-left:50px">
+            <div style="width:90px;height:25px;background-color:#95b3d7;float:left;"></div>
+            <div style="float:left;padding-left:20px;">
+              {% trans "Closed" %}
+            </div>
+          </div>
+        </td>
+        <td class="width-50 pad-top text-left">
+          <div style="padding-left:50px">
+            <div><b>{% trans "Legend" %}</b></div>
+            <div style="width:90px;height:25px;background-color:#c5be97;float:left"></div>
+            <div style="float:left;padding-left:20px;">
+              {% trans "Maximum response time" %}
+            </div>
+          </div>
+          <div style="clear:both;padding-left:50px">
+            <div style="width:90px;height:25px;background-color:#538ed5;float:left"></div>
+            <div style="float:left;padding-left:20px;">
+              {% trans "Average response time" %}
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% for dept in stats.depts %}
+      <tr>
+        <td colspan="2">
+          <div class="text-center pad-top width-100">
+            <b><i>{{ dept.name }}</i></b>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td align="center">
+          <div style="width:450px;height:300px" id="volume-{{dept.id}}">
+          </div>
+        </td>
+        <td>
+          <div style="width:450px;height:300px" id="time-{{dept.id}}">
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    <div class="section-header width-100 text-left pad-top">
+      {% trans "Most filed complaint types" %}
+    </div>
+    <table class="width-100 tabularlist">
+      <thead>
+        <tr>
+          <th>{% trans "Complaint Type" %}</th>
+          <th>{% trans "Number of Complaints" %}</th>
+          <th>{% trans "Department" %}</th>
+          <th>{% trans "Category" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ct in stats.most_filed %}
+        <tr>
+          <td> {{ ct.summary }} </td>
+          <td> {{ ct.num_complaints }} </td>
+          <td> {{ ct.department_name }} </td>
+          <td> {{ ct.cclass }} </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="section-header width-100 text-left pad-top">
+      {% trans "Longest Pending Complaints" %}
+    </div>
+    <table class="width-100 tabularlist">
+      <thead>
+        <tr>
+          <th>{% trans "Complaint #" %}</th>
+          <th>{% trans "Complaint Type" %}</th>
+          <th>{% trans "Open Since" %}</th>
+          <th>{% trans "Department" %}</th>
+          <th>{% trans "Category" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in stats.longest_pending %}
+        <tr>
+          <td> {{ c.complaintno }} </td>
+          <td> {{ c.complainttype.summary }} </td>
+          <td> {{ c.created|date:"d M, Y" }} </td>
+          <td> {{ c.department.name }} </td>
+          <td> {{ c.complainttype.cclass }} </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="width_100 text-center pad-top section-header">
+      {% trans "Millenium Development Goal Indicators" %}<br/>
+      {% trans "(Complaints filed in report period)" %}
+    </div>
+    <center>
+      <div style="width:800px;height:300px;" id="mdgs">
+      </div>
+      <div style="width:800px;text-align:left;padding-left:162px;">
+        <img src="/static/images/MDG-1.jpg" width="65px" class="mdg-report-icons">
+        <img src="/static/images/MDG-2.jpg" width="65px" class="mdg-report-icons">
+        <img src="/static/images/MDG-3.jpg" width="65px" class="mdg-report-icons">
+        <img src="/static/images/MDG-4.jpg" width="65px" class="mdg-report-icons">
+        <img src="/static/images/MDG-5.jpg" width="65px" class="mdg-report-icons">
+        <img src="/static/images/MDG-6.jpg" width="65px" class="mdg-report-icons">
+        <img src="/static/images/MDG-7.jpg" width="65px" class="mdg-report-icons">
+      </div>
+    </center>
+    {% if final %}
+    {% if mdgindicators %}
+    <div class="width_100 text-left pad-top section-header">
+      {% trans "MDG Performance Indicator: (link to master)" %}
+    </div>
+    <div class="width_100 text_left">{{ mdgindicators }}</div>
+    {% endif %}
+    {% else %}
+    <div class="width_100 text-left pad-top section-header">
+      {% trans "MDG Performance Indicator: (link to master)" %}
+    </div>
+    <textarea cols="130" rows="6" name="mdgindicators"></textarea>
+    {% endif %}
+    {% if final %}
+    {% if suggestions %}
+    <div class="width_100 text-left pad-top section-header">
+      {% trans "Suggested Follow up Actions" %}
+    </div>
+    <div style="width:850px;height:75px">{{ suggestions }}</div>
+    {% endif %}
+    {% else %}
+    <div class="width_100 text-left pad-top section-header">
+      {% trans "Suggested Follow up Actions" %}
+    </div>
+    <textarea cols="130" rows="6" name="suggestions"></textarea>
+    {% endif %}
+    {% if not final %}
+    <div class="width_100 text-center pad-top">
+      <input type="hidden" name="stdate" value="{{ stats.stdate }}">
+      <input type="hidden" name="endate" value="{{ stats.endate }}">
+      <input type="hidden" name="deptids" value="{{ stats.deptids }}">
+      <input type="hidden" name="stateids" value="{{ stats.stateids }}">
+      <input type="hidden" name="disttids" value="{{ stats.disttids }}">
+      <input type="hidden" name="blockids" value="{{ stats.blockids }}">
+      <input type="hidden" name="grampids" value="{{ stats.grampids }}">
+      <input type="hidden" name="villgids" value="{{ stats.villgids }}">
+      <input type="submit" style="font-size:24px;font-weight:bold;width:290px;height:50px" name="final" class="btn" value="PRINT FINAL REPORT">
     </div>
     {% endif %}
   </fieldset>
-</div>
-<br/><br/>
-<fieldset>
-  <legend>
-    {% trans "Report" %}
-  </legend>
-  <center>
-    <table class="tabularlist" style="width:80%">
+  <fieldset>
+    <legend>
+      {% trans "Selected Departments" %}
+    </legend>
+    <table class="tabularlist width-100">
       <thead>
         <tr>
-          <th>{% trans "Complaint Status" %}</th>
-          <th>{% trans "Number of complaints in status" %}</th>
+          <th>
+            <div class="subsection-header"><a name="sel_departments">{% trans "Department Names" %}</a></div>
+          </th>
         </tr>
       </thead>
       <tbody>
-      <tr>
-        <td>{% trans "New" %}</td>
-        <td>{{stats.new_count}}</td>
-      </tr>
-      <tr>
-        <td>{% trans "Acknowledged" %}</td>
-        <td>{{stats.ack_count}}</td>
-      </tr>
-      <tr>
-        <td>{% trans "Opened" %}</td>
-        <td>{{stats.ope_count}}</td>
-      </tr>
-      <tr>
-        <td>{% trans "Resolved" %}</td>
-        <td>{{stats.res_count}}</td>
-      </tr>
-      <tr>
-        <td>{% trans "Closed" %}</td>
-        <td>{{stats.clo_count}}</td>
-      </tr>
-      </tbody>
-    </table>
-  </center>
-  <br/><br/><br/>
-  <center>
-    <div id="bargraph" style="width:90%;height:400px">
-    </div>
-  </center>
-  <br/><br/><br/>
-  <center>
-    <div id="linegraph" style="width:90%;height:400px">
-    </div>
-  </center>
-
-  <div style="text-align:left">
-    <h2>{% trans "Hot Issues" %}</h2>
-  </div>
-  <center>
-    <table class="tabularlist">
-      <thead>
+        {% for dept in stats.depts %}
         <tr>
-          <th>{% trans "Sr.No." %}</th>
-          <th>{% trans "Scheme" %}</th>
-          <th>{% trans "Department" %}</th>
-          <th>{% trans "Count" %}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for e in stats.hot_issues %}
-        <tr>
-          <td>{{e.slno}}</td>
-          <td>{{e.scheme}}</td>
-          <td>{{e.name}}</td>
-          <td>{{e.count}}</td>
+          <td>
+            <div style="text-align:left;width:100%">
+              {{ dept.name }}
+            </div>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-  </center>
-
-  <div style="text-align:left">
-    <h2>{% trans "Top Five Complaints" %}</h2>
-  </div>
-  <center>
-    <table class="tabularlist">
+    {% if not final %}
+    <div style="text-align:right;">
+      <button class="btn" name="edit_selection">Modify Selection</button>
+    </div>
+    {% endif %}
+  </fieldset>
+  <fieldset>
+    <legend>
+      {% trans "Selected Locations" %}
+    </legend>
+    <table class='tabularlist'>
       <thead>
         <tr>
-          <th>{% trans "Time in System" %}</th>
-          <th>{% trans "Department code" %}</th>
+          <th><a name="sel_locations">{% trans "Block" %}</a></th>
+          <th>{% trans "Gram Panchayat" %}</th>
           <th>{% trans "Village" %}</th>
-          <th>{% trans "GP" %}</th>
-          <th>{% trans "Issue Details" %}</th>
-          <th>{% trans "MDGs* Covered" %}</th>
         </tr>
       </thead>
       <tbody>
-        {% for dur,e,md in stats.top_five_comp %}
+        {% for block in stats.blocks %}
         <tr>
-          <td>{{ dur }}</td>
-          <td>{{e.department.code}}</td>
-          <td>{{e.location.name}}</td>
-          <td>{{e.location.grampanchayat.name}}</td>
-          <td>{{e.complainttype.summary}}</td>
-          <td>{{md}}</td>
+          <td colspan="3">
+            <div style="text-align:left;">
+              {{ block.name }}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+        {% for gramp in stats.gramps %}
+        <tr>
+          <td>
+            <div style="text-align:left;">
+              {{ gramp.block.name }}
+            </div>
+          </td>
+          <td colspan="2" align="left">
+            <div style="text-align:left;">
+              {{ gramp.name }}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+        {% for villg in stats.villgs %}
+        <tr>
+          <td align="left">
+            <div style="text-align:left;">
+              {{ villg.grampanchayat.block.name }}
+            </div>
+          </td>
+          <td align="left">
+            <div style="text-align:left;">
+              {{ villg.grampanchayat.name }}
+            </div>
+          </td>
+          <td align="left">
+            <div style="text-align:left;">
+              {{ villg.name }}
+            </div>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-    <form action="/complaint/report/" method="post">
-      {% if flag %}
-      <div class="textboxes" width="100%">
-        <h2 align="left">{% trans "Key points and Suggested Follow-up Actions" %} </h2>
-        <div class = "text-content">
-          <p align = "justify">
-            {{ stats.keypts }}
-          </p>
-        </div>
-        <br />
-        <br /> <br />
-        <h2 align="left"> {% trans "Success Story" %} </h2>
-        <div class = "text-content">
-          <p align = "justify">
-            {{ stats.successtry}}
-          </p>
-        </div>
-        <br/>
-      </div>
-
-      {% else %}
-      <div class="textboxes" width="100%">
-        <h2 align="left"> {% trans "Key points and Suggested Follow-up Actions" %} </h2>
-        <br />
-        <textarea rows="10" columns="80" name="keypoints" style="width:90%"></textarea>
-        <br /> <br />
-        <h2 align="left"> {% trans "Success Story" %} </h2>
-        <textarea rows="10" columns="80" name="sucess_story" style="width:90%;align:left"></textarea>
-        <br />
-        <input type="hidden" name="repdataid" value="{{repdataid}}">
-        <input type="submit" name="final_report" value="Final Report" class="btn" style="text-align:center;align:left">
-      </div>
-      {% endif %}
-    </form>
-  </center>
-</fieldset>
-{% if flag %}
-<div class = "note-content">
-  <p align = "justify">
-    {% trans " Note: MDGs (Millennium Development Goals) are set of 8 goals to be achieved by year 2015, covering issues of Poverty, Hunger, Education, Mother and Child Health, HIV, Employment, Environment which were agreed to by 189 Government Leaders from all over the world in year 2000." %}
-  </p>
-</div>
-{% endif %}
+    {% if not final %}
+    <div style="text-align:right;">
+      <button class="btn" name="edit_selection">Modify Selection</button>
+    </div>
+    {% endif %}
+  </fieldset>
+</form>
 {% endblock %}
 
 {% block body_scripts %}
-<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
-<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.canvasAxisTickRenderer.js"></script>
-<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script>
-<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.enhancedLegendRenderer.js"></script>
-<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.pointLabels.min.js"></script>
-<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.barRenderer.min.js"></script>
-<script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.dateAxisRenderer.js"></script>
-<script type="text/javascript">
+ <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
+ <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.canvasAxisTickRenderer.js"></script>
+ <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+ <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.enhancedLegendRenderer.js"></script>
+ <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.pointLabels.min.js"></script>
+ <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.barRenderer.min.js"></script>
+ <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.dateAxisRenderer.js"></script>
+ <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+ <script type="text/javascript">
  $(document).ready(function () {
-     $.jqplot.config.enablePlugins = true;
-     var colors = ["#4bb2c5", "#c5b47f", "#EAA228", "#579575", "#839557", "#958c12", "#953579", "#4b5de4",
-         "#d8b83f", "#ff5800", "#0085cc", "#663333", "#FFFF33", "#0066CC", "#669900", "#CC0099",
-         "#666666", "#660000", "#00FFFF", "#9966FF", "#006600", "#FFE87C", "#FF3300", "#003366",
-         "#CC9900", "#FFCCFF", "#CCFF33", "#660066", "#FFCC00", "#003300", "#00BFFF", "#8D38C9",
-         "#F778A1", "#FDD017", "#666633", "#FF9933", "#660033", "#FFFF00", "#999999", "#0099FF",
-         "#CCFF00", "#663300", "#CCCCFF", "#FF0000", "#C9BE62", "#2F4F4F", "#000000", "#FFF0F5",
-         "#D3D3D3", "#191970", "#EEE8AA", "#8B6508", "#FFDEAD", "#CDB7B5", "#CD1076", "#E066FF",
-         "#F88158", "#87F717", "#333300", "#3399FF", "#C3FDB8"];
-     $.jqplot ('linegraph', {{ stats.line_graph.linescheme_data|safe }},
-               {
-                   title : "COMPLAINTS PER SCHEME",
-                   axes : {
-                       xaxis : {
-                           renderer:$.jqplot.DateAxisRenderer,
-                           tickOptions: {formatString: '%b %#d'},
-                       },
-                       yaxis : {
-                           min: 0,
-                           tickOptions: {formatString: '%d'},
-                           max : {{ stats.line_graph.maxval }}
-                       }
-                   },
-                   seriesColors : colors,
-                   seriesDefaults : {
-                       showMarker : true,
-                       pointLabels: {
-                           show:false,
-                           ypadding: 3,
-                           edgeTolerance: 4
-                       }
-                   },
-                   series:[{% for legend in stats.line_graph.legends %}
-                           {label: "{{ legend|safe }}"}{% if not forloop.last %},{% endif %}
-                           {% endfor %}],
-                   legend: {
-                       show: true,
-                       placement: 'inside',
-                       location: 'n',
-                       renderer : $.jqplot.EnhancedLegendRenderer,
-                       rendererOptions : {numberColumns : 5}
-                   }
-               });
-
-     $.jqplot('bargraph', {{ stats.bar_chart.scheme_data }},
-              {
-
-                  title : "OPEN COMPLAINTS",
-                  series:[{% for legend in stats.bar_chart.legends %}
-                          {label: "{{ legend|safe }}",
-                           renderer : $.jqplot.BarRenderer,
-                           rendererOptions : {barWidth : {{ stats.bar_chart.width }} } }{% if not forloop.last %},{% endif %}
-                          {% endfor %}],
-                  axesDefaults: {
-                      tickRenderer: $.jqplot.CanvasAxisTickRenderer,
-                      tickOptions: {
-                          angle: -30,
-                          labelPosition : 'middle'
-                      }
-                  },
-                  legend: {
-                      show: true,
-                      placement: 'insideGrid'
-                  },
-                  axes: {
-                      xaxis: {
-                          renderer: $.jqplot.CategoryAxisRenderer,
-                          ticks: [{% for scheme in stats.bar_chart.schemes %}"{{ scheme|safe }}"{% if not forloop.last %},{% endif %}{% endfor %}],
-                          tickOptions : {angle:-45}
-                      },
-                      yaxis: {
-                          pad: 1.00,
-                          tickOptions: {formatString: '%d',
-                                        angle:0}
-                      }
-                  }
-              });
-  });
-</script>
+                       $.jqplot.config.enablePlugins = true;
+                       {% for dept in stats.depts %}
+                       $.jqplot('volume-{{dept.id}}', {{ stats.volume|get_schemes_data:dept.id }},
+                                {
+                                    seriesColors : ["#948b54", "#95b3d7"],
+                                    seriesDefaults:{
+                                        renderer:$.jqplot.BarRenderer,
+                                        rendererOptions : {
+                                            barWidth : 25
+                                        }
+                                    },
+                                    axes: {
+                                        xaxis: {
+                                            renderer: $.jqplot.CategoryAxisRenderer,
+                                            ticks: [{% for s in stats.volume|get_schemes:dept.id %} "{{ s|safe }}" {% if not forloop.last %} , {% endif %} {% endfor %}],
+                                            tickOptions : {
+                                                angle:-30, 
+                                                labelPosition : 'middle'
+                                            },
+                                            tickRenderer : $.jqplot.CanvasAxisTickRenderer
+                                        },
+                                        yaxis: {
+                                            min : 0,
+                                            pad: 1.5,
+                                            tickOptions: {
+                                                show: false,
+                                                formatString:'%d',
+                                            },
+                                            label : '{% trans "Number of Complaints" %}',
+                                            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+                                            labelOptions: {
+                                                fontFamily: 'Georgia, Serif',
+                                                fontSize: '12pt',
+                                            }
+                                        }
+                                    }
+                                });
+                       $.jqplot('time-{{dept.id}}', {{ stats.time|get_schemes_data:dept.id }},
+                                {
+                                    seriesColors : ["#c5be97", "#538ed5"],
+                                    seriesDefaults:{
+                                        renderer:$.jqplot.BarRenderer,
+                                        rendererOptions : {
+                                            barWidth : 25
+                                        }
+                                    },
+                                    axes: {
+                                        xaxis: {
+                                            renderer: $.jqplot.CategoryAxisRenderer,
+                                            ticks: [{% for s in stats.time|get_schemes:dept.id %} "{{ s|safe }}" {% if not forloop.last %} , {% endif %} {% endfor %}],
+                                            tickOptions : {angle:-30, labelPosition : 'middle'},
+                                            tickRenderer : $.jqplot.CanvasAxisTickRenderer
+                                        },
+                                        yaxis: {
+                                            min : 0,
+                                            pad: 1.5,
+                                            tickOptions: {
+                                                show: false,
+                                                formatString:'%d',
+                                            },
+                                            label : '{% trans "Days" %}',
+                                            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+                                            labelOptions: {
+                                                fontFamily: 'Georgia, Serif',
+                                                fontSize: '12pt',
+                                            }
+                                        }
+                                    }
+                                });
+                       {% endfor %}
+                       $.jqplot('mdgs', {{ stats.mdgs }},
+                                {
+                                    seriesColors : ["#fcdb00", "#bbd802", "#abaac9", "#b2def7", "#b2def7", "#b2def7", "#5ba129"],
+                                    seriesDefaults:{
+                                        renderer:$.jqplot.BarRenderer,
+                                        rendererOptions : {
+                                            barWidth : 65,
+                                            barPadding: 35
+                                        }
+                                    },
+                                    axes: {
+                                        xaxis: {
+                                            renderer: $.jqplot.CategoryAxisRenderer,
+                                            ticks: [' ']
+                                        },
+                                        yaxis: {
+                                            min : 0,
+                                            pad: 1.5,
+                                            tickOptions: {
+                                                show: false,
+                                                formatString:'%d',
+                                            },
+                                            label : '{% trans "Number of Complaints" %}',
+                                            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+                                            labelOptions: {
+                                                fontFamily: 'Georgia, Serif',
+                                                fontSize: '12pt',
+                                            }
+                                        }
+                                    }
+                                });
+                   });
+ </script>
 {% endblock %}

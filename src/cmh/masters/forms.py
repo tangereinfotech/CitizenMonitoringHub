@@ -38,6 +38,7 @@ from cmh.common.utils import get_random_string, debug
 from cmh.common.constants import PASSWORD_LEN, PASSWORD_MSG, DeployDistrict
 
 from cmh.common.models import ComplaintMDG, ComplaintType, State, District, Block, GramPanchayat, Village
+from cmh.common.models import MilleniumDevGoal
 
 class AddCSOMember (forms.Form):
     username = UsernameField (widget = AutoCompleteOffTextInput ())
@@ -462,6 +463,13 @@ class AddComplaint (forms.Form):
                                           empty_label = "------",
                                           widget=forms.Select (attrs = {'style' : 'width:100%'}))
 
+    def clean_mdg (self):
+        for goalnum in self.cleaned_data ['mdg']:
+            if int (goalnum) < 1 or int (goalnum) > 8:
+                raise forms.ValidationError (_("MDG goal must be between 1 and 8"))
+        return self.cleaned_data ['mdg']
+
+
     def clean (self) :
         if 'code' in self.cleaned_data and 'department' in self.cleaned_data:
             compcode = "%s.%s" % (self.cleaned_data['department'].code, self.cleaned_data ['code'])
@@ -481,8 +489,9 @@ class AddComplaint (forms.Form):
                                             defsmsclo    = self.cleaned_data['defsmsclo'],
                                             department   = self.cleaned_data['department'])
 
-        for mdg in self.cleaned_data ['mdg']:
-            ComplaintMDG.objects.create (complainttype = comp, goalnum = mdg)
+        for goalnum in self.cleaned_data ['mdg']:
+            mdg = MilleniumDevGoal.objects.get (goalnum = goalnum)
+            ComplaintMDG.objects.create (complainttype = comp, mdg = mdg)
 
 
 class EditBlk (forms.Form):
@@ -751,7 +760,15 @@ class EditComp (forms.Form):
             self.fields ['defsmsopen'].initial  = compobj.defsmsopen
             self.fields ['defsmsres'].initial   = compobj.defsmsres
             self.fields ['defsmsclo'].initial   = compobj.defsmsclo
-            self.fields ['mdg'].initial         = ', '.join (sorted ([str (m.goalnum) for m in compobj.complaintmdg_set.all ()]))
+            self.fields ['mdg'].initial         = ', '.join (sorted ([str (m.mdg.goalnum) for m in compobj.complaintmdg_set.all ()]))
+
+
+    def clean_mdg (self):
+        for goalnum in self.cleaned_data ['mdg']:
+            if int (goalnum) < 1 or int (goalnum) > 8:
+                raise forms.ValidationError (_("MDG goal must be between 1 and 8"))
+        return self.cleaned_data ['mdg']
+
 
     def clean (self):
         if 'objid' in self.cleaned_data and 'hcode' in self.cleaned_data and 'code' in self.cleaned_data:
@@ -781,12 +798,13 @@ class EditComp (forms.Form):
 
         compmdg_ids = [m.id for m in comp.complaintmdg_set.all ()]
         foundmdgs = []
-        for mdg in self.cleaned_data ['mdg']:
+        for goalnum in self.cleaned_data ['mdg']:
+            mdg = MilleniumDevGoal.objects.get (goalnum = goalnum)
             try:
-                mdgobj = comp.complaintmdg_set.get (goalnum = mdg)
+                mdgobj = comp.complaintmdg_set.get (mdg__goalnum = goalnum)
                 foundmdgs.append (mdgobj.id)
             except ComplaintMDG.DoesNotExist:
-                mdgobj = ComplaintMDG.objects.create (complainttype = comp, goalnum = mdg)
+                mdgobj = ComplaintMDG.objects.create (complainttype = comp, mdg = mdg)
 
         for objid in compmdg_ids:
             if objid in foundmdgs:

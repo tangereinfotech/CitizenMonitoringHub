@@ -27,7 +27,7 @@
     <legend>
       {% trans "Time Period" %}
     </legend>
-    <table align="center">
+    <table align="center" style="width-100">
       <tr>
         <td style="text-align:center">
           {% trans "Start Date" %}
@@ -45,7 +45,7 @@
           {{ form.endate }}
         </td>
         <td>
-          <button type="button" class="btn" onclick="update_maps ();">{% trans "Apply" %}</button>
+          <button type="button" width="120px" class="btn" onclick="update_maps ();">{% trans "Apply" %}</button>
         </td>
       </tr>
       <tr>
@@ -106,6 +106,26 @@
 <script type="text/javascript" src="/static/js/complainthandler.js"></script>
 <script type="text/javascript" src="/static/js/department_selector.js"></script>
 <script type="text/javascript">
+ var states = new Array ();
+ var distts = new Array ();
+ var blocks = new Array ();
+ var gramps = new Array ();
+ var villgs = new Array ();
+
+ function add_location_selection (type, code) {
+     if (type === 'state') {
+         states.push (code);
+     } else if (type === 'distt') {
+         distts.push (code);
+     } else if (type === 'block') {
+         blocks.push (code);
+     } else if (type === 'gramp') {
+         gramps.push (code);
+     } else if (type === 'villg') {
+         villgs.push (code);
+     }
+ }
+
  function update_maps () {
      en_date = $("#id_endate").val ();
      st_date = $("#id_stdate").val ();
@@ -136,22 +156,52 @@
 
      var hstdate = document.createElement ("input");
      hstdate.name = "stdate";
-     hstdate.type = "hidden";
+     hstdate.type = "text";
      hstdate.value = $("#id_stdate").val ();
 
      var hendate = document.createElement ("input");
      hendate.name = "endate";
-     hendate.type = "hidden";
+     hendate.type = "text";
      hendate.value = $("#id_endate").val ();
 
      var deptids = document.createElement ("input");
      deptids.name = "deptids";
-     deptids.type = "hidden";
+     deptids.type = "text";
      deptids.value = selected_dept_ids;
+
+     var stateids = document.createElement ('input');
+     stateids.name = 'stateids';
+     stateids.type = 'text';
+     stateids.value = states.join (",");
+
+     var disttids = document.createElement ('input');
+     disttids.name = 'disttids';
+     disttids.type = 'text';
+     disttids.value = distts.join (",");
+
+     var blockids = document.createElement ('input');
+     blockids.name = 'blockids';
+     blockids.type = 'text';
+     blockids.value = blocks.join (",");
+
+     var grampids = document.createElement ('input');
+     grampids.name = 'grampids';
+     grampids.type = 'text';
+     grampids.value = gramps.join (",");
+
+     var villgids = document.createElement ('input');
+     villgids.name = 'villgids';
+     villgids.type = 'text';
+     villgids.value = villgs.join (",");
 
      form.appendChild (hstdate);
      form.appendChild (hendate);
      form.appendChild (deptids);
+     form.appendChild (stateids);
+     form.appendChild (disttids);
+     form.appendChild (blockids);
+     form.appendChild (grampids);
+     form.appendChild (villgids);
 
      document.body.appendChild (form);
 
@@ -159,8 +209,7 @@
  }
 
 
- function dateFormat (date)
- {
+ function dateFormat (date) {
      return '%02d/%02d/%04d'.sprintf(date.getDate (),(date.getMonth () + 1),date.getFullYear ());
  }
 
@@ -177,7 +226,9 @@
          $("#id_endate").datepicker ({dateFormat : 'dd/mm/yy'});
          department_selector ('/complaint/get_category_map_update/');
          $(".selector").attr ("checked", true);
-         MapHandler.init ('base_map', {{ map.center_lat }}, {{ map.center_long }}, function () {
+         MapHandler.init ('base_map', {{ map.center_lat }}, {{ map.center_long }},
+                          add_location_selection,
+                          function () {
                               update_issues_maps ('0', MapHandler.DISTT_ZOOM, 'distt', st_date, en_date);
                           });
      }

@@ -26,7 +26,7 @@ from cmh.smsgateway.utils import queue_complaint_update_sms, queue_sms
 
 from cmh.issuemgr.utils import update_complaint_sequence
 from cmh.issuemgr.utils import get_location_attr
-from cmh.issuemgr.models import Complaint
+from cmh.issuemgr.models import Complaint, ComplaintClosureMetric
 from cmh.issuemgr.constants import STATUS_NEW
 
 from cmh.common.models import ComplaintType
@@ -95,6 +95,8 @@ def gateway (request):
                                                   creator = None)
 
                 update_complaint_sequence (compl)
+
+                ComplaintClosureMetric.objects.create (complaintno = compl.complaintno)
 
                 # If we reach this point, the message was properly formatted
                 rtm.valid = True

@@ -29,7 +29,7 @@ from cmh.common.models import ComplaintStatus, StatusTransition
 
 from cmh.issuemgr.constants import STATUS_NEW, STATUS_ACK, STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED, STATUS_REOPEN
 
-from cmh.issuemgr.models import Complaint
+from cmh.issuemgr.models import Complaint, ComplaintClosureMetric
 from cmh.issuemgr.utils import update_complaint_sequence
 
 from cmh.usermgr.utils import get_or_create_citizen
@@ -103,6 +103,9 @@ class ComplaintForm (forms.Form):
                                         creator = user,
                                         assignto = assignto)
         update_complaint_sequence (cpl)
+
+        ComplaintClosureMetric.objects.create (complaintno = cpl.complaintno)
+
         return cpl
 
 class AcceptComplaintForm (forms.Form):
@@ -166,6 +169,8 @@ class AcceptComplaintForm (forms.Form):
                                         creator = user,
                                         assignto = assignto)
         update_complaint_sequence (cpl)
+
+        ComplaintClosureMetric.objects.create (complaintno = cpl.complaintno)
 
         accept_cpl = cpl.clone (user)
         accept_cpl.curstate = STATUS_ACK
@@ -343,6 +348,26 @@ class ComplaintUpdateForm (forms.Form):
             original.community = newver.community
             original.save ()
 
+        if newver.curstate == STATUS_CLOSED:
+            now_time = datetime.now ()
+            ccms = ComplaintClosureMetric.objects.filter (complaintno = newver.complaintno)
+            origs = Complaint.objects.filter (complaintno = newver.complaintno, curstate = STATUS_NEW).order_by ('created')
+            if ccms.count () == 1:
+                if origs.count () == 1:
+                    orig = origs [0]
+                    ccm = ccms [0]
+                    ccm.closed = now_time
+                    period = now_time - orig.created
+                    ccm.period = period.days + ((period.seconds * 1.0) / (3600 * 24))
+                    ccm.save ()
+                else:
+                    debug ("Multiple complaint objects with status_new for complaint : " + newver.complaintno)
+                    debug ("... Doing nothing")
+            else:
+                debug ("Multiple complaint closure metrics exist for this complaint : " + newver.complaintno)
+                debug ("... Doing nothing")
+
+
         if newver.curstate == STATUS_ACK:
             message = newver.complainttype.defsmsack
         elif newver.curstate == STATUS_OPEN:
@@ -435,7 +460,15 @@ class ReportForm(forms.Form):
                               widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
     endate = forms.DateField (input_formats = ('%d/%m/%Y',),
                               widget = forms.TextInput (attrs = {'autocomplete' : 'off'}))
-    deptids = MultiNumberIdField ()
+    deptids = MultiNumberIdField (required = False)
+    stateids = MultiNumberIdField (required = False)
+    disttids = MultiNumberIdField (required = False)
+    blockids = MultiNumberIdField (required = False)
+    grampids = MultiNumberIdField (required = False)
+    villgids = MultiNumberIdField (required = False)
+    mdgindicators = forms.CharField (required = False)
+    suggestions   = forms.CharField (required = False)
+
 
 class ReportDataValid(forms.Form):
     deptids = MultiNumberIdField ()

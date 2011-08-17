@@ -375,6 +375,7 @@ ul.errorlist li {
    border-bottom: 1px solid white;
    color: #669;
    padding: 8px;
+   text-align:left;
 }
 
 .tabularlist td {
@@ -383,7 +384,7 @@ ul.errorlist li {
    color: #336;
    border-top: 1px solid transparent;
    padding: 4px;
-   text-align: center;
+   text-align: left;
 }
 
 .inlineform {
@@ -500,11 +501,17 @@ input[readonly="readonly"] {
    background: #dfdfdf;
 }
 
-.btn{
-    background:#499ed7;
-    border-color:#1569C7;
-    color:#f2efe9;
+.btn {
+   background:#95b3d7;
+   border-color:#1569C7;
+   color:#f2efe9;
+   font-weight:bold;
+}
 
+.btn:hover {
+   background:#8593c7;
+   border-color:#2579d7;
+   cursor: pointer;
 }
 
 /*MENU OUTLINE*/
@@ -740,4 +747,46 @@ ul.complaint-updates li {
    box-sizing: border-box;
    -webkit-box-sizing:border-box;
    -moz-box-sizing: border-box;
+}
+
+.page-header, .section-header {
+   font-weight: bold;
+   color: #538ed5;
+}
+
+.page-header {
+   font-size: 18px;
+}
+
+.subsection-header {
+   font-weight: bold;
+   color: #6674b1;
+}
+
+.width-100 {
+   width: 100%;
+}
+
+.width-50 {
+   width: 50%;
+}
+
+.text-center {
+   text-align:center;
+}
+
+.text-left {
+   text-align: left;
+}
+
+.text-right {
+   text-align: right;
+}
+
+.pad-top {
+   padding-top: 25px;
+}
+
+.mdg-report-icons {
+   padding: 0px 31px 0px 0px;
 }

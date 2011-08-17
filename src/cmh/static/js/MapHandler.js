@@ -23,6 +23,7 @@ var MapHandler = {
     departments : null,
     center_lat : null,
     center_long : null,
+    update_loc_selection: null,
     VILLG_ZOOM : 12,
     GRAMP_ZOOM : 11,
     BLOCK_ZOOM : 10,
@@ -39,10 +40,11 @@ var MapHandler = {
         for (var attr in object) { return false; }
         return true;
     },
-    init : function (map_canvas, center_lat, center_long, donecallback) {
+    init : function (map_canvas, center_lat, center_long, update_loc_selection, donecallback) {
         this.map_canvas = map_canvas;
         this.center_lat = center_lat;
         this.center_long = center_long;
+        this.update_loc_selection = update_loc_selection;
 
         var myOptions  = {
             mapTypeId : google.maps.MapTypeId.ROADMAP,
@@ -231,20 +233,20 @@ var MapHandler = {
                                                                           google.maps.event.addListenerOnce(infowindow,
                                                                                                             "domready",
                                                                                                             function() {
-                                                                                                                elem_id = "#infoclose-" + data.loctype + "-" + data.locid;
-                                                                                                                $(elem_id).click (function (event) {
-                                                                                                                    var message = "Location has been added to report";
-                                                                                                                    $('#notification-part').html(message);
-                                                                                                                    $('#notification-part').html(function() {
-                                                                                                                        setTimeout (function () {
-                                                                                                                            $('#notification-part').html ('');
-                                                                                                                        }, 1500);
-                                                                                                                    });
-                                                                                                                    $.post ("/",
-                                                                                                                            {'loctype' : data.loctype,
-                                                                                                                             'locid' : data.locid},
-                                                                                                                            function (data, status,jqXHR) {});
-                                                                                                                    infowindow.close ();
+                                                                                                                var elem_id = "#infoclose-" + data.loctype + "-" + data.locid;
+                                                                                                                $(elem_id).click (
+                                                                                                                    function (event) {
+                                                                                                                        var message = "Location has been added to report";
+                                                                                                                        $('#notification-part').html(message);
+                                                                                                                        $('#notification-part').html(
+                                                                                                                            function() {
+                                                                                                                                setTimeout (function () {
+                                                                                                                                                $('#notification-part').html ('');
+                                                                                                                                            }, 1500);
+                                                                                                                            });
+                                                                                                                        MapHandler.update_loc_selection (MapHandler.data_level,
+                                                                                                                                                         data.locid);
+                                                                                                                        infowindow.close ();
                                                                                                                     return false;
                                                                                                                 });
 

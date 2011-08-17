@@ -31,7 +31,7 @@
         {% trans "Language Selection:" %}
         <form id="langselect" action="/i18n/setlang/" method="post" style="display:inline">
           <input name="next" type="hidden" value="/" />
-          <select name="language" style="padding:0px;margin:0px;border:0px">
+          <select class ="langselector" name="language" style="padding:0px;margin:0px;border:0px">
             {% get_available_languages as LANGUAGES %}
             {% get_current_language as lang_code %}
             {% for lang in LANGUAGES %}
@@ -109,7 +109,7 @@
 </div>
 <script type="text/javascript">
   $(document).ready (function () {
-    $(".langselect-choice").click (function () {
+    $(".langselector").change (function () {
       $("#langselect").submit ();
     });
   });

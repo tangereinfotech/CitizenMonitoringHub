@@ -314,3 +314,5 @@ def get_evidence_url (unique_filename):
     return "/complaint/evidences/" + unique_filename
 
 
+def timedelta_to_days (td):
+    return td.days + (1.0 * td.seconds) / (3600.0 * 24)

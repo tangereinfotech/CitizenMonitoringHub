@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import re, os
+import itertools
 
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
@@ -38,15 +39,15 @@ from cmh.common.models import AppRole, ComplaintDepartment
 from cmh.common.utils import debug, daterange
 from cmh.common.utils import get_datatables_records
 from cmh.common.utils import get_session_data, set_session_data
-from cmh.common.utils import get_evidence_url
+from cmh.common.utils import get_evidence_url, timedelta_to_days
 
 from cmh.issuemgr.constants import STATUS_NEW, STATUS_REOPEN, STATUS_ACK
 from cmh.issuemgr.constants import STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED
 from cmh.issuemgr.constants import HotComplaintPeriod
 
-from cmh.issuemgr.models import Complaint, ComplaintEvidence, ComplaintReminder
+from cmh.issuemgr.models import Complaint, ComplaintEvidence, ComplaintReminder, ComplaintClosureMetric
 from cmh.issuemgr.forms import ComplaintForm, ComplaintLocationBox, ComplaintTypeBox, Report
-from cmh.issuemgr.forms import ComplaintTrackForm, LocationStatsForm, ReportForm, ReportDataValid
+from cmh.issuemgr.forms import ComplaintTrackForm, LocationStatsForm, ReportForm
 from cmh.issuemgr.forms import ComplaintDepartmentBox, ComplaintUpdateForm, HotComplaintForm
 from cmh.issuemgr.forms import AcceptComplaintForm, LOCATION_REGEX, ComplaintDisplayParams
 from cmh.issuemgr.forms import SetComplaintReminder
@@ -662,165 +663,173 @@ def combine_dept_data (cstats, drange):
 
 from cmh.issuemgr.models import ReportData
 
-def get_report_stats (repdata):
-    def get_scheme_data (mydict, lschemes):
-        retdata = []
-        for cclass in lschemes:
-            try:
-                retdata.append (mydict [cclass])
-            except KeyError:
-                retdata.append (0)
+def get_report_stats (stdate, endate,
+                      deptids,
+                      stateids, disttids, blockids, grampids, villgids):
+
+    if ALL_DEPT_ID in deptids:
+        depts = ComplaintDepartment.objects.all ()
+    else:
+        depts = ComplaintDepartment.objects.filter (id__in = deptids)
+
+    states = State.objects.filter (id__in = stateids)
+    distts = District.objects.filter (id__in = disttids)
+    blocks = Block.objects.filter (id__in = blockids)
+    gramps = GramPanchayat.objects.filter (id__in = grampids)
+    villgs = Village.objects.filter (id__in = villgids)
+
+    if states.count () != 0:
+        blocks = blocks | Block.objects.filter (district__state__id__in = [state.id for state in states])
+
+    if distts.count () != 0:
+        blocks = blocks | Block.objects.filter (district__id__in = [distt.id for distt in distts])
+
+    stats = {'stdate_show' : stdate.strftime ("%d %B, %Y"),
+             'endate_show' : endate.strftime ("%d %B, %Y"),
+             'stdate' : stdate.strftime ("%d/%m/%Y"),
+             'endate' : endate.strftime ("%d/%m/%Y"),
+             'deptids' : ",".join ([str (x) for x in deptids]),
+             'stateids' : ",".join ([str (x) for x in stateids]),
+             'disttids' : ",".join ([str (x) for x in disttids]),
+             'blockids' : ",".join ([str (x) for x in blockids]),
+             'grampids' : ",".join ([str (x) for x in grampids]),
+             'villgids' : ",".join ([str (x) for x in villgids]),
+             'depts' : depts,
+             'blocks' : blocks,
+             'gramps' : gramps,
+             'villgs' : villgs}
+
+    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, department__in = [dept.id for dept in depts])
+
+    new_complaints = complaints.filter (curstate = STATUS_NEW)
+    ack_complaints = complaints.filter (curstate = STATUS_ACK)
+    ope_complaints = complaints.filter (curstate = STATUS_OPEN)
+    res_complaints = complaints.filter (curstate = STATUS_RESOLVED)
+    clo_complaints = complaints.filter (curstate = STATUS_CLOSED)
+    reo_complaints = complaints.filter (curstate = STATUS_REOPEN)
+    pen_complaints = res_complaints.exclude (complaintno__in = [c.complaintno for c in clo_complaints] + [c.complaintno for c in reo_complaints])
+
+    all_complaint_stats = {'new' : len (set ([c.complaintno for c in new_complaints])),
+                           'ack' : len (set ([c.complaintno for c in ack_complaints])),
+                           'ope' : len (set ([c.complaintno for c in ope_complaints])),
+                           'res' : len (set ([c.complaintno for c in res_complaints])),
+                           'clo' : len (set ([c.complaintno for c in clo_complaints])),
+                           'reo' : len (set ([c.complaintno for c in reo_complaints])),
+                           'pen' : len (set ([c.complaintno for c in pen_complaints]))}
+
+    new_complaintnos = set ([c.complaintno for c in new_complaints])
+    new_ack_complaints = complaints.filter (curstate = STATUS_ACK, complaintno__in = new_complaintnos)
+    new_ope_complaints = complaints.filter (curstate = STATUS_OPEN, complaintno__in = new_complaintnos)
+    new_res_complaints = complaints.filter (curstate = STATUS_RESOLVED, complaintno__in = new_complaintnos)
+    new_clo_complaints = complaints.filter (curstate = STATUS_CLOSED, complaintno__in = new_complaintnos)
+    new_reo_complaints = complaints.filter (curstate = STATUS_REOPEN, complaintno__in = new_complaintnos)
+    new_pen_complaints = res_complaints.exclude (complaintno__in = [c.complaintno for c in new_clo_complaints] + [c.complaintno for c in new_reo_complaints])
+
+    new_complaint_stats = {'new' : len (set ([c.complaintno for c in new_complaints])),
+                           'ack' : len (set ([c.complaintno for c in new_ack_complaints])),
+                           'ope' : len (set ([c.complaintno for c in new_ope_complaints])),
+                           'res' : len (set ([c.complaintno for c in new_res_complaints])),
+                           'clo' : len (set ([c.complaintno for c in new_clo_complaints])),
+                           'reo' : len (set ([c.complaintno for c in new_reo_complaints])),
+                           'pen' : len (set ([c.complaintno for c in new_pen_complaints]))}
+
+    stats ['all_complaints'] = all_complaint_stats
+    stats ['new_complaints'] = new_complaint_stats
+
+    # RESPONSE VOLUME METRICS
+    def get_grouped_data (dataset):
+        retdata = {}
+        dataset = itertools.groupby (sorted (dataset, key = lambda x: x ['department__id']), key = lambda x : x ['department__id'])
+        for deptid, schemedataset in dataset:
+            retdata [deptid] = dict ([schemedata ['complainttype__cclass'], schemedata ['count']] for schemedata in schemedataset)
+
+        for dept in depts:
+            if retdata.has_key (dept.id) == False:
+                retdata [dept.id] = {}
+
+            for ctype in dept.complainttype_set.all ():
+                if retdata [dept.id].has_key (ctype.cclass) == False:
+                    retdata [dept.id][ctype.cclass] = 0
+
         return retdata
 
-    stats = {'today' : repdata.enddate.strftime ("%d %B, %Y")}
+    ack_grouped = ack_complaints.values ('department__id', 'complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
+    clo_grouped = clo_complaints.values ('department__id', 'complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
 
-    deptids     = [dept.id for dept in repdata.department.all()]
-    complaints = Complaint.objects.filter (latest = True, department__id__in = deptids)
+    ack_grouped = get_grouped_data (ack_grouped)
+    clo_grouped = get_grouped_data (clo_grouped)
 
-    locq = None
-    if repdata.block.all ().count () != 0:
-        locq = Q (location__grampanchayat__block__id__in = [b.id for b in repdata.block.all ()])
+    volume_stats = {}
+    for dept in depts:
+        schemes = set ([ct.cclass for ct in dept.complainttype_set.all ()])
+        volume_stats [dept.id]= {'schemes' : schemes,
+                                 'dpoints' : [[ack_grouped [dept.id][s] for s in schemes],
+                                              [clo_grouped [dept.id][s] for s in schemes]]}
 
-    if repdata.gp.all ().count () != 0:
-        if locq != None:
-            locq = locq | Q (location__grampanchayat__id__in = [b.id for b in repdata.gp.all ()])
+    stats ['volume'] = volume_stats
+
+    # RESPONSE TIME METRICS
+    now_time = datetime.now ()
+
+    def get_scheme_times (scheme):
+        new_scheme_complaints = new_complaints.filter (complainttype__cclass = scheme)
+        scheme_ccms = ComplaintClosureMetric.objects.filter (complaintno__in = [c.complaintno for c in new_scheme_complaints])
+        scheme_stats = scheme_ccms.exclude (period = None)
+        scheme_ccms_open = scheme_ccms.filter (closed = None).order_by ('created')
+
+        retdata  = {}
+        if scheme_ccms_open.count () != 0:
+            max_open = timedelta_to_days (now_time - scheme_ccms_open[0].created)
         else:
-            locq = Q (location__grampanchayat__id__in = [b.id for b in repdata.gp.all ()])
+            max_open = 0
 
-    if repdata.village.all ().count () != 0:
-        if locq != None:
-            locq = locq | Q (location__id__in = [b.id for b in repdata.village.all ()])
+        if scheme_stats.count () != 0:
+            scheme_stats = scheme_stats.aggregate (maxper = Max ('period'), avgper = Avg ('period'))
+            scheme_max = scheme_stats ['maxper']
+            scheme_avg = scheme_stats ['avgper']
         else:
-            locq = Q (location__id__in = [b.id for b in repdata.village.all ()])
+            scheme_max = 0
+            scheme_avg = 0
 
-    if locq != None:
-        complaints = complaints.filter (locq)
+        if max_open > scheme_max:
+            scheme_max = max_open
 
-    #Complaints before the end date
-    end_complaints = complaints.filter (createdate__lte = repdata.enddate)
+        return {'max' : scheme_max, 'avg' : scheme_avg}
 
-    #report_health_check
-    end_new_complaints = end_complaints.filter (curstate = STATUS_NEW)
-    end_ack_complaints = end_complaints.filter (curstate = STATUS_ACK)
-    end_ope_complaints = end_complaints.filter (curstate = STATUS_OPEN)
-    end_res_complaints = end_complaints.filter (curstate = STATUS_RESOLVED)
-    end_clo_complaints = end_complaints.filter (curstate = STATUS_CLOSED)
+    time_stats = {}
+    for dept in depts:
+        schemes = set ([ct.cclass for ct in dept.complainttype_set.all ()])
+        scheme_times = dict([(s, get_scheme_times (s)) for s in schemes])
 
-    stats ['new_count'] = end_new_complaints.count ()
-    stats ['ack_count'] = end_ack_complaints.count ()
-    stats ['ope_count'] = end_ope_complaints.count ()
-    stats ['res_count'] = end_res_complaints.count ()
-    stats ['clo_count'] = end_clo_complaints.count ()
+        time_stats [dept.id] = {'schemes' : schemes,
+                                'dpoints' : [[scheme_times [s]['max'] for s in schemes],
+                                             [scheme_times [s]['avg'] for s in schemes]]}
 
-    #bar chart of ack and open complaints
-    bar_new_complaints = end_new_complaints.values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
-    bar_ack_complaints = end_ack_complaints.values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
-    bar_res_complaints = end_res_complaints.values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
-    bar_clo_complaints = end_clo_complaints.values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
+    stats ['time'] = time_stats
 
-    bar_new_scheme_data = dict ([(bac ['complainttype__cclass'], bac ['count']) for bac in bar_new_complaints])
-    bar_ack_scheme_data = dict ([(bac ['complainttype__cclass'], bac ['count']) for bac in bar_ack_complaints])
-    bar_res_scheme_data = dict ([(brc ['complainttype__cclass'], brc ['count']) for brc in bar_res_complaints])
-    bar_clo_scheme_data = dict ([(bcc ['complainttype__cclass'], bcc ['count']) for bcc in bar_clo_complaints])
+    # MOST FILED COMPLAINTS
+    most_filed = new_complaints.values ('complainttype__summary', 'department__name', 'complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
 
-    schemes     = list (set (bar_new_scheme_data.keys () + bar_ack_scheme_data.keys () + bar_res_scheme_data.keys () + bar_clo_scheme_data.keys ()))
+    stats ['most_filed'] = [{'summary' : mf ['complainttype__summary'],
+                             'num_complaints' : mf ['count'],
+                             'department_name' : mf ['department__name'],
+                             'cclass' : mf ['complainttype__cclass']}
+                            for mf in (sorted (most_filed,
+                                               key = lambda x : x ['count'],
+                                               reverse = True))[:5]]
 
-    new_counts = get_scheme_data (bar_new_scheme_data, schemes)
-    ack_counts = get_scheme_data (bar_ack_scheme_data, schemes)
-    res_counts = get_scheme_data (bar_res_scheme_data, schemes)
-    clo_counts = get_scheme_data (bar_clo_scheme_data, schemes)
+    # LONGEST PENDING COMPLAINTS
+    longest_pending = Complaint.objects.filter (complaintno__in = new_complaintnos,
+                                                latest = True)
+    longest_pending = longest_pending.exclude (curstate = STATUS_RESOLVED).exclude (curstate = STATUS_CLOSED).order_by ('created')
 
-    res_clo_counts = map (lambda x, y: x + y, res_counts, clo_counts)
-    scheme_data = [new_counts, ack_counts, res_clo_counts]
-
-    if len(schemes) <= 10:
-        wid = 30
-    elif ((len(schemes) > 10) and (len(schemes) <= 20)):
-        wid = 25
-    else:
-        wid = 10
-
-    stats ['bar_chart']                = {'legends' : [_('New'), _('Acknowledged'), _('Resolved/ Closed')]}
-    stats ['bar_chart']['schemes']     = schemes
-    stats ['bar_chart']['scheme_data'] = scheme_data
-    stats ['bar_chart']['width']       = wid
-
-    #line graph for trends on selected schemes
-    line_range_data      = complaints.filter(createdate__gt = repdata.strtdate,
-                                             createdate__lte = repdata.enddate).values ('complainttype__cclass',
-                                                                                        'createdate').annotate (count = Count ('createdate'))
-    schemelist = list (set ([lrd ['complainttype__cclass'] for lrd in line_range_data]))
-
-    line_prev_data = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_OPEN), createdate__lte = repdata.strtdate)
-    line_prev_data = line_prev_data.filter (complainttype__cclass__in = schemelist).values ('complainttype__cclass').annotate (count = Count ('complainttype__cclass'))
-    line_prev_data = [(lpd ['complainttype__cclass'], lpd ['count']) for lpd in line_prev_data]
-
-    ymax = max ([lpd [1] for lpd in line_prev_data] + [0])
-    line_prev_data = dict (line_prev_data)
-
-    last_date_data = {}
-    linescheme_data = {}
-    for scheme in schemelist:
-        if scheme in line_prev_data.keys ():
-            linescheme_data [scheme] = [[repdata.strtdate.strftime ('%Y-%m-%d 1:00 AM'), line_prev_data [scheme]]]
-        else:
-            linescheme_data [scheme] = [[repdata.strtdate.strftime ('%Y-%m-%d 1:00 AM'), 0]]
-        last_date_data [scheme] = linescheme_data [scheme][0][1]
+    stats ['longest_pending'] = longest_pending [:5]
 
 
-    line_range_data = [(lrd ['complainttype__cclass'], lrd ['createdate'], lrd ['count']) for lrd in line_range_data]
+    # MDG Graph
+    stats ['mdgs'] = [[new_complaints.filter (complainttype__complaintmdg__mdg__goalnum = x).count ()] for x in range (1, 8)]
 
-    line_range_data = sorted (line_range_data, key = (lambda x : x [1]))
-
-    for lrd in line_range_data:
-        linescheme_data [lrd [0]].append ([lrd [1].strftime ('%Y-%m-%d 1:00 AM'), last_date_data [lrd[0]] + lrd [2]])
-        last_date_data[lrd[0]] += lrd[2]
-
-    range_last_datestr = repdata.enddate.strftime ('%Y-%m-%d 1:00 AM')
-    for schemename, lsd in linescheme_data.items ():
-        last_data_point = lsd [-1]
-        if last_data_point [0] != range_last_datestr:
-            linescheme_data [schemename].append ([range_last_datestr, last_data_point [1]])
-
-    linescheme_datalist = []
-    for scheme in schemelist:
-        linescheme_datalist.append (linescheme_data [scheme])
-
-        ymax = max (ymax, max ([lsdp [1] for lsdp in linescheme_data [scheme]] + [0]))
-
-    stats ['line_graph'] = {'legends' : schemelist}
-    stats ['line_graph']['daterange'] = {"stdate":repdata.strtdate, "endate":repdata.enddate}
-    stats ['line_graph']['linescheme_data'] = linescheme_datalist
-    stats ['line_graph']['maxval'] = ymax * 1.4
-
-    #hot_issues section
-    hot_issues = end_complaints.values ('department__name', 'complainttype__cclass').annotate (count=Count ('complainttype__cclass'))
-    hot_issues = sorted (hot_issues, key = (lambda x : -x ['count']))
-
-    slno = 1
-    stats ['hot_issues'] = []
-    for hi in hot_issues [:5]:
-        stats ['hot_issues'].append ({'slno' : slno,
-                                      'count': hi ['count'],
-                                      'name' : hi ['department__name'],
-                                      'scheme' : hi ['complainttype__cclass']})
-        slno += 1
-
-    #Top five pending complaints based on time period
-    top_five_complaints = complaints.exclude (curstate = STATUS_CLOSED).exclude(curstate = STATUS_RESOLVED).order_by ('created')[:5]
-
-    now = datetime.now()
-
-    comp_list  = []
-    for complaint in top_five_complaints:
-        mdgs = ", ".join ([mdg.goalnum for mdg in complaint.complainttype.complaintmdg_set.all()])
-        if complaint.original != None:
-            delay = (now - complaint.original.created).days
-        else:
-            delay = (now - complaint.created).days
-        comp_list.append((delay, complaint, mdgs))
-
-    stats ['top_five_comp'] = comp_list
+    print stats ['mdgs']
 
     return stats
 
@@ -833,43 +842,38 @@ def initial_report (request):
             stdate  = form.cleaned_data ['stdate']
             endate  = form.cleaned_data ['endate']
             deptids = form.cleaned_data ['deptids']
+            stateids = form.cleaned_data ['stateids']
+            disttids = form.cleaned_data ['disttids']
+            blockids = form.cleaned_data ['blockids']
+            grampids = form.cleaned_data ['grampids']
+            villgids = form.cleaned_data ['villgids']
+            mdgindicators = form.cleaned_data ['mdgindicators']
+            suggestions   = form.cleaned_data ['suggestions']
 
-            if ALL_DEPT_ID in deptids:
-                depts = ComplaintDepartment.objects.all ()
+            stats = get_report_stats (stdate, endate,
+                                      deptids,
+                                      stateids,
+                                      disttids,
+                                      blockids,
+                                      grampids,
+                                      villgids)
+
+            if 'final' in request.POST:
+                final = True
             else:
-                depts = ComplaintDepartment.objects.filter (id__in = deptids)
+                final = False
 
-            blkids  = get_session_data (request, 'blkids')
-            gpids   = get_session_data (request, 'gpids')
-            villids = get_session_data (request, 'villids')
-
-            request.session.flush ()
-
-            repdata = ReportData.objects.create (strtdate = stdate, enddate = endate)
-
-            for d in depts: repdata.department.add (d)
-
-            if len (blkids.strip ()) != 0:
-                for bid in blkids.split (','): repdata.block.add (Block.objects.get (id = bid))
-
-            if len (gpids.strip ()) != 0:
-                for gpid in gpids.split (','): repdata.gp.add (GramPanchayat.objects.get (id = gpid))
-
-            if len (villids.strip ()) != 0:
-                for vid in villids.split (','): repdata.village.add (Village.objects.get (id = vid))
-
-            repdata.save ()
-
-            stats = get_report_stats (repdata)
             return render_to_response ('report.html', {'stats' : stats,
-                                                       'flag'  : False,
-                                                       'repdataid'  : repdata.id,
-                                                       'staticdata' : repdata})
+                                                       'final' : final,
+                                                       'mdgindicators' : mdgindicators,
+                                                       'suggestions'   : suggestions})
         except:
             import traceback
             traceback.print_exc ()
     else:
+        print form
         return HttpResponseRedirect ("/")
+
 
 def edit_report (request):
     repdata = ReportData.objects.get (id = request.POST ['repdataid'])

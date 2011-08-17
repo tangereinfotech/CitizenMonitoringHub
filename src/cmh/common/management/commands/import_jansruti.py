@@ -35,7 +35,7 @@ from cmh.common.models import GramPanchayat, Village
 from cmh.usermgr.utils import get_or_create_citizen
 
 from cmh.issuemgr.constants import STATUS_NEW
-from cmh.issuemgr.models import Complaint
+from cmh.issuemgr.models import Complaint, ComplaintClosureMetric
 from cmh.issuemgr.utils import update_complaint_sequence
 
 COL_REFR_NUMB = 0
@@ -156,6 +156,8 @@ class Command (BaseCommand):
                                           location = village,
                                           logdate = datetime.today ())
             update_complaint_sequence (c)
+
+            ComplaintClosureMetric.objects.create (complaintno = cpl.complaintno)
 
             randpos  = int (random () * NUM_DATES)
             backdate = AGOS [randpos]

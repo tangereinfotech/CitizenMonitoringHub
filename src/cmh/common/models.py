@@ -80,9 +80,13 @@ class ComplaintType (models.Model):
     def get_department (self):
         return self.code.split ('.')[0]
 
+class MilleniumDevGoal (models.Model):
+    goalnum = models.CharField (max_length = 20, unique = True)
+
 class ComplaintMDG (models.Model):
     complainttype = models.ForeignKey (ComplaintType)
-    goalnum = models.CharField (max_length = 20)
+    mdg = models.ForeignKey (MilleniumDevGoal, blank = True, null = True)
+
 
 class ComplaintStatus (models.Model):
     name = models.CharField (max_length = 50)

@@ -45,27 +45,6 @@ def index (request):
                                     'map'   : {'center_lat' : init_lattd,
                                                'center_long' : init_longd},
                                     'departments' : departments})
-    elif request.method == 'POST':
-        form = SaveMapDataForm (request.POST)
-        if form.is_valid ():
-            loctype = form.cleaned_data ['loctype']
-            locid = form.cleaned_data ['locid']
-
-            session_var = {'Block' : 'blkids',
-                           'gramp' : 'gpids',
-                           'Village' : 'villids'} [loctype]
-            session_data = request.session [session_var]
-            session_data = session_data.strip ()
-
-            if len (session_data) == 0:
-                request.session [session_var] = "%d" % (locid)
-            else:
-                sdata = session_data.split (',')
-                sdata.append ("%d" % (locid))
-                request.session [session_var] = ",".join (set (sdata))
-        else:
-            pass
-        return HttpResponse ("")
     else:
         return HttpResponseRedirect ('/')
 
@@ -74,8 +53,3 @@ def aboutus (request):
                                                 'user' : request.user},)
 
 
-class SaveMapDataForm (forms.Form):
-    loctype = forms.ChoiceField (choices = ((_('Block'), _('Block')),
-                                            (_('gramp'), _('Gram Panchayat')),
-                                            (_('Village'), _('Village'))))
-    locid   = forms.IntegerField ()

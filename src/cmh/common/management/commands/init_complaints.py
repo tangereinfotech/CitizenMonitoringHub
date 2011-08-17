@@ -112,8 +112,14 @@ class Command (BaseCommand):
             if comp_mdgs != None:
                 for mdg in comp_mdgs.split (','):
                     g = mdg.strip ()
+
                     if len (g) != 0:
-                        ComplaintMDG.objects.create (complainttype = complaint, goalnum = g)
+                        if MilleniumDevGoal.objects.filter (goalnum = g).count () == 0:
+                            mdg = MilleniumDevGoal.objects.create (goalnum = g)
+                        else:
+                            mdg = MilleniumDevGoal.objects.get (goalnum = g)
+
+                        ComplaintMDG.objects.create (complainttype = complaint, mdg = mdg)
 
     def parse_complete (self):
         pass

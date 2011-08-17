@@ -39,6 +39,12 @@ class ComplaintManager (models.Manager):
     def get_latest_complaints (self):
         return Complaint.objects.filter (latest = True)
 
+class ComplaintClosureMetric (models.Model):
+    complaintno = models.CharField (max_length = 50)
+    created     = models.DateTimeField (auto_now_add = True)
+    closed      = models.DateTimeField (blank = True, null = True)
+    period      = models.FloatField (blank = True, null = True)
+
 class Complaint(models.Model):
     complainttype = models.ForeignKey (ComplaintType, blank = True, null = True, related_name = 'complaintbase')
     complaintno   = models.CharField (max_length = 50, blank = True, null = True)
