@@ -15,27 +15,32 @@
 {% extends "base.html" %}
 
 {% load i18n %}
+{% load common_extras %}
 
 {% block base_content %}
 <div class="top_panel">
   <div class="system_panel">
     <div class="aboutpanel">
       <ul class="sysnav">
-        <li><a href="aboutus">{% trans "About Us" %}</a></li>
+        <li class="un-color"><a href="/">{% trans "Home" %}</a></li>
         <li>|</li>
-        <li><a href="/">{% trans "Home" %} </a></li>
+        <li class="un-color"><a href="/aboutus">{% trans "About Us" %}</a></li>
+        <li>|</li>
+        <li class="un-color"><a href="/forcitizens">{% trans "For Citizens" %}</a></li>
+        <li>|</li>
+        <li class="un-color"><a href="/forgovernment">{% trans "For Government" %}</a></li>
       </ul>
     </div>
     <div style="width:67%;float:right">
-      <span style="padding-right:10px;">
+      <span class="un-color" style="padding-right:10px;">
         {% trans "Language Selection:" %}
         <form id="langselect" action="/i18n/setlang/" method="post" style="display:inline">
           <input name="next" type="hidden" value="/" />
-          <select class ="langselector" name="language" style="padding:0px;margin:0px;border:0px">
+          <select class ="langselector un-color" name="language" style="padding:0px;margin:0px;border:0px">
             {% get_available_languages as LANGUAGES %}
             {% get_current_language as lang_code %}
             {% for lang in LANGUAGES %}
-            <option class="langselect-choice" value="{{ lang.0 }}"
+            <option class="langselect-choice un-color" value="{{ lang.0 }}"
                     {% if lang.0 == lang_code %}selected{% endif %}>
               {{ lang.1 }}
             </option>
@@ -46,14 +51,14 @@
       <span id="notification-part"></span>
       {% if user.is_authenticated %}
       <ul class="sys-panel">
-        <li> Hello {{ user.username }} </li>
+        <li class="un-color"> Hello {{ user.username }} </li>
         <li> | </li>
-        <li> <a href="/user/myprofile/">{% trans "Profile" %}</a> </li>
+        <li class="un-color"> <a href="/user/myprofile/">{% trans "Profile" %}</a> </li>
         <li> | </li>
-        <li> <a href="/user/logout/">{% trans "Sign out" %}</a> </li>
+        <li class="un-color"> <a href="/user/logout/">{% trans "Sign out" %}</a> </li>
       </ul>
       {% else %}
-      <a href="/user/login"> {% trans "Sign in" %} </a>
+      <span class="un-color"><a href="/user/login"> {% trans "Sign in" %} </a></span>
       {% endif %}
     </div>
   </div>
@@ -61,26 +66,46 @@
     <div class="logo">
       <img src="/static/images/samadhan-logo.jpg" alt="Samadhan Logo">
     </div>
-    <div class="menu_part">
-      <div style="text-align:center;position:absolute;top:20px;font-size:18px;width:100%">
-        {% trans "Joint Initiative of " %}<br/>
-        {% trans "Collectorate Sehore, UN Millenium Campaign and Samarthan" %}
-      </div>
-      <div class="top_menu">
-        <div class="UIAPIPlugin ui-tabs ui-widget ui-widget-content ui-corner-all" id="widget-docs" style="padding-bottom:0px;">
-          <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-            {% for menuitem in menus %}
-            <li class="ui-state-default ui-corner-top {{ menuitem.class }}">
-              <a href="{{menuitem.url}}">{% blocktrans with menuitem.name as menuname %}{{menuname}}{% endblocktrans %}</a>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
+    <div class="caption_part">
+      <div style="text-align:center;position:absolute;top:35px;font-size:18px;width:100%">
+        <span class="un-color" style="font-weight:bold;font-size:20px">
+          {% trans "Joint Initiative of " %}<br/>
+          {% trans "Collectorate Sehore, UN Millenium Campaign and Samarthan" %}
+        </span>
       </div>
     </div>
   </div>
 </div>
-<div class="page_content">
+<div class="menu_part" style="clear:both;">
+  <div class="UIAPIPlugin ui-tabs ui-widget ui-widget-content ui-corner-all"
+       style="padding-bottom:0px;float:left;width:60%;"
+       id="widget-docs">
+    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+      {% for menuitem in menus %}
+      <li class="ui-state-default ui-corner-top {{ menuitem.class }}">
+        <a href="{{ menuitem.url }}">{% blocktrans with menuitem.name as menuname %}{{menuname}}{% endblocktrans %}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="UIAPIPlugin ui-tabs ui-widget ui-widget-content ui-corner-all"
+       style="padding-bottom:0px;float:right;"
+       id="widget-docs">
+    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+      <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active info">
+        <a href="#">
+          {% trans "SMS: " %}{% value_from_settings SMS %}
+        </a>
+      </li>
+      <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active">
+        <a href="#">
+          {% trans "Phone: " %}{% value_from_settings PHONE %}
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="page_content" style="clear:both">
   {% block page_content %}{% endblock %}
 </div>
 <div class="footer">

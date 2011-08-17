@@ -91,7 +91,6 @@ div.slidecomp{
 
 div.top_panel {
    width:100%;
-   height:139px;
 }
 div.system_panel {
    text-align: right;
@@ -135,6 +134,7 @@ ul.sys-panel {
    list-style-type: none;
    float: right;
    margin-top: 0px;
+   padding-left: 0px;
 }
 
 ul.sys-panel li {
@@ -146,7 +146,6 @@ div.logo_top_menu {
     clear: both;
     position: relative;
     width: 100%;
-    height: 120px;
 }
 
 div.logo {
@@ -157,21 +156,25 @@ div.logo {
    font-size: 36px;
 }
 
-div.menu_part {
+div.caption_part {
     position: relative;
     float: right;
     width: 70%;
     height: 120px;
 }
 
-div.menu_part div.top_menu {
-    float: right;
-    text-align: center;
-    width: 100%;
-    border-spacing: 0;
-    border-collapse: collapse;
-    position: absolute;
-    bottom: 0px;
+div.menu_part {
+   clear: both;
+}
+
+div.menu_part ul {
+   list-style-type: none;
+   margin: 0px;
+   padding: 0px;
+}
+
+div.menu_part ul li {
+   display: inline;
 }
 
 div.page_content {
@@ -514,41 +517,8 @@ input[readonly="readonly"] {
    cursor: pointer;
 }
 
-/*MENU OUTLINE*/
-#widget-docs ul.ui-tabs-nav { padding:0 0 0 8px; background:#499ed7; border-color:#1569C7;border-bottom-color:#bfd1e5; border-bottom:2px;}
-#widget-docs .ui-tabs-nav li { margin:5px 5px 0 0;  /*#488AC7*/;border-color:#41627E;}
-/*TABS WHICH ARE NOT SELECTED*/
-#widget-docs .ui-tabs-nav li a:link,
-#widget-docs .ui-tabs-nav li a:visited,
-#widget-docs .ui-tabs-nav li a:hover,
-#widget-docs .ui-tabs-nav li a:active { font-size:14px; padding:4px 1.2em 3px; color: #1369a1/*#00386b*/; background:#f2efe9/*#efefef*/}
-/*TAB WEN SELECTED*/
-#widget-docs .ui-tabs-nav li.ui-tabs-selected a:link,
-#widget-docs .ui-tabs-nav li.ui-tabs-selected a:visited,
-#widget-docs .ui-tabs-nav li.ui-tabs-selected a:hover,
-#widget-docs .ui-tabs-nav li.ui-tabs-selected a:active { color:	#f2efe9; background: #1369a1;}
-#widget-docs .ui-tabs-panel { padding:20px 9px; font-size:12px; line-height:1.4; color:#000; }
-
-/*BORDER*/
-#widget-docs.ui-widget-content,
-#widget-docs .ui-widget-content { background-image:none; background-color:	#fff; border:0; }
-
-#widget-docs .ui-widget-content a:link,
-#widget-docs .ui-widget-content a:visited { color:#1b75bb; text-decoration:none; }
-#widget-docs .ui-widget-content a:hover,
-#widget-docs .ui-widget-content a:active { color:#0b559b; }
-
-#widget-docs.ui-corner-all {
-	-moz-border-radius-bottomleft:2px;
-	-moz-border-radius-bottomright:2px;
-	-moz-border-radius-topleft:2px;
-	-moz-border-radius-topright:2px;
-}
 
 #demo-dialog .ui-dialog-title { font-size:1.2em; }
-
-#widget-docs .toggle-docs-links { float:right; margin:0 0.4em 0.4em; }
-#widget-docs .toggle-docs-links a { margin:0 0.4em;cursor:pointer; }
 
 .dataTables_length {
    float: left;
@@ -789,4 +759,62 @@ ul.complaint-updates li {
 
 .mdg-report-icons {
    padding: 0px 31px 0px 0px;
+}
+
+/*MENU OUTLINE*/
+#widget-docs ul.ui-tabs-nav { padding:0 0 0 8px; background:#95c9fb; border-color:#95c9fb;border-bottom-color:#bfd1e5; border-bottom:2px;}
+#widget-docs .ui-tabs-nav li { margin:5px 5px 0 0;  /*#488AC7*/;border-color:#41627E;}
+/*TABS WHICH ARE NOT SELECTED*/
+#widget-docs .ui-tabs-nav li a:link,
+#widget-docs .ui-tabs-nav li a:visited,
+#widget-docs .ui-tabs-nav li a:hover,
+#widget-docs .ui-tabs-nav li a:active { font-size:14px; padding:4px 1.2em 3px; color: #1369a1/*#00386b*/; background:#f2efe9/*#efefef*/}
+/*TAB WEN SELECTED*/
+#widget-docs .ui-tabs-nav li.ui-tabs-selected a:link,
+#widget-docs .ui-tabs-nav li.ui-tabs-selected a:visited,
+#widget-docs .ui-tabs-nav li.ui-tabs-selected a:hover,
+#widget-docs .ui-tabs-nav li.ui-tabs-selected a:active { color:	#f2efe9; background: #1369a1;}
+#widget-docs .ui-tabs-panel { padding:20px 9px; font-size:12px; line-height:1.4; color:#000; }
+
+/*BORDER*/
+#widget-docs.ui-widget-content,
+#widget-docs .ui-widget-content { background-image:none; background-color:	#fff; border:0; }
+
+#widget-docs .ui-widget-content a:link,
+#widget-docs .ui-widget-content a:visited { color:#1b75bb; text-decoration:none; }
+#widget-docs .ui-widget-content a:hover,
+#widget-docs .ui-widget-content a:active { color:#0b559b; }
+
+#widget-docs.ui-corner-all {
+	-moz-border-radius-bottomleft:2px;
+	-moz-border-radius-bottomright:2px;
+	-moz-border-radius-topleft:2px;
+	-moz-border-radius-topright:2px;
+}
+
+ #demo-dialog .ui-dialog-title { font-size:1.2em; }
+
+#widget-docs .toggle-docs-links { float:right; margin:0 0.4em 0.4em; }
+#widget-docs .toggle-docs-links a { margin:0 0.4em;cursor:pointer; }
+
+
+.un-color {
+   color:#538ed5;
+}
+
+.un-color a {
+   text-decoration: none;
+}
+
+.un-color a:hover {
+   text-decoration: underline;
+}
+
+.un-color a:visited {
+   color:#538ed5;
+   text-decoration: none;
+}
+
+.ui-tabs .ui-tabs-nav li.info {
+   float: right;
 }

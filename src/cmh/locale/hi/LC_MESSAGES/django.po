@@ -29,66 +29,66 @@ msgstr "​हिन्दी"
 #: issuemgr/templates/reportselection.html:94 masters/forms.py:374
 #: masters/forms.py:411 masters/templates/masters.html:36
 msgid "Block"
-msgstr ""
+msgstr "जनपद पंचायत"
 
 #: views.py:79 issuemgr/views.py:183
 msgid "gramp"
-msgstr ""
+msgstr " ग्राम पंचायत"
 
 #: views.py:79 issuemgr/views.py:180 masters/forms.py:412
 #: masters/templates/masters.html:37
 msgid "Gram Panchayat"
-msgstr ""
+msgstr " ग्राम पंचायत "
 
 #: views.py:80 issuemgr/views.py:177 issuemgr/templates/report.html:223
 #: issuemgr/templates/reportselection.html:100
 #: masters/templates/masters.html:38
 msgid "Village"
-msgstr ""
+msgstr " गांव "
 
 #: captcha/fields.py:56
 msgid "Play captcha as audio file"
-msgstr ""
+msgstr "कैप्चा को ध्वनि रुप मे सुनायें"
 
 #: captcha/fields.py:71 captcha/fields.py:96 captcha/tests/__init__.py:70
 msgid "Invalid CAPTCHA"
-msgstr ""
+msgstr "अमान्य कॅप्चा"
 
 #: captcha/tests/__init__.py:97
 msgid "This field is required."
-msgstr ""
+msgstr " यह क्षेत्र ज​रुरी है "
 
 #: common/fields.py:39
 msgid "Username is already registered"
-msgstr ""
+msgstr "उपयोगकर्ता नाम पहले से ही पंजीकृत है"
 
 #: common/fields.py:52
 msgid "Please enter a valid Indian phone number"
-msgstr ""
+msgstr "कृपया उपयुक्त भारतीय न0 डाले"
 
 #: common/fields.py:144
 msgid "Only comma separated integers are allowed"
-msgstr ""
+msgstr "केवल अल्पविराम अलग पूर्णांकों की अनुमति है"
 
 #: common/fields.py:157
 msgid "Invalid Date - month / year: "
-msgstr ""
+msgstr " अमान्य दिनांक.माह: वर्ष,"
 
 #: common/fields.py:161
 msgid "Invalid Date - date: "
-msgstr ""
+msgstr " अमान्य दिनांक."
 
 #: common/fields.py:163
 msgid "Invalid date - general failure : "
-msgstr ""
+msgstr " अमान्य दिनांक- सामान्य विफलता "
 
 #: common/models.py:106
 msgid "Multiple Roles for user: "
-msgstr ""
+msgstr " सेवाकर्मी के लिए कइ तरह ​क​ी जिम्ेदारिया "
 
 #: common/utils.py:83 common/utils.py:95
 msgid "Conversion to Date Type not supported"
-msgstr ""
+msgstr " परिवर्तन से आकडे सहयोग नही कर रहे "
 
 #: common/utils.py:85
 msgid "Invalid target datatype:"
@@ -96,164 +96,164 @@ msgstr ""
 
 #: common/utils.py:97
 msgid "Invalid target datatype : "
-msgstr ""
+msgstr "अमान्य लक्ष्य डेटाप्रकार"
 
 #: common/utils.py:100
 msgid "Conversion from Date Type not supported"
-msgstr ""
+msgstr " परिवर्तन से आकडे सहयोग नही कर रहे "
 
 #: common/utils.py:102
 msgid "Invalid source datatype : "
-msgstr ""
+msgstr " आकडे प्रकार के अमान्य स्रोत "
 
 #: issuemgr/forms.py:61 issuemgr/forms.py:128 issuemgr/forms.py:227
 #: issuemgr/templates/complaint.html:77
 msgid "Upload Evidence:"
-msgstr ""
+msgstr " साक्ष्य भरे "
 
 #: issuemgr/forms.py:67 issuemgr/forms.py:134 issuemgr/forms.py:258
 msgid "Location code is not correct"
-msgstr ""
+msgstr " स्थान कोड सही नही है "
 
 #: issuemgr/forms.py:75 issuemgr/forms.py:141
 msgid "Complaint Type is not correct"
-msgstr ""
+msgstr " शिकायत का प्रकार सही नही है "
 
 #: issuemgr/forms.py:215
 msgid "Male"
-msgstr ""
+msgstr " पुरूष "
 
 #: issuemgr/forms.py:216
 msgid "Female"
-msgstr ""
+msgstr " महिला "
 
 #: issuemgr/forms.py:217 issuemgr/forms.py:219 issuemgr/forms.py:223
 #: issuemgr/forms.py:225
 msgid "Unspecified"
-msgstr ""
+msgstr " अनिर्दिष्ट "
 
 #: issuemgr/forms.py:221
 msgid "SC/ST"
-msgstr ""
+msgstr " अनु0जाति /अनु0जनजाति "
 
 #: issuemgr/forms.py:221
 msgid "SC / ST"
-msgstr ""
+msgstr " अनु0जाति /अनु0जनजाति "
 
 #: issuemgr/forms.py:222
 msgid "Others"
-msgstr ""
+msgstr " अन्य "
 
 #: issuemgr/forms.py:266
 msgid "Complaint Category is not correct"
-msgstr ""
+msgstr " शि​कायत प्रकार सही नही है "
 
 #: issuemgr/forms.py:271
 msgid "Comment is mandatory"
-msgstr ""
+msgstr " सुझाव आवश्यक है "
 
 #: issuemgr/forms.py:279 issuemgr/forms.py:297
 msgid "Complaint number is invalid"
-msgstr ""
+msgstr " शिकायत न0 अमान्य है "
 
 #: issuemgr/forms.py:286
 msgid "New status is not a valid status code"
-msgstr ""
+msgstr " नयी ​स्थिति कोड सही ​स्थिति कोड नही है "
 
 #: issuemgr/forms.py:288
 msgid "That status transition is not allowed"
-msgstr ""
+msgstr "यही स्थिति संक्रमण की अनुमति नहीं है"
 
 #: issuemgr/forms.py:290
 msgid "Please select a valid next status"
-msgstr ""
+msgstr " कृपया आगे सही ​स्थिति का चयन करें "
 
 #: issuemgr/forms.py:302
 msgid "Complaint Type is mandatory"
-msgstr ""
+msgstr " शिकायत का प्रकार आवश्यक है "
 
 #: issuemgr/forms.py:375
 msgid "Complaint No."
-msgstr ""
+msgstr " शिकायत क्रमांक "
 
 #: issuemgr/forms.py:399
 msgid "Available Departments"
-msgstr ""
+msgstr " उपलब्ध विभाग "
 
 #: issuemgr/forms.py:404
 msgid "Selected Departments"
-msgstr ""
+msgstr " चयनित विभाग "
 
 #: issuemgr/forms.py:452
 msgid "On:"
-msgstr ""
+msgstr "पर"
 
 #: issuemgr/views.py:237 issuemgr/templates/update.html:207
 msgid "Gram Panchayat:"
-msgstr ""
+msgstr " ग्राम पंचायत "
 
 #: issuemgr/views.py:239
 msgid "Block: "
-msgstr ""
+msgstr " जनपद "
 
 #: issuemgr/views.py:268
 msgid "Department: "
-msgstr ""
+msgstr " वि​भाग "
 
 #: issuemgr/views.py:743 issuemgr/templates/report.html:155
 msgid "New"
-msgstr ""
+msgstr " नया "
 
 #: issuemgr/views.py:743 issuemgr/templates/complaint_metrics.html:41
 #: issuemgr/templates/report.html:159
 msgid "Acknowledged"
-msgstr ""
+msgstr " स्वीकार "
 
 #: issuemgr/views.py:743
 msgid "Resolved/ Closed"
-msgstr ""
+msgstr " समाधान/ समाप्त "
 
 #: issuemgr/views.py:978
 msgid "Unauthorized access to evidence. Will be reported"
-msgstr ""
+msgstr "साक्ष्य को अनाधिक्रित प्रकार से  "
 
 #: issuemgr/templates/all_issues.html:27 issuemgr/templates/my_issues.html:27
 msgid "My Issues"
-msgstr ""
+msgstr " मेरे मुददे "
 
 #: issuemgr/templates/all_issues.html:29 issuemgr/templates/my_issues.html:29
 msgid "View Issues:"
-msgstr ""
+msgstr " विचारित मुददे "
 
 #: issuemgr/templates/all_issues.html:30 issuemgr/templates/my_issues.html:30
 msgid "All"
-msgstr ""
+msgstr "समस्त"
 
 #: issuemgr/templates/all_issues.html:31 issuemgr/templates/my_issues.html:31
 msgid "Reminders"
-msgstr ""
+msgstr " याद दिलाना "
 
 #: issuemgr/templates/all_issues.html:45 issuemgr/templates/my_issues.html:45
 msgid "Complaint #"
-msgstr ""
+msgstr " शिकायत "
 
 #: issuemgr/templates/all_issues.html:46 issuemgr/templates/my_issues.html:46
 msgid "Filed On"
-msgstr ""
+msgstr " दर्ज "
 
 #: issuemgr/templates/all_issues.html:47 issuemgr/templates/my_issues.html:47
 #: issuemgr/templates/track_issues.html:117
 msgid "Description"
-msgstr ""
+msgstr " विवरण "
 
 #: issuemgr/templates/all_issues.html:48 issuemgr/templates/my_issues.html:48
 #: issuemgr/templates/track_issues.html:170 issuemgr/templates/update.html:262
 msgid "Status"
-msgstr ""
+msgstr "अवस्था"
 
 #: issuemgr/templates/all_issues.html:49 issuemgr/templates/my_issues.html:49
 msgid "Updated On"
-msgstr ""
+msgstr " अद्यतन दिनांक"
 
 #: issuemgr/templates/all_issues.html:60 issuemgr/templates/my_issues.html:60
 #: issuemgr/templates/track_issues.html:158 issuemgr/templates/update.html:181
@@ -262,195 +262,195 @@ msgstr ""
 #: masters/templates/view_comp_type.html:47 masters/templates/view_dep.html:46
 #: masters/templates/view_gp.html:65 masters/templates/view_village.html:68
 msgid "Update"
-msgstr ""
+msgstr "अद्यत"
 
 #: issuemgr/templates/all_issues.html:61 issuemgr/templates/all_issues.html:65
 #: issuemgr/templates/my_issues.html:61 issuemgr/templates/my_issues.html:65
 msgid "Track"
-msgstr ""
+msgstr " पता लगाना "
 
 #: issuemgr/templates/complaint.html:22
 msgid "Submit Your Complaint"
-msgstr ""
+msgstr " अपनी शिकायत दर्ज करें"
 
 #: issuemgr/templates/complaint.html:29 issuemgr/templates/update.html:23
 msgid "Details"
-msgstr ""
+msgstr " विवरण"
 
 #: issuemgr/templates/complaint.html:31
 msgid "Date:"
-msgstr ""
+msgstr " दिनांक"
 
 #: issuemgr/templates/complaint.html:37 issuemgr/templates/update.html:113
 msgid "Description:"
-msgstr ""
+msgstr " विवरण"
 
 #: issuemgr/templates/complaint.html:43
 #: issuemgr/templates/track_issues.html:57 issuemgr/templates/update.html:55
 msgid "Location:"
-msgstr ""
+msgstr " स्थान"
 
 #: issuemgr/templates/complaint.html:50
 msgid "Your Name:"
-msgstr ""
+msgstr " आपका नाम:"
 
 #: issuemgr/templates/complaint.html:56
 msgid "Your Mobile Number:"
-msgstr ""
+msgstr " आपका फोन नo "
 
 #: issuemgr/templates/complaint.html:62
 msgid "Categorize Your Complaint"
-msgstr ""
+msgstr "अपनी शिकायत को श्रेणीबद्ध करे"
 
 #: issuemgr/templates/complaint.html:69
 msgid "Gender:"
-msgstr ""
+msgstr " लिंग"
 
 #: issuemgr/templates/complaint.html:72
 msgid "Community:"
-msgstr ""
+msgstr " समुदाय"
 
 #: issuemgr/templates/complaint_metrics.html:25
 msgid "Complaint Metrics"
-msgstr ""
+msgstr " शिकायत विशलेषण"
 
 #: issuemgr/templates/complaint_metrics.html:28
 msgid "Week"
-msgstr ""
+msgstr " सप्ताह"
 
 #: issuemgr/templates/complaint_metrics.html:29
 msgid "Month"
-msgstr ""
+msgstr "माह"
 
 #: issuemgr/templates/complaint_metrics.html:30
 msgid "3 Months"
-msgstr ""
+msgstr "3महीने"
 
 #: issuemgr/templates/complaint_metrics.html:36
 #: masters/templates/masters.html:46
 msgid "Complaint Type"
-msgstr ""
+msgstr "शिकायत प्रकार"
 
 #: issuemgr/templates/complaint_metrics.html:37
 msgid "Number of complaint in status:"
-msgstr ""
+msgstr "शिकायत संख्या स्थिति में"
 
 #: issuemgr/templates/complaint_metrics.html:40
 msgid "New / Reopened"
-msgstr ""
+msgstr " नया /दुबारा खोलना"
 
 #: issuemgr/templates/complaint_metrics.html:42
 msgid "Opened (In Progress)"
-msgstr ""
+msgstr "खुला (प्रगति में)"
 
 #: issuemgr/templates/complaint_metrics.html:43
 #: issuemgr/templates/report.html:167
 msgid "Resolved"
-msgstr ""
+msgstr "हल"
 
 #: issuemgr/templates/complaint_metrics.html:44
 #: issuemgr/templates/report.html:171
 msgid "Closed"
-msgstr ""
+msgstr " बन्द "
 
 #: issuemgr/templates/complaint_submitted.html:5
 msgid "Thank you for submitting your complaint. Your complaint number is: "
-msgstr ""
+msgstr " धन्यवाद आपकी शिकायत दर्ज हो गयी आपका शिकायत क्रमांक है "
 
 #: issuemgr/templates/location_stats.html:20
 msgid "Add To Report"
-msgstr ""
+msgstr "रिपोर्ट में जोडे"
 
 #: issuemgr/templates/location_stats.html:56
 msgid "Complaints:"
-msgstr ""
+msgstr " शिकायते"
 
 #: issuemgr/templates/report.html:28
 #: issuemgr/templates/reportselection.html:21
 msgid "Duration"
-msgstr ""
+msgstr " अवधि "
 
 #: issuemgr/templates/report.html:32
 msgid "Start Date:"
-msgstr ""
+msgstr " प्रारम्भ तिथि "
 
 #: issuemgr/templates/report.html:39
 msgid "End Date:"
-msgstr ""
+msgstr " समाप्त तिथि"
 
 #: issuemgr/templates/report.html:48 masters/templates/masters.html:45
 #: templates/index.html:61
 msgid "Departments"
-msgstr ""
+msgstr " विभाग "
 
 #: issuemgr/templates/report.html:53
 msgid "Code"
-msgstr ""
+msgstr " कोड "
 
 #: issuemgr/templates/report.html:56 masters/forms.py:214
 #: masters/templates/cso_master.html:34 masters/templates/masters.html:83
 #: masters/templates/officials.html:33
 msgid "Name"
-msgstr ""
+msgstr " नाम "
 
 #: issuemgr/templates/report.html:73 masters/templates/masters.html:31
 msgid "Locations"
-msgstr ""
+msgstr " स्थान "
 
 #: issuemgr/templates/report.html:78
 msgid "Blocks"
-msgstr ""
+msgstr " जनपद पंचायत "
 
 #: issuemgr/templates/report.html:81
 msgid "Gram Panchayats"
-msgstr ""
+msgstr " ग्राम पंचायत "
 
 #: issuemgr/templates/report.html:84
 msgid "Villages"
-msgstr ""
+msgstr " गांव "
 
 #: issuemgr/templates/report.html:143
 msgid "Report"
-msgstr ""
+msgstr " प्रतिवेदन "
 
 #: issuemgr/templates/report.html:149
 msgid "Complaint Status"
-msgstr ""
+msgstr " शिकायत स्थिति "
 
 #: issuemgr/templates/report.html:150
 msgid "Number of complaints in status"
-msgstr ""
+msgstr " विभिन्न स्थितियों में शिकायतो की संख्या "
 
 #: issuemgr/templates/report.html:163
 msgid "Opened"
-msgstr ""
+msgstr "कार्यावाही प्रारम्भ"
 
 #: issuemgr/templates/report.html:189
 msgid "Hot Issues"
-msgstr ""
+msgstr " ज्वलन्त मुद्दे"
 
 #: issuemgr/templates/report.html:195
 msgid "Sr.No."
-msgstr ""
+msgstr " क्रम संख्या "
 
 #: issuemgr/templates/report.html:196
 msgid "Scheme"
-msgstr ""
+msgstr " योजना "
 
 #: issuemgr/templates/report.html:197 issuemgr/templates/track_issues.html:169
 #: issuemgr/templates/update.html:261 masters/forms.py:216
 #: masters/forms.py:460 masters/forms.py:720 masters/forms.py:727
 #: masters/templates/officials.html:36
 msgid "Department"
-msgstr ""
+msgstr " विभाग "
 
 #: issuemgr/templates/report.html:198
 msgid "Count"
-msgstr ""
+msgstr "संख्या"
 
 #: issuemgr/templates/report.html:215
 msgid "Top Five Complaints"
-msgstr ""
+msgstr " 5 सर्वोच्च् शिकायतें"
 
 #: issuemgr/templates/report.html:221
 msgid "Time in System"
@@ -458,19 +458,19 @@ msgstr ""
 
 #: issuemgr/templates/report.html:222
 msgid "Department code"
-msgstr ""
+msgstr " विभाग कोड "
 
 #: issuemgr/templates/report.html:224
 msgid "GP"
-msgstr ""
+msgstr " ग्राम पंचायत "
 
 #: issuemgr/templates/report.html:225
 msgid "Issue Details"
-msgstr ""
+msgstr " मुददो का विवरण "
 
 #: issuemgr/templates/report.html:226
 msgid "MDGs* Covered"
-msgstr ""
+msgstr " MDGs पूर्ण "
 
 #: issuemgr/templates/report.html:245 issuemgr/templates/report.html.py:264
 msgid "Key points and Suggested Follow-up Actions"
@@ -478,10 +478,10 @@ msgstr ""
 
 #: issuemgr/templates/report.html:253 issuemgr/templates/report.html.py:268
 msgid "Success Story"
-msgstr ""
+msgstr " सफलता की कहानी "
 
 #: issuemgr/templates/report.html:281
-msgid ""
+msgid " सहस्रब्दि विकास के आठ लक्ष्य पूर्ण "
 " Note: MDGs (Millennium Development Goals) are set of 8 goals to be achieved "
 "by year 2015, covering issues of Poverty, Hunger, Education, Mother and "
 "Child Health, HIV, Employment, Environment which were agreed to by 189 "
@@ -490,31 +490,31 @@ msgstr ""
 
 #: issuemgr/templates/reportselection.html:33
 msgid "Departments Available"
-msgstr ""
+msgstr " उपलब्ध विभाग "
 
 #: issuemgr/templates/reportselection.html:41
 msgid "Departments Selected"
-msgstr ""
+msgstr " चयनित विभाग "
 
 #: issuemgr/templates/reportselection.html:54
 msgid "Select Block"
-msgstr ""
+msgstr " चयनित जनपद पंचायत "
 
 #: issuemgr/templates/reportselection.html:65
 msgid "Select GramPanchayat"
-msgstr ""
+msgstr " चयनित ग्राम पंचायत "
 
 #: issuemgr/templates/reportselection.html:76
 msgid "Select Village"
-msgstr ""
+msgstr " चयनित गांव "
 
 #: issuemgr/templates/reportselection.html:87
 msgid "Selected Location Details"
-msgstr ""
+msgstr " चयनितस्थिति विवरण "
 
 #: issuemgr/templates/reportselection.html:97
 msgid "GramPanchayat"
-msgstr ""
+msgstr " ग्राम पंचायत "
 
 #: issuemgr/templates/reportselection.html:103
 msgid "Click to remove"
@@ -522,15 +522,15 @@ msgstr ""
 
 #: issuemgr/templates/track_issues.html:29 issuemgr/templates/update.html:27
 msgid "Complaint Number:"
-msgstr ""
+msgstr " शिकायत क्रमांक "
 
 #: issuemgr/templates/track_issues.html:38
 msgid "Current Status:"
-msgstr ""
+msgstr " तत्कालस्थिति "
 
 #: issuemgr/templates/track_issues.html:48 issuemgr/templates/update.html:46
 msgid "Filed By:"
-msgstr ""
+msgstr " दर्ज  "
 
 #: issuemgr/templates/track_issues.html:67 issuemgr/templates/update.html:65
 msgid "Filed On:"
@@ -538,11 +538,11 @@ msgstr ""
 
 #: issuemgr/templates/track_issues.html:76 issuemgr/templates/update.html:74
 msgid "Issue Date:"
-msgstr ""
+msgstr " मुददा तिथि "
 
 #: issuemgr/templates/track_issues.html:86 issuemgr/templates/update.html:84
 msgid "Complaint Summary:"
-msgstr ""
+msgstr " शिकायत विवरण "
 
 #: issuemgr/templates/track_issues.html:96 issuemgr/templates/update.html:94
 msgid "Assigned To:"
@@ -551,15 +551,15 @@ msgstr ""
 #: issuemgr/templates/track_issues.html:105 issuemgr/templates/update.html:103
 #: issuemgr/templates/update.html.py:221
 msgid "Department:"
-msgstr ""
+msgstr " विभाग "
 
 #: issuemgr/templates/track_issues.html:129 issuemgr/templates/update.html:125
 msgid "Evidences:"
-msgstr ""
+msgstr " साक्ष्य "
 
 #: issuemgr/templates/track_issues.html:142
 msgid "History for Complaint No. "
-msgstr ""
+msgstr " शिकायत क्रमांक का इतिहास "
 
 #: issuemgr/templates/track_issues.html:148
 msgid "Set Reminder"
@@ -571,15 +571,15 @@ msgstr ""
 
 #: issuemgr/templates/track_issues.html:168 issuemgr/templates/update.html:260
 msgid "Changed On"
-msgstr ""
+msgstr " परिवर्तित "
 
 #: issuemgr/templates/track_issues.html:171 issuemgr/templates/update.html:263
 msgid "Comment"
-msgstr ""
+msgstr " सुझाव "
 
 #: issuemgr/templates/track_issues.html:172 issuemgr/templates/update.html:264
 msgid "Changed by"
-msgstr ""
+msgstr " परिवर्तित "
 
 #: issuemgr/templates/track_issues.html:192
 msgid "Setting Reminder for Complaint # "
@@ -587,7 +587,7 @@ msgstr ""
 
 #: issuemgr/templates/track_issues.html:195
 msgid "Set"
-msgstr ""
+msgstr "ठीक करना"
 
 #: issuemgr/templates/track_issues_not_found.html:23
 #, python-format
@@ -595,6 +595,7 @@ msgid ""
 " The complaint number [%(complaintno)s] was not found. Are you sure about "
 "the complaint number? "
 msgstr ""
+"शिकायत क्रमांक [%(complaintno)s] स्थापित नही हुआ आप निश्चित है उसके बारे में?"
 
 #: issuemgr/templates/update-cannot-do.html:21
 msgid "This issue cannot be updated."
@@ -602,248 +603,248 @@ msgstr ""
 
 #: issuemgr/templates/update.html:36
 msgid "Current Status"
-msgstr ""
+msgstr " तत्कालस्थिति "
 
 #: issuemgr/templates/update.html:137 issuemgr/templates/update.html.py:160
 msgid "Optional"
-msgstr ""
+msgstr " विकल्प "
 
 #: issuemgr/templates/update.html:140 issuemgr/templates/update.html.py:163
 msgid "Personal Details:"
-msgstr ""
+msgstr " ब्यकतिगत विवरण "
 
 #: issuemgr/templates/update.html:143 issuemgr/templates/update.html.py:166
 msgid "Gender        :"
-msgstr ""
+msgstr " लिंग "
 
 #: issuemgr/templates/update.html:151 issuemgr/templates/update.html.py:173
 msgid "Community     :"
-msgstr ""
+msgstr " समुदाय "
 
 #: issuemgr/templates/update.html:191
 msgid "New Status"
-msgstr ""
+msgstr " नयी स्थिति "
 
 #: issuemgr/templates/update.html:200
 msgid "Location (Revised)"
-msgstr ""
+msgstr " स्थिति (संशोधित)"
 
 #: issuemgr/templates/update.html:208
 msgid "Block:"
-msgstr ""
+msgstr " जनपद पंचायत "
 
 #: issuemgr/templates/update.html:213
 msgid "Complaint Type (Revised)"
-msgstr ""
+msgstr " शिकायत प्रकार (संशोधित)"
 
 #: issuemgr/templates/update.html:230
 msgid "Comment:"
-msgstr ""
+msgstr "सुझाव"
 
 #: issuemgr/templates/update.html:238
 msgid "Evidence:"
-msgstr ""
+msgstr "साक्ष्य"
 
 #: issuemgr/templates/update.html:255
 msgid "History for Complaint No."
-msgstr ""
+msgstr "शिकायत क्रमांक का इतिहास"
 
 #: masters/forms.py:108
 msgid "Invalid DM Object"
-msgstr ""
+msgstr "डी0एम0 का आपत्ति अमान्य है"
 
 #: masters/forms.py:110
 msgid "Multiple DM Objects should not be present"
-msgstr ""
+msgstr "डी0एम0 का विभिन्न आपत्ति प्रस्तुत नही हो सकता"
 
 #: masters/forms.py:174
 msgid "Department is mandatory"
-msgstr ""
+msgstr "विभाग आवश्यक है"
 
 #: masters/forms.py:213
 msgid "UserName"
-msgstr ""
+msgstr "सेवाकर्मी नाम"
 
 #: masters/forms.py:215 templates/edit.html:22
 msgid "Phone Number"
-msgstr ""
+msgstr "फोन न0"
 
 #: masters/forms.py:292 masters/forms.py:304 masters/forms.py:338
 #: masters/forms.py:367 masters/forms.py:403 masters/forms.py:490
 #: masters/forms.py:553 masters/forms.py:614
 #: masters/templates/view_state.html:32
 msgid "State Name"
-msgstr ""
+msgstr "राज्य नाम"
 
 #: masters/forms.py:293 masters/forms.py:305 masters/forms.py:339
 #: masters/forms.py:368 masters/forms.py:404 masters/forms.py:491
 #: masters/forms.py:554 masters/forms.py:615
 #: masters/templates/view_state.html:31
 msgid "State Code"
-msgstr ""
+msgstr "राज्य कोड"
 
 #: masters/forms.py:294 masters/templates/view_block.html:54
 #: masters/templates/view_district.html:33
 #: masters/templates/view_state.html:33
 msgid "Latitude"
-msgstr ""
+msgstr " अक्षांश "
 
 #: masters/forms.py:295 masters/templates/view_block.html:55
 #: masters/templates/view_district.html:34 masters/templates/view_gp.html:57
 #: masters/templates/view_state.html:34 masters/templates/view_village.html:59
 msgid "Longitude"
-msgstr ""
+msgstr " देशान्तर "
 
 #: masters/forms.py:306 masters/forms.py:340 masters/forms.py:369
 #: masters/forms.py:405 masters/forms.py:492 masters/forms.py:555
 #: masters/forms.py:616 masters/templates/view_district.html:32
 msgid "District Name"
-msgstr ""
+msgstr " जिला नाम "
 
 #: masters/forms.py:307 masters/forms.py:341 masters/forms.py:370
 #: masters/forms.py:406 masters/forms.py:493 masters/forms.py:556
 #: masters/forms.py:617 masters/templates/view_district.html:31
 msgid "District Code"
-msgstr ""
+msgstr " जिला कोड "
 
 #: masters/forms.py:308
 msgid "District Latitude"
-msgstr ""
+msgstr " जिलाअक्षांश "
 
 #: masters/forms.py:309
 msgid "District Longitude"
-msgstr ""
+msgstr " जिलादेशान्तर "
 
 #: masters/forms.py:319 masters/forms.py:673
 #: masters/templates/view_dep.html:37
 msgid "Department Name"
-msgstr ""
+msgstr " विभाग नाम "
 
 #: masters/forms.py:320 masters/forms.py:674
 #: masters/templates/view_comp_type.html:36 masters/templates/view_dep.html:36
 msgid "Department Code"
-msgstr ""
+msgstr " विभाग कोड "
 
 #: masters/forms.py:325
 msgid "Department code already exists"
-msgstr ""
+msgstr " विभाग कोड पहले से ही अस्तित्व में है  "
 
 #: masters/forms.py:328
 msgid "Department code must be a string with all CAPTIAL LETTERS"
-msgstr ""
+msgstr " विभाग कोड बडे अक्षर में होना चहिए "
 
 #: masters/forms.py:342 masters/forms.py:497 masters/forms.py:560
 #: masters/forms.py:618 masters/templates/view_block.html:53
 #: masters/templates/view_gp.html:53 masters/templates/view_village.html:53
 msgid "Block Name"
-msgstr ""
+msgstr " जनपद नाम "
 
 #: masters/forms.py:343 masters/forms.py:498 masters/forms.py:561
 #: masters/forms.py:619 masters/templates/view_block.html:52
 #: masters/templates/view_gp.html:52 masters/templates/view_village.html:52
 msgid "Block Code"
-msgstr ""
+msgstr " जनपदकोड "
 
 #: masters/forms.py:344
 msgid "Block Latitude"
-msgstr ""
+msgstr " जनपद ​अक्षांश "
 
 #: masters/forms.py:345
 msgid "Block Longitude"
-msgstr ""
+msgstr " जनपद देशान्तर "
 
 #: masters/forms.py:351
 msgid "Block code must be a number"
-msgstr ""
+msgstr " जनपद कोड संख्या में होना चहिए "
 
 #: masters/forms.py:355
 msgid "Block code already exists"
-msgstr ""
+msgstr " जनपद कोड से ही अस्तित्व में है "
 
 #: masters/forms.py:371 masters/forms.py:494 masters/forms.py:557
 msgid "Gram Panchayat Latitude"
-msgstr ""
+msgstr " ग्राम पंचायत अक्षांशकोड "
 
 #: masters/forms.py:372 masters/forms.py:495 masters/forms.py:558
 msgid "Gram Panchayat Longitude"
-msgstr ""
+msgstr " ग्राम पंचायत दंशान्त "
 
 #: masters/forms.py:375 masters/forms.py:562 masters/forms.py:620
 #: masters/templates/view_gp.html:55 masters/templates/view_village.html:55
 msgid "Gram Panchayat Name"
-msgstr ""
+msgstr " गा्म पंचायत नाम "
 
 #: masters/forms.py:376 masters/forms.py:563 masters/forms.py:621
 #: masters/templates/view_gp.html:54 masters/templates/view_village.html:54
 msgid "Gram Panchayat Code"
-msgstr ""
+msgstr " गा्म पंचायतकोड "
 
 #: masters/forms.py:385
 msgid "Gram Panchayat code must be a number"
-msgstr ""
+msgstr " गा्म पंचायतकोड संख्या में होना चहिए "
 
 #: masters/forms.py:389
 msgid "Gram Panchayat code already exists"
-msgstr ""
+msgstr " ग्राम पंचायत कोड पहले से अस्तित्व में है "
 
 #: masters/forms.py:407 masters/forms.py:623
 #: masters/templates/view_village.html:57
 msgid "Village Name"
-msgstr ""
+msgstr " गांव नाम "
 
 #: masters/forms.py:408 masters/forms.py:624
 #: masters/templates/view_village.html:56
 msgid "Village Code"
-msgstr ""
+msgstr " गांव कोड "
 
 #: masters/forms.py:409 masters/forms.py:625
 msgid "Village Latitude"
-msgstr ""
+msgstr " गांव अक्षांश"
 
 #: masters/forms.py:410 masters/forms.py:626
 msgid "Village Longitude"
-msgstr ""
+msgstr " गांव दंशान्त "
 
 #: masters/forms.py:432
 msgid "Village code must be a number"
-msgstr ""
+msgstr " गांव कोड संख्या में होना चहिए "
 
 #: masters/forms.py:436
 msgid "Village code already exists"
-msgstr ""
+msgstr " गांव कोड पहले से अस्तित्व में है "
 
 #: masters/forms.py:451 masters/forms.py:711 masters/forms.py:730
 #: masters/templates/view_comp_type.html:37
 msgid "Complaint Code"
-msgstr ""
+msgstr " शिकायत कोड "
 
 #: masters/forms.py:452 masters/forms.py:712 masters/forms.py:731
 msgid "Summary"
-msgstr ""
+msgstr " संक्षेप "
 
 #: masters/forms.py:453 masters/forms.py:713 masters/forms.py:732
 msgid "Classification"
-msgstr ""
+msgstr " वर्गीकरण"
 
 #: masters/forms.py:454 masters/forms.py:714 masters/forms.py:733
 msgid "Default SMS New"
-msgstr ""
+msgstr "बकाया संदेश नया"
 
 #: masters/forms.py:455 masters/forms.py:715 masters/forms.py:734
 msgid "Default SMS Acknowledge"
-msgstr ""
+msgstr "बकाया संदेश स्वीकार"
 
 #: masters/forms.py:456 masters/forms.py:716 masters/forms.py:735
 msgid "Default SMS Open"
-msgstr ""
+msgstr "बकाया संदेश खुला"
 
 #: masters/forms.py:457 masters/forms.py:717 masters/forms.py:736
 msgid "Default SMS Resolved"
-msgstr ""
+msgstr " बकाया संदेश सुलझा "
 
 #: masters/forms.py:458 masters/forms.py:718 masters/forms.py:737
 msgid "Default SMS Closed"
-msgstr ""
+msgstr " बकाया संदेश बंद "
 
 #: masters/forms.py:459 masters/forms.py:719 masters/forms.py:738
 msgid "MDG Goals"
@@ -851,55 +852,55 @@ msgstr ""
 
 #: masters/forms.py:469
 msgid "Complaint code already exists"
-msgstr ""
+msgstr " शिकायत कोड पेहेले से ही अस्तित्व में हे "
 
 #: masters/forms.py:516 masters/forms.py:520
 msgid "This code can't be used. Block with this code already exists"
-msgstr ""
+msgstr " यह कोड अनुप्योगी हे A जनपद कोड पहले से ही अस्तित्व में है "
 
 #: masters/forms.py:583 masters/forms.py:587
 msgid ""
 "This code can't be used. Gram Panchayat with this code exists within block"
-msgstr ""
+msgstr " यह कोड अनुप्योगी हेA जनपद में यह ग्राम पंचायत कोड पहले से ही अस्तित्व में है "
 
 #: masters/forms.py:649 masters/forms.py:653
 msgid ""
 "This code can't be used. Village with this code exists within Gram Panchayat"
-msgstr ""
+msgstr " यह कोड अनुप्योगी हेA ग्राम पंचायत में यह ग्राम कोड पहले से ही अस्तित्व में है "
 
 #: masters/forms.py:691 masters/forms.py:695
 msgid ""
 "Department code already exists please enter non-existing department code"
-msgstr ""
+msgstr " विभाग कोड पहले से ही अस्तित्व में है A  कृपया अस्तित्व हीन विभाग कोड दर्ज करे "
 
 #: masters/forms.py:763 masters/forms.py:767
 msgid "Complaint code already exists please enter non-existing complaint code"
-msgstr ""
+msgstr " शिकायत कोड पेहेले से ही अस्तित्व में हे  कृपया अस्तित्व हीन शिकायत कोड दर्ज करे "
 
 #: masters/views.py:193
 msgid ""
-"Wrong data passed! The data passed doesnot belong to any official Please go "
-"back and click again"
-msgstr ""
+"Wrong data passed! The data passed doesnot belong to any official "
+"Please go back and click again"
+msgstr " कृपया पिछे जाकर दबाये "
 
 #: masters/views.py:311
 msgid ""
-"Wrong data passed! The data passed doesnot belong to any cso Please go back "
-"and click again"
-msgstr ""
+"Wrong data passed! The data passed doesnot belong to any cso back "
+"Please go and click again"
+msgstr " कृपया पिछे जाकर दबाये "
 
 #: masters/templates/add_block.html:21
 msgid "Add Block"
-msgstr ""
+msgstr " जनपद जोडे "
 
 #: masters/templates/add_block.html:70 masters/templates/add_gp.html:80
 #: masters/templates/add_village.html:88
 msgid "Add"
-msgstr ""
+msgstr " जोडे "
 
 #: masters/templates/add_comp_type.html:21
 msgid "Add Complaint"
-msgstr ""
+msgstr " शिकायत जोडे "
 
 #: masters/templates/add_comp_type.html:102
 #: masters/templates/add_cso_member.html:44 masters/templates/add_dep.html:46
@@ -911,213 +912,213 @@ msgstr ""
 #: masters/templates/edit_gp.html:85 masters/templates/edit_official.html:54
 #: masters/templates/edit_state.html:50 masters/templates/edit_village.html:93
 msgid "Save"
-msgstr ""
+msgstr " बचाए "
 
 #: masters/templates/add_cso_member.html:21
 msgid "Adding New CSO Member"
-msgstr ""
+msgstr " नये गेर सरकारी संघठन सदस्य को जोडे "
 
 #: masters/templates/add_cso_member.html:45
 #: masters/templates/add_official.html:51 masters/templates/create_dm.html:45
 #: masters/templates/edit_dm.html:51
 msgid "Cancel"
-msgstr ""
+msgstr " रद्ध् करे "
 
 #: masters/templates/add_dep.html:21
 msgid "Add Department"
-msgstr ""
+msgstr " विभाग जोडे "
 
 #: masters/templates/add_gp.html:21
 msgid "Add Gram Panchayat"
-msgstr ""
+msgstr " ग्राम पंचायत जोडे "
 
 #: masters/templates/add_official.html:21
 msgid "Adding Official"
-msgstr ""
+msgstr " अधिकारी जोडे "
 
 #: masters/templates/add_village.html:21
 msgid "Add Village"
-msgstr ""
+msgstr " ग्राम जोडे "
 
 #: masters/templates/create_dm.html:21
 msgid "Registering District Magistrate"
-msgstr ""
+msgstr " ज़िला अधिकारी को पंजीकृत करे "
 
 #: masters/templates/create_dm.html:44
 msgid "Register"
-msgstr ""
+msgstr " पंजीयन "
 
 #: masters/templates/cso_master.html:26
 msgid "CMH Members"
-msgstr ""
+msgstr " सामुदायिक निगरानी केन्द्र सदस्य "
 
 #: masters/templates/cso_master.html:29 masters/templates/officials.html:29
 #: masters/templates/view_block.html:46
 #: masters/templates/view_comp_type.html:30 masters/templates/view_dep.html:30
 #: masters/templates/view_gp.html:46 masters/templates/view_village.html:46
 msgid "Add New"
-msgstr ""
+msgstr " नया जोडे "
 
 #: masters/templates/cso_master.html:35 masters/templates/masters.html:84
 #: masters/templates/officials.html:34
 msgid "Role"
-msgstr ""
+msgstr " किरदार "
 
 #: masters/templates/cso_master.html:36 masters/templates/masters.html:85
 #: masters/templates/officials.html:35
 msgid "Phone"
-msgstr ""
+msgstr " दूरभाष "
 
 #: masters/templates/edit_block.html:21
 msgid "Edit Block"
-msgstr ""
+msgstr " जनपद  संशोधन "
 
 #: masters/templates/edit_comp_type.html:21
 msgid "Edit Complaint Type"
-msgstr ""
+msgstr " शिकायत प्रकार संशोधन"
 
 #: masters/templates/edit_cso.html:21
 msgid "Edit CSO"
-msgstr ""
+msgstr " गैर सरकारी संघठन संशोधन "
 
 #: masters/templates/edit_dep.html:21
 msgid "Edit Department"
-msgstr ""
+msgstr " विभाग संशोधन "
 
 #: masters/templates/edit_district.html:22 masters/templates/masters.html:35
 #: masters/templates/view_district.html:21
 msgid "District"
-msgstr ""
+msgstr " ज़िला "
 
 #: masters/templates/edit_dm.html:21 masters/templates/masters.html:25
 #: masters/templates/view_change_dm.html:21 masters/templates/view_dm.html:21
 msgid "District Magistrate"
-msgstr ""
+msgstr " ज़िला अधिकारी "
 
 #: masters/templates/edit_gp.html:21
 msgid "Edit Gram Panchayat"
-msgstr ""
+msgstr " ग्राम पंचायत संशोधन "
 
 #: masters/templates/edit_official.html:21
 msgid "Edit Official"
-msgstr ""
+msgstr " अधिकारी संशोधन "
 
 #: masters/templates/edit_state.html:22 masters/templates/masters.html:34
 #: masters/templates/view_state.html:21
 msgid "State"
-msgstr ""
+msgstr " राज्य "
 
 #: masters/templates/edit_village.html:21
 msgid "Edit Village"
-msgstr ""
+msgstr " ग्राम संशोधन "
 
 #: masters/templates/masters.html:22
 msgid "People"
-msgstr ""
+msgstr " जनता "
 
 #: masters/templates/masters.html:26
 msgid "Officials"
-msgstr ""
+msgstr " अधिकारी "
 
 #: masters/templates/masters.html:27
 msgid "CSO Members"
-msgstr ""
+msgstr " गैर सरकारी संघठन सदस्य "
 
 #: masters/templates/masters.html:42
 msgid "Complaints"
-msgstr ""
+msgstr " शिकायते "
 
 #: masters/templates/masters.html:55
 msgid "Registered Users"
-msgstr ""
+msgstr " पंजीकृत सेवाकर्मी "
 
 #: masters/templates/masters.html:86
 msgid "Email"
-msgstr ""
+msgstr " ई-मेल "
 
 #: masters/templates/officials.html:26
 msgid "List of Officials"
-msgstr "अधिकारियों की सूची"
+msgstr " अधिकारीयों की सूची "
 
 #: masters/templates/officials.html:37
 msgid "Supervisor"
-msgstr "सुपरवाइज़र"
+msgstr " पर्वेक्षक "
 
 #: masters/templates/view_block.html:26
 #, fuzzy
 msgid "List of Blocks"
-msgstr "अधिकारियों की सूची"
+msgstr " जनपद की सूची "
 
 #: masters/templates/view_block.html:27
 msgid "Block belonging to"
-msgstr ""
+msgstr " जनपद संबंधीत "
 
 #: masters/templates/view_block.html:30 masters/templates/view_gp.html:29
 #: masters/templates/view_village.html:29
 msgid "State:"
-msgstr ""
+msgstr " राज्य "
 
 #: masters/templates/view_block.html:33 masters/templates/view_gp.html:32
 #: masters/templates/view_village.html:32
 msgid "State Code:"
-msgstr ""
+msgstr " राज्य कोड "
 
 #: masters/templates/view_block.html:37 masters/templates/view_gp.html:36
 #: masters/templates/view_village.html:36
 msgid "District:"
-msgstr ""
+msgstr " ज़िला: "
 
 #: masters/templates/view_block.html:40 masters/templates/view_gp.html:39
 #: masters/templates/view_village.html:39
 msgid "District Code:"
-msgstr ""
+msgstr " ज़िला कोड: "
 
 #: masters/templates/view_comp_type.html:26
 msgid "List of Complaints and Complaint Types"
-msgstr ""
+msgstr "शिकायत की सूची और शिकायत प्रकार"
 
 #: masters/templates/view_comp_type.html:38
 msgid "Complaint Department"
-msgstr ""
+msgstr "शिकायत विभाग"
 
 #: masters/templates/view_comp_type.html:39
 msgid "Complaint Classification"
-msgstr ""
+msgstr "शिकायत वर्गीकरण"
 
 #: masters/templates/view_comp_type.html:40
 msgid "MDGs"
-msgstr ""
+msgstr "सहास्त्राब्दि विकास लक्ष्य "
 
 #: masters/templates/view_dep.html:26
 msgid "List of Departments"
-msgstr ""
+msgstr "विभागों की सूची "
 
 #: masters/templates/view_district.html:25
 #: masters/templates/view_state.html:25
 msgid "Edit"
-msgstr ""
+msgstr " संशोधन "
 
 #: masters/templates/view_dm.html:26 templates/edit.html:9
 #: templates/profile.html:9
 msgid "Username:"
-msgstr ""
+msgstr " सेवाकर्मी नाम "
 
 #: masters/templates/view_dm.html:30 templates/edit.html:18
 #: templates/profile.html:13
 msgid "Name:"
-msgstr ""
+msgstr "नाम"
 
 #: masters/templates/view_dm.html:34
 msgid "Phone:"
-msgstr ""
+msgstr " दूरभाष "
 
 #: masters/templates/view_gp.html:25
 msgid "List of Gram Panchayats"
-msgstr ""
+msgstr " ग्राम पंचायत की सूचि "
 
 #: masters/templates/view_gp.html:26
 msgid "Gram Panchayats belonging to"
-msgstr ""
+msgstr " संबंधित ग्राम पंचायत "
 
 #: masters/templates/view_gp.html:56 masters/templates/view_village.html:58
 msgid "Lattitude"
@@ -1126,21 +1127,20 @@ msgstr ""
 #: masters/templates/view_village.html:25
 #, fuzzy
 msgid "List of Villages"
-msgstr "अधिकारियों की सूची"
+msgstr " गावों की सूची "
 
 #: masters/templates/view_village.html:26
 msgid "Village belongs to"
-msgstr ""
+msgstr " संबंधित ग्राम "
 
 #: templates/aboutus.html:6
 msgid ""
-"AMPLIFYING CITIZEN VOICES FOR ACCOUNTABLE GOVERNANCE AND THE ACHIEVEMENT OF "
-"THE MILLENNIUM DEVELOPMENT GOALS (MDGs)"
+"AMPLIFYING CITIZEN VOICES FOR ACCOUNTABLE GOVERNANCE AND THE ACHIEVEMENT OF THE MILLENNIUM DEVELOPMENT GOALS (MDGs)"
 msgstr ""
 
 #: templates/aboutus.html:8
 msgid "Background:"
-msgstr ""
+msgstr " पृष्ठ भूमि "
 
 #: templates/aboutus.html:9
 msgid ""
@@ -1163,7 +1163,7 @@ msgstr ""
 
 #: templates/aboutus.html:11
 msgid "What is SAMADHAN?"
-msgstr ""
+msgstr " समाधान क्या है? "
 
 #: templates/aboutus.html:12
 msgid ""
@@ -1189,7 +1189,7 @@ msgstr ""
 
 #: templates/aboutus.html:14
 msgid "How does the SAMADHAN Platform Work?"
-msgstr ""
+msgstr " समाधान मंच कैसे काम करता है? "
 
 #: templates/aboutus.html:15
 msgid ""
@@ -1225,7 +1225,7 @@ msgstr ""
 
 #: templates/aboutus.html:18
 msgid "Sehore District"
-msgstr ""
+msgstr " सिहोरे ज़िला "
 
 #: templates/aboutus.html:18
 msgid ", the "
@@ -1233,15 +1233,15 @@ msgstr ""
 
 #: templates/aboutus.html:18
 msgid "Government of Madhya Pradesh"
-msgstr ""
+msgstr " मध्य प्रदेश सरकार "
 
 #: templates/aboutus.html:18
 msgid ", civil society organization"
-msgstr ""
+msgstr " गैर सरकारी संघठन "
 
 #: templates/aboutus.html:18
 msgid "Samarthan"
-msgstr ""
+msgstr " समर्थन "
 
 #: templates/aboutus.html:18
 msgid ""
@@ -1251,23 +1251,23 @@ msgstr ""
 
 #: templates/aboutus.html:18
 msgid "Koraput District"
-msgstr ""
+msgstr " कोरापूट ज़िला "
 
 #: templates/aboutus.html:18
 msgid "Government of Orissa"
-msgstr ""
+msgstr " ओडिसा सरकार "
 
 #: templates/aboutus.html:18
 msgid ", civil society partners"
-msgstr ""
+msgstr " गैर सरकारी सहयोगी "
 
 #: templates/aboutus.html:18
 msgid "VSO India Trust"
-msgstr ""
+msgstr " वी. अस. ओ. भारतिय ट्रस्ट "
 
 #: templates/aboutus.html:18
 msgid "and"
-msgstr ""
+msgstr " और "
 
 #: templates/aboutus.html:18
 msgid "South Orissa Voluntary Action (SOVA)"
@@ -1284,39 +1284,39 @@ msgstr ""
 
 #: templates/base.html:20 templates/reportbase.html:20
 msgid "Samadhan"
-msgstr ""
+msgstr " समाधान "
 
 #: templates/basewithmenu.html:24 templates/reportbase.html:41
 msgid "About Us"
-msgstr "हमारे विषय में"
+msgstr " हमारे बारे मे "
 
 #: templates/basewithmenu.html:26 templates/reportbase.html:43
 msgid "Home"
-msgstr "होमपेज"
+msgstr " मुख्य "
 
 #: templates/basewithmenu.html:31
 msgid "Language Selection:"
-msgstr ""
+msgstr " भाषा चयन "
 
 #: templates/basewithmenu.html:51
 msgid "Profile"
-msgstr ""
+msgstr " रूप रेखा "
 
 #: templates/basewithmenu.html:53 templates/loggedinbase.html:19
 msgid "Sign out"
-msgstr ""
+msgstr " बंद करे "
 
 #: templates/basewithmenu.html:56 templates/signinbase.html:20
 msgid "Sign in"
-msgstr ""
+msgstr " खोले "
 
 #: templates/basewithmenu.html:66
 msgid "Joint Initiative of "
-msgstr ""
+msgstr " संयुक्त पहल "
 
 #: templates/basewithmenu.html:67
 msgid "Collectorate Sehore, UN Millenium Campaign and Samarthan"
-msgstr ""
+msgstr " ज़िला प्रशासन सिहोर. संयुक्त राष्ट्र सहस्त्राब्दि अभियान और समर्थन "
 
 #: templates/basewithmenu.html:74
 #, python-format
@@ -1325,37 +1325,37 @@ msgstr ""
 
 #: templates/edit.html:5
 msgid "Editing User Profile"
-msgstr ""
+msgstr " संशोधन सेवाकर्मी रूप रेखा "
 
 #: templates/error.html:23
 msgid ""
 "General failure performing the requested operation. Please contact system "
 "administrator."
-msgstr ""
+msgstr " प्रबंधक "
 
 #: templates/index.html:28
 msgid "Time Period"
-msgstr ""
+msgstr " समय अव्धि "
 
 #: templates/index.html:33
 msgid "Start Date"
-msgstr ""
+msgstr " प्रारंभ तिथी "
 
 #: templates/index.html:36
 msgid "End Date"
-msgstr ""
+msgstr " अंतीम तिथी "
 
 #: templates/index.html:48
 msgid "Apply"
-msgstr ""
+msgstr " आवेधन करना "
 
 #: templates/index.html:53
 msgid "Generate Report"
-msgstr ""
+msgstr " प्रस्तुत रिपोर्ट "
 
 #: templates/index.html:71
 msgid "All Departments"
-msgstr ""
+msgstr " सारे विभाग "
 
 #: templates/index.html:80
 #, python-format
@@ -1364,43 +1364,43 @@ msgstr ""
 
 #: templates/index.html:95
 msgid "Complaint Pendency"
-msgstr ""
+msgstr " बची शिकायत "
 
 #: templates/loggedinbase.html:19
 msgid "Hello"
-msgstr ""
+msgstr " सुनो "
 
 #: templates/profile.html:5
 msgid "User Profile"
-msgstr ""
+msgstr " सेवाकर्ता रूपरेखा "
 
 #: templates/profile.html:17
 msgid "Phone Number:"
-msgstr ""
+msgstr " फोन नम्बर "
 
 #: templates/profile.html:22
 msgid "Edit Profile"
-msgstr ""
+msgstr " संशोधन रूप रेखा "
 
 #: templates/profile.html:23
 msgid "Change Password"
-msgstr ""
+msgstr "पहचान परिवर्तन्"
 
 #: usermgr/forms.py:29
 msgid "Username"
-msgstr ""
+msgstr "सेवाकर्मी नाम"
 
 #: usermgr/forms.py:32
 msgid "Password"
-msgstr ""
+msgstr " पहचान "
 
 #: usermgr/forms.py:41
 msgid "Username / Password does not match"
-msgstr ""
+msgstr " सेवाकर्मी /पहचान नाम एक बराबर न​ही है "
 
 #: usermgr/forms.py:43
 msgid "Username is not registered"
-msgstr ""
+msgstr " सेवाकर्मी नाम पंजीकृत न​ही है "
 
 #: usermgr/forms.py:45
 msgid "Account  suspended. Contact Administrator"
@@ -1408,15 +1408,15 @@ msgstr ""
 
 #: usermgr/forms.py:50
 msgid "username"
-msgstr ""
+msgstr " सेवाकर्मी नाम "
 
 #: usermgr/forms.py:51
 msgid "password"
-msgstr ""
+msgstr " पहचान "
 
 #: usermgr/forms.py:52
 msgid "repassword"
-msgstr ""
+msgstr " पुन: पहचान "
 
 #: usermgr/forms.py:53
 msgid "fname"
@@ -1428,71 +1428,71 @@ msgstr ""
 
 #: usermgr/forms.py:55
 msgid "streetaddress"
-msgstr ""
+msgstr " गली का पता "
 
 #: usermgr/forms.py:56
 msgid "town"
-msgstr ""
+msgstr " कस्बा "
 
 #: usermgr/forms.py:57
 msgid "district"
-msgstr ""
+msgstr " जिला "
 
 #: usermgr/forms.py:58
 msgid "state"
-msgstr ""
+msgstr " राज्य "
 
 #: usermgr/forms.py:59
 msgid "pincode"
-msgstr ""
+msgstr " पिन कोड "
 
 #: usermgr/forms.py:60
 msgid "phone"
-msgstr ""
+msgstr " फोन "
 
 #: usermgr/forms.py:61
 msgid "mobile"
-msgstr ""
+msgstr " मोबाइल "
 
 #: usermgr/forms.py:62
 msgid "email"
-msgstr ""
+msgstr " इ.मेल "
 
 #: usermgr/forms.py:70
 msgid "Username already Exist"
-msgstr ""
+msgstr " सेवाकर्मी नाम पहले से है "
 
 #: usermgr/forms.py:74
 msgid "Username format is invalid"
-msgstr ""
+msgstr " सेवाकर्मी प्रपत्र अमान्य है "
 
 #: usermgr/forms.py:82
 msgid "Mobile number format is invalid"
-msgstr ""
+msgstr " मोबाइल प्रपत्र अमान्य है "
 
 #: usermgr/forms.py:89
 msgid "Phone number format is invalid"
-msgstr ""
+msgstr " फोन न0 प्रपत्र अमान्य है "
 
 #: usermgr/forms.py:98
 msgid "Old password:"
-msgstr ""
+msgstr " पुराना पहचान "
 
 #: usermgr/forms.py:99
 msgid "New password:"
-msgstr ""
+msgstr " नया पहचान "
 
 #: usermgr/forms.py:100
 msgid "Confirm Password:"
-msgstr ""
+msgstr " निश्चित पहचान "
 
 #: usermgr/forms.py:108
 msgid "Old password is wrong"
-msgstr ""
+msgstr " पुराना पहचान गलत "
 
 #: usermgr/forms.py:116
 msgid "Passwords do not match"
-msgstr ""
+msgstr " पहचान मैच नही करता "
 
 #: usermgr/models.py:29
 msgid "Citizen: "
@@ -1512,4 +1512,4 @@ msgstr ""
 
 #: usermgr/templates/login.html:36
 msgid "Forgot Password"
-msgstr ""
+msgstr " पहचान भूल गया "
