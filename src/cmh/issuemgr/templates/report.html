@@ -54,7 +54,7 @@
       </td>
       <td>
         {% if not final %}
-        <button class="btn" name="edit_selection">Modify Selection</button>
+        <button class="btn edit_selection">Modify Selection</button>
         {% endif %}
       </td>
     </tr>
@@ -67,7 +67,7 @@
       </td>
       <td>
         {% if not final %}
-        <button class="btn" name="edit_selection">Modify Selection</button>
+        <button class="btn edit_selection">Modify Selection</button>
         {% endif %}
       </td>
     </tr>
@@ -408,7 +408,7 @@
     </table>
     {% if not final %}
     <div style="text-align:right;">
-      <button class="btn" name="edit_selection">Modify Selection</button>
+      <button class="btn edit_selection">Modify Selection</button>
     </div>
     {% endif %}
   </fieldset>
@@ -471,7 +471,7 @@
     </table>
     {% if not final %}
     <div style="text-align:right;">
-      <button class="btn" name="edit_selection">Modify Selection</button>
+      <button class="btn edit_selection">Modify Selection</button>
     </div>
     {% endif %}
   </fieldset>
@@ -488,108 +488,168 @@
  <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.dateAxisRenderer.js"></script>
  <script type="text/javascript" src="/static/jquery/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
  <script type="text/javascript">
- $(document).ready(function () {
-                       $.jqplot.config.enablePlugins = true;
-                       {% for dept in stats.depts %}
-                       $.jqplot('volume-{{dept.id}}', {{ stats.volume|get_schemes_data:dept.id }},
-                                {
-                                    seriesColors : ["#948b54", "#95b3d7"],
-                                    seriesDefaults:{
-                                        renderer:$.jqplot.BarRenderer,
-                                        rendererOptions : {
-                                            barWidth : 25
-                                        }
-                                    },
-                                    axes: {
-                                        xaxis: {
-                                            renderer: $.jqplot.CategoryAxisRenderer,
-                                            ticks: [{% for s in stats.volume|get_schemes:dept.id %} "{{ s|safe }}" {% if not forloop.last %} , {% endif %} {% endfor %}],
-                                            tickOptions : {
-                                                angle:-30, 
-                                                labelPosition : 'middle'
-                                            },
-                                            tickRenderer : $.jqplot.CanvasAxisTickRenderer
-                                        },
-                                        yaxis: {
-                                            min : 0,
-                                            pad: 1.5,
-                                            tickOptions: {
-                                                show: false,
-                                                formatString:'%d',
-                                            },
-                                            label : '{% trans "Number of Complaints" %}',
-                                            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                                            labelOptions: {
-                                                fontFamily: 'Georgia, Serif',
-                                                fontSize: '12pt',
-                                            }
-                                        }
-                                    }
-                                });
-                       $.jqplot('time-{{dept.id}}', {{ stats.time|get_schemes_data:dept.id }},
-                                {
-                                    seriesColors : ["#c5be97", "#538ed5"],
-                                    seriesDefaults:{
-                                        renderer:$.jqplot.BarRenderer,
-                                        rendererOptions : {
-                                            barWidth : 25
-                                        }
-                                    },
-                                    axes: {
-                                        xaxis: {
-                                            renderer: $.jqplot.CategoryAxisRenderer,
-                                            ticks: [{% for s in stats.time|get_schemes:dept.id %} "{{ s|safe }}" {% if not forloop.last %} , {% endif %} {% endfor %}],
-                                            tickOptions : {angle:-30, labelPosition : 'middle'},
-                                            tickRenderer : $.jqplot.CanvasAxisTickRenderer
-                                        },
-                                        yaxis: {
-                                            min : 0,
-                                            pad: 1.5,
-                                            tickOptions: {
-                                                show: false,
-                                                formatString:'%d',
-                                            },
-                                            label : '{% trans "Days" %}',
-                                            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                                            labelOptions: {
-                                                fontFamily: 'Georgia, Serif',
-                                                fontSize: '12pt',
-                                            }
-                                        }
-                                    }
-                                });
-                       {% endfor %}
-                       $.jqplot('mdgs', {{ stats.mdgs }},
-                                {
-                                    seriesColors : ["#fcdb00", "#bbd802", "#abaac9", "#b2def7", "#b2def7", "#b2def7", "#5ba129"],
-                                    seriesDefaults:{
-                                        renderer:$.jqplot.BarRenderer,
-                                        rendererOptions : {
-                                            barWidth : 65,
-                                            barPadding: 35
-                                        }
-                                    },
-                                    axes: {
-                                        xaxis: {
-                                            renderer: $.jqplot.CategoryAxisRenderer,
-                                            ticks: [' ']
-                                        },
-                                        yaxis: {
-                                            min : 0,
-                                            pad: 1.5,
-                                            tickOptions: {
-                                                show: false,
-                                                formatString:'%d',
-                                            },
-                                            label : '{% trans "Number of Complaints" %}',
-                                            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                                            labelOptions: {
-                                                fontFamily: 'Georgia, Serif',
-                                                fontSize: '12pt',
-                                            }
-                                        }
-                                    }
-                                });
-                   });
- </script>
+ $(document).ready(
+     function () {
+         $.jqplot.config.enablePlugins = true;
+         {% for dept in stats.depts %}
+         $.jqplot('volume-{{dept.id}}', {{ stats.volume|get_schemes_data:dept.id }},
+                  {
+                      seriesColors : ["#948b54", "#95b3d7"],
+                      seriesDefaults:{
+                          renderer:$.jqplot.BarRenderer,
+                          rendererOptions : {
+                              barWidth : 25
+                          }
+                      },
+                      axes: {
+                          xaxis: {
+                              renderer: $.jqplot.CategoryAxisRenderer,
+                              ticks: [{% for s in stats.volume|get_schemes:dept.id %} "{{ s|safe }}" {% if not forloop.last %} , {% endif %} {% endfor %}],
+                              tickOptions : {
+                                  angle:-30,
+                                  labelPosition : 'middle'
+                              },
+                              tickRenderer : $.jqplot.CanvasAxisTickRenderer
+                          },
+                          yaxis: {
+                              min : 0,
+                              pad: 1.5,
+                              tickOptions: {
+                                  show: false,
+                                  formatString:'%d',
+                              },
+                              label : '{% trans "Number of Complaints" %}',
+                              labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+                              labelOptions: {
+                                  fontFamily: 'Georgia, Serif',
+                                  fontSize: '12pt',
+                              }
+                          }
+                      }
+                  });
+         $.jqplot('time-{{dept.id}}', {{ stats.time|get_schemes_data:dept.id }},
+                  {
+                      seriesColors : ["#c5be97", "#538ed5"],
+                      seriesDefaults:{
+                          renderer:$.jqplot.BarRenderer,
+                          rendererOptions : {
+                              barWidth : 25
+                          }
+                      },
+                      axes: {
+                          xaxis: {
+                              renderer: $.jqplot.CategoryAxisRenderer,
+                              ticks: [{% for s in stats.time|get_schemes:dept.id %} "{{ s|safe }}" {% if not forloop.last %} , {% endif %} {% endfor %}],
+                              tickOptions : {angle:-30, labelPosition : 'middle'},
+                              tickRenderer : $.jqplot.CanvasAxisTickRenderer
+                          },
+                          yaxis: {
+                              min : 0,
+                              pad: 1.5,
+                              tickOptions: {
+                                  show: false,
+                                  formatString:'%d',
+                              },
+                              label : '{% trans "Days" %}',
+                              labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+                              labelOptions: {
+                                  fontFamily: 'Georgia, Serif',
+                                  fontSize: '12pt',
+                              }
+                          }
+                      }
+                  });
+         {% endfor %}
+         $.jqplot('mdgs', {{ stats.mdgs }},
+                  {
+                      seriesColors : ["#fcdb00", "#bbd802", "#abaac9", "#b2def7", "#b2def7", "#b2def7", "#5ba129"],
+                      seriesDefaults:{
+                          renderer:$.jqplot.BarRenderer,
+                          rendererOptions : {
+                              barWidth : 65,
+                              barPadding: 35
+                          }
+                      },
+                      axes: {
+                          xaxis: {
+                              renderer: $.jqplot.CategoryAxisRenderer,
+                              ticks: [' ']
+                          },
+                          yaxis: {
+                              min : 0,
+                              pad: 1.5,
+                              tickOptions: {
+                                  show: false,
+                                  formatString:'%d',
+                              },
+                              label : '{% trans "Number of Complaints" %}',
+                              labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+                              labelOptions: {
+                                  fontFamily: 'Georgia, Serif',
+                                  fontSize: '12pt',
+                              }
+                          }
+                      }
+                  });
+         $(".edit_selection").click (
+             function (event) {
+                 var form = document.createElement ("form");
+
+                 form.action = "/complaint/edit_report/";
+                 form.method = "post";
+
+                 var stdate = document.createElement ("input");
+                 stdate.name = "stdate";
+                 stdate.type = "hidden";
+                 stdate.value = "{{ stats.stdate }}";
+
+                 var endate = document.createElement ("input");
+                 endate.name = "endate";
+                 endate.type = "hidden";
+                 endate.value = "{{ stats.endate }}";
+
+                 var deptids = document.createElement ("input");
+                 deptids.name = "deptids";
+                 deptids.type = "hidden";
+                 deptids.value = "{{ stats.deptids }}";
+
+                 var stateids = document.createElement ("input");
+                 stateids.name = "stateids";
+                 stateids.type = "hidden";
+                 stateids.value = "{{ stats.stateids }}";
+
+                 var disttids = document.createElement ("input");
+                 disttids.name = "disttids";
+                 disttids.type = "hidden";
+                 disttids.value = "{{ stats.disttids }}";
+
+                 var blockids = document.createElement ("input");
+                 blockids.name = "blockids";
+                 blockids.type = "hidden";
+                 blockids.value = "{{ stats.blockids }}";
+
+                 var grampids = document.createElement ("input");
+                 grampids.name = "grampids";
+                 grampids.type = "hidden";
+                 grampids.value = "{{ stats.grampids }}";
+
+                 var villgids = document.createElement ("input");
+                 villgids.name = "villgids";
+                 villgids.type = "hidden";
+                 villgids.value = "{{ stats.villgids }}";
+
+                 form.appendChild (stdate);
+                 form.appendChild (endate);
+                 form.appendChild (deptids);
+                 form.appendChild (stateids);
+                 form.appendChild (disttids);
+                 form.appendChild (blockids);
+                 form.appendChild (grampids);
+                 form.appendChild (villgids);
+
+                 document.body.appendChild (form);
+                 form.submit ();
+             });
+     });
+</script>
 {% endblock %}

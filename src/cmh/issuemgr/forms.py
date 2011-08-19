@@ -404,10 +404,10 @@ class ComplaintTrackForm (forms.Form):
 class DateIndex (forms.Form):
     stdate = forms.DateField (input_formats = ('%d/%m/%Y',),
                               widget = forms.TextInput (attrs = {'autocomplete': 'off',
-                                                                 'style' : 'width:100px'}))
+                                                                 'style' : 'width:80px'}))
     endate = forms.DateField (input_formats = ('%d/%m/%Y',),
                               widget = forms.TextInput (attrs = {'autocomplete': 'off',
-                                                                 'style' : 'width:100px'}))
+                                                                 'style' : 'width:80px'}))
 
 class ComplaintDisplayParams (forms.Form):
     departments = MultiNumberIdField ()
@@ -416,39 +416,45 @@ class ComplaintDisplayParams (forms.Form):
                                                 ("block", "block"),
                                                 ("distt", "distt"),
                                                 ("state", "state")))
-    stdate      = FormattedDateField ();
-    endate      = FormattedDateField ();
+    stdate      = FormattedDateField ()
+    endate      = FormattedDateField ()
 
 class Report (forms.Form):
-    departments  = forms.ModelMultipleChoiceField(queryset = ComplaintDepartment.objects.all(),
-                                                  label    = _("Available Departments"),
-                                                  widget   = forms.Select (attrs = {'style' : 'width:300px;height:150px;',
-                                                                                    'multiple' : 'multiple',}),
-                                                  required = False)
-    selecteddep  = forms.ModelMultipleChoiceField(queryset = ComplaintDepartment.objects.none(),
-                                                  label    = _("Selected Departments"),
-                                                  widget   = forms.Select (attrs = {'style' : 'width:300px;height:150px;',
-                                                                                    'multiple' : 'multiple',}),
-                                                  required = False)
-    sel_loc      = forms.MultipleChoiceField( widget = forms.Select (attrs = {'style' : 'width:300px;height:150px;',
-                                                                              'multiple' : 'multiple',}),
-                                              required = False)
-    block        = forms.ModelChoiceField(queryset = Block.objects.all(), empty_label = "------",
-                                          widget   = forms.Select (attrs = { 'style' : 'width:100%'}),
-                                          required = False)
+    stdate = FormattedDateField ()
+    endate = FormattedDateField ()
+    departments  = forms.ModelMultipleChoiceField (queryset = ComplaintDepartment.objects.all(),
+                                                   label    = _("Available Departments"),
+                                                   widget   = forms.Select (attrs = {'style' : 'width:300px;height:150px;',
+                                                                                     'multiple' : 'multiple',}),
+                                                   required = False)
+
+    selecteddep  = forms.ModelMultipleChoiceField (queryset = ComplaintDepartment.objects.none(),
+                                                   label    = _("Selected Departments"),
+                                                   widget   = forms.Select (attrs = {'style' : 'width:300px;height:150px;',
+                                                                                     'multiple' : 'multiple',}),
+                                                   required = False)
+
+    block        = forms.ModelChoiceField (queryset = Block.objects.all(),
+                                           empty_label = "------",
+                                           widget   = forms.Select (attrs = { 'style' : 'width:100%'}),
+                                           required = False)
     gp           = forms.ModelChoiceField (queryset = GramPanchayat.objects.none (),
                                            empty_label = '------',
                                            widget   = forms.Select (attrs = { 'style' : 'width:100%'}),
                                            required = False)
-    village      = forms.ModelChoiceField (queryset = Village.objects.none (),empty_label = '------',
+    village      = forms.ModelChoiceField (queryset = Village.objects.none (),
+                                           empty_label = '------',
                                            widget   = forms.Select (attrs = { 'style' : 'width:100%'}),
                                            required = False)
-    def __init__ (self, repdata, *args, **kwargs):
+
+    def __init__ (self, stdate, endate, deptids, blockids, *args, **kwargs):
         super (Report, self).__init__ (*args, **kwargs)
-        if repdata != None:
-            self.fields['departments'].queryset = ComplaintDepartment.objects.exclude(id__in = [d.id for d in repdata.department.all ()])
-            self.fields['selecteddep'].queryset = repdata.department.all ()
-            self.fields['block'].queryset       = Block.objects.all().exclude(id__in = [b.id for b in repdata.block.all()])
+
+        self.fields ['stdate'].initial = stdate
+        self.fields ['endate'].initial = endate
+        self.fields ['departments'].queryset = ComplaintDepartment.objects.exclude (id__in = deptids)
+        self.fields ['selecteddep'].queryset = ComplaintDepartment.objects.filter (id__in = deptids)
+        self.fields ['block'].queryset       = Block.objects.all().exclude (id__in = blockids)
 
 
 

@@ -566,7 +566,7 @@ def hot_complaints (request):
     except:
         import traceback
         traceback.print_exc ()
-    vital_stats = {'new' : 0,
+    vital_stats = {'newc' : 0,
                    'ack' : 0,
                    'ope' : 0,
                    'res' : 0,
@@ -576,7 +576,11 @@ def hot_complaints (request):
     return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : [], 'departments' : [], 'vital_stats' : vital_stats}))
 
 def get_vital_stats (deptids, stdate, endate):
-    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, department__in = deptids)
+    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, department__in = deptids, curstate = STATUS_NEW)
+
+    complaintnos = [c.complaintno for c in complaints]
+
+    complaints = Complaint.objects.filter (complaintno__in = complaintnos)
 
     new_complaints = complaints.filter (curstate = STATUS_NEW)
     ack_complaints = complaints.filter (curstate = STATUS_ACK)
@@ -586,7 +590,7 @@ def get_vital_stats (deptids, stdate, endate):
     reo_complaints = complaints.filter (curstate = STATUS_REOPEN)
     pen_complaints = res_complaints.exclude (complaintno__in = [c.complaintno for c in clo_complaints] + [c.complaintno for c in reo_complaints])
 
-    vital_stats = {'new' : len (set ([c.complaintno for c in new_complaints])),
+    vital_stats = {'newc' : len (set ([c.complaintno for c in new_complaints])),
                    'ack' : len (set ([c.complaintno for c in ack_complaints])),
                    'ope' : len (set ([c.complaintno for c in ope_complaints])),
                    'res' : len (set ([c.complaintno for c in res_complaints])),
@@ -720,7 +724,7 @@ def get_report_stats (stdate, endate,
              'deptids' : ",".join ([str (x) for x in deptids]),
              'stateids' : ",".join ([str (x) for x in stateids]),
              'disttids' : ",".join ([str (x) for x in disttids]),
-             'blockids' : ",".join ([str (x) for x in blockids]),
+             'blockids' : ",".join ([str (x.id) for x in blocks]),
              'grampids' : ",".join ([str (x) for x in grampids]),
              'villgids' : ",".join ([str (x) for x in villgids]),
              'depts' : depts,
@@ -902,12 +906,28 @@ def initial_report (request):
 
 
 def edit_report (request):
-    repdata = ReportData.objects.get (id = request.POST ['repdataid'])
-    stats = get_report_stats (repdata)
-    return render_to_response ('report.html', {'stats' : stats,
-                                               'flag'  : False,
-                                               'repdataid'  : repdata.id,
-                                               'staticdata' : repdata})
+    form  = ReportForm (request.POST)
+    if form.is_valid ():
+        all_depts = ComplaintDepartment.objects.all ()
+        if ALL_DEPT_ID in form.cleaned_data ['deptids']:
+            deptids = [dept.id for dept in all_depts]
+        else:
+            deptids = form.cleaned_data ['deptids']
+
+        repform = Report (form.cleaned_data ['stdate'],
+                          form.cleaned_data ['endate'],
+                          deptids,
+                          form.cleaned_data ['blockids'])
+
+        return render_to_response ('reportselection.html', {'form' : repform,
+                                                            'stdate' : form.cleaned_data ['stdate'],
+                                                            'endate' : form.cleaned_data ['endate'],
+                                                            'deptids' : deptids,
+                                                            'blocks' : Block.objects.filter (id__in = form.cleaned_data ['blockids']),
+                                                            'gramps' : GramPanchayat.objects.filter (id__in = form.cleaned_data ['grampids']),
+                                                            'villgs' : Village.objects.filter (id__in = form.cleaned_data ['villgids']),
+                                                            'user' : request.user,
+                                                            'menus' : get_user_menus (request.user, edit_report)})
 
 
 

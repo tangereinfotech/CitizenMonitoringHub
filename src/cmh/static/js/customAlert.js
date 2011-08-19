@@ -38,7 +38,7 @@ function createCustomAlert(title,txt) {
     h1.appendChild(d.createTextNode(title));
 
     // create a paragraph element to contain the txt argument
-    msg = alertObj.appendChild(d.createElement("p"));
+    msg = alertObj.appendChild(d.createElement("div"));
     msg.innerHTML = txt;
 
     // create an anchor element to use as the confirmation button.

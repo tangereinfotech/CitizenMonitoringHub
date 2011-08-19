@@ -20,18 +20,18 @@
 {% block base_content %}
 <div class="top_panel">
   <div class="system_panel">
-    <div class="aboutpanel">
+    <div class="aboutpanel" nowrap="true">
       <ul class="sysnav">
         <li class="un-color"><a href="/">{% trans "Home" %}</a></li>
-        <li>|</li>
+        <li class="un-color">|</li>
         <li class="un-color"><a href="/aboutus">{% trans "About Us" %}</a></li>
-        <li>|</li>
+        <li class="un-color">|</li>
         <li class="un-color"><a href="#">{% trans "For Citizens" %}</a></li>
-        <li>|</li>
+        <li class="un-color">|</li>
         <li class="un-color"><a href="#">{% trans "For Government" %}</a></li>
       </ul>
     </div>
-    <div style="width:67%;float:right">
+    <div style="width:63%;float:right">
       <span class="un-color" style="padding-right:10px;">
         {% trans "Language Selection:" %}
         <form id="langselect" action="/i18n/setlang/" method="post" style="display:inline">
@@ -52,9 +52,9 @@
       {% if user.is_authenticated %}
       <ul class="sys-panel">
         <li class="un-color"> Hello {{ user.username }} </li>
-        <li> | </li>
+        <li class="un-color"> | </li>
         <li class="un-color"> <a href="/user/myprofile/">{% trans "Profile" %}</a> </li>
-        <li> | </li>
+        <li class="un-color"> | </li>
         <li class="un-color"> <a href="/user/logout/">{% trans "Sign out" %}</a> </li>
       </ul>
       {% else %}
@@ -139,7 +139,7 @@
       </tr>
     </table>
   </center>
-  <div style="clear:both;border-top:2px dashed #044a98;" class="img">
+  <div style="clear:both;border-top:1px solid #dddddd;" class="img">
     <center>
       <table>
         <tr>

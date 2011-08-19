@@ -13,19 +13,31 @@
 {# limitations under the License.                                               #}
 
 {% extends "basewithmenu.html" %}
+
+{% load i18n %}
+
 {% block page_content %}
 <div style="width:100%; text-align:center;">
   <div class="report_form" align="center">
+    <h2>{% trans "Editing Report Criteria" %}</h2>
     <fieldset  style="width:750px;">
       <legend>
         {% trans "Duration" %}
       </legend>
-      <input type="text" id="id_stdate" name="stdate" value="{{repdata.strtdate|date:'d/m/Y'}}" readonly="readonly">
-      <input type="text" id="id_endate" name="endate" value="{{repdata.enddate|date:'d/m/Y'}}" readonly="readonly">
+      <table>
+        <tr>
+          <td>{% trans "Start Date" %}</td>
+          <td>{% trans "End Date" %}</td>
+        </tr>
+        <tr>
+          <td> {{ form.stdate }} </td>
+          <td> {{ form.endate }} </td>
+        </tr>
+      </table>
     </fieldset>
     <fieldset  style="width:750px;">
       <legend>
-        Department
+        {% trans "Department" %}
       </legend>
       <table style="text-align:center;">
         <tr>
@@ -34,8 +46,18 @@
             {{ form.departments }}
           </td>
           <td style="text-align:center">
-            <input type = "button" value="Add" id = "btnMoveRight" onclick = "fnMoveItems('id_departments','id_selecteddep','add', {{ repdata.id }})" class="btn" style="width:80px" name="hello"><br/>
-            <input type = "button" value="Remove" id = "btnMoveLeft" onclick = "fnMoveItems('id_selecteddep','id_departments','remove', {{ repdata.id }})" class="btn" style="width:80px">
+            <input type="button"
+                   value="Add"
+                   id="btnMoveRight"
+                   onclick="RepSelector.fnMoveItems('id_departments','id_selecteddep','add')"
+                   class="btn"
+                   style="width:80px"><br/>
+            <input type="button"
+                   value="Remove"
+                   id="btnMoveLeft"
+                   onclick="RepSelector.fnMoveItems('id_selecteddep','id_departments','remove')"
+                   class="btn"
+                   style="width:80px">
           </td>
           <td>
             {% trans "Departments Selected" %}<br/><br/>
@@ -46,7 +68,7 @@
     </fieldset>
     <fieldset  style="width:750px;">
       <legend>
-        Locations
+        {% trans "Locations" %}
       </legend>
       <table style="text-align:center;width:100%">
         <tr>
@@ -105,9 +127,9 @@
                 </tr>
               </thead>
               <tbody>
-                {% for b in repdata.block.all %}
+                {% for b in blocks %}
                 <tr>
-                  <td> {{ b }} </td>
+                  <td> {{ b.name }} </td>
                   <td/>
                   <td/>
                   <form action="/complaint/report/" method="POST" id="formloc-" + "{{ b.id }}">
@@ -120,10 +142,10 @@
                 </tr>
 
                 {% endfor %}
-                {% for g in repdata.gp.all %}
+                {% for g in gramps %}
                 <tr>
-                  <td> {{ g.block }} </td>
-                  <td> {{ g }} </td>
+                  <td> {{ g.block.name }} </td>
+                  <td> {{ g.name }} </td>
                   <td/>
                   <form action="/complaint/report/" method="POST" id="formloc-" + "{{ g.id }}">
                     <td>
@@ -134,11 +156,11 @@
                   </form>
                 </tr>
                 {% endfor %}
-                {% for v in repdata.village.all %}
+                {% for v in villgs %}
                 <tr>
-                  <td> {{ v.grampanchayat.block }} </td>
-                  <td> {{ v.grampanchayat }} </td>
-                  <td> {{ v }} </td>
+                  <td> {{ v.grampanchayat.block.name }} </td>
+                  <td> {{ v.grampanchayat.name }} </td>
+                  <td> {{ v.name }} </td>
                   <form action="/complaint/report/" method="POST"  id="formloc-" + "{{ v.id }}">
                     <td>
                       <input type="hidden" value="{{ repdata.id }}" name="repdataid">
@@ -154,58 +176,23 @@
         </tr>
       </table>
     </fieldset>
-    <form action ="/complaint/edit_report/" method="POST">
-      <table align="center" style="text-align:center;width:830px;">
-        <tr>
-          <td colspan="3">
-            <input type="hidden" name="repdataid" value="{{ repdata.id }}">
-            <input type="submit" value="View Report" name="initial_report" class="btn" />
-          </td>
-        </tr>
-      </table>
-    </form>
+    <input type="submit" value="View Report" name="" class="btn" id="genreport"/>
   </div>
 </div>
 <script type="text/javascript" src="/static/js/reportSelectors.js"></script>
 <script type="text/javascript">
  $(document).ready (
     function () {
-        $("#id_block").change(
-            function(){
-                $.getJSON ("/masters/getgpinblocks/",
-                           {
-                               repdataid : {{ repdata.id }},
-                               blockid : $(this).val ()
-                           },
-                           function (data, status, jqXHR) {
-                               var gp_dom_html = "<option value='0'>-------</option>"
-                               var village_dom_html = "<option value='0'>-------</option>"
-                               $.each (data.gps,
-                                       function (index, gpdata) {
-                                           gp_dom_html += "<option value='" + gpdata.id + "'>" + gpdata.name + "</option>"
-                                       });
-                               $("#id_gp").html (gp_dom_html);
-                               $("#id_village").html (village_dom_html);
-                           });
+        $("#id_stdate").datepicker ({dateFormat : 'dd/mm/yy'});
+        $("#id_endate").datepicker ({dateFormat : 'dd/mm/yy'});
+        $.each ({{ deptids }}, function (index, deptid) {
+                    RepSelector.fnAddSelectedDept (deptid);
+                });
+        $("#genreport").click (
+            function (event) {
+                RepSelector.submitReport ();
             });
-        $("#id_gp").change(
-            function() {
-                $.getJSON ("/masters/getvillingps/",
-                           {
-                               repdataid : {{ repdata.id }},
-                               gpid : $(this).val ()
-                           },
-                           function (data, status, jqXHR) {
-                               var vill_dom_html = "<option value='0'>-------</option>"
-                               $.each (data.vills,
-                                       function (index, villdata) {
-                                           vill_dom_html += "<option value='" + villdata.id + "'>" + villdata.name + "</option>"
-                                       });
-                               $("#id_village").html (vill_dom_html);
-                           });
-            });
-    }
- );
+    });
 </script>
 
 {% endblock %}

@@ -105,7 +105,7 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                                                        }
                                                    });
                    }
-                   $('#comps_new').html (data.vital_stats.new);
+                   $('#comps_new').html (data.vital_stats.newc);
                    $('#comps_ack').html (data.vital_stats.ack);
                    $('#comps_ope').html (data.vital_stats.ope);
                    $('#comps_res').html (data.vital_stats.res);

@@ -22,43 +22,32 @@
 <meta http-equiv="expires" content="0">
 {% endblock %}
 {% block page_content %}
-<div id="department-list" style="border-right: 5px solid #4f6228">
-  <table>
-    <tr>
-      <td colspan="2" align="center">
-        {% trans "Choose Period" %}
-      </td>
-    </tr>
-    <tr>
-      <td style="text-align:right">
-        {{ form.stdate }}
-      </td>
-      <td style="text-align:left">
-        {{ form.endate }}
-      </td>
-      <td rowspan="2">
-        <button type="button" class="btn" onclick="update_maps ();" style="padding:4px 14px;">
-          <span style="font-size:16px; font-weight:bold">{% trans "Update Map, Graph and Stats" %} <br/>{% trans "for Period" %}</span>
-        </button>
-      </td>
-    </tr>
-    <tr>
-      <td style="text-align:center">
-        {% trans "Start Date" %}
-      </td>
-      <td style="text-align:center">
-        {% trans "End Date" %}
-      </td>
-      <td/>
-    </tr>
-    <tr>
-      <td colspan="3" style="text-align:center">
-      </td>
-    </tr>
-  </table>
-  <div class="width_100 text-center" style="border-top:5px solid #4f6228">
+<div id="department-list">
+  <center style="padding-top:10px">
+    <table>
+      <tr>
+        <td colspan="2" align="center">
+          <span style="color:#376091">{% trans "Choose Period" %}</span>
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align:right" valign="middle">
+          {{ form.stdate }}
+        </td>
+        <td style="text-align:left" valign="middle">
+          {{ form.endate }}
+        </td>
+        <td valign="middle">
+          <button type="button" class="btn" onclick="update_maps ();" style="padding:4px 8px;">
+            <span style="font-size:12px;">{% trans "Update Map, Graph and Stats for Period" %}</span>
+          </button>
+        </td>
+      </tr>
+    </table>
+  </center>
+  <div class="width_100 text-center" style="border-top:5px solid #dddddd">
     <span style="font-size:16px;font-weight:bold;color:#376091">{% trans "Select Departments" %}</span><br/>
-    <span style="color:#376091">{% trans "(Map, Graph and Stats update automatically)" %}</span>
+    <span style="color:#376091;font-size:10px;">{% trans "(Map, Graph and Stats update automatically)" %}</span>
   </div>
   <div style="width:100%;height:190px;overflow:auto;">
     <table style="width:100%">
@@ -66,7 +55,7 @@
         <td>
           <input type="checkbox" class="selector all" name="deptid" value="0">
         </td>
-        <td><span class="department-name">{% trans "All Departments" %}</span></td>
+        <td><span class="department-name" style="color:#346096">{% trans "All Departments" %}</span></td>
       </tr>
       {% for department in departments %}
       <tr class="department_row">
@@ -75,7 +64,7 @@
         </td>
         <td>
           <div>
-            <span class="department-name" style="float:left">{% blocktrans with department.name as deptname %}{{ deptname }}{% endblocktrans %}</span>
+            <span class="department-name" style="float:left;color:#346096">{% blocktrans with department.name|title as deptname %}{{ deptname }}{% endblocktrans %}</span>
             <button class="dept-selector deptid-{{department.id}}"
                     style="width:20px;height:15px;background-color:red;float:right;border:0px;padding-right:10px;display:none;"
                     disabled="disabled">
@@ -86,7 +75,7 @@
       {% endfor %}
     </table>
   </div>
-  <div style="border-top:5px solid #4f6228;padding:5px" class="width_100">
+  <div style="border-top:5px solid #dddddd;padding:5px;text-align:center;color:#346096;font-size:11px;" class="width_100">
     {% trans "Click on Locations with number displayed on map. A bubble would pop up. Choose Add to report in the bubble. Select as many locations as desired" %}
   </div>
   <div class="width_100 text-center">
@@ -97,105 +86,111 @@
     </button>
   </div>
 </div>
-<div id="base_map"></div>
+<div id="base_map_container">
+  <div id="base_map"></div>
+</div>
 <div style="clear:both" class="section-title">
 </div>
-<div id="vital-stats">
-  <div style="padding: 0px 20px 10px">
-    <div class="width_100 text-center">
-      {% trans "Vital Statistics" %}<br/>
-      {% trans "(For complaints filed in the report period)" %}
+<div style="padding:20px 0px;">
+  <div id="vital-stats">
+    <div style="padding: 0px 20px 10px">
+      <div class="width_100 text-center" style="padding-bottom:30px">
+        <span style="color:#376091" class="section-header">{% trans "Vital Statistics" %}</span><br/>
+        <span style="color:#376091;font-size:10px;">{% trans "(For complaints filed in the report period)" %}</span>
+      </div>
+      <center>
+        <table  style="border-collapse: collapse;">
+          <tr class="vital-stats-data">
+            <td class="vital-stats-number" style="text-align:right;">
+              <span id="comps_new">
+              </span>
+            </td>
+            <td class="vital-stats-text">
+              <div style="padding-left:30px">
+                {% trans "complaints were filed" %}
+              </div>
+            </td>
+          </tr>
+          <tr class="vital-stats-data">
+            <td class="vital-stats-number" style="text-align:right">
+              <span id="comps_ack">
+              </span>
+            </td>
+            <td class="vital-stats-text">
+              <div style="padding-left:30px">
+                {% trans "were acknowledged" %}
+              </div>
+            </td>
+          </tr>
+          <tr class="vital-stats-data">
+            <td class="vital-stats-number" style="text-align:right">
+              <span id="comps_ope">
+              </span>
+            </td>
+            <td class="vital-stats-text">
+              <div style="padding-left:30px">
+                {% trans "were opened" %}
+              </div>
+            </td>
+          </tr>
+          <tr class="vital-stats-data">
+            <td class="vital-stats-number" style="text-align:right">
+              <span id="comps_res">
+              </span>
+            </td>
+            <td class="vital-stats-text">
+              <div style="padding-left:30px">
+                {% trans "were resolved" %}
+              </div>
+            </td>
+          </tr>
+          <tr class="vital-stats-data">
+            <td class="vital-stats-number" style="text-align:right">
+              <span id="comps_clo">
+              </span>
+            </td>
+            <td class="vital-stats-text">
+              <div style="padding-left:30px">
+                {% trans "were closed" %}
+              </div>
+            </td>
+          </tr>
+          <tr class="vital-stats-data">
+            <td class="vital-stats-number" style="text-align:right">
+              <span id="comps_pen">
+              </span>
+            </td>
+            <td class="vital-stats-text">
+              <div style="padding-left:30px">
+                {% trans "are awaiting confirmation" %}
+              </div>
+            </td>
+          </tr>
+          <tr class="vital-stats-data">
+            <td class="vital-stats-number" style="text-align:right">
+              <span id="comps_reo">
+              </span>
+            </td>
+            <td class="vital-stats-text">
+              <div style="padding-left:30px">
+                {% trans "require further attention" %}
+              </div>
+            </td>
+          </tr>
+        </table>
+      </center>
     </div>
-    <table class="tabularlist" style="border-collapse: collapse;">
-      <tr>
-        <td class="vital-stats-data" style="text-align:right;">
-          <span id="comps_new">
-          </span>
-        </td>
-        <td>
-          <div style="padding-left:30px">
-            {% trans "complaints filed" %}
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td class="vital-stats-data" style="text-align:right">
-          <span id="comps_ack">
-          </span>
-        </td>
-        <td>
-          <div style="padding-left:30px">
-            {% trans "were acknowledged" %}
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td class="vital-stats-data" style="text-align:right">
-          <span id="comps_ope">
-          </span>
-        </td>
-        <td>
-          <div style="padding-left:30px">
-            {% trans "were opened" %}
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td class="vital-stats-data" style="text-align:right">
-          <span id="comps_res">
-          </span>
-        </td>
-        <td>
-          <div style="padding-left:30px">
-            {% trans "were resolved" %}
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td class="vital-stats-data" style="text-align:right">
-          <span id="comps_clo">
-          </span>
-        </td>
-        <td>
-          <div style="padding-left:30px">
-            {% trans "Closed" %}
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td class="vital-stats-data" style="text-align:right">
-          <span id="comps_pen">
-          </span>
-        </td>
-        <td>
-          <div style="padding-left:30px">
-            {% trans "Awaiting Confirmation" %}
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td class="vital-stats-data" style="text-align:right">
-          <span id="comps_reo">
-          </span>
-        </td>
-        <td>
-          <div style="padding-left:30px">
-            {% trans "Require further attention" %}
-          </div>
-        </td>
-      </tr>
-    </table>
   </div>
-</div>
-<div id="trending-issues-section">
-  <div class="width_100 text-center">
-    {% trans "Department wise Open Complaints Trend" %}<br/>
-    {% trans "(For all complaints filed in report period)" %}
-  </div>
-  <div style="width:100%">
-    <center>
-      <div id="trending-issues-chart"></div>
-    </center>
+  <div id="trending-issues-section">
+    <div class="width_100 text-center">
+      <span class="section-header" style="color:#376091">{% trans "Department wise Open Complaints Trend" %}</span><br/>
+      <span style="color:#376091;font-size:10px;">{% trans "(For all complaints filed in report period)" %}</span>
+    </div>
+    <div style="width:100%">
+      <center>
+        <div id="trending-issues-chart"></div>
+      </center>
+    </div>
   </div>
 </div>
 <div style="clear:both"></div>
@@ -249,7 +244,7 @@
 
  function callReport () {
      if (locadded == false) {
-         alert ('{% trans "Locations" %}', '{% trans "Select locations before trying to generate report" %}');
+         alert ('{% trans "Locations" %}', '<br/>{% trans "You have not selected any locations" %}<br/><br/>{% trans "Click on Locations with number displayed on map. A bubble would pop up. Choose Add to report in the bubble. Select as many locations as desired" %}<br/>');
      } else {
          var selected_dept_ids = $('.selector:checked').map (
              function () {
