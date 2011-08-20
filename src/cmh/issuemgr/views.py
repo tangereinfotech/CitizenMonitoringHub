@@ -85,7 +85,7 @@ def index (request):
             debug ("Sending message for complaint acceptance")
 
             if complaint.complainttype != None:
-                sms = complaintcomplainttype.defsmsnew
+                sms = complaint.complainttype.defsmsnew
             else:
                 # HACK ALERT - complaint type is not known so just pick any complaint type and pick its defsmsnew
                 complainttypes = ComplaintType.objects.exclude (Q (defsmsnew = '') | Q (defsmsnew = None))
