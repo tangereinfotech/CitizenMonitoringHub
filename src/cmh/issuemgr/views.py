@@ -84,10 +84,18 @@ def index (request):
 
             debug ("Sending message for complaint acceptance")
 
-            # HACK ALERT - complaint type is not known so just pick any complaint type and pick its defsmsnew
-            queue_complaint_update_sms (complaint.filedby.mobile,
-                                        ComplaintType.objects.exclude (Q (defsmsnew = '') | Q (defsmsnew = None))[0].defsmsnew,
-                                        complaint)
+            if complaint.complainttype != None:
+                sms = complaintcomplainttype.defsmsnew
+            else:
+                # HACK ALERT - complaint type is not known so just pick any complaint type and pick its defsmsnew
+                complainttypes = ComplaintType.objects.exclude (Q (defsmsnew = '') | Q (defsmsnew = None))
+                if complainttypes.count () != 0:
+                    sms = complainttypes [0].defsmsnew
+                else:
+                    sms = None
+
+            if sms != None:
+                queue_complaint_update_sms (complaint.filedby.mobile, sms, complaint)
 
             return render_to_response ('complaint_submitted.html',
                                        {'menus' : get_user_menus (request.user,index),
