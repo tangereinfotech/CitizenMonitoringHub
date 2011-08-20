@@ -3,26 +3,30 @@ import datetime
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models
+from cmh.common.models import ComplaintStatus
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        from cmh.issuemgr.constants import STATUS_NEW, STATUS_CLOSED
-        print 'Creating complaint closure metrics'
-        complaints = orm ['issuemgr.Complaint'].objects.filter (curstate = STATUS_NEW)
+        try:
+            from cmh.issuemgr.constants import STATUS_NEW, STATUS_CLOSED
+            print 'Creating complaint closure metrics'
+            complaints = orm ['issuemgr.Complaint'].objects.filter (curstate = STATUS_NEW)
 
-        for c in complaints:
-            if orm ['issuemgr.ComplaintClosureMetric'].objects.filter (complaintno = c.complaintno).count () == 0:
-                csm = orm ['issuemgr.ComplaintClosureMetric'].objects.create (complaintno = c.complaintno)
-                csm.created = c.created
+            for c in complaints:
+                if orm ['issuemgr.ComplaintClosureMetric'].objects.filter (complaintno = c.complaintno).count () == 0:
+                    csm = orm ['issuemgr.ComplaintClosureMetric'].objects.create (complaintno = c.complaintno)
+                    csm.created = c.created
 
-                closed = orm ['issuemgr.Complaint'].objects.filter (curstate = STATUS_CLOSED, complaintno = c.complaintno)
-                if closed.count () != 0:
-                    csm.closed = closed [0].created
-                    period = closed [0].created - c.created
-                    csm.period = period.days + ((period.seconds * 1.0) / (3600 * 24))
+                    closed = orm ['issuemgr.Complaint'].objects.filter (curstate = STATUS_CLOSED, complaintno = c.complaintno)
+                    if closed.count () != 0:
+                        csm.closed = closed [0].created
+                        period = closed [0].created - c.created
+                        csm.period = period.days + ((period.seconds * 1.0) / (3600 * 24))
 
-                csm.save ()
+                    csm.save ()
+        except ComplaintStatus.DoesNotExist:
+            pass # Nothing has happened so far, so don't need to create CCMs
 
 
     def backwards(self, orm):

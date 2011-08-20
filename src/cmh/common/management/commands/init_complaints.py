@@ -20,7 +20,7 @@ import re
 
 from optparse import make_option, OptionParser
 from django.core.management.base import BaseCommand, CommandError
-from cmh.common.models import ComplaintDepartment, ComplaintType, ComplaintMDG
+from cmh.common.models import ComplaintDepartment, ComplaintType, ComplaintMDG, MilleniumDevGoal
 from cmh.common.utils import ExcelProcessor as EP
 from cmh.common.utils import InvalidDataException
 from cmh.common.constants import DeployDistrict
