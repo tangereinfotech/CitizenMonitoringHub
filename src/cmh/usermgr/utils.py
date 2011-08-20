@@ -50,12 +50,12 @@ def get_user_menus (user, fnname):
         if selmenuitem != None:
             retmenus.append({'url' : mi.url,
                              'name' : mi.name,
-                             'class' : ('ui-tabs-selected ui-state-active'
-                                        if mi.id == selmenuitem.id else '')})
+                             'class' : ('menu-selected'
+                                        if mi.id == selmenuitem.id else 'menu')})
         else:
             retmenus.append({'url' : mi.url,
                              'name' : mi.name,
-                             'class' : ''})
+                             'class' : 'menu'})
 
     return retmenus
 

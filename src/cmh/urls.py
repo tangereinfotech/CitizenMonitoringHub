@@ -45,5 +45,7 @@ if settings.DEBUG:
 
 urlpatterns += patterns ("",
                          (r'^$', 'cmh.views.index'),
-                         (r'aboutus$','cmh.views.aboutus'))
+                         (r'aboutus$','cmh.views.aboutus'),
+                         (r'for_citizens$','cmh.views.for_citizens'),
+                         (r'for_government$','cmh.views.for_government'))
 

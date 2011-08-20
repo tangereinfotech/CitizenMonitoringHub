@@ -87,12 +87,14 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                                                        axes : {
                                                            xaxis : {
                                                                renderer:$.jqplot.DateAxisRenderer,
-                                                               tickOptions: {formatString: '%b %#d'}
+                                                               tickOptions: {
+                                                                   formatString: '%b %#d'
+                                                               }
                                                            },
                                                            yaxis : {
                                                                min: 0,
-                                                               tickOptions: {formatString: '%d'}
-
+                                                               pad: 1.5,
+                                                               tickOptions: {formatString: '%d'},
                                                            }
                                                        },
                                                        seriesDefaults : {

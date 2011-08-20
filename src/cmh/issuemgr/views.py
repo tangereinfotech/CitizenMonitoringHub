@@ -1083,3 +1083,9 @@ def set_reminder (request, complaintno):
 def del_reminder (request, complaintno):
     ComplaintReminder.objects.filter (user = request.user, complaintno = complaintno).delete ()
     return HttpResponseRedirect (reverse (track_issues, args = [complaintno]))
+
+def file_sms (request):
+    return render_to_response ('file_sms.html')
+
+def file_phone (request):
+    return render_to_response ('file_phone.html')

@@ -56,8 +56,8 @@ class ComplaintForm (forms.Form):
                                                                          'maxlenght' : '15'}))
     categoryid  = forms.IntegerField (required = False, widget = forms.HiddenInput ())
     categorydesc = forms.CharField (required = False,
-                                    widget = forms.TextInput (attrs = {'style' : 'width:348px',
-                                                                       'autocomplete' : 'off'}))
+                                    widget = forms.HiddenInput (attrs = {'style' : 'width:348px',
+                                                                         'autocomplete' : 'off'}))
     filename    = forms.FileField (label = _("Upload Evidence:"), required = False)
 
     def clean_locationid (self):

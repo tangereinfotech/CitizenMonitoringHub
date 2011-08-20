@@ -49,7 +49,12 @@ def index (request):
         return HttpResponseRedirect ('/')
 
 def aboutus (request):
-    return render_to_response ('aboutus.html', {'menus' : get_user_menus (request.user,index),
-                                                'user' : request.user},)
+    return render_to_response ('aboutus.html')
 
+
+def for_citizens (request):
+    return render_to_response ('for_citizens.html')
+
+def for_government (request):
+    return render_to_response ('for_government.html')
 

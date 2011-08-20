@@ -40,7 +40,12 @@
             {{ form.description }} <br/>
 
             <div class="form-field">
-              <label for="id_location">{% trans "Location:" %}</label>
+              <label for="id_location">
+                {% trans "Location" %}:<br/>
+                <span style="font-size:80%">
+                  {% trans "(Type Name of Block or Gram Panchayat or Village to Search)" %}
+                </span>
+              </label>
               {{ form.locationdesc.errors }}
             </div>
             {{ form.locationid }} {{ form.locationdesc }}
@@ -58,10 +63,6 @@
             </div>
             {{ form.yourmobile }} <br/>
 
-            <div class="form-field">
-              <label for="id_category">{% trans "Categorize Your Complaint" %}</label>
-              {{ form.categoryid.errors }}
-            </div>
             {{ form.categoryid }} {{ form.categorydesc }}
             <div id="id_category_detail" style="margin:0"></div>
             {% if user.is_authenticated %}
@@ -74,11 +75,11 @@
             </div>
             {% endif %}
             <div class="form-field">
-              <label for="id_file">{% trans "Upload Evidence:" %}</label>
+              <label for="id_file">{% trans "Upload Any File as Evidence (Optional):" %}</label>
               {{ form.filename.errors }}
             </div>
             {{ form.filename }} <br/>
-            <div style="text-align:center;width:100%;">
+            <div style="text-align:center;width:100%;padding-top:20px;">
               <input type="submit" value="Submit Complaint" class="btn"/>
             </div>
           </fieldset>

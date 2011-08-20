@@ -1,23 +1,54 @@
-{% extends "basewithmenu.html" %}
+{# Copyright 2011, Tangere Infotech Pvt Ltd [http://tangere.in]                 #}
+{#                                                                              #}
+{# Licensed under the Apache License, Version 2.0 (the "License");              #}
+{# you may not use this file except in compliance with the License.             #}
+{# You may obtain a copy of the License at                                      #}
+{#                                                                              #}
+{#       http://www.apache.org/licenses/LICENSE-2.0                             #}
+{#                                                                              #}
+{# Unless required by applicable law or agreed to in writing, software          #}
+{# distributed under the License is distributed on an "AS IS" BASIS,            #}
+{# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     #}
+{# See the License for the specific language governing permissions and          #}
+{# limitations under the License.                                               #}
 
 {% load i18n %}
 
-{% block page_content %}
-<div class="about-content">
-<p>
-  <b>{% trans "AMPLIFYING CITIZEN VOICES FOR ACCOUNTABLE GOVERNANCE AND THE ACHIEVEMENT OF THE MILLENNIUM DEVELOPMENT GOALS (MDGs)" %}</b>
-</p>
-<p><b>{% trans "Background:" %}</b></p>
-<p align="justify">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans "The Government of India's ambitious development targets in the 11th Five Year Plan, and the Approach Paper to the 12th Five Year Plan focus on social inclusion for the most disadvantaged. While a number of policies and flagship programmes are in place to achieve MDGs, there is a need for more efficient, accountable and transparent delivery of services." %}</p>
-<p align="justify">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans "Given such urgency to meet MDGs for all sections of population, it is crucial that citizens, who are the primary beneficiaries, play an active role in assessing and giving feedback about the delivery of the services in claiming their entitlements under various programmes. In this context, multiple stakeholders have started a new initiative on amplifying citizens  voices for accountable governance." %}</p>
-<p><b>{% trans "What is SAMADHAN?" %} </b></p>
-<p align="justify">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans "The initiative, entitled  SAMADHAN   Citizen s Action for Governance , is designed to provide real-time, authentic and reliable feedback from citizens on service delivery  under various flagship programmes of central and State Governments. These demands will be aggregated and amplified so that they trigger appropriate responses from service providers as well as provide useful data for policy and decision makers. In collaboration with State and District administrations several key stakeholders including  civil society groups, media, technology providers, and elected representatives have come together for this initiative, which is based on the use of communication technology to send and receive feedback on services in real time." %}</p>
-<p align="justify">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans "The overall objective of the initiative is to improve the quality of service delivery at local level by strengthening citizens and civil society capacity to enhance accountability and increase demand for services through use of ICT tools and knowledge." %}</p>
-<p><b>{% trans "How does the SAMADHAN Platform Work?" %}</b></p>
-<p align="justify">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans "The SAMADHAN platform is an Internet-based software that collects citizens  voices on the performance and delivery of various public services and presents them for action and response by the relevant ministry or line department. After the government s action is taken, a message is sent to the citizen requesting them to verify that the action has taken place. Apart from collating information about individual services and feedback mechanisms, the Samadhan system allows for an in-depth analysis by civil society organisations and government so that systemic problems can be identified and addressed. Samadhan is being integrated with existing feedback and grievance redressal mechanisms in order to establish it as a unified gateway for information needed for speedy redressal. The information about complaints is available to the public, including CSOs, media etc. in an easy-to-use fashion. View the Demo Page for more details." %}</p>
-<p><b>{% trans "Geographical Focus and Key Partners for the Pilot" %}</b></p>
-<p align="justify">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans "Samadhan is being piloted in Sehore district of Madhya Pradesh and Koraput District in Orissa, led by the District Collectors of the two districts." %}
-{% trans "In Madhya Pradesh, a partnership has been formed between the Collector of " %}<a href="http://www.sehore.nic.in/">{% trans "Sehore District" %}</a>{% trans ", the " %}<a href="http://www.mp.gov.in/">{% trans "Government of Madhya Pradesh" %}</a>{% trans ", civil society organization" %} <a href="http://www.samarthan.org/">{% trans "Samarthan" %}</a>{% trans ", and communities of the district and local media houses and civil society networks. The initiative in Orissa is led by the Collector of " %}<a href="http://koraput.nic.in/New/index.asp">{% trans "Koraput District" %}</a>{% trans ", the " %}<a href="http://www.orissa.gov.in/Portal/default.asp">{% trans "Government of Orissa" %}</a>{% trans ", civil society partners" %} <a href="http://www.vsoindia.org/">{% trans "VSO India Trust" %} </a>{% trans "and" %} <a href="http://www.sovaindia.org/">{% trans "South Orissa Voluntary Action (SOVA)" %}</a>{% trans ", along with communities of the district and local media houses and civil society networks. UN Millennium Campaign an interagency initiative of the UN to support citizen's in holding governments accountable for achievement of MDGs, is facilitating the process in cooperation with UN Resident Coordinators office in India." %}</p>
-</div>
-{% endblock %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <body>
+    <div style="font-size:16px;font-weight:bold;text-align:center;">
+      CITIZEN VOICES FOR ACCOUNTABLE GOVERNANCE AND SERVICE DELIVERY
+    </div>
+    <div class="about-content">
+      <p><b>{% trans "Why SAMADHAN?" %}</b></p>
+      <p align="justify">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans "There are less than four years left for the world to achieve the Millennium Development Goals – a series of ambitious commitments that countries made across the globe to reduce poverty, eliminate preventable disease and protect the earth’s environment by 2015. Given the urgency, SAMADHAN is a way for citizens in India to play a direct and active role in achieving the MDGs by demanding what their government has already promised them. The Government of India’s own targets in the 11th and upcoming 12th Five-Year Plan are even more ambitious than the MDGs. Many development schemes are in place to achieve them but there is a need for more efficient, accountable and transparent delivery of services. SAMADHAN aims to fill this gap." %}</p>
+      <p><b>{% trans "What is SAMADHAN?" %} </b></p>
+
+      <p align="justify">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans "SAMADHAN is an internet-based platform primarily for citizens to directly demand and track their service entitlements under national and state government schemes. Your NREGA wage has not been fully paid, a mother has not received her Janani Suraksha Yojana money, an Anganwaadi worker is not opening the nutrition center everyday - citizens can take any such problem they are facing and send a simple text message, call in at a toll-free number or visit the District Collector’s Office to demand or file complaints through SAMADHAN. Once demands or complaints are registered, local administration will process the complaints and respond with appropriate action to resolve them. Citizens can track the status of their complaint through an ID number. After the government has taken action, a message is sent to the citizen requesting them to verify that the action has taken place." %}
+      <p align="justify">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans "SAMADHAN is a multi-purpose system that will also allow civil society organizations, the government and media to use the data and information for analyzing and highlighting systemic challenges. Since the information on complaints will be in the public domain, they will be able to view it easily and in a user-friendly manner. SAMADHAN will be integrated with the government’s existing grievance mechanisms for speedy redressal. View the Demo Page for more details." %}
+
+      <p><b>{% trans "Where is SAMADHAN?" %}</b></p>
+      <p align="justify">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans "SAMADHAN is being piloted in Sehore district of Madhya Pradesh and Koraput District in Orissa.In Madhya Pradesh, a partnership has been formed between the Collector of Sehore District, Government of Madhya Pradesh, the civil society organization called Samarthan and local media and civil society networks. In Orissa, it is led by the Collector of Koraput District,  Government of Orissa, civil society partners VSO India Trust and South Orissa Voluntary Action (SOVA), along with local media and civil society networks. The United Nations Millennium Campaign is an interagency initiative of the UN to support citizens in holding governments accountable for achievement of the MDGs. For more details on UNMC, please visit: http://www.endpoverty2015.org/" %}</p>
+    </div>
+    <div>
+      <table width="100%">
+        <tr>
+          <td width="40%" align="center">
+            <a href="http://www.un.org/" target="_blank"><img src="/static/images/un-logo.jpg"></a>
+            <a href="http://www.endpoverty2015.org" target="_blank"><img src="/static/images/unmdg2015logo.png"></a>
+          </td>
+          <td width="30%" align="center">
+            <a href="http://samarthan.org" target="_blank"><img src="/static/images/samarthan.png"></a>
+          </td>
+          <td width="30%" align="center">
+            <a href="http://sovakoraput.org" target="_blank"><img src="/static/images/sova_koraput.png"></a>
+          </td>
+          <td width="20%" align="center">
+            <a href="http://vsointernational.org" target="_blank"><img src="/static/images/VSO_purple_RGB.jpg"></a>
+          </td>
+
+    </div>
+  </body>
+</html>
 

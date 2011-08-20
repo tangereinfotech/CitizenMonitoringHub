@@ -35,14 +35,15 @@ class Command (NoArgsCommand):
         dm = AppRole.objects.get (role = UserRoles.DM)
 
         anonymous_menu = [{'name' : 'Home', 'url' : '/'},
-                          {'name' : 'Submit Issue', 'url' : '/complaint/'},
-                          {'name' : 'Track Issue', 'url' : '/complaint/track/'},]
+                          {'name' : 'File Complaint Online', 'url' : '/complaint/'},
+                          {'name' : 'File Complaint By SMS', 'url' : '/complaint/file_sms/'},
+                          {'name' : 'File Complaint By Phone', 'url' : '/complaint/file_phone/'},
+                          {'name' : 'Track Your Complaint', 'url' : '/complaint/track/'},]
 
         cso_menu = [{'name' : 'Home', 'url' : '/'},
                     {'name' : 'Accept', 'url' : '/complaint/accept/'},
                     {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
                     {'name' : 'Masters', 'url' : '/masters/'},
-                    {'name' : 'Metrics', 'url' : '/complaint/metrics/'},
                     {'name' : 'All Issues', 'url' : '/complaint/all_issues/'}]
 
         delegate_menu = [{'name' : 'Home', 'url' : '/'},
@@ -55,7 +56,6 @@ class Command (NoArgsCommand):
 
         dm_menu = [{'name' : 'Home', 'url' : '/'},
                    {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
-                   {'name' : 'Metrics', 'url' : '/complaint/metrics/'},
                    {'name' : 'All Issues', 'url' : '/complaint/all_issues/'}]
 
         self._ensure_menu (anonymous, anonymous_menu)

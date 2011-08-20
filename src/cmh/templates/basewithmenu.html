@@ -26,12 +26,12 @@
         <li class="un-color">|</li>
         <li class="un-color"><a href="/aboutus">{% trans "About Us" %}</a></li>
         <li class="un-color">|</li>
-        <li class="un-color"><a href="#">{% trans "For Citizens" %}</a></li>
+        <li class="un-color"><a href="/for_citizens">{% trans "For Citizens" %}</a></li>
         <li class="un-color">|</li>
-        <li class="un-color"><a href="#">{% trans "For Government" %}</a></li>
+        <li class="un-color"><a href="/for_government">{% trans "For Government" %}</a></li>
       </ul>
     </div>
-    <div style="width:63%;float:right">
+    <div style="width:59%;float:right">
       <span class="un-color" style="padding-right:10px;">
         {% trans "Language Selection:" %}
         <form id="langselect" action="/i18n/setlang/" method="post" style="display:inline">
@@ -64,7 +64,7 @@
   </div>
   <div class="logo_top_menu">
     <div class="logo">
-      <img src="/static/images/samadhan-logo.jpg" alt="Samadhan Logo">
+      <img src="/static/images/samadhan-logo.jpg" height="90px" alt="Samadhan Logo">
     </div>
     <div class="caption_part">
       <div style="text-align:center;position:absolute;top:35px;font-size:18px;width:100%">
@@ -77,27 +77,21 @@
   </div>
 </div>
 <div class="menu_part" style="clear:both;">
-  <div class="UIAPIPlugin ui-tabs ui-widget ui-widget-content ui-corner-all"
-       style="padding-bottom:0px;float:left;width:60%;"
-       id="widget-docs">
-    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+  <div class="left-right-menu">
+    <ul class="app-menu">
       {% for menuitem in menus %}
-      <li class="ui-state-default ui-corner-top {{ menuitem.class }}">
+      <li class="{{ menuitem.class }}">
         <a href="{{ menuitem.url }}">{% blocktrans with menuitem.name as menuname %}{{menuname}}{% endblocktrans %}</a>
       </li>
       {% endfor %}
     </ul>
-  </div>
-  <div class="UIAPIPlugin ui-tabs ui-widget ui-widget-content ui-corner-all"
-       style="padding-bottom:0px;float:right;"
-       id="widget-docs">
-    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-      <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active info">
+    <ul class="phone-menu">
+      <li>
         <a href="#">
           {% trans "SMS: " %}{% value_from_settings SMS %}
         </a>
       </li>
-      <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active">
+      <li>
         <a href="#">
           {% trans "Phone: " %}{% value_from_settings PHONE %}
         </a>
@@ -159,6 +153,11 @@
     $(".langselector").change (function () {
       $("#langselect").submit ();
     });
+    $('a[href="/complaint/file_sms/"]').fancybox ();
+    $('a[href="/complaint/file_phone/"]').fancybox ();
+    $('a[href="/aboutus"]').fancybox ();
+    $('a[href="/for_citizens"]').fancybox ();
+    $('a[href="/for_government"]').fancybox ();
   });
 </script>
 {% endblock %}

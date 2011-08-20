@@ -42,4 +42,6 @@ urlpatterns = patterns ('cmh.issuemgr.views',
                         (r'^evidences/(?P<filename>.*)$', 'get_evidence'),
                         (r'^set_reminder/(?P<complaintno>[\d\.]+)/$', 'set_reminder'),
                         (r'^del_reminder/(?P<complaintno>[\d\.]+)/$', 'del_reminder'),
+                        (r'^file_sms/$', 'file_sms'),
+                        (r'^file_phone/$', 'file_phone'),
                         )
