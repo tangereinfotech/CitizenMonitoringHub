@@ -20,7 +20,7 @@ body {
    margin: 10px auto;
    width: 1100px;
    font-size: 90%;
-   color: #558ed5;
+   color: #376091;
    background-color: #cfcfcf;
    width: expression( document.body.clientWidth < 900 ? "900px" : "90%" );
    min-width:1100;
@@ -28,6 +28,8 @@ body {
 
 img {
    border: 0px;
+   margin: 0px;
+   padding: 0px;
 }
 
 fieldset {
@@ -210,8 +212,7 @@ ul.category li.category_item {
 }
 
 .department-name {
-   color: #95b3d7;
-   font-weight: bold;
+   color: #376091;
 }
 
 #base_map_container {
@@ -798,19 +799,22 @@ ul.complaint-updates li {
 
 
 .un-color {
-   color:#558ed5;
+   color: #376091;
 }
 
 .un-color a {
    text-decoration: none;
+   color: #376091;
+   font-size: 80%;
 }
 
 .un-color a:hover {
    text-decoration: underline;
+   color: #376091;
 }
 
 .un-color a:visited {
-   color:#558ed5;
+   color: #376091;
    text-decoration: none;
 }
 
@@ -852,7 +856,7 @@ ul.app-menu {
 }
 
 ul.app-menu li {
-   padding: 4px 3px 0px;
+   padding: 4px 3px 0px 3px;
    bottom: 0px;
    display: inline;
    margin: 0px 4px;
@@ -866,6 +870,7 @@ ul.app-menu li.menu a {
    text-decoration : none;
    font-weight: bold;
    color: #558ed5;
+   padding: 2px 0px;
 }
 
 ul.app-menu li.menu-selected {
@@ -911,4 +916,13 @@ ul.phone-menu li a {
    filter: progid:DXImageTransform.Microsoft.Matrix(/* IE6–IE9 */
       M11=6.123031769111886e-17, M12=1, M21=-1, M22=6.123031769111886e-17, sizingMethod='auto expand');
    zoom: 1;
+}
+
+
+ol.list-of-items li {
+   padding: 4px 0px;
+}
+
+ul.list-of-items li {
+   padding: 4px 0px;
 }

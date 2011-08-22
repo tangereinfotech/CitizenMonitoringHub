@@ -16,7 +16,55 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css" media="screen" />
+  </head>
   <body>
-    {% trans "Content for Citizens Comes here" %}
+    <h3>{% trans "For Citizens" %}</h3>
+    <h4>{% trans "What is SAMADHAN and what can you do with it?" %}</h4>
+    {% trans "The Government of India has in place a number of policies and flagship programmes to reduce poverty and inequality and provide quality education, health services and infrastructure and other essential services to improve people’s lives. On the other hand, citizens who are the primary beneficiaries of those policies and programmes need to play an active role in assessing and giving feedback about the delivery of the services and report to relevant authorities if those services are not forthcoming. Such participation by citizens in monitoring and claiming the government services will lead to more efficient, accountable and transparent delivery of services." %}<br/><br/>
+    {% trans "SAMADHAN is an internet-based platform primarily for citizens to directly demand and track their service entitlements under national and state government schemes. Your NREGA wage has not been fully paid, a mother has not received her Janani Suraksha Yojana money, an Anganwaadi worker is not opening the nutrition center everyday - citizens can take any such problem they are facing and send a simple text message, call in at a toll-free number or visit the District Collector’s Office to demand or file complaints through SAMADHAN. Once demands or complaints are registered, local administration will process the complaints and respond with appropriate action to resolve them. Citizens can track the status of their complaint through a tracking number assigned to their individual case. After the government has taken action, a message is sent to the citizen requesting them to verify that the action has taken place. The reports are then mapped on the Samadhan site for public viewing." %}<br/><br/>
+
+    <h4>{% trans "How to use SAMADHAN" %}</h4>
+    <b>{% trans "OPTION  1: Calling toll-free 1077 helpline" %}</b><br/><br/>
+
+    <b>{% trans "Prakash lives in the village of Khilaput in the GP of Umuri in the block of Koraput. He has an MGNREGA job card and has worked 10 days last month on a project. He has not yet received his wages for the work." %}</b><br/><br/>
+
+    {% trans "Steps in complaint filing and redressal:" %}
+    <ol class="list-of-items">
+      <li>{% trans "Prakash calls the toll-free 1077 help-line. A person answers the phone and logs the complaint on the SAMADHAN website." %}</li>
+      <li>{% trans "Prakash gets an SMS on his mobile that acknowledges his complaint and assigns him a complaint ID number." %}</li>
+      <li>{% trans "A District Rural Development Agency (DRDA) department official logs in to the SAMADHAN website and marks Prakash’s complaint as “open”. This means the department has taken up the complaint and is working to resolve it." %}</li>
+      <li>{% trans "Prakash gets an SMS on his mobile that tells him the DRDA department is working on his complaint and it will be resolved within 7 days. Prakash can log into the website with the tracking number given to his case, and view the progress updates in resolving his case." %}</li>
+      <li>{% trans "The DRDA department sends the due wages to Prakash." %}</li>
+      <li>{% trans "A DRDA department official logs in to the SAMADHAN website and marks Prakash’s complaint as resolved." %}</li>
+      <li>{% trans "7.Prakash gets an SMS on his mobile that tells him the complaint is now resolved and that if he is not satisfied he should contact the 1077 help-line immediately." %}</li>
+      <li>{% trans "After 7 days, Prakash’s complaint is automatically closed by the SAMADHAN system." %}</li>
+      <li>{% trans "Prakash receives a final SMS telling him the complaint has been closed." %}</li>
+    </ol>
+
+    <b>{% trans "OPTION 2: Sending SMS to 9437582015" %}</b><br/><br/>
+
+    <b>{% trans "Tapasmita lives in the village of Lima in the GP of Lima in the block of Kundra. She is sending her children to school every day, but for the last 15 days, the school has been closed." %}</b><br/><br/>
+
+    {% trans "Steps in complaint filing and redressal:" %}
+    <ol class="list-of-items">
+      <li>{% trans "Tapasmita sends the following SMS to 9437582015:" %}<br/><br/>
+
+        {% trans "“16-10-21 Tapasmita The school has been closed for 15 days.”" %}<br/>
+        {% trans "(The message can be in Oriya)" %}<br/><br/>
+
+        {% trans "The first three numbers are the location codes from her husband’s MGNREGA job card. These numbers indicate that she lives in the Kundra block (16), the Lima GP (10), and the village of Lima (21)." %}
+        {% trans "Then Tapasmita must put her name, followed by her complaint." %}</li>
+      <li>{% trans "The Citizen Monitoring Hub (CMH) staff calls Tapasmita back and confirms the details of her complaint." %}</li>
+      <li>{% trans "Tapasmita gets an SMS on her mobile that acknowledges her complaint and assigns her a complaint ID number." %}</li>
+      <li>{% trans "An education department official logs in to the SAMADHAN website and marks Tapasmita’s complaint as “open”. This means the department has taken up the complaint and is working to resolve it." %}</li>
+      <li>{% trans "Tapasmita gets an SMS on her mobile that says the education department is working on her complaint and it will be resolved within 7 days." %}</li>
+      <li>{% trans "The education department works with the teacher to open the school in Lima village." %}</li>
+      <li>{% trans "An education department official logs in to the SAMADHAN website and marks Tapasmita’s complaint as resolved." %}</li>
+      <li>{% trans "Tapasmita gets an SMS on her mobile that tells her the complaint is now resolved and that if she is not satisfied she should contact the CMH immediately." %}</li>
+      <li>{% trans "After 7 days, Tapasmita’s complaint is automatically closed by the SAMADHAN system." %}</li>
+      <li>{% trans "Tapasmita receives a final SMS telling her the complaint has been closed." %}</li>
+    </ol>
   </body>
 </html>

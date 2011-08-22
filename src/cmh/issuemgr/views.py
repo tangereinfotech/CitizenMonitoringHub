@@ -225,7 +225,8 @@ def getstats (request):
                  'locid'      : location.id,
                  'departments': dept_complaints,
                  'uptype'     : uptype,
-                 'upname'     : upname}
+                 'upname'     : upname,
+                 'uncat'      : complaints.filter (department = None).count ()}
         infowindow_data = loader.render_to_string ('location_stats.html', {'stats' : stats})
         return HttpResponse (json.dumps ({'infowindow_data' : infowindow_data,
                                           'loctype' : loctype,
@@ -592,22 +593,23 @@ def hot_complaints (request):
                    'res' : 0,
                    'clo' : 0,
                    'reo' : 0,
-                   'pen' : 0}
+                   'pen' : 0,
+                   'unc' : 0}
     return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : [], 'departments' : [], 'vital_stats' : vital_stats}))
 
 def get_vital_stats (deptids, stdate, endate):
-    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, department__in = deptids, curstate = STATUS_NEW)
+    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, curstate = STATUS_NEW)
 
     complaintnos = [c.complaintno for c in complaints]
 
     complaints = Complaint.objects.filter (complaintno__in = complaintnos)
 
     new_complaints = complaints.filter (curstate = STATUS_NEW)
-    ack_complaints = complaints.filter (curstate = STATUS_ACK)
-    ope_complaints = complaints.filter (curstate = STATUS_OPEN)
-    res_complaints = complaints.filter (curstate = STATUS_RESOLVED)
-    clo_complaints = complaints.filter (curstate = STATUS_CLOSED)
-    reo_complaints = complaints.filter (curstate = STATUS_REOPEN)
+    ack_complaints = complaints.filter (curstate = STATUS_ACK, department__in = deptids)
+    ope_complaints = complaints.filter (curstate = STATUS_OPEN, department__in = deptids)
+    res_complaints = complaints.filter (curstate = STATUS_RESOLVED, department__in = deptids)
+    clo_complaints = complaints.filter (curstate = STATUS_CLOSED, department__in = deptids)
+    reo_complaints = complaints.filter (curstate = STATUS_REOPEN, department__in = deptids)
     pen_complaints = res_complaints.exclude (complaintno__in = [c.complaintno for c in clo_complaints] + [c.complaintno for c in reo_complaints])
 
     vital_stats = {'newc' : len (set ([c.complaintno for c in new_complaints])),
