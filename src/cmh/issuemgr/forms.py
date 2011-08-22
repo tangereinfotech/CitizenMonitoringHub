@@ -57,7 +57,7 @@ class ComplaintForm (forms.Form):
     categoryid  = forms.IntegerField (required = False, widget = forms.HiddenInput ())
     categorydesc = forms.CharField (required = False,
                                     widget = forms.HiddenInput (attrs = {'style' : 'width:348px',
-                                                                         'autocomplete' : 'off'}))
+                                                                       'autocomplete' : 'off'}))
     filename    = forms.FileField (label = _("Upload Evidence:"), required = False)
 
     def clean_locationid (self):
@@ -167,7 +167,9 @@ class AcceptComplaintForm (forms.Form):
                                         location = location,
                                         original = None,
                                         creator = user,
-                                        assignto = assignto)
+                                        assignto = assignto,
+                                        gender = self.cleaned_data ['gender'],
+                                        community = self.cleaned_data ['community'])
         update_complaint_sequence (cpl)
 
         ComplaintClosureMetric.objects.create (complaintno = cpl.complaintno)

@@ -312,10 +312,10 @@ def metrics (request):
 def accept (request):
     if request.method == 'GET':
         form = AcceptComplaintForm ()
-        return render_to_response ('complaint.html', {'form' : form,
-                                                      'menus' : get_user_menus (request.user,accept),
-                                                      'user' : request.user,
-                                                      'post_url' : reverse (accept)})
+        return render_to_response ('accept.html', {'form' : form,
+                                                   'menus' : get_user_menus (request.user,accept),
+                                                   'user' : request.user,
+                                                   'post_url' : reverse (accept)})
     elif request.method == 'POST':
         form = AcceptComplaintForm (request.POST, request.FILES)
         if form.is_valid ():
@@ -329,7 +329,7 @@ def accept (request):
                                         'user' : request.user,
                                         'complaint' : complaint})
         else:
-            return render_to_response ('complaint.html',
+            return render_to_response ('accept.html',
                                        {'form': form,
                                         'menus' : get_user_menus (request.user,accept),
                                         'user' : request.user,
@@ -418,7 +418,13 @@ def my_issues_list (request):
 def update (request, complaintno):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
     base = complaints.get (original = None)
-    current = complaints.get (latest = True)
+
+    current = complaints [0]
+    if complaints.filter (latest = True).count () != 1:
+        complaints.update (latest = False)
+        current.latest = True
+        current.save ()
+
     user_role = AppRole.objects.get_user_role (request.user)
     newstatuses = StatusTransition.objects.get_allowed_statuses (user_role, current.curstate)
 
@@ -484,7 +490,13 @@ def track_issues (request, complaintno):
     try:
         complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
         base = complaints.get (original = None)
-        current = complaints.get (latest = True)
+
+        current = complaints [0]
+        if complaints.filter (latest = True).count != 1:
+            complaints.update (latest = False)
+            current.latest = True
+            current.save ()
+
         user_role = AppRole.objects.get_user_role (request.user)
         newstatuses = StatusTransition.objects.get_allowed_statuses (user_role, current.curstate)
 

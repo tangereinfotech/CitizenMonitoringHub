@@ -1,0 +1,105 @@
+{# Copyright 2011, Tangere Infotech Pvt Ltd [http://tangere.in]                 #}
+{#                                                                              #}
+{# Licensed under the Apache License, Version 2.0 (the "License");              #}
+{# you may not use this file except in compliance with the License.             #}
+{# You may obtain a copy of the License at                                      #}
+{#                                                                              #}
+{#       http://www.apache.org/licenses/LICENSE-2.0                             #}
+{#                                                                              #}
+{# Unless required by applicable law or agreed to in writing, software          #}
+{# distributed under the License is distributed on an "AS IS" BASIS,            #}
+{# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     #}
+{# See the License for the specific language governing permissions and          #}
+{# limitations under the License.                                               #}
+
+{% extends "basewithmenu.html" %}
+
+{% load i18n %}
+
+{% block page_content %}
+<div style="width:100%; text-align:center;">
+  <div style="width:100%; text-align: center">
+    <h2> {% trans "Accept Complaint" %} </h2>
+  </div>
+  <center>
+    <div class="complaint_form">
+      <form action="{{ post_url }}" method="post" enctype="multipart/form-data">
+        <div class="right_section">
+          <fieldset>
+            <legend>{% trans "Details" %}</legend>
+            <div class="form-field">
+              <label for="id_date" class="id_date">{% trans "Date:" %}</label>
+              {{ form.logdate.errors }}
+            </div>
+            {{ form.logdate }} <br/>
+
+            <div class="form-field">
+              <label for="id_description">{% trans "Description:" %}</label>
+              {{ form.description.errors }}
+            </div>
+            {{ form.description }} <br/>
+
+            <div class="form-field">
+              <label for="id_location">
+                {% trans "Location" %}:<br/>
+                <span style="font-size:80%">
+                  {% trans "(Type Name of Block or Gram Panchayat or Village to Search)" %}
+                </span>
+              </label>
+              {{ form.locationdesc.errors }}
+            </div>
+            {{ form.locationid }} {{ form.locationdesc }}
+            <div id="id_location_detail"></div>
+
+            <div class="form-field">
+              <label for="your_name">{% trans "Your Name:" %}</label>
+              {{ form.yourname.errors }}
+            </div>
+            {{ form.yourname }} <br/>
+
+            <div class="form-field">
+              <label for="your_mobile">{% trans "Your Mobile Number:" %}</label>
+              {{ form.yourmobile.errors }}
+            </div>
+            {{ form.yourmobile }} <br/>
+
+            <div class="form-field">
+              <label for="id_category">{% trans "Categorize Your Complaint" %}</label>
+              {{ form.categoryid.errors }}
+            </div>
+            {{ form.categoryid }} {{ form.categorydesc }}
+            <div id="id_category_detail" style="margin:0"></div>
+            {% if user.is_authenticated %}
+            <div class="gendercaste">
+              {% trans "Gender:" %}<br/>
+              {{ form.gender }}
+              <br/>
+              {% trans "Community:" %}<br/>
+              {{ form.community }}
+            </div>
+            {% endif %}
+            <div class="form-field">
+              <label for="id_file">{% trans "Upload Any File as Evidence (Optional):" %}</label>
+              {{ form.filename.errors }}
+            </div>
+            {{ form.filename }} <br/>
+            <div style="text-align:center;width:100%;padding-top:20px;">
+              <input type="submit" value="Accept Complaint" class="btn"/>
+            </div>
+          </fieldset>
+        </div>
+      </form>
+    </div>
+  </center>
+</div>
+<script type="text/javascript" src="/static/js/MapHandler.js"></script>
+<script type="text/javascript" src="/static/js/DateTimeHandler.js"></script>
+<script type="text/javascript" src="/static/js/complainthandler.js"></script>
+<script type="text/javascript">
+  $(document).ready (function () {
+    $("#id_logdate").datepicker ({dateFormat : 'dd/mm/yy'});
+    field_autocomplete ("#id_locationdesc", "#id_locationid", "#id_location_detail", "/complaint/locations/");
+    field_autocomplete ("#id_categorydesc", "#id_categoryid", "#id_category_detail", "/complaint/categories/");
+  });
+</script>
+{% endblock %}
