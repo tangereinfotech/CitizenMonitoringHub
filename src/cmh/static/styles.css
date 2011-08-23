@@ -800,12 +800,12 @@ ul.complaint-updates li {
 
 .un-color {
    color: #376091;
+   font-size: 80%;
 }
 
 .un-color a {
    text-decoration: none;
    color: #376091;
-   font-size: 80%;
 }
 
 .un-color a:hover {

@@ -29,12 +29,12 @@
         <li class="un-color"><a href="/for_government">{% trans "For Government" %}</a></li>
       </ul>
     </div>
-    <div style="width:59%;float:right">
+    <div style="width:59%;float:right;padding-top:3px;">
       <span class="un-color" style="padding-right:10px;">
         {% trans "Language Selection:" %}
         <form id="langselect" action="/i18n/setlang/" method="post" style="display:inline">
           <input name="next" type="hidden" value="/" />
-            <select class ="langselector un-color" name="language" style="padding:0px;margin:0px;border:0px;">
+          <select class ="langselector un-color" name="language" style="padding:0px;margin:0px;border:0px;">
             {% get_available_languages as LANGUAGES %}
             {% get_current_language as lang_code %}
             {% for lang in LANGUAGES %}
@@ -56,7 +56,7 @@
         <li class="un-color"> <a href="/user/logout/">{% trans "Sign out" %}</a> </li>
       </ul>
       {% else %}
-      <span class="un-color"><a href="/user/login"> {% trans "Sign in" %} </a></span>
+      <span class="un-color"><a href="/user/login"> <b>{% trans "Sign in" %}</b> </a></span>
       {% endif %}
     </div>
   </div>
