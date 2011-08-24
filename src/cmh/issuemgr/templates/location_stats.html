@@ -60,7 +60,7 @@
       <tbody>
         {% for dept in stats.departments %}
         <tr>
-          <td>{{dept.name}}</td>
+          <td>{{dept.name|title}}</td>
           <td>{{dept.count}}</td>
         </tr>
         {% endfor %}

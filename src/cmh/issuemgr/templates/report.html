@@ -20,7 +20,7 @@
 {% block base_content %}
 <div style="clear:both"></div>
 <div class="page-header" style="text-align:center;width:100%;">
-  {% trans  "Complaint status report for chosen departments, locations and period" %}
+  {% trans  "Complaint Status Report For Chosen Departments, Locations And Period" %}
 </div>
 <fieldset>
   <legend>
@@ -138,7 +138,7 @@
                 <span style="color:#aecf00">{{ stats.all_complaints.pen }}</span>
               </td>
               <td>
-                <div style="padding-left:30px">{% trans "Resolved Complaints are awaiting complainant feedback" %}</div>
+                <div style="padding-left:30px">{% trans "Resolved complaints are awaiting complainant feedback" %}</div>
               </td>
             </tr>
           </table>
@@ -210,7 +210,7 @@
                 <span style="color:#aecf00">{{ stats.new_complaints.pen }}</span>
               </td>
               <td>
-                <div style="padding-left:30px">{% trans "Resolved Complaints are awaiting complainant feedback" %}</div>
+                <div style="padding-left:30px">{% trans "Resolved complaints are awaiting complainant feedback" %}</div>
               </td>
             </tr>
           </table>
@@ -223,7 +223,7 @@
     <table class="width-100 text-center">
       <tr>
         <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response Volume" %}</span></td>
-        <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response time" %}</span></td>
+        <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response Time" %}</span></td>
       </tr>
       <tr>
         <td class="width-50 pad-top text-left">
@@ -261,7 +261,7 @@
       <tr>
         <td colspan="2">
           <div class="text-center pad-top width-100">
-            <b><i>{{ dept.name }}</i></b>
+            <b><i>{{ dept.name|title }}</i></b>
           </div>
         </td>
       </tr>
@@ -294,7 +294,7 @@
         <tr>
           <td> {{ ct.summary }} </td>
           <td> {{ ct.num_complaints }} </td>
-          <td> {{ ct.department_name }} </td>
+          <td> {{ ct.department_name|title }} </td>
           <td> {{ ct.cclass }} </td>
         </tr>
         {% endfor %}
@@ -319,7 +319,7 @@
           <td> {{ c.complaintno }} </td>
           <td> {{ c.complainttype.summary }} </td>
           <td> {{ c.created|date:"d M, Y" }} </td>
-          <td> {{ c.department.name }} </td>
+          <td> {{ c.department.name|title }} </td>
           <td> {{ c.complainttype.cclass }} </td>
         </tr>
         {% endfor %}
@@ -327,7 +327,7 @@
     </table>
     <div class="width_100 text-center pad-top section-header">
       {% trans "Millenium Development Goal Indicators" %}<br/>
-      {% trans "(Complaints filed in report period)" %}
+      {% trans "(Complaints Filed In Report Period)" %}
     </div>
     <center>
       <div style="width:800px;height:300px;" id="mdgs">
@@ -345,26 +345,26 @@
     {% if final %}
     {% if mdgindicators %}
     <div class="width_100 text-left pad-top section-header">
-      {% trans "MDG Performance Indicator: (link to master)" %}
+      {% trans "MDG Performance Indicator Notes" %}
     </div>
     <div class="width_100 text_left">{{ mdgindicators }}</div>
     {% endif %}
     {% else %}
     <div class="width_100 text-left pad-top section-header">
-      {% trans "MDG Performance Indicator: (link to master)" %}
+      {% trans "MDG Performance Indicator Notes" %}
     </div>
     <textarea cols="130" rows="6" name="mdgindicators"></textarea>
     {% endif %}
     {% if final %}
     {% if suggestions %}
     <div class="width_100 text-left pad-top section-header">
-      {% trans "Suggested Follow up Actions" %}
+      {% trans "Suggested Follow-up Actions" %}
     </div>
     <div style="width:850px;height:75px">{{ suggestions }}</div>
     {% endif %}
     {% else %}
     <div class="width_100 text-left pad-top section-header">
-      {% trans "Suggested Follow up Actions" %}
+      {% trans "Suggested Follow-up Actions" %}
     </div>
     <textarea cols="130" rows="6" name="suggestions"></textarea>
     {% endif %}
@@ -399,7 +399,7 @@
         <tr>
           <td>
             <div style="text-align:left;width:100%">
-              {{ dept.name }}
+              {{ dept.name|title }}
             </div>
           </td>
         </tr>
@@ -429,7 +429,7 @@
         <tr>
           <td colspan="3">
             <div style="text-align:left;">
-              {{ block.name }}
+              {{ block.name|title }}
             </div>
           </td>
         </tr>
@@ -438,12 +438,12 @@
         <tr>
           <td>
             <div style="text-align:left;">
-              {{ gramp.block.name }}
+              {{ gramp.block.name|title }}
             </div>
           </td>
           <td colspan="2" align="left">
             <div style="text-align:left;">
-              {{ gramp.name }}
+              {{ gramp.name|title }}
             </div>
           </td>
         </tr>
@@ -452,17 +452,17 @@
         <tr>
           <td align="left">
             <div style="text-align:left;">
-              {{ villg.grampanchayat.block.name }}
+              {{ villg.grampanchayat.block.name|title }}
             </div>
           </td>
           <td align="left">
             <div style="text-align:left;">
-              {{ villg.grampanchayat.name }}
+              {{ villg.grampanchayat.name|title }}
             </div>
           </td>
           <td align="left">
             <div style="text-align:left;">
-              {{ villg.name }}
+              {{ villg.name|title }}
             </div>
           </td>
         </tr>
@@ -520,10 +520,6 @@
                               },
                               label : '{% trans "Number of Complaints" %}',
                               labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                              labelOptions: {
-                                  fontFamily: 'Georgia, Serif',
-                                  fontSize: '12pt',
-                              }
                           }
                       }
                   });
@@ -552,10 +548,6 @@
                               },
                               label : '{% trans "Days" %}',
                               labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                              labelOptions: {
-                                  fontFamily: 'Georgia, Serif',
-                                  fontSize: '12pt',
-                              }
                           }
                       }
                   });
@@ -584,10 +576,6 @@
                               },
                               label : '{% trans "Number of Complaints" %}',
                               labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                              labelOptions: {
-                                  fontFamily: 'Georgia, Serif',
-                                  fontSize: '12pt',
-                              }
                           }
                       }
                   });
