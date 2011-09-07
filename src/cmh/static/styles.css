@@ -96,7 +96,7 @@ div.top_panel {
    width:100%;
 }
 div.system_panel {
-   text-align: right;
+   text-align: left;
    width: 100%;
    padding: 4px 0px 8px;
    height: 17px;
@@ -106,7 +106,7 @@ div.system_panel {
 div.aboutpanel {
     float:left;
     padding-bottom: 5px;
-    width: 40%;
+    width: 100%;
 }
 div.about-content{
     padding-left:125px;
@@ -135,7 +135,6 @@ div.tables{
 ul.sys-panel {
    display:inline;
    list-style-type: none;
-   float: right;
    margin-top: 0px;
    padding-left: 0px;
 }
@@ -153,7 +152,7 @@ div.logo_top_menu {
 
 div.logo {
    float: left;
-   width:  30%;
+   width:  20%;
    height: 95px;
    font-weight: bold;
    font-size: 36px;
@@ -162,7 +161,7 @@ div.logo {
 div.caption_part {
     position: relative;
     float: right;
-    width: 70%;
+    width: 80%;
     height: 95px;
 }
 
@@ -208,11 +207,11 @@ ul.category li.category_item {
 .department_row {
    /* background-color: #e8eeff; */
    border-top: 1px solid #dddddd;
-   font-size: 85%;
 }
 
 .department-name {
    color: #376091;
+   font-weight: bold;
 }
 
 #base_map_container {
@@ -692,11 +691,13 @@ div.gendercaste ul li {
 }
 
 ul.sysnav {
-    list-style-type : none;
-    display: inline;
-    margin: 0px;
-    padding: 0px;
-    float:left;
+   list-style-type : none;
+   display: inline;
+   margin: 0px;
+   padding: 0px;
+   float:left;
+   -webkit-padding-start: 0px;
+   -webkit-margin-before: 0px;
 }
 
 ul.sysnav li {
@@ -869,7 +870,7 @@ ul.app-menu li.menu {
 ul.app-menu li.menu a {
    text-decoration : none;
    font-weight: bold;
-   color: #558ed5;
+   color: #376091;
    padding: 2px 0px;
 }
 

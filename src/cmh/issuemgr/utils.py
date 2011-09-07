@@ -13,11 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 
+from cmh.smsgateway.utils import queue_complaint_update_sms
+
+from cmh.common.utils import debug
 from cmh.common.models import Village
 from cmh.common.constants import DeployDistrict
+from cmh.issuemgr.models import Complaint
+
+from cmh.issuemgr.constants import STATUS_RESOLVED, STATUS_CLOSED
 
 def update_complaint_sequence (complaint):
     from cmh.issuemgr.models import Complaint
@@ -43,4 +50,26 @@ def get_location_attr (block_no, gp_no, vill_no):
 
     return Village.objects.get (code = loc_code)
 
+
+def close_resolved ():
+    now_day = datetime.today ().date ()
+    seven_ago = now_day - timedelta (days = 7)
+
+    resolved = Complaint.objects.filter (latest = True,
+                                         curstate = STATUS_RESOLVED,
+                                         createdate__lte = seven_ago)
+
+    for oldver in resolved:
+        debug ("Closing through time lapse : " + oldver.complaintno)
+        newver = oldver.clone (AnonymousUser ())
+        newver.curstate = STATUS_CLOSED
+        newver.save ()
+
+        if newver.complainttype.defsmsclo != None:
+            queue_complaint_update_sms (newver.filedby.mobile,
+                                        newver.complainttype.defsmsclo,
+                                        newver)
+        else:
+            debug ("[%s]{%s}: " % (newver.complaintno, str (newver.curstate)) +
+                   "Message is empty -- not queueing >> from forms.py: issuemgr")
 

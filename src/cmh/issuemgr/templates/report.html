@@ -32,17 +32,7 @@
         <span class="subsection-header" style="font-size:16px;font-weight:bold">{% trans "Report Period" %}</span>
       </td>
       <td colspan="2">
-        <table width="50%">
-          <tr>
-            <td>
-              <span style="font-weight:bold">{% trans "Start Date:" %}</span> {{ stats.stdate_show }}
-            </td>
-            <td width="40px"/>
-            <td>
-              <span style="font-weight:bold">{% trans "End Date:" %}</span> {{ stats.endate_show }}
-            </td>
-          </tr>
-        </table>
+        <b>{{ stats.stdate_show }}</b> {% trans "to" %} <b>{{ stats.endate_show }}</b>
       </td>
     </tr>
     <tr>
@@ -73,409 +63,407 @@
     </tr>
   </table>
 </fieldset>
-<form action="." method="post">
-  <fieldset>
-    <legend>
-      {% trans "Report" %}
-    </legend>
-    <table width="100%">
+<fieldset>
+  <legend>
+    {% trans "Report" %}
+  </legend>
+  <table width="100%">
+    <tr>
+      <td width="50%">
+        <div class="section-header" style="text-align:center;">
+          {% trans "Statistics For All Complaints (In Report Period)" %}
+        </div>
+        <table>
+          <tr>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.all_complaints.new }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "New complaints were filed" %}</div>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.all_complaints.ack }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "Complaints were acknowledged" %}</div>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.all_complaints.ope }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "Complaints were opened for action" %}</div>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.all_complaints.res }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "Complaints were resolved" %}</div>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.all_complaints.clo }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "Complaints were closed during the period" %}</div>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.all_complaints.reo }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "Complaints were reported for further attention" %}</div>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.all_complaints.pen }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "Resolved complaints are awaiting complainant feedback" %}</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td width="50%">
+        <div class="section-header" style="text-align:center;">
+          {% trans "Statistics For New Complaints (In Report Period)" %}
+        </div>
+        <table>
+          <tr>
+            <td>
+              <div style="padding-right:15px;font-weight:bold">{% trans "Out of" %}</div>
+            </td>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.new_complaints.new }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "complaints were filed in this period" %}</div>
+            </td>
+          </tr>
+          <tr>
+            <td/>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.new_complaints.ack }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "Complaints were acknowledged" %}</div>
+            </td>
+          </tr>
+          <tr>
+            <td/>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.new_complaints.ope }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "Complaints were opened for action" %}</div>
+            </td>
+          </tr>
+          <tr>
+            <td/>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.new_complaints.res }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "Complaints were resolved" %}</div>
+            </td>
+          </tr>
+          <tr>
+            <td/>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.new_complaints.clo }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "Complaints were closed during the period" %}</div>
+            </td>
+          </tr>
+          <tr>
+            <td/>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.new_complaints.reo }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "Complaints were reported for further attention" %}</div>
+            </td>
+          </tr>
+          <tr>
+            <td/>
+            <td align="right">
+              <span style="color:#aecf00">{{ stats.new_complaints.pen }}</span>
+            </td>
+            <td>
+              <div style="padding-left:30px">{% trans "Resolved complaints are awaiting complainant feedback" %}</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+  <div class="section-header width-100 text-center pad-top">
+    {% trans "Complaints Organized By Department (In Report Period)" %}
+  </div>
+  <table class="width-100 text-center">
+    <tr>
+      <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response Volume" %}</span></td>
+      <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response Time" %}</span></td>
+    </tr>
+    <tr>
+      <td class="width-50 pad-top text-left">
+        <div style="padding-left:50px">
+          <div><b>{% trans "Legend" %}</b></div>
+          <div style="width:90px;height:25px;background-color:#948b54;float:left;"></div>
+          <div style="float:left;padding-left:20px;">
+            {% trans "Acknowledged" %}
+          </div>
+        </div>
+        <div style="clear:both;padding-left:50px">
+          <div style="width:90px;height:25px;background-color:#95b3d7;float:left;"></div>
+          <div style="float:left;padding-left:20px;">
+            {% trans "Closed" %}
+          </div>
+        </div>
+      </td>
+      <td class="width-50 pad-top text-left">
+        <div style="padding-left:50px">
+          <div><b>{% trans "Legend" %}</b></div>
+          <div style="width:90px;height:25px;background-color:#c5be97;float:left"></div>
+          <div style="float:left;padding-left:20px;">
+            {% trans "Maximum response time" %}
+          </div>
+        </div>
+        <div style="clear:both;padding-left:50px">
+          <div style="width:90px;height:25px;background-color:#538ed5;float:left"></div>
+          <div style="float:left;padding-left:20px;">
+            {% trans "Average response time" %}
+          </div>
+        </div>
+      </td>
+    </tr>
+    {% for dept in stats.depts %}
+    <tr>
+      <td colspan="2">
+        <div class="text-center pad-top width-100">
+          <b><i>{{ dept.name|title }}</i></b>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <div style="width:450px;height:300px" id="volume-{{dept.id}}">
+        </div>
+      </td>
+      <td>
+        <div style="width:450px;height:300px" id="time-{{dept.id}}">
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  <div class="section-header width-100 text-left pad-top">
+    {% trans "Most Filed Complaint Types" %}
+  </div>
+  <table class="width-100 tabularlist">
+    <thead>
       <tr>
-        <td width="50%">
-          <div class="section-header" style="text-align:center;">
-            {% trans "Statistics For All Complaints (In Report Period)" %}
-          </div>
-          <table>
-            <tr>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.all_complaints.new }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "New complaints were filed" %}</div>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.all_complaints.ack }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "Complaints were acknowledged" %}</div>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.all_complaints.ope }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "Complaints were opened for action" %}</div>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.all_complaints.res }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "Complaints were resolved" %}</div>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.all_complaints.clo }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "Complaints were closed during the period" %}</div>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.all_complaints.reo }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "Complaints were reported for further attention" %}</div>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.all_complaints.pen }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "Resolved complaints are awaiting complainant feedback" %}</div>
-              </td>
-            </tr>
-          </table>
-        </td>
-        <td width="50%">
-          <div class="section-header" style="text-align:center;">
-            {% trans "Statistics For New Complaints (In Report Period)" %}
-          </div>
-          <table>
-            <tr>
-              <td>
-                <div style="padding-right:15px;font-weight:bold">{% trans "Out of" %}</div>
-              </td>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.new_complaints.new }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "complaints were filed in this period" %}</div>
-              </td>
-            </tr>
-            <tr>
-              <td/>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.new_complaints.ack }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "Complaints were acknowledged" %}</div>
-              </td>
-            </tr>
-            <tr>
-              <td/>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.new_complaints.ope }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "Complaints were opened for action" %}</div>
-              </td>
-            </tr>
-            <tr>
-              <td/>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.new_complaints.res }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "Complaints were resolved" %}</div>
-              </td>
-            </tr>
-            <tr>
-              <td/>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.new_complaints.clo }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "Complaints were closed during the period" %}</div>
-              </td>
-            </tr>
-            <tr>
-              <td/>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.new_complaints.reo }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "Complaints were reported for further attention" %}</div>
-              </td>
-            </tr>
-            <tr>
-              <td/>
-              <td align="right">
-                <span style="color:#aecf00">{{ stats.new_complaints.pen }}</span>
-              </td>
-              <td>
-                <div style="padding-left:30px">{% trans "Resolved complaints are awaiting complainant feedback" %}</div>
-              </td>
-            </tr>
-          </table>
-        </td>
+        <th>{% trans "Complaint Type" %}</th>
+        <th>{% trans "Number of Complaints" %}</th>
+        <th>{% trans "Department" %}</th>
+        <th>{% trans "Category" %}</th>
       </tr>
-    </table>
-    <div class="section-header width-100 text-center pad-top">
-      {% trans "Complaints Organized By Department (In Report Period)" %}
+    </thead>
+    <tbody>
+      {% for ct in stats.most_filed %}
+      <tr>
+        <td> {{ ct.summary }} </td>
+        <td> {{ ct.num_complaints }} </td>
+        <td> {{ ct.department_name|title }} </td>
+        <td> {{ ct.cclass }} </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="section-header width-100 text-left pad-top">
+    {% trans "Longest Pending Complaints" %}
+  </div>
+  <table class="width-100 tabularlist">
+    <thead>
+      <tr>
+        <th>{% trans "Complaint #" %}</th>
+        <th>{% trans "Complaint Type" %}</th>
+        <th>{% trans "Open Since" %}</th>
+        <th>{% trans "Department" %}</th>
+        <th>{% trans "Category" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in stats.longest_pending %}
+      <tr>
+        <td> {{ c.complaintno }} </td>
+        <td> {{ c.complainttype.summary }} </td>
+        <td> {{ c.created|date:"d M, Y" }} </td>
+        <td> {{ c.department.name|title }} </td>
+        <td> {{ c.complainttype.cclass }} </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="width_100 text-center pad-top section-header">
+    {% trans "Millenium Development Goal Indicators" %}<br/>
+    {% trans "(Complaints Filed in Report Period)" %}
+  </div>
+  <center>
+    <div style="width:800px;height:300px;" id="mdgs">
     </div>
-    <table class="width-100 text-center">
+    <div style="width:800px;text-align:left;padding-left:162px;">
+      <img src="/static/images/MDG-1.jpg" width="65px" class="mdg-report-icons">
+      <img src="/static/images/MDG-2.jpg" width="65px" class="mdg-report-icons">
+      <img src="/static/images/MDG-3.jpg" width="65px" class="mdg-report-icons">
+      <img src="/static/images/MDG-4.jpg" width="65px" class="mdg-report-icons">
+      <img src="/static/images/MDG-5.jpg" width="65px" class="mdg-report-icons">
+      <img src="/static/images/MDG-6.jpg" width="65px" class="mdg-report-icons">
+      <img src="/static/images/MDG-7.jpg" width="65px" class="mdg-report-icons">
+    </div>
+  </center>
+  {% if final %}
+  {% if mdgindicators %}
+  <div class="width_100 text-left pad-top section-header">
+    {% trans "MDG Performance Indicator Notes" %}
+  </div>
+  <div class="width_100 text_left">{{ mdgindicators }}</div>
+  {% endif %}
+  {% else %}
+  <div class="width_100 text-left pad-top section-header">
+    {% trans "MDG Performance Indicator Notes" %}
+  </div>
+  <textarea cols="130" rows="6" name="mdgindicators"></textarea>
+  {% endif %}
+  {% if final %}
+  {% if suggestions %}
+  <div class="width_100 text-left pad-top section-header">
+    {% trans "Suggested Follow-up Actions" %}
+  </div>
+  <div style="width:850px;height:75px">{{ suggestions }}</div>
+  {% endif %}
+  {% else %}
+  <div class="width_100 text-left pad-top section-header">
+    {% trans "Suggested Follow-up Actions" %}
+  </div>
+  <textarea cols="130" rows="6" name="suggestions"></textarea>
+  {% endif %}
+  {% if not final %}
+  <div class="width_100 text-center pad-top">
+    <input type="hidden" name="stdate" value="{{ stats.stdate }}">
+    <input type="hidden" name="endate" value="{{ stats.endate }}">
+    <input type="hidden" name="deptids" value="{{ stats.deptids }}">
+    <input type="hidden" name="stateids" value="{{ stats.stateids }}">
+    <input type="hidden" name="disttids" value="{{ stats.disttids }}">
+    <input type="hidden" name="blockids" value="{{ stats.blockids }}">
+    <input type="hidden" name="grampids" value="{{ stats.grampids }}">
+    <input type="hidden" name="villgids" value="{{ stats.villgids }}">
+    <input type="submit" style="font-size:24px;font-weight:bold;width:290px;height:50px" name="final" class="btn" value="PRINT FINAL REPORT">
+  </div>
+  {% endif %}
+</fieldset>
+<fieldset>
+  <legend>
+    {% trans "Selected Departments" %}
+  </legend>
+  <table class="tabularlist width-100">
+    <thead>
       <tr>
-        <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response Volume" %}</span></td>
-        <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response Time" %}</span></td>
+        <th>
+          <div class="subsection-header"><a name="sel_departments">{% trans "Department Names" %}</a></div>
+        </th>
       </tr>
-      <tr>
-        <td class="width-50 pad-top text-left">
-          <div style="padding-left:50px">
-            <div><b>{% trans "Legend" %}</b></div>
-            <div style="width:90px;height:25px;background-color:#948b54;float:left;"></div>
-            <div style="float:left;padding-left:20px;">
-              {% trans "Acknowledged" %}
-            </div>
-          </div>
-          <div style="clear:both;padding-left:50px">
-            <div style="width:90px;height:25px;background-color:#95b3d7;float:left;"></div>
-            <div style="float:left;padding-left:20px;">
-              {% trans "Closed" %}
-            </div>
-          </div>
-        </td>
-        <td class="width-50 pad-top text-left">
-          <div style="padding-left:50px">
-            <div><b>{% trans "Legend" %}</b></div>
-            <div style="width:90px;height:25px;background-color:#c5be97;float:left"></div>
-            <div style="float:left;padding-left:20px;">
-              {% trans "Maximum response time" %}
-            </div>
-          </div>
-          <div style="clear:both;padding-left:50px">
-            <div style="width:90px;height:25px;background-color:#538ed5;float:left"></div>
-            <div style="float:left;padding-left:20px;">
-              {% trans "Average response time" %}
-            </div>
-          </div>
-        </td>
-      </tr>
+    </thead>
+    <tbody>
       {% for dept in stats.depts %}
       <tr>
-        <td colspan="2">
-          <div class="text-center pad-top width-100">
-            <b><i>{{ dept.name|title }}</i></b>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td align="center">
-          <div style="width:450px;height:300px" id="volume-{{dept.id}}">
-          </div>
-        </td>
         <td>
-          <div style="width:450px;height:300px" id="time-{{dept.id}}">
+          <div style="text-align:left;width:100%">
+            {{ dept.name|title }}
           </div>
         </td>
       </tr>
       {% endfor %}
-    </table>
-    <div class="section-header width-100 text-left pad-top">
-      {% trans "Most Filed Complaint Types" %}
-    </div>
-    <table class="width-100 tabularlist">
-      <thead>
-        <tr>
-          <th>{% trans "Complaint Type" %}</th>
-          <th>{% trans "Number of Complaints" %}</th>
-          <th>{% trans "Department" %}</th>
-          <th>{% trans "Category" %}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for ct in stats.most_filed %}
-        <tr>
-          <td> {{ ct.summary }} </td>
-          <td> {{ ct.num_complaints }} </td>
-          <td> {{ ct.department_name|title }} </td>
-          <td> {{ ct.cclass }} </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <div class="section-header width-100 text-left pad-top">
-      {% trans "Longest Pending Complaints" %}
-    </div>
-    <table class="width-100 tabularlist">
-      <thead>
-        <tr>
-          <th>{% trans "Complaint #" %}</th>
-          <th>{% trans "Complaint Type" %}</th>
-          <th>{% trans "Open Since" %}</th>
-          <th>{% trans "Department" %}</th>
-          <th>{% trans "Category" %}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for c in stats.longest_pending %}
-        <tr>
-          <td> {{ c.complaintno }} </td>
-          <td> {{ c.complainttype.summary }} </td>
-          <td> {{ c.created|date:"d M, Y" }} </td>
-          <td> {{ c.department.name|title }} </td>
-          <td> {{ c.complainttype.cclass }} </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <div class="width_100 text-center pad-top section-header">
-      {% trans "Millenium Development Goal Indicators" %}<br/>
-      {% trans "(Complaints Filed in Report Period)" %}
-    </div>
-    <center>
-      <div style="width:800px;height:300px;" id="mdgs">
-      </div>
-      <div style="width:800px;text-align:left;padding-left:162px;">
-        <img src="/static/images/MDG-1.jpg" width="65px" class="mdg-report-icons">
-        <img src="/static/images/MDG-2.jpg" width="65px" class="mdg-report-icons">
-        <img src="/static/images/MDG-3.jpg" width="65px" class="mdg-report-icons">
-        <img src="/static/images/MDG-4.jpg" width="65px" class="mdg-report-icons">
-        <img src="/static/images/MDG-5.jpg" width="65px" class="mdg-report-icons">
-        <img src="/static/images/MDG-6.jpg" width="65px" class="mdg-report-icons">
-        <img src="/static/images/MDG-7.jpg" width="65px" class="mdg-report-icons">
-      </div>
-    </center>
-    {% if final %}
-    {% if mdgindicators %}
-    <div class="width_100 text-left pad-top section-header">
-      {% trans "MDG Performance Indicator Notes" %}
-    </div>
-    <div class="width_100 text_left">{{ mdgindicators }}</div>
-    {% endif %}
-    {% else %}
-    <div class="width_100 text-left pad-top section-header">
-      {% trans "MDG Performance Indicator Notes" %}
-    </div>
-    <textarea cols="130" rows="6" name="mdgindicators"></textarea>
-    {% endif %}
-    {% if final %}
-    {% if suggestions %}
-    <div class="width_100 text-left pad-top section-header">
-      {% trans "Suggested Follow-up Actions" %}
-    </div>
-    <div style="width:850px;height:75px">{{ suggestions }}</div>
-    {% endif %}
-    {% else %}
-    <div class="width_100 text-left pad-top section-header">
-      {% trans "Suggested Follow-up Actions" %}
-    </div>
-    <textarea cols="130" rows="6" name="suggestions"></textarea>
-    {% endif %}
-    {% if not final %}
-    <div class="width_100 text-center pad-top">
-      <input type="hidden" name="stdate" value="{{ stats.stdate }}">
-      <input type="hidden" name="endate" value="{{ stats.endate }}">
-      <input type="hidden" name="deptids" value="{{ stats.deptids }}">
-      <input type="hidden" name="stateids" value="{{ stats.stateids }}">
-      <input type="hidden" name="disttids" value="{{ stats.disttids }}">
-      <input type="hidden" name="blockids" value="{{ stats.blockids }}">
-      <input type="hidden" name="grampids" value="{{ stats.grampids }}">
-      <input type="hidden" name="villgids" value="{{ stats.villgids }}">
-      <input type="submit" style="font-size:24px;font-weight:bold;width:290px;height:50px" name="final" class="btn" value="PRINT FINAL REPORT">
-    </div>
-    {% endif %}
-  </fieldset>
-  <fieldset>
-    <legend>
-      {% trans "Selected Departments" %}
-    </legend>
-    <table class="tabularlist width-100">
-      <thead>
-        <tr>
-          <th>
-            <div class="subsection-header"><a name="sel_departments">{% trans "Department Names" %}</a></div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for dept in stats.depts %}
-        <tr>
-          <td>
-            <div style="text-align:left;width:100%">
-              {{ dept.name|title }}
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% if not final %}
-    <div style="text-align:right;">
-      <button class="btn edit_selection">Modify Selection</button>
-    </div>
-    {% endif %}
-  </fieldset>
-  <fieldset>
-    <legend>
-      {% trans "Selected Locations" %}
-    </legend>
-    <table class='tabularlist'>
-      <thead>
-        <tr>
-          <th><a name="sel_locations">{% trans "Block" %}</a></th>
-          <th>{% trans "Gram Panchayat" %}</th>
-          <th>{% trans "Village" %}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for block in stats.blocks %}
-        <tr>
-          <td colspan="3">
-            <div style="text-align:left;">
-              {{ block.name|title }}
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-        {% for gramp in stats.gramps %}
-        <tr>
-          <td>
-            <div style="text-align:left;">
-              {{ gramp.block.name|title }}
-            </div>
-          </td>
-          <td colspan="2" align="left">
-            <div style="text-align:left;">
-              {{ gramp.name|title }}
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-        {% for villg in stats.villgs %}
-        <tr>
-          <td align="left">
-            <div style="text-align:left;">
-              {{ villg.grampanchayat.block.name|title }}
-            </div>
-          </td>
-          <td align="left">
-            <div style="text-align:left;">
-              {{ villg.grampanchayat.name|title }}
-            </div>
-          </td>
-          <td align="left">
-            <div style="text-align:left;">
-              {{ villg.name|title }}
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% if not final %}
-    <div style="text-align:right;">
-      <button class="btn edit_selection">Modify Selection</button>
-    </div>
-    {% endif %}
-  </fieldset>
-</form>
+    </tbody>
+  </table>
+  {% if not final %}
+  <div style="text-align:right;">
+    <button class="btn edit_selection">Modify Selection</button>
+  </div>
+  {% endif %}
+</fieldset>
+<fieldset>
+  <legend>
+    {% trans "Selected Locations" %}
+  </legend>
+  <table class='tabularlist'>
+    <thead>
+      <tr>
+        <th><a name="sel_locations">{% trans "Block" %}</a></th>
+        <th>{% trans "Gram Panchayat" %}</th>
+        <th>{% trans "Village" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for block in stats.blocks %}
+      <tr>
+        <td colspan="3">
+          <div style="text-align:left;">
+            {{ block.name|title }}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+      {% for gramp in stats.gramps %}
+      <tr>
+        <td>
+          <div style="text-align:left;">
+            {{ gramp.block.name|title }}
+          </div>
+        </td>
+        <td colspan="2" align="left">
+          <div style="text-align:left;">
+            {{ gramp.name|title }}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+      {% for villg in stats.villgs %}
+      <tr>
+        <td align="left">
+          <div style="text-align:left;">
+            {{ villg.grampanchayat.block.name|title }}
+          </div>
+        </td>
+        <td align="left">
+          <div style="text-align:left;">
+            {{ villg.grampanchayat.name|title }}
+          </div>
+        </td>
+        <td align="left">
+          <div style="text-align:left;">
+            {{ villg.name|title }}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if not final %}
+  <div style="text-align:right;">
+    <button class="btn edit_selection">Modify Selection</button>
+  </div>
+  {% endif %}
+</fieldset>
 {% endblock %}
 
 {% block body_scripts %}

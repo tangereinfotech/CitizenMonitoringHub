@@ -55,7 +55,7 @@
             <input type="button"
                    value="Remove"
                    id="btnMoveLeft"
-                   onclick="RepSelector.fnMoveItems('id_selecteddep','id_departments','remove')"
+                   onclick="RepSelector.fnMoveItems('id_selecteddep','id_departments','rem')"
                    class="btn"
                    style="width:80px">
           </td>
@@ -127,7 +127,7 @@
                 </tr>
               </thead>
               <tbody>
-                {% for b in blocks %}
+                {% for b in selblocks %}
                 <tr>
                   <td> {{ b.name }} </td>
                   <td/>
@@ -183,11 +183,34 @@
 <script type="text/javascript">
  $(document).ready (
     function () {
+        RepSelector.init (
+            [
+                {% for d in avldepts %}
+                [ {{ d.id }}, '{{ d.name }}']
+                {% if not forloop.last %} , {% endif %}
+                {% endfor %}
+            ],
+            [
+                {% for d in seldepts %}
+                [ {{ d.id }}, '{{ d.name }}']
+                {% if not forloop.last %} , {% endif %}
+                {% endfor %}
+            ],
+            [
+                {% for b in avlblocks %}
+                [ {{ b.id }}, '{{ b.name }}']
+                {% if not forloop.last %} , {% endif %}
+                {% endfor %}
+            ],
+            [
+                {% for b in selblocks %}
+                [ {{ b.id }}, '{{ b.name }}']
+                {% if not forloop.last %} , {% endif %}
+                {% endfor %}
+            ],
+        );
         $("#id_stdate").datepicker ({dateFormat : 'dd/mm/yy'});
         $("#id_endate").datepicker ({dateFormat : 'dd/mm/yy'});
-        $.each ({{ deptids }}, function (index, deptid) {
-                    RepSelector.fnAddSelectedDept (deptid);
-                });
         $("#genreport").click (
             function (event) {
                 RepSelector.submitReport ();

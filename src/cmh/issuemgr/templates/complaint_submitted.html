@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block page_content %}
-<div style="text-align: center;width:100%;padding: 50px 0px;">
-  {% trans "Thank you for submitting your complaint. Your complaint number is: " %}<b>{{ complaint.complaintno }}</b> .
+<div style="text-align: center;width:100%;padding: 50px 0px;font-size:20px">
+  {% trans "Thank you for submitting your complaint. <br/><br/>Your complaint number is: " %}<b><span style="font-size:24px">{{ complaint.complaintno }}</span></b> .
 </div>
 {% endblock %}
