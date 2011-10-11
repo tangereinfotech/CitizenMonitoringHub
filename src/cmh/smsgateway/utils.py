@@ -40,14 +40,15 @@ def queue_sms (mobile, message):
 def queue_complaint_ack_official_sms (complaint):
     if (complaint.assignto != None and
         complaint.assignto.user.cmhuser.phone != None and
-        len (complaint.assignto.user.cmhuser.phone) != 0):
+        len (complaint.assignto.user.cmhuser.phone) != 0 and
+        complaint.complainttype != None):
         official_message = "%s : %s : %s : %s/%s/%s : %s" % (complaint.complaintno,
                                                              complaint.filedby.name,
                                                              complaint.filedby.mobile,
                                                              complaint.location.name,
                                                              complaint.location.grampanchayat.name,
                                                              complaint.location.grampanchayat.block.name,
-                                                             complaint.description)
+                                                             complaint.complainttype.summary)
         queue_sms (complaint.assignto.user.cmhuser.phone, official_message)
     else:
         debug ("!! ERROR : Queuing message to official. Complaint no: %s, Assigned to: %s" %
