@@ -20,7 +20,7 @@ LOCATION_REGEX = r'^ *(?P<village>\w+) *\[(?P<gp>\w+), *(?P<block>\w+)\] *$|^ *(
 from datetime import datetime
 from django.utils.translation import ugettext as _
 
-from cmh.smsgateway.utils import queue_complaint_update_sms
+from cmh.smsgateway.utils import queue_complaint_update_sms, queue_complaint_ack_official_sms
 
 from cmh.common.models import Country, State, District
 from cmh.common.models import Block, GramPanchayat, Village
@@ -178,6 +178,7 @@ class AcceptComplaintForm (forms.Form):
         accept_cpl.curstate = STATUS_ACK
         accept_cpl.save ()
 
+        queue_complaint_ack_official_sms (accept_cpl)
 
         message = None
         ct = cpl.complainttype
@@ -388,6 +389,9 @@ class ComplaintUpdateForm (forms.Form):
         else:
             debug ("[%s]{%s}: " % (newver.complaintno, str (newver.curstate)) +
                    "Message is empty -- not queueing >> from forms.py: issuemgr")
+
+        if (newver.curstate == STATUS_ACK):
+            queue_complaint_ack_official_sms (newver)
 
         return newver
 

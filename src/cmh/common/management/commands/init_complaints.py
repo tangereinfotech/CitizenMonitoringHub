@@ -74,6 +74,7 @@ class Command (BaseCommand):
                      EP.CELL_TEXT])
 
     def save_data (self, rowid, cells):
+        print "Processing row: " + str (rowid) + ", Cells: " + str (cells)
         dept_name = cells [COL_DEPT_NAME]
         dept_code = cells [COL_DEPT_CODE]
         comp_code = cells [COL_COMP_CODE]
