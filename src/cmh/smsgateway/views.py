@@ -69,7 +69,7 @@ def gateway (request):
                                                           valid = False,
                                                           message = message)
 
-                matches = re.match (FORMAT, message, re.M)
+                matches = re.match (FORMAT, message, re.S)
                 if matches != None:
                     block = str (int (matches.group ('block')))
                     gramp = str (int (matches.group ('gramp')))
