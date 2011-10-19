@@ -780,7 +780,7 @@ def editc (request, compcode, depcode):
                                         'menus' : get_user_menus (request.user,process_dm),
                                         'user' : request.user})
     else:
-        ccode = "%s.%03s" %(depcode,compcode)
+        ccode = "%s.%s" %(depcode,compcode)
         comp = ComplaintType.objects.get (code = ccode)
         return render_to_response ('edit_comp_type.html',
                                    {'trial' : EditComp (compobj = comp),

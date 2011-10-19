@@ -99,7 +99,7 @@ class Command (BaseCommand):
         try:
             complaint = ComplaintType.objects.get (code = comp_code)
         except ComplaintType.DoesNotExist:
-            search_str = "%s;%s" % (comp_summ.lower (), comp_clss.lower ())
+            search_str = "%s;%s;%s;%s" % (department.name, department.code,comp_summ.lower (), comp_clss.lower ())
             complaint = ComplaintType.objects.create (code = comp_code,
                                                       summary = comp_summ,
                                                       department = department,
