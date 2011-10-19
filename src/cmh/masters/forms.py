@@ -445,11 +445,11 @@ class AddVillage (forms.Form):
                                       lattd               = self.cleaned_data['lattd'],
                                       longd               = self.cleaned_data['longd'],
                                       grampanchayat       = self.cleaned_data['gp'])
-        vill.search = "%s;%s;%s;%s;%s" % (vill.name,
-                                          vill.grampanchayat.name,
-                                          vill.grampanchayat.block.name,
-                                          vill.grampanchayat.block.district.name,
-                                          vill.grampanchayat.block.district.state.name)
+        vill.search = "%s;%s;%s;%s;%s" % (vill.name.lower (),
+                                          vill.grampanchayat.name.lower (),
+                                          vill.grampanchayat.block.name.lower (),
+                                          vill.grampanchayat.block.district.name.lower (),
+                                          vill.grampanchayat.block.district.state.name.lower ())
         vill.save ()
 
 
@@ -494,7 +494,7 @@ class AddComplaint (forms.Form):
                                             defsmsclo    = self.cleaned_data['defsmsclo'],
                                             department   = self.cleaned_data['department'])
 
-        comp.search = "%s;%s;%s;%s" % (comp.department.name, comp.department.code, comp.summary, comp.cclass)
+        comp.search = "%s;%s;%s;%s" % (comp.department.name.lower (), comp.department.code.lower (), comp.summary.lower (), comp.cclass.lower ())
         comp.save ()
 
         for goalnum in self.cleaned_data ['mdg']:
@@ -682,11 +682,11 @@ class EditVillage (forms.Form):
         vil.lattd   = self.cleaned_data['lattd']
         vil.longd   = self.cleaned_data['longd']
 
-        vil.search = "%s;%s;%s;%s;%s" % (vil.name,
-                                         vil.grampanchayat.name,
-                                         vil.grampanchayat.block.name,
-                                         vil.grampanchayat.block.district.name,
-                                         vil.grampanchayat.block.district.state.name)
+        vil.search = "%s;%s;%s;%s;%s" % (vil.name.lower (),
+                                         vil.grampanchayat.name.lower (),
+                                         vil.grampanchayat.block.name.lower (),
+                                         vil.grampanchayat.block.district.name.lower (),
+                                         vil.grampanchayat.block.district.state.name.lower ())
         vil.save()
 
 
@@ -808,7 +808,7 @@ class EditComp (forms.Form):
         comp.defsmsack    = self.cleaned_data['defsmsack']
         comp.defsmsres    = self.cleaned_data['defsmsres']
         comp.defsmsclo    = self.cleaned_data['defsmsclo']
-        comp.search = "%s;%s;%s;%s" % (comp.department.name, comp.department.code, comp.summary, comp.cclass)
+        comp.search = "%s;%s;%s;%s" % (comp.department.name.lower (), comp.department.code.lower (), comp.summary.lower (), comp.cclass.lower ())
         comp.save()
 
         compmdg_ids = [m.id for m in comp.complaintmdg_set.all ()]
