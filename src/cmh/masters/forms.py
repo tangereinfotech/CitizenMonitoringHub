@@ -806,6 +806,7 @@ class EditComp (forms.Form):
         comp.cclass       = self.cleaned_data['cclass']
         comp.defsmsnew    = self.cleaned_data['defsmsnew']
         comp.defsmsack    = self.cleaned_data['defsmsack']
+        comp.defsmsopen   = self.cleaned_data['defsmsopen']
         comp.defsmsres    = self.cleaned_data['defsmsres']
         comp.defsmsclo    = self.cleaned_data['defsmsclo']
         comp.search = "%s;%s;%s;%s" % (comp.department.name.lower (), comp.department.code.lower (), comp.summary.lower (), comp.cclass.lower ())
