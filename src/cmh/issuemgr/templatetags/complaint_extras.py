@@ -38,7 +38,9 @@ def is_updatable (complaint, user):
 @register.filter
 def get_evidence_display (evidence, user):
     role = AppRole.objects.get_user_role (user)
-    if role == UserRoles.ROLE_CSO or role == UserRoles.ROLE_DM:
+    #if role == UserRoles.ROLE_CSO or role == UserRoles.ROLE_DM:
+    # Request has been made to provide the url for the officer role also
+    if role == UserRoles.ROLE_CSO or role == UserRoles.ROLE_DM or role == UserRoles.ROLE_OFFICIAL:
         retstr  = ('<a href="' + evidence.url + '" target="_blank">'
                    + evidence.filename + '</a>')
     else:

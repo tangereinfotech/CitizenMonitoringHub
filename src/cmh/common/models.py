@@ -80,6 +80,9 @@ class ComplaintType (models.Model):
     def get_department (self):
         return self.code.split ('.')[0]
 
+    def __unicode__ (self):
+        return "%s:%s:%s" % (self.department.code, self.code, self.summary)
+
 class MilleniumDevGoal (models.Model):
     goalnum = models.CharField (max_length = 20, unique = True)
 

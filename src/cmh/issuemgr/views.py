@@ -1042,7 +1042,7 @@ from django.views.static import serve as serve_static_file
 @login_required
 def get_evidence (request, filename):
     role = AppRole.objects.get_user_role (request.user)
-    if role == UserRoles.ROLE_CSO or role == UserRoles.ROLE_DM:
+    if role == UserRoles.ROLE_CSO or role == UserRoles.ROLE_DM or role == UserRoles.ROLE_OFFICIAL:
         return serve_static_file (request,
                                   filename,
                                   document_root = settings.EVIDENCE_DIR,

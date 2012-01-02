@@ -21,7 +21,7 @@ from cmh.common.constants import UserRoles
 from cmh.usermgr.models import Citizen
 
 def get_or_create_citizen (mobile, name):
-    citizens = Citizen.objects.filter (mobile = mobile)
+    citizens = Citizen.objects.filter (mobile = mobile, name = name)
     if citizens.count () != 0:
         citizen = citizens [0]
     else:

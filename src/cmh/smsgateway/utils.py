@@ -15,6 +15,7 @@
 
 from cmh.smsgateway.models import TextMessage
 from cmh.common.utils import debug
+from django.utils.encoding import smart_str
 
 def prepare_sms_message (message, complaint):
     message = message.replace ('____', complaint.complaintno)
@@ -35,7 +36,7 @@ def queue_complaint_update_sms (mobile, complaint_message, complaint):
 
 def queue_sms (mobile, message):
     debug ("Queueing message [[%s]] for mobile [%s]" % (message, str (mobile)))
-    TextMessage.objects.queue_text_message (mobile, message)
+    TextMessage.objects.queue_text_message (mobile, smart_str(message))
 
 def queue_complaint_ack_official_sms (complaint):
     if (complaint.assignto != None and
@@ -49,7 +50,9 @@ def queue_complaint_ack_official_sms (complaint):
                                                              complaint.location.grampanchayat.name,
                                                              complaint.location.grampanchayat.block.name,
                                                              complaint.complainttype.summary)
-        queue_sms (complaint.assignto.user.cmhuser.phone, official_message)
+        # made the official_message use smart_str since the message contains unicode
+	# and encoding was not happening properly
+        queue_sms (complaint.assignto.user.cmhuser.phone, smart_str(official_message))
     else:
         debug ("!! ERROR : Queuing message to official. Complaint no: %s, Assigned to: %s" %
                (complaint.complaintno, str (complaint.assignto)))
