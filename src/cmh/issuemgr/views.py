@@ -754,8 +754,15 @@ def get_report_stats (stdate, endate,
              'gramps' : gramps,
              'villgs' : villgs}
     # Find all villages in the selected locations for the report
-    villages = Village.objects.filter(Q(id__in  = [gid for gid in villgids]) | Q(grampanchayat__id__in = [grampid for grampid in grampids]) | Q(grampanchayat__block__id__in = [blockid for blockid in blockids]) | Q(grampanchayat__block__district__id__in = [distid for distid in disttids]) | Q(grampanchayat__block__district__state__id__in = [stateid for stateid in stateids]))
-    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, department__in = [dept.id for dept in depts]).filter(location__in = [vill.id for vill in villages])
+    complaints = Complaint.objects.filter (Q (createdate__gte = stdate)
+                                           & Q (createdate__lte = endate)
+                                           & Q (department__in = [dept.id for dept in depts])
+                                           & (Q (location__in = villgids)
+                                              | Q (location__grampanchayat__id__in = grampids)
+                                              | Q (location__grampanchayat__block__id__in = blockids)
+                                              | Q (location__grampanchayat__block__district__id__in = disttids)
+                                              | Q (location__grampanchayat__block__district__state__id__in = stateids))
+                                           )
     new_complaints = complaints.filter (curstate = STATUS_NEW)
     ack_complaints = complaints.filter (curstate = STATUS_ACK)
     ope_complaints = complaints.filter (curstate = STATUS_OPEN)
