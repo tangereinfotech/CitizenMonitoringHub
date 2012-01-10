@@ -746,16 +746,16 @@ def get_report_stats (stdate, endate,
              'deptids' : ",".join ([str (x) for x in deptids]),
              'stateids' : ",".join ([str (x) for x in stateids]),
              'disttids' : ",".join ([str (x) for x in disttids]),
-             'blockids' : ",".join ([str (x.id) for x in blocks]),
+             'blockids' : ",".join ([str (x) for x in blockids]),
              'grampids' : ",".join ([str (x) for x in grampids]),
              'villgids' : ",".join ([str (x) for x in villgids]),
              'depts' : depts,
              'blocks' : blocks,
              'gramps' : gramps,
              'villgs' : villgs}
-
-    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, department__in = [dept.id for dept in depts])
-
+    # Find all villages in the selected locations for the report
+    villages = Village.objects.filter(Q(id__in  = [gid for gid in villgids]) | Q(grampanchayat__id__in = [grampid for grampid in grampids]) | Q(grampanchayat__block__id__in = [blockid for blockid in blockids]) | Q(grampanchayat__block__district__id__in = [distid for distid in disttids]) | Q(grampanchayat__block__district__state__id__in = [stateid for stateid in stateids]))
+    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, department__in = [dept.id for dept in depts]).filter(location__in = [vill.id for vill in villages])
     new_complaints = complaints.filter (curstate = STATUS_NEW)
     ack_complaints = complaints.filter (curstate = STATUS_ACK)
     ope_complaints = complaints.filter (curstate = STATUS_OPEN)
