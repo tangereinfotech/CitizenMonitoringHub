@@ -131,6 +131,7 @@ INSTALLED_APPS = (
     'cmh.smsgateway',
     'cmh.masters',
     'south',
+    'django_extensions'
 )
 
 LOGIN_URL = '/user/login/'
