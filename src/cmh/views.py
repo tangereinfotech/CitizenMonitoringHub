@@ -31,7 +31,10 @@ from cmh.issuemgr.forms import DateIndex
 
 def index (request):
     if request.method == 'GET':
-        departments = ComplaintDepartment.objects.all ()
+        deps = set()
+        [deps.add(complaint.department) for complaint in ComplaintType.objects.all()]
+        departments = list(deps)
+        #departments = ComplaintDepartment.objects.all ()
         request.session ['blkids']  = ""
         request.session ['villids'] = ""
         request.session ['gpids']   = ""

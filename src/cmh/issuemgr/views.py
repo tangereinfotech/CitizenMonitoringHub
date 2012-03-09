@@ -723,7 +723,10 @@ def get_report_stats (stdate, endate,
                       stateids, disttids, blockids, grampids, villgids):
 
     if ALL_DEPT_ID in deptids:
-        depts = ComplaintDepartment.objects.all ()
+        deps = set()
+        [deps.add(complaint.department) for complaint in ComplaintType.objects.all()]
+        depts = list(deps)
+        #depts = ComplaintDepartment.objects.all ()
     else:
         depts = ComplaintDepartment.objects.filter (id__in = deptids)
 
