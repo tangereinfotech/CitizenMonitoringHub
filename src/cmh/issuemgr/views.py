@@ -123,7 +123,7 @@ def get_category_map_update (request):
             dttm_start = datetime (stdate.year, stdate.month, stdate.day, 0, 0, 0)
             dttm_end   = datetime (endate.year, endate.month, endate.day, 23, 59, 59)
 
-            complaints = Complaint.objects.filter (latest = True, created__gte = dttm_start, created__lte = dttm_end)
+            complaints = Complaint.objects.filter (latest = True, logdate__gte = dttm_start, logdate__lte = dttm_end)
             complaints = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_REOPEN) | Q (curstate = STATUS_OPEN))
 
             if not ALL_DEPT_ID in deptids:
@@ -598,7 +598,7 @@ def hot_complaints (request):
     return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : [], 'departments' : [], 'vital_stats' : vital_stats}))
 
 def get_vital_stats (deptids, stdate, endate):
-    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, curstate = STATUS_NEW)
+    complaints = Complaint.objects.filter (logdate__gte = stdate, logdate__lte = endate, curstate = STATUS_NEW)
 
     complaintnos = [c.complaintno for c in complaints]
 
@@ -788,7 +788,7 @@ def get_report_stats (stdate, endate,
     new_res_complaints = complaints.filter (curstate = STATUS_RESOLVED, complaintno__in = new_complaintnos)
     new_clo_complaints = complaints.filter (curstate = STATUS_CLOSED, complaintno__in = new_complaintnos)
     new_reo_complaints = complaints.filter (curstate = STATUS_REOPEN, complaintno__in = new_complaintnos)
-    new_pen_complaints = res_complaints.exclude (complaintno__in = [c.complaintno for c in new_clo_complaints] + [c.complaintno for c in new_reo_complaints])
+    new_pen_complaints = new_res_complaints.exclude (complaintno__in = [c.complaintno for c in new_clo_complaints] + [c.complaintno for c in new_reo_complaints])
 
     new_complaint_stats = {'new' : len (set ([c.complaintno for c in new_complaints])),
                            'ack' : len (set ([c.complaintno for c in new_ack_complaints])),
