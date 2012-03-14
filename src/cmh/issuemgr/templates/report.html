@@ -42,11 +42,11 @@
       <td>
         {% trans "See" %} <a href="#sel_departments">{% trans "Selected Departments" %}</a> {% trans "section for detailed listing" %}
       </td>
-      <td>
+      <!--<td>
         {% if not final %}
         <button class="btn edit_selection">Modify Selection</button>
         {% endif %}
-      </td>
+      </td> -->
     </tr>
     <tr>
       <td>
@@ -55,11 +55,11 @@
       <td>
         {% trans "See" %} <a href="#sel_locations">{% trans "Selected Locations" %}</a> {% trans "section for detailed listing" %}
       </td>
-      <td>
+      <!--<td>
         {% if not final %}
         <button class="btn edit_selection">Modify Selection</button>
         {% endif %}
-      </td>
+      </td> -->
     </tr>
   </table>
 </fieldset>
@@ -395,11 +395,13 @@
       {% endfor %}
     </tbody>
   </table>
+  <!--
   {% if not final %}
   <div style="text-align:right;">
     <button class="btn edit_selection">Modify Selection</button>
   </div>
   {% endif %}
+  -->
 </fieldset>
 <fieldset>
   <legend>
@@ -458,11 +460,13 @@
       {% endfor %}
     </tbody>
   </table>
+  <!--
   {% if not final %}
   <div style="text-align:right;">
     <button class="btn edit_selection">Modify Selection</button>
   </div>
   {% endif %}
+  -->
 </fieldset>
 {% endblock %}
 
