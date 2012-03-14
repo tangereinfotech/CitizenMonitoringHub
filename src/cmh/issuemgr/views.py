@@ -123,8 +123,14 @@ def get_category_map_update (request):
             dttm_start = datetime (stdate.year, stdate.month, stdate.day, 0, 0, 0)
             dttm_end   = datetime (endate.year, endate.month, endate.day, 23, 59, 59)
 
-            complaints = Complaint.objects.filter (latest = True, logdate__gte = dttm_start, logdate__lte = dttm_end)
-            complaints = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_REOPEN) | Q (curstate = STATUS_OPEN))
+            complaints = Complaint.objects.filter (curstate = STATUS_NEW, created__gte = dttm_start, created__lte = dttm_end)
+            complaintnos = [c.complaintno for c in complaints]
+            rel_complaint_ids = []
+            for cno in complaintnos:
+                cid = Complaint.objects.filter(complaintno = cno, created__lte = dttm_end).exclude(curstate = STATUS_CLOSED).order_by('-created')[0].pk
+                rel_complaint_ids.append(cid)
+            open_states = [STATUS_NEW, STATUS_ACK, STATUS_OPEN, STATUS_REOPEN]
+            complaints = Complaint.objects.filter(pk__in = rel_complaint_ids).filter(curstate__in = open_states)
 
             if not ALL_DEPT_ID in deptids:
                 complaints = complaints.filter (department__id__in = deptids)
@@ -173,8 +179,14 @@ def getstats (request):
         dttm_start = datetime (stdate.year, stdate.month, stdate.day, 0, 0, 0)
         dttm_end   = datetime (endate.year, endate.month, endate.day, 23, 59, 59)
 
-        complaints = Complaint.objects.filter (latest = True, created__gte = dttm_start, created__lte = dttm_end)
-        complaints = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_REOPEN) | Q (curstate = STATUS_OPEN))
+        complaints = Complaint.objects.filter (curstate = STATUS_NEW, created__gte = dttm_start, created__lte = dttm_end)
+        complaintnos = [c.complaintno for c in complaints]
+        rel_complaint_ids = []
+        for cno in complaintnos:
+            cid = Complaint.objects.filter(complaintno = cno, created__lte = dttm_end).exclude(curstate = STATUS_CLOSED).order_by('-created')[0].pk
+            rel_complaint_ids.append(cid)
+        open_states = [STATUS_NEW, STATUS_ACK, STATUS_OPEN, STATUS_REOPEN]
+        complaints = Complaint.objects.filter(pk__in = rel_complaint_ids).filter(curstate__in = open_states)
 
         if not ALL_DEPT_ID in deptids:
             complaints = complaints.filter (department__id__in = deptids)
@@ -598,18 +610,21 @@ def hot_complaints (request):
     return HttpResponse (json.dumps ({'datapoints' : [[]], 'names' : [], 'departments' : [], 'vital_stats' : vital_stats}))
 
 def get_vital_stats (deptids, stdate, endate):
-    complaints = Complaint.objects.filter (logdate__gte = stdate, logdate__lte = endate, curstate = STATUS_NEW)
+    dttm_start = datetime (stdate.year, stdate.month, stdate.day, 0, 0, 0)
+    dttm_end   = datetime (endate.year, endate.month, endate.day, 23, 59, 59)
+
+    complaints = Complaint.objects.filter (created__gte = dttm_start, created__lte = dttm_end, curstate = STATUS_NEW)
 
     complaintnos = [c.complaintno for c in complaints]
 
     complaints = Complaint.objects.filter (complaintno__in = complaintnos)
 
     new_complaints = complaints.filter (curstate = STATUS_NEW)
-    ack_complaints = complaints.filter (curstate = STATUS_ACK, department__in = deptids)
-    ope_complaints = complaints.filter (curstate = STATUS_OPEN, department__in = deptids)
-    res_complaints = complaints.filter (curstate = STATUS_RESOLVED, department__in = deptids)
-    clo_complaints = complaints.filter (curstate = STATUS_CLOSED, department__in = deptids)
-    reo_complaints = complaints.filter (curstate = STATUS_REOPEN, department__in = deptids)
+    ack_complaints = complaints.filter (curstate = STATUS_ACK, department__in = deptids, created__lte = dttm_end)
+    ope_complaints = complaints.filter (curstate = STATUS_OPEN, department__in = deptids, created__lte = dttm_end)
+    res_complaints = complaints.filter (curstate = STATUS_RESOLVED, department__in = deptids, created__lte = dttm_end)
+    clo_complaints = complaints.filter (curstate = STATUS_CLOSED, department__in = deptids, created__lte = dttm_end)
+    reo_complaints = complaints.filter (curstate = STATUS_REOPEN, department__in = deptids, created__lte = dttm_end)
     pen_complaints = res_complaints.exclude (complaintno__in = [c.complaintno for c in clo_complaints] + [c.complaintno for c in reo_complaints])
 
     vital_stats = {'newc' : len (set ([c.complaintno for c in new_complaints])),
@@ -757,8 +772,11 @@ def get_report_stats (stdate, endate,
              'gramps' : gramps,
              'villgs' : villgs}
     # Find all villages in the selected locations for the report
-    complaints = Complaint.objects.filter (Q (createdate__gte = stdate)
-                                           & Q (createdate__lte = endate)
+
+    dttm_start = datetime (stdate.year, stdate.month, stdate.day, 0, 0, 0)
+    dttm_end   = datetime (endate.year, endate.month, endate.day, 23, 59, 59)
+    complaints = Complaint.objects.filter (Q (created__gte = dttm_start)
+                                           & Q (created__lte = dttm_end)
                                            & Q (department__in = [dept.id for dept in depts])
                                            & (Q (location__in = villgids)
                                               | Q (location__grampanchayat__id__in = grampids)
