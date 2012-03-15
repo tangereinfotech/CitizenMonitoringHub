@@ -23,6 +23,7 @@
   {% trans  "Complaint Status Report For Chosen Departments, Locations And Period" %}
 </div>
 <fieldset>
+  <form>
   <legend>
     {% trans "Selections" %}
   </legend>
@@ -368,6 +369,7 @@
     <input type="hidden" name="grampids" value="{{ stats.grampids }}">
     <input type="hidden" name="villgids" value="{{ stats.villgids }}">
     <input type="submit" style="font-size:24px;font-weight:bold;width:290px;height:50px" name="final" class="btn" value="PRINT FINAL REPORT">
+    </form>
   </div>
   {% endif %}
 </fieldset>
