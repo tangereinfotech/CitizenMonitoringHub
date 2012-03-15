@@ -916,7 +916,6 @@ def get_report_stats (stdate, endate,
 
 
 def initial_report (request):
-    print "Came here"
     form  = ReportForm (request.POST)
 
     if form.is_valid ():
@@ -939,7 +938,7 @@ def initial_report (request):
                                       blockids,
                                       grampids,
                                       villgids)
-            print request.POST
+
             if 'final' in request.POST:
                 final = True
             else:
@@ -953,7 +952,6 @@ def initial_report (request):
             import traceback
             traceback.print_exc ()
     else:
-        print form.errors
         return HttpResponseRedirect ("/")
 
 
