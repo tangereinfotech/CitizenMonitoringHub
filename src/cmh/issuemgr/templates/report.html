@@ -196,11 +196,10 @@
       </td>
     </tr>
   </table>
-  <div class="section-header width-100 text-center pad-top">
+  <div class="section-header width-100 text-center pad-top" style="page-break-before:always">
     {% trans "Complaints Organized By Department (In Report Period)" %}
   </div>
-  <div style="page-break-after:always;">
-  <table class="width-100 text-center">
+  <!-- <table class="width-100 text-center">
     <tr>
       <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response Volume" %}</span></td>
       <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response Time" %}</span></td>
@@ -209,13 +208,17 @@
       <td class="width-50 pad-top text-left">
         <div style="padding-left:50px">
           <div><b>{% trans "Legend" %}</b></div>
-          <div style="width:90px;height:25px;background-color:#948b54;float:left;"></div>
-          <div style="float:left;padding-left:20px;">
+          <div id="leg_ack" style="width:90px;height:25px;background-color:#948b54;float:left;">
+          <img src="/static/images/leg_ack.png" width="90px"/>
+          </div>
+          <div id="leg_close" style="float:left;padding-left:20px;">
             {% trans "Acknowledged" %}
           </div>
         </div>
         <div style="clear:both;padding-left:50px">
-          <div style="width:90px;height:25px;background-color:#95b3d7;float:left;"></div>
+          <div style="width:90px;height:25px;background-color:#95b3d7;float:left;">
+          <img src="/static/images/leg_close.png" width="90px"/>
+          </div>
           <div style="float:left;padding-left:20px;">
             {% trans "Closed" %}
           </div>
@@ -224,26 +227,29 @@
       <td class="width-50 pad-top text-left">
         <div style="padding-left:50px">
           <div><b>{% trans "Legend" %}</b></div>
-          <div style="width:90px;height:25px;background-color:#c5be97;float:left"></div>
+          <div style="width:90px;height:25px;background-color:#c5be97;float:left">
+          <img src="/static/images/leg_max_res.png" width="90px"/>
+          </div>
           <div style="float:left;padding-left:20px;">
             {% trans "Maximum response time" %}
           </div>
         </div>
         <div style="clear:both;padding-left:50px">
-          <div style="width:90px;height:25px;background-color:#538ed5;float:left"></div>
+          <div style="width:90px;height:25px;background-color:#538ed5;float:left">
+          <img src="/static/images/leg_av_res.png" width="90px"/>
+          </div>
           <div style="float:left;padding-left:20px;">
             {% trans "Average response time" %}
           </div>
         </div>
       </td>
     </tr>
-    </table>
-    </div>
+    </table> --> 
     {% for dept in stats.depts %}
     {% if forloop.counter|divisibleby:"2" %}
     <div style="page-break-after:always;">
     {% endif %}
-    <table>
+    <table width="100%"> 
     <tr>
       <td colspan="2">
         <div class="text-center pad-top width-100">
@@ -252,11 +258,11 @@
       </td>
     </tr>
     <tr>
-      <td align="center">
+      <td width="50%" align="center">
         <div style="width:450px;height:280px" id="volume-{{dept.id}}">
         </div>
       </td>
-      <td>
+      <td width="50%" align="center">
         <div style="width:450px;height:280px;" id="time-{{dept.id}}">
         </div>
       </td>
@@ -478,6 +484,10 @@
                               barWidth : 25
                           }
                       },
+                      legend: {
+                          show: true,
+                          labels:['Acknowledged','Closed']
+                          }, 
                       axes: {
                           xaxis: {
                               renderer: $.jqplot.CategoryAxisRenderer,
@@ -509,6 +519,10 @@
                               barWidth : 25
                           }
                       },
+                      legend: {
+                          show: true,
+                          labels:['Max Response Time','Average Response Time']
+                          }, 
                       axes: {
                           xaxis: {
                               renderer: $.jqplot.CategoryAxisRenderer,
