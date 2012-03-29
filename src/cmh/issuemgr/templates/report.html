@@ -42,11 +42,6 @@
       <td>
         {% trans "See" %} <a href="#sel_departments">{% trans "Selected Departments" %}</a> {% trans "section for detailed listing" %}
       </td>
-      <!--<td>
-        {% if not final %}
-        <button class="btn edit_selection">Modify Selection</button>
-        {% endif %}
-      </td> -->
     </tr>
     <tr>
       <td>
@@ -55,11 +50,6 @@
       <td>
         {% trans "See" %} <a href="#sel_locations">{% trans "Selected Locations" %}</a> {% trans "section for detailed listing" %}
       </td>
-      <!--<td>
-        {% if not final %}
-        <button class="btn edit_selection">Modify Selection</button>
-        {% endif %}
-      </td> -->
     </tr>
   </table>
 </fieldset>
@@ -209,6 +199,7 @@
   <div class="section-header width-100 text-center pad-top">
     {% trans "Complaints Organized By Department (In Report Period)" %}
   </div>
+  <div style="page-break-after:always;">
   <table class="width-100 text-center">
     <tr>
       <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response Volume" %}</span></td>
@@ -229,7 +220,7 @@
             {% trans "Closed" %}
           </div>
         </div>
-      </td>
+      </td>    
       <td class="width-50 pad-top text-left">
         <div style="padding-left:50px">
           <div><b>{% trans "Legend" %}</b></div>
@@ -246,7 +237,13 @@
         </div>
       </td>
     </tr>
+    </table>
+    </div>
     {% for dept in stats.depts %}
+    {% if forloop.counter|divisibleby:"2" %}
+    <div style="page-break-after:always;">
+    {% endif %}
+    <table>
     <tr>
       <td colspan="2">
         <div class="text-center pad-top width-100">
@@ -256,16 +253,19 @@
     </tr>
     <tr>
       <td align="center">
-        <div style="width:450px;height:300px" id="volume-{{dept.id}}">
+        <div style="width:450px;height:280px" id="volume-{{dept.id}}">
         </div>
       </td>
       <td>
-        <div style="width:450px;height:300px" id="time-{{dept.id}}">
+        <div style="width:450px;height:280px;" id="time-{{dept.id}}">
         </div>
       </td>
     </tr>
+    </table>
+    {% if forloop.counter|divisibleby:2 %}
+    </div>
+    {% endif %}
     {% endfor %}
-  </table>
   <div class="section-header width-100 text-left pad-top">
     {% trans "Most Filed Complaint Types" %}
   </div>
@@ -314,7 +314,7 @@
       {% endfor %}
     </tbody>
   </table>
-  <div class="width_100 text-center pad-top section-header">
+  <div class="width_100 text-center pad-top section-header" style="page-break-before:always">
     {% trans "Millenium Development Goal Indicators" %}<br/>
     {% trans "(Complaints Filed in Report Period)" %}
   </div>
@@ -358,7 +358,7 @@
   <textarea cols="130" rows="6" name="suggestions"></textarea>
   {% endif %}
   {% if not final %}
-  <div class="width_100 text-center pad-top">
+  <div class="width_100 text-center pad-top" style="page-break-after:always;">
     <input type="hidden" name="stdate" value="{{ stats.stdate }}">
     <input type="hidden" name="endate" value="{{ stats.endate }}">
     <input type="hidden" name="deptids" value="{{ stats.deptids }}">
@@ -367,7 +367,6 @@
     <input type="hidden" name="blockids" value="{{ stats.blockids }}">
     <input type="hidden" name="grampids" value="{{ stats.grampids }}">
     <input type="hidden" name="villgids" value="{{ stats.villgids }}">
-    <input type="submit" style="font-size:24px;font-weight:bold;width:290px;height:50px" name="final" class="btn" value="PRINT FINAL REPORT">
   </div>
   {% endif %}
 </fieldset>
@@ -395,13 +394,6 @@
       {% endfor %}
     </tbody>
   </table>
-  <!--
-  {% if not final %}
-  <div style="text-align:right;">
-    <button class="btn edit_selection">Modify Selection</button>
-  </div>
-  {% endif %}
-  -->
 </fieldset>
 <fieldset>
   <legend>
@@ -460,13 +452,6 @@
       {% endfor %}
     </tbody>
   </table>
-  <!--
-  {% if not final %}
-  <div style="text-align:right;">
-    <button class="btn edit_selection">Modify Selection</button>
-  </div>
-  {% endif %}
-  -->
 </fieldset>
 {% endblock %}
 

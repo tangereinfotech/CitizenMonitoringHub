@@ -734,6 +734,7 @@ ul.complaint-updates li {
 .subsection-header {
    font-weight: bold;
    color: #6674b1;
+   page-break-before:always;
 }
 
 .width-100 {
