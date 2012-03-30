@@ -19,7 +19,7 @@ import itertools
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
@@ -1023,6 +1023,8 @@ def report(request) :
                                        'menus'     : get_user_menus (request.user,report),
                                        'user'      : request.user,
                                        'repdata'   : repdata})
+    else:
+        raise Http404
 
 
 def storedata(request, repdataid, identifier, codea, codeb, codec):
