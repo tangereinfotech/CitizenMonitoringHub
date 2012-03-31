@@ -43,7 +43,8 @@ class UserLoginForm (forms.Form):
                     raise forms.ValidationError (_('Username is not registered'))
             elif user.is_active == False:
                 raise forms.ValidationError (_('Account  suspended. Contact Administrator'))
-        self.valid_user = user
+            else:
+                self.valid_user = user
         return self.cleaned_data
 
 class UserRegisterForm(forms.Form):
