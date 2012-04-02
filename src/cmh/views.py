@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from django import forms
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 from django.shortcuts import render_to_response
 from django.db.models import Q

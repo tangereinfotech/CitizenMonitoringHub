@@ -365,14 +365,15 @@
   {% endif %}
   {% if not final %}
   <div class="width_100 text-center pad-top" style="page-break-after:always;">
-    <input type="hidden" name="stdate" value="{{ stats.stdate }}">
-    <input type="hidden" name="endate" value="{{ stats.endate }}">
-    <input type="hidden" name="deptids" value="{{ stats.deptids }}">
-    <input type="hidden" name="stateids" value="{{ stats.stateids }}">
-    <input type="hidden" name="disttids" value="{{ stats.disttids }}">
-    <input type="hidden" name="blockids" value="{{ stats.blockids }}">
-    <input type="hidden" name="grampids" value="{{ stats.grampids }}">
-    <input type="hidden" name="villgids" value="{{ stats.villgids }}">
+    <input type="hidden" name="stdate" value="{{ stats.stdate }}"/>
+    <input type="hidden" name="endate" value="{{ stats.endate }}"/>
+    <input type="hidden" name="deptids" value="{{ stats.deptids }}"/>
+    <input type="hidden" name="stateids" value="{{ stats.stateids }}"/>
+    <input type="hidden" name="disttids" value="{{ stats.disttids }}"/>
+    <input type="hidden" name="blockids" value="{{ stats.blockids }}"/>
+    <input type="hidden" name="grampids" value="{{ stats.grampids }}"/>
+    <input type="hidden" name="villgids" value="{{ stats.villgids }}"/>
+    <input type="submit" style="font-size:24px;font-weight:bold;width:290px;height:50px" name="final" class="btn" value="PRINT FINAL REPORT" onclick="window.print()"/>
   </div>
   {% endif %}
 </fieldset>
