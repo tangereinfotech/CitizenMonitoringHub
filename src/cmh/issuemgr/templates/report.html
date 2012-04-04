@@ -53,9 +53,10 @@
     </tr>
   </table>
 </fieldset>
+<form action="." method="post">
 <fieldset>
   <legend>
-    {% trans "Report" %}
+    {% trans "Report Summary" %}
   </legend>
   <table width="100%">
     <tr>
@@ -196,60 +197,16 @@
       </td>
     </tr>
   </table>
+</fieldset>
   <div class="section-header width-100 text-center pad-top" style="page-break-before:always">
     {% trans "Complaints Organized By Department (In Report Period)" %}
   </div>
-  <!-- <table class="width-100 text-center">
-    <tr>
-      <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response Volume" %}</span></td>
-      <td class="width-50 pad-top"><span class="subsection-header">{% trans "Response Time" %}</span></td>
-    </tr>
-    <tr>
-      <td class="width-50 pad-top text-left">
-        <div style="padding-left:50px">
-          <div><b>{% trans "Legend" %}</b></div>
-          <div id="leg_ack" style="width:90px;height:25px;background-color:#948b54;float:left;">
-          <img src="/static/images/leg_ack.png" width="90px"/>
-          </div>
-          <div id="leg_close" style="float:left;padding-left:20px;">
-            {% trans "Acknowledged" %}
-          </div>
-        </div>
-        <div style="clear:both;padding-left:50px">
-          <div style="width:90px;height:25px;background-color:#95b3d7;float:left;">
-          <img src="/static/images/leg_close.png" width="90px"/>
-          </div>
-          <div style="float:left;padding-left:20px;">
-            {% trans "Closed" %}
-          </div>
-        </div>
-      </td>    
-      <td class="width-50 pad-top text-left">
-        <div style="padding-left:50px">
-          <div><b>{% trans "Legend" %}</b></div>
-          <div style="width:90px;height:25px;background-color:#c5be97;float:left">
-          <img src="/static/images/leg_max_res.png" width="90px"/>
-          </div>
-          <div style="float:left;padding-left:20px;">
-            {% trans "Maximum response time" %}
-          </div>
-        </div>
-        <div style="clear:both;padding-left:50px">
-          <div style="width:90px;height:25px;background-color:#538ed5;float:left">
-          <img src="/static/images/leg_av_res.png" width="90px"/>
-          </div>
-          <div style="float:left;padding-left:20px;">
-            {% trans "Average response time" %}
-          </div>
-        </div>
-      </td>
-    </tr>
-    </table> --> 
     {% for dept in stats.depts %}
     {% if forloop.counter|divisibleby:"2" %}
     <div style="page-break-after:always;">
     {% endif %}
     <table width="100%"> 
+    
     <tr>
       <td colspan="2">
         <div class="text-center pad-top width-100">
@@ -373,10 +330,9 @@
     <input type="hidden" name="blockids" value="{{ stats.blockids }}"/>
     <input type="hidden" name="grampids" value="{{ stats.grampids }}"/>
     <input type="hidden" name="villgids" value="{{ stats.villgids }}"/>
-    <input type="submit" style="font-size:24px;font-weight:bold;width:290px;height:50px" name="final" class="btn" value="PRINT FINAL REPORT" onclick="window.print()"/>
+    <input type="submit" style="font-size:24px;font-weight:bold;width:290px;height:50px" name="final" class="btn" value="PRINT FINAL REPORT"/>
   </div>
   {% endif %}
-</fieldset>
 <fieldset>
   <legend>
     {% trans "Selected Departments" %}
@@ -460,6 +416,7 @@
     </tbody>
   </table>
 </fieldset>
+</form>
 {% endblock %}
 
 {% block body_scripts %}
