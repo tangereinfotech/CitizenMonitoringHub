@@ -39,6 +39,9 @@
           <div class="aboutpanel">
             <ul class="sysnav">
               <li class="un-color"><a href="/">{% trans "Home" %}</a></li>
+  	      {% if final %}
+              <li class="un-color"><a href="#" onclick="window.print()">{% trans "Print" %}</a></li>
+	      {% endif %}
             </ul>
           </div>
       {% block base_content %} {% endblock %}
