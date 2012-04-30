@@ -428,6 +428,7 @@ def my_issues_list (request):
 
     return get_datatables_records (request, querySet, columnIndexNameMap, 'issue_entity_datatable.html')
 
+@login_required
 def update (request, complaintno):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
     base = complaints.get (original = None)
