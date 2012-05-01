@@ -73,6 +73,8 @@ class Complaint(models.Model):
     createdate    = models.DateField (auto_now_add = True) # For querying by date
 
     objects = ComplaintManager ()
+    def __unicode__(self):
+        return self.complaintno
 
     def clone (self, cloner):
         self.latest = False

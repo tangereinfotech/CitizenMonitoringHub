@@ -153,3 +153,5 @@ class StatusTransition (models.Model):
 
     objects = StatusTransitionManager ()
 
+    def __unicode__(self):
+        return self.role.name + ':' + self.curstate.name + '-to-' + self.newstate.name

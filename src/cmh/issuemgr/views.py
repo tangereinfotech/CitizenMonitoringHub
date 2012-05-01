@@ -406,7 +406,7 @@ def my_mode_issues (request, mode):
 def my_issues_list (request):
     role = AppRole.objects.get_user_role (request.user)
     statuses = StatusTransition.objects.get_changeable_statuses (role)
-    querySet = Complaint.objects.get_latest_complaints ().filter (curstate__in = statuses)
+    querySet = Complaint.objects.get_latest_complaints ()
 
     mode = get_session_data (request, MY_ISSUES_MODE)
     if mode.lower () == 'rem':
