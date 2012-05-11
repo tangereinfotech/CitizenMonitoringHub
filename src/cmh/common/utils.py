@@ -24,7 +24,6 @@ from django.http import HttpResponse
 from django.utils.cache import add_never_cache_headers
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
-
 class InvalidDataException (Exception):
     pass
 
@@ -251,8 +250,10 @@ def get_datatables_records(request, querySet, columnIndexNameMap, jsonTemplatePa
 
     # Determine which columns are searchable
     searchableColumns = []
-    for col in range(0,cols):
-        if request.GET.get('bSearchable_{0}'.format(col), False) == 'true': searchableColumns.append(columnIndexNameMap[col])
+    # Hacky fix for IE 8 issue. For some funny reason IE 8 sends a diff number of columns. so doing a min of the cols and columnIndexNameMap length. Otherwise range(0,cols) would suffice. 
+    for col in range(0,min(cols,len(columnIndexNameMap))):
+        if request.GET.get('bSearchable_{0}'.format(col), False) == 'true':
+            searchableColumns.append(columnIndexNameMap[col])
 
     # Apply filtering by value sent by user
     customSearch = request.GET.get('sSearch', '').encode('utf-8');
