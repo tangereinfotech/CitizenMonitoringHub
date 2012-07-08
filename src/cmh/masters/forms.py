@@ -490,6 +490,7 @@ class AddComplaint (forms.Form):
                                             cclass       = self.cleaned_data['cclass'],
                                             defsmsnew    = self.cleaned_data['defsmsnew'],
                                             defsmsack    = self.cleaned_data['defsmsack'],
+                                            defsmsopen   = self.cleaned_data['defsmsopen'],
                                             defsmsres    = self.cleaned_data['defsmsres'],
                                             defsmsclo    = self.cleaned_data['defsmsclo'],
                                             department   = self.cleaned_data['department'])
