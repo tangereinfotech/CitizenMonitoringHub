@@ -21,7 +21,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.utils.translation import ugettext as _
 
 from cmh.smsgateway.forms import SMSTransferReqFormat, SMSReceivedFormat
-from cmh.smsgateway.models import TextMessage, ReceivedTextMessage, SenderBlacklist
+from cmh.smsgateway.models import TextMessage, ReceivedTextMessage, SenderBlacklist, IgnoredTextMessage
 from cmh.smsgateway.utils import queue_complaint_update_sms, queue_sms
 
 from cmh.issuemgr.utils import update_complaint_sequence
@@ -55,7 +55,10 @@ def gateway (request):
                                                "secret": "0123456789",
                                                "messages": messages}}))
         else:
-            return HttpResponse (json.dumps ({}))
+            #non user generated request, just ignore this
+            return HttpResponse (json.dumps ({"payload":
+                                          {"success": "true",
+                                           }}))
     elif request.method == 'POST':
         receivedform = SMSReceivedFormat (request.POST)
         debug ("Received from: " + str (receivedform))
@@ -64,7 +67,6 @@ def gateway (request):
                 debug ("Form is valid")
                 sender_phone = receivedform.cleaned_data ['from']
                 message      = receivedform.cleaned_data ['message']
-
                 rtm = ReceivedTextMessage.objects.create (sender = sender_phone,
                                                           valid = False,
                                                           message = message)
@@ -76,45 +78,41 @@ def gateway (request):
                     villg = str (int (matches.group ('villg')))
                     sender_name  = matches.group ('name')
                     issue_desc = matches.group ('complaint')
+                    citizen = get_or_create_citizen (sender_phone, sender_name)
+                    location = get_location_attr (block, gramp, villg)
+                    compl = Complaint.objects.create (complainttype = None,
+                                                      complaintno = None,
+                                                      description = issue_desc,
+                                                      department = None,
+                                                      curstate = STATUS_NEW,
+                                                      filedby = citizen,
+                                                      logdate = datetime.today ().date (),
+                                                      location = location,
+                                                      original = None,
+                                                      creator = None)
+                    update_complaint_sequence (compl)
+                    ComplaintClosureMetric.objects.create (complaintno = compl.complaintno)
+
+                    # If we reach this point, the message was properly formatted
+                    rtm.valid = True
+                    rtm.save ()
+
+                    # Remove the user from blacklist in case he is there
+                    for sbl in SenderBlacklist.objects.filter (sender = rtm.sender):
+                        debug ("Removing sender from blacklist: " + str (rtm.sender))
+                        sbl.delete ()
+
+                    # HACK ALERT - complaint type is not known so just pick any complaint type and pick its defsmsnew
+                    #queue_complaint_update_sms (citizen.mobile,
+                    #                            ComplaintType.objects.all ()[0].defsmsnew,
+                    #                            compl)
+                    return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
                 else:
-                    raise InvalidMessageException ("Message is not formatted correctly")
-
-                citizen = get_or_create_citizen (sender_phone, sender_name)
-
-                location = get_location_attr (block, gramp, villg)
-
-                compl = Complaint.objects.create (complainttype = None,
-                                                  complaintno = None,
-                                                  description = issue_desc,
-                                                  department = None,
-                                                  curstate = STATUS_NEW,
-                                                  filedby = citizen,
-                                                  logdate = datetime.today ().date (),
-                                                  location = location,
-                                                  original = None,
-                                                  creator = None)
-
-                update_complaint_sequence (compl)
-
-                ComplaintClosureMetric.objects.create (complaintno = compl.complaintno)
-
-                # If we reach this point, the message was properly formatted
-                rtm.valid = True
-                rtm.save ()
-
-                # Remove the user from blacklist in case he is there
-                for sbl in SenderBlacklist.objects.filter (sender = rtm.sender):
-                    debug ("Removing sender from blacklist: " + str (rtm.sender))
-                    sbl.delete ()
-
-                # HACK ALERT - complaint type is not known so just pick any complaint type and pick its defsmsnew
-                queue_complaint_update_sms (citizen.mobile,
-                                            ComplaintType.objects.all ()[0].defsmsnew,
-                                            compl)
-                return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
-            except:
-                import traceback
-                traceback.print_exc ()
+                    itm = IgnoredTextMessage.objects.create(sender = sender_phone,
+                                                            valid = False,
+                                                            message = message)
+                    raise InvalidMessageException
+            except InvalidMessageException:
                 # Improperly formatted
                 # check if the user is black listed, keep the sender black listed and don't respond
                 if not is_blacklisted (rtm.sender):

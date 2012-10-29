@@ -34,5 +34,11 @@ class ReceivedTextMessage (models.Model):
     valid   = models.NullBooleanField (default = False)
     created = models.DateTimeField (auto_now_add = True)
 
+class IgnoredTextMessage (models.Model):
+    sender  = models.CharField (max_length = 20)
+    message = models.CharField (max_length = 500)
+    valid   = models.NullBooleanField (default = False)
+    created = models.DateTimeField (auto_now_add = True)
+
 class SenderBlacklist (models.Model):
     sender = models.CharField (max_length = 20)
