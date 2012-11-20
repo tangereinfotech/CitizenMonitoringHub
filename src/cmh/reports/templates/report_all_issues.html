@@ -1,0 +1,45 @@
+{% extends "basewithmenu.html" %}
+{%load i18n%}
+{%load my_issues_filter %}
+{% block extra_heads %}
+<link type="text/css" href="/static/jquery/css/jquery.contextMenu.css" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block page_content %}
+   <style type="text/css" title="currentStyle">
+			@import "/static/css/demo_page.css"; @import "/static/css/header.css";
+			@import "/static/css/demo_table.css";
+    </style>
+    <script type="text/javascript" language="javascript" src="/static/jquery/js/jquery.js"></script>
+    <script type="text/javascript" language="javascript" src="/static/jquery/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#datatable').dataTable({
+             "bFilter": true,
+             "bSort": true,
+             "sPaginationType": "full_numbers",
+             "bProcessing" : true,
+             "sAjaxSource": "/reports/my_issues_data",
+             "bStateSave" : true,
+             "bServerSide": false,
+             "aoColumns" : [
+             {% for col in cols %} {"sType": "{{col|col_type:cols}}", "sName": "{{col|col_code:cols}}", "bSearchable" : {{col|is_col_searchable:cols}},"bSortable" : {{col|is_col_sortable:cols}}},
+             {% endfor %}]
+            });
+        } );
+    </script>
+        <table id="datatable" width="100%">
+            <thead align="center">
+                {% for col in cols %} <td>{{col|col_name:cols}}</td> {% endfor %}
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot>
+                {% for col in cols%}
+                    <td><input value="{{col|col_search_description_name:cols}}"></input></td>
+                {% endfor %} 
+            </tfoot>
+        </table>
+{% endblock %}
+{% block body_scripts %}
+{% endblock %}
