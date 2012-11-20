@@ -34,6 +34,7 @@ from cmh.common.models import ComplaintType
 from cmh.usermgr.utils import get_or_create_citizen
 from cmh.common.utils import debug
 
+from django.core.exceptions import ObjectDoesNotExist
 REGEX_SEP = r"[\. ,;\-_:]+"
 
 FORMAT = r"^(?P<block>\d+)" + REGEX_SEP + r"(?P<gramp>\d+)" + REGEX_SEP + r"(?P<villg>\d+)" + REGEX_SEP + r"(?P<name>\w+)" + REGEX_SEP + r"(?P<complaint>.+$)"
@@ -112,7 +113,7 @@ def gateway (request):
                                                             valid = False,
                                                             message = message)
                     raise InvalidMessageException
-            except InvalidMessageException:
+            except (InvalidMessageException, ObjectDoesNotExist) as e:
                 # Improperly formatted
                 # check if the user is black listed, keep the sender black listed and don't respond
                 if not is_blacklisted (rtm.sender):
