@@ -112,6 +112,7 @@ TEMPLATE_DIRS = (
     os.path.join (CMH_APP_DIR, "cmh", "templates"),
     os.path.join (CMH_APP_DIR, "cmh", "usermgr", "templates"),
     os.path.join (CMH_APP_DIR, "cmh", "issuemgr", "templates"),
+    os.path.join (CMH_APP_DIR, "cmh", "reports", "templates"),
 )
 
 EVIDENCE_DIR = os.path.abspath (os.path.join (CMH_APP_DIR, "..", 'evidences'))
@@ -130,6 +131,7 @@ INSTALLED_APPS = (
     'cmh.captcha',
     'cmh.smsgateway',
     'cmh.masters',
+    'cmh.reports',
     'south',
     'django_extensions'
 )
