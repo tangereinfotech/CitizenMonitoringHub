@@ -4,12 +4,50 @@
 {% block extra_heads %}
 <link type="text/css" href="/static/jquery/css/jquery.contextMenu.css" rel="stylesheet" media="screen">
 {% endblock %}
-
+{% block onload_block %}
+style="width:95%"
+{% endblock %}
 {% block page_content %}
    <style type="text/css" title="currentStyle">
 			@import "/static/css/demo_page.css"; @import "/static/css/header.css";
 			@import "/static/css/demo_table.css";
     </style>
+    <style type="text/javascript">
+        .toggleSwitch {
+            width: 20px; 
+            height:40px; 
+            /* add other styling as appropriate to position element */
+            position: relative;
+            background: black;
+        }
+        .slider {
+            background:blue; 
+            position: absolute;
+            width: 10px; 
+            height: 38px; 
+        }
+        .slider.on {
+            right: 0;
+        }
+        .slider.off {
+            left: 0;
+        }
+    </style>
+    <script type="text/javascript">
+        function replaceClass(elt, oldClass, newClass) {
+            var oldRE = RegExp('\\b'+oldClass+'\\b');
+            elt.className = elt.className.replace(oldRE, newClass);
+        }
+        function toggle(elt, on, off) {
+            var onRE = RegExp('\\b'+on+'\\b');
+            if (onRE.test(elt.className)) {
+                elt.className = elt.className.replace(onRE, off);
+            } else {
+                replaceClass(elt, off, on);
+            }
+        }
+    </script>
+    <div class="toggleSwitch" onclick="toggle(this.firstChild, 'on', 'off');"><div class="slider off" /></div>
     <script type="text/javascript" language="javascript" src="/static/jquery/js/jquery.js"></script>
     <script type="text/javascript" language="javascript" src="/static/jquery/js/jquery.dataTables.js"></script>
     <script>
@@ -22,23 +60,31 @@
              "sAjaxSource": "/reports/my_issues_data",
              "bStateSave" : true,
              "bServerSide": false,
+             "bAutoWidth" : false,
              "aoColumns" : [
-             {% for col in cols %} {"sType": "{{col|col_type:cols}}", "sName": "{{col|col_code:cols}}", "bSearchable" : {{col|is_col_searchable:cols}},"bSortable" : {{col|is_col_sortable:cols}}},
+             {% for col in cols %} {"sType": "{{col|col_type:cols}}", "sName": "{{col|col_code:cols}}", "sClass" : "{{col|col_class:cols}}" ,"bVisible" : {{col|is_col_visible:cols}},"bSearchable" : {{col|is_col_searchable:cols}},"bSortable" : {{col|is_col_sortable:cols}}},
              {% endfor %}]
             });
         } );
+        function fnShowHide( iCol )
+        {
+	/* Get the DataTables object again - this is not a recreation, just a get of the object */
+	var oTable = $('#datatable').dataTable();
+	
+	var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+	oTable.fnSetColumnVis( iCol, bVis ? false : true );
+        }
     </script>
+        <ul>
+                {% for col in cols %} 
+                <li> <a id={{dec}}_0 href="javascript:void(0);" onclick="fnShowHide({{col}});">{% trans "Toggle " %}{{col|col_name:cols}}<br></a></li> {% endfor %}
+        </ul>
         <table id="datatable" width="100%">
             <thead align="center">
                 {% for col in cols %} <td>{{col|col_name:cols}}</td> {% endfor %}
             </thead>
             <tbody>
             </tbody>
-            <tfoot>
-                {% for col in cols%}
-                    <td><input value="{{col|col_search_description_name:cols}}"></input></td>
-                {% endfor %} 
-            </tfoot>
         </table>
 {% endblock %}
 {% block body_scripts %}

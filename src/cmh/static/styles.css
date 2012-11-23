@@ -333,7 +333,10 @@ ul.errorlist {
    padding: 0px;
    margin: 0px;
 }
-
+.cellformat {
+    font-size: 80%;
+    text-align: center;
+}
 ul.errorlist li {
    padding: 0px;
    margin: 0px;

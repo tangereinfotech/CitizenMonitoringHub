@@ -11,6 +11,10 @@ def col_name(val,dict):
    return dict[val]['name']
 
 @register.filter
+def col_class(val,dict):
+   return dict[val]['sClass']
+
+@register.filter
 def col_code(val,dict):
    return dict[val]['code']
 
@@ -35,3 +39,11 @@ def is_col_sortable(val, dict):
         return 'true'
     else:
         return 'false'
+
+@register.filter
+def is_col_visible(val, dict):
+    if (dict[val]['bVisible'] == True):
+        return 'true'
+    else:
+        return 'false'
+
