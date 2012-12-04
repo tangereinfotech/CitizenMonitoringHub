@@ -4,35 +4,18 @@
 {% block extra_heads %}
 <link type="text/css" href="/static/jquery/css/jquery.contextMenu.css" rel="stylesheet" media="screen">
 {% endblock %}
-{% block onload_block %}
-style="width:95%"
-{% endblock %}
 {% block page_content %}
    <style type="text/css" title="currentStyle">
-			@import "/static/css/demo_page.css"; @import "/static/css/header.css";
-			@import "/static/css/demo_table.css";
+            @import "/static/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css";
+            .ui-button {
+                padding: 8px;
+            }
+            #datatable_filter{
+                display: None;
+            }
     </style>
-    <style type="text/javascript">
-        .toggleSwitch {
-            width: 20px; 
-            height:40px; 
-            /* add other styling as appropriate to position element */
-            position: relative;
-            background: black;
-        }
-        .slider {
-            background:blue; 
-            position: absolute;
-            width: 10px; 
-            height: 38px; 
-        }
-        .slider.on {
-            right: 0;
-        }
-        .slider.off {
-            left: 0;
-        }
-    </style>
+    
+{% comment %}
     <script type="text/javascript">
         function replaceClass(elt, oldClass, newClass) {
             var oldRE = RegExp('\\b'+oldClass+'\\b');
@@ -47,24 +30,45 @@ style="width:95%"
             }
         }
     </script>
-    <div class="toggleSwitch" onclick="toggle(this.firstChild, 'on', 'off');"><div class="slider off" /></div>
+{% endcomment %}
+
     <script type="text/javascript" language="javascript" src="/static/jquery/js/jquery.js"></script>
     <script type="text/javascript" language="javascript" src="/static/jquery/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" language="javascript" src="/static/jquery/js/FixedColumns.js"></script>
     <script>
+        var asInitVals = new Array();
         $(document).ready(function() {
-            $('#datatable').dataTable({
-             "bFilter": true,
-             "bSort": true,
-             "sPaginationType": "full_numbers",
-             "bProcessing" : true,
-             "sAjaxSource": "/reports/my_issues_data",
-             "bStateSave" : true,
-             "bServerSide": false,
-             "bAutoWidth" : false,
-             "aoColumns" : [
-             {% for col in cols %} {"sType": "{{col|col_type:cols}}", "sName": "{{col|col_code:cols}}", "sClass" : "{{col|col_class:cols}}" ,"bVisible" : {{col|is_col_visible:cols}},"bSearchable" : {{col|is_col_searchable:cols}},"bSortable" : {{col|is_col_sortable:cols}}},
-             {% endfor %}]
-            });
+                $('#datatable').dataTable({
+                 "bFilter": true,
+                 "bJQueryUI": true,
+                 "sScrollX" : "600px",
+                 "bSort": true,
+                 "sPaginationType": "full_numbers",
+                 "bProcessing" : true,
+                 "sAjaxSource": "/reports/my_issues_data",
+                 "bStateSave" : true,
+                 "bServerSide": false,
+                 "bAutoWidth" : true,
+                 "aoColumns" : [
+                 {% for col in cols %} {"sType": "{{col|col_type:cols}}", "sWidth": "{{col|col_width:cols}}","sName": "{{col|col_code:cols}}", "sClass" : "{{col|col_class:cols}}" ,"bVisible" : "{{col|is_col_visible:cols}}","bSearchable" : "{{col|is_col_searchable:cols}}","bSortable" : "{{col|is_col_sortable:cols}}"},
+                 {% endfor %} 
+                 ]
+                });
+           $(".colsearch").keyup( function () {
+                    /* Filter on the column (the index) of this element */
+	            var oTable = $('#datatable').dataTable();
+                    oTable.fnFilter( this.value, $(".colsearch").index(this) );
+            } );
+	
+	
+	
+            /*
+             * Support functions to provide a little bit of 'user friendliness' to the textboxes in 
+             * the footer
+             */
+            $(".colsearch").each( function (i) {
+                    asInitVals[i] = this.value;
+            } );
         } );
         function fnShowHide( iCol )
         {
@@ -79,13 +83,20 @@ style="width:95%"
                 {% for col in cols %} 
                 <li> <a id={{dec}}_0 href="javascript:void(0);" onclick="fnShowHide({{col}});">{% trans "Toggle " %}{{col|col_name:cols}}<br></a></li> {% endfor %}
         </ul>
-        <table id="datatable" width="100%">
+        <div id="all-issues-table-wrapper">
+        <table id="datatable">
             <thead align="center">
-                {% for col in cols %} <td>{{col|col_name:cols}}</td> {% endfor %}
+                {% for col in cols %} <th>{{col|col_name:cols}}</th> {% endfor %} 
             </thead>
             <tbody>
             </tbody>
+            <tfoot>
+                {% for col in cols %} <td width="{{col|col_width:cols}}"><input  "class="colsearch" type="text"> </input></td> {% endfor %}
+            </tfoot>
         </table>
+        </div>
 {% endblock %}
+{% comment %}
 {% block body_scripts %}
 {% endblock %}
+{% endcomment %}

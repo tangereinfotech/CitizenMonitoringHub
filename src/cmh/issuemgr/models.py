@@ -49,10 +49,8 @@ class Complaint(models.Model):
     complainttype = models.ForeignKey (ComplaintType, blank = True, null = True, related_name = 'complaintbase')
     complaintno   = models.CharField (max_length = 50, blank = True, null = True)
     description   = models.CharField (max_length=1000)
-    department    = models.ForeignKey (ComplaintDepartment, blank = True, null = True,
-                                     related_name = 'complaintdepartment')
-    curstate      = models.ForeignKey (ComplaintStatus, blank = True, null = True,
-                                     related_name = 'complnaintstate')
+    department    = models.ForeignKey (ComplaintDepartment, blank = True, null = True, related_name = 'complaintdepartment')
+    curstate      = models.ForeignKey (ComplaintStatus, blank = True, null = True, related_name = 'complnaintstate')
     filedby       = models.ForeignKey (Citizen)
     assignto      = models.ForeignKey (Official, blank = True, null = True)
     location      = models.ForeignKey (Village, blank = True, null = True)
@@ -64,7 +62,6 @@ class Complaint(models.Model):
     comment       = models.CharField (max_length = 1000, blank = True, null = True)
     community     = models.CharField(max_length = 20, blank = True, null = True, choices = COMMUNITY_CHOICES, default = 'Unspecified')
     gender        = models.CharField(max_length = 20, choices = GENDER_CHOICES, blank = True, null = True, default = 'Unspecified')
-
     evidences     = models.ManyToManyField ('ComplaintEvidence', blank = True, null = True)
 
     ###################################

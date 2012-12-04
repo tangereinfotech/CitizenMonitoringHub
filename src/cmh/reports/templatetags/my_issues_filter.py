@@ -7,8 +7,19 @@ def col_number(val):
    return val
 
 @register.filter
+def col_sort_number(val,dict):
+    if 'sort_col' in dict[val]:
+        return dict[val]['sort_col']
+    else:
+        return val
+
+@register.filter
 def col_name(val,dict):
    return dict[val]['name']
+
+@register.filter
+def col_width(val,dict):
+   return dict[val]['width']
 
 @register.filter
 def col_class(val,dict):

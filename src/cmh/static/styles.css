@@ -382,7 +382,7 @@ ul.errorlist li {
 }
 
 .tabularlist th {
-   font-weight: bold;
+   font-weight: normal;
    background-color: #B9C9FE;
    border-top: 4px solid #AABCFE;
    border-bottom: 1px solid white;
