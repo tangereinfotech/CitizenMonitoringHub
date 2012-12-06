@@ -7,6 +7,8 @@ from django.utils.translation import ugettext as _
 from cmh.issuemgr.models import Complaint, ComplaintEvidence, ComplaintReminder, ComplaintClosureMetric, ComplaintManager
 from django.contrib.auth.decorators import login_required
 from cmh.usermgr.utils import get_user_menus
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 
 def get_complaint_no(c):
     if (c is not None):
@@ -235,15 +237,16 @@ columProperties = {
 def home(request):
     return render_to_response('report_all_issues.html', {'cols': columProperties, 'menus': get_user_menus(request.user, home)}, context_instance = RequestContext(request))
 
-
 def my_issues_data(request):
-    latest_complaints = Complaint.objects.filter(latest = True)
-    cdata = []
-    for comp in latest_complaints:
-        row = []
-        for i in range(0,len(columProperties)):
-            row.append(columProperties[i]['fnGetData'](comp))
-        cdata.append(row)
-
-    mdata = dumps({'aaData': cdata})
+    mdata = cache.get('my_key')
+    if mdata == None:
+        cdata = []
+        latest_complaints = Complaint.objects.filter(latest = True)
+        for comp in latest_complaints:
+            row = []
+            for i in range(0,len(columProperties)):
+                row.append(columProperties[i]['fnGetData'](comp))
+            cdata.append(row)
+        mdata = dumps({'aaData': cdata})
+        cache.set('my_key', mdata,24*60*60)
     return HttpResponse(mdata)
