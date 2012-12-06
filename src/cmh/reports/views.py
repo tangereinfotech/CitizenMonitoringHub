@@ -33,19 +33,34 @@ def get_last_updated_sort(c,fmt="%Y%m%d"):
     return get_last_updated(c, fmt)
 
 def get_department(c):
-    return c.department.code
+    if ((c is not None) and (c.department is not None) and (c.department.code is not None)):
+        return c.department.code
+    else:
+        return ''
 
 def get_location(c):
-    return c.department.code,c.location.search[:-22]
+    if ((c is not None) and (c.location is not None)):
+        return c.location.search[:-22]
 
 def get_description(c):
-    return c.original.description
+    if ((c is not None) and (c.original is not None)):
+        return c.original.description
+    elif (c is not None):
+        return c.description
+    else:
+        return ''
 
 def get_latest_update(c):
-    return c.description
+    if (c is not None):
+        return c.description
+    else:
+        return ''
 
 def get_filed_by(c):
-    return c.filedby.name
+    if (c is not None) and (c.filedby is not None):
+        return c.filedby.name
+    else:
+        return ''
 
 def get_accepted_by(c):
     comps = Complaint.objects.filter(complaintno = c.complaintno)
@@ -65,7 +80,10 @@ def get_last_updated_by(c):
         return 'System'
 
 def get_workflow_state(c):
-    return c.curstate.name
+    if (c is not None):
+        return c.curstate.name
+    else:
+        return ''
 
 def get_attachments(c):
     evi_str = ''
