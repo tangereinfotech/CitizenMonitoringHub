@@ -15,7 +15,7 @@ def get_complaint_no(c):
         return ''
 
 def get_filed_on(c, fmt="%y.%m.%d"):
-    if (c is not None):
+    if ((c is not None) and (c.original is not None) and (c.original.logdate is not None)):
         return c.original.logdate.strftime(fmt)
     else:
         return ''
