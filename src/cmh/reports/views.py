@@ -6,6 +6,7 @@ from django.utils.simplejson import dumps
 from django.utils.translation import ugettext as _
 from cmh.issuemgr.models import Complaint, ComplaintEvidence, ComplaintReminder, ComplaintClosureMetric, ComplaintManager
 from django.contrib.auth.decorators import login_required
+from cmh.usermgr.utils import get_user_menus
 
 def get_complaint_no(c):
     if (c is not None):
@@ -87,7 +88,6 @@ columProperties = {
         'type'      : 'string',
         'search_str': _('Search Complaint Numbers'),
         'bVisible'  : True,
-        'width'     : "5%",
         'sClass'    : 'cellformat',
         'fnGetData' : get_complaint_no
     },
@@ -98,7 +98,6 @@ columProperties = {
         'type'      : 'string',
         'search_str': _('Search Filed On Date'),
         'bVisible'  : True,
-        'width'     : "5%",
         'sClass'    : 'cellformat',
         'fnGetData' : get_filed_on
 
@@ -110,7 +109,6 @@ columProperties = {
         'type'      : 'string',
         'search_str': _('Search Last Updated'),
         'bVisible'  : True,
-        'width'     : "3%",
         'sClass'    : 'cellformat',
         'fnGetData' : get_last_updated
     },
@@ -121,7 +119,6 @@ columProperties = {
         'type'      : 'string',
         'sClass'    : 'cellformat',
         'bVisible'  : False,
-        'width'     : "3%",
         'search_str': _('Search Department'),
         'fnGetData' : get_department
     },
@@ -132,7 +129,6 @@ columProperties = {
         'type'      : 'string',
         'sClass'    : 'cellformat',
         'bVisible'  : True,
-        'width'     : "10%",
         'search_str': _('Search Description'),
         'fnGetData' : get_location
     },
@@ -143,7 +139,6 @@ columProperties = {
         'type'      : 'string',
         'sClass'    : 'cellformat',
         'bVisible'  : True,
-        'width'     : "20%",
         'search_str': _('Search Description'),
         'fnGetData' : get_description
     },
@@ -154,7 +149,6 @@ columProperties = {
         'type'      : 'string',
         'sClass'    : 'cellformat',
         'bVisible'  : True,
-        'width'     : "20%",
         'search_str': _('Search Latest Update'),
         'fnGetData' : get_latest_update
     },
@@ -165,7 +159,6 @@ columProperties = {
         'type'      : 'string',
         'sClass'    : 'cellformat',
         'bVisible'  : True,
-        'width'     : "5%",
         'search_str': _('Search Filed By'),
         'fnGetData' : get_filed_by
     },
@@ -176,7 +169,6 @@ columProperties = {
         'type'      : 'string',
         'sClass'    : 'cellformat',
         'bVisible'  : True,
-        'width'     : "5%",
         'search_str': _('Search Accepted By'),
         'fnGetData' : get_accepted_by,
     },
@@ -187,7 +179,6 @@ columProperties = {
         'type'      : 'string',
         'sClass'    : 'cellformat',
         'bVisible'  : True,
-        'width'     : "5%",
          'search_str': _('Search Last Updated By'),
         'fnGetData' : get_last_updated_by,
     },
@@ -198,7 +189,6 @@ columProperties = {
         'type'      : 'string',
         'sClass'    : 'cellformat',
         'bVisible'  : True,
-        'width'     : "5%",
         'search_str': _('Search Workflow State'),
         'fnGetData' : get_workflow_state,
     },
@@ -209,7 +199,6 @@ columProperties = {
         'type'      : 'html',
         'sClass'    : 'cellformat',
         'bVisible'  : True,
-        'width'     : "5%",
         'search_str': '',
         'fnGetData' : get_attachments,
     },
@@ -220,36 +209,14 @@ columProperties = {
           'type'      : 'html',
           'sClass'    : 'cellformat',
           'bVisible'  : True,
-          'width'     : "5%",
           'search_str': '',
         'fnGetData' : get_action,
     }
 }
-hiddenColumnProperties = {
-    13 : {'code' : 'filed_on_search',
-          'searchable': False,
-          'sortable'  : False,
-          'name'      :_('Get Filed On Sort'),
-          'type'      : 'string',
-          'sClass'    : 'cellformat',
-          'bVisible'  : False,
-          'search_str': '',
-        'fnGetData' : get_filed_on_sort,
-    },
-    14 : {'code' : 'last_updated_search',
-          'searchable': False,
-          'sortable'  : False,
-          'name'      :_('Get Last Updated Sort'),
-          'type'      : 'string',
-          'sClass'    : 'cellformat',
-          'bVisible'  : False,
-          'search_str': '',
-        'fnGetData' : get_last_updated_sort,
-    }
-}
+
 @login_required
 def home(request):
-    return render_to_response('report_all_issues.html', {'cols': columProperties, 'hidden_cols': hiddenColumnProperties}, context_instance = RequestContext(request))
+    return render_to_response('report_all_issues.html', {'cols': columProperties, 'menus': get_user_menus(request.user, home)}, context_instance = RequestContext(request))
 
 
 @login_required
