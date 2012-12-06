@@ -214,12 +214,10 @@ columProperties = {
     }
 }
 
-@login_required
 def home(request):
     return render_to_response('report_all_issues.html', {'cols': columProperties, 'menus': get_user_menus(request.user, home)}, context_instance = RequestContext(request))
 
 
-@login_required
 def my_issues_data(request):
     latest_complaints = Complaint.objects.filter(latest = True)
     cdata = []
