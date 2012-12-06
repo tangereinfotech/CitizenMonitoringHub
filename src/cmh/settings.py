@@ -58,6 +58,13 @@ LANGUAGES = (
     ('hi', gettext('Hindi')),
 )
 
+CACHES = {
+    'default' : {
+        'BACKEND' : 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT' : 45*24*60*60
+    }
+}
 
 SITE_ID = 1
 
@@ -94,6 +101,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -101,6 +109,7 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.csrf.CsrfResponseMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'cmh.urls'
