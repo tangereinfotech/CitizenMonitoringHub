@@ -336,6 +336,8 @@ ul.errorlist {
 .cellformat {
     font-size: 80%;
     text-align: justify;
+    padding-left:4px;
+    padding-right:4px;
 }
 ul.errorlist li {
    padding: 0px;
