@@ -36,7 +36,7 @@ def update_complaint_sequence (complaint):
     todays_complaints = todays_complaints.order_by ('created')
 
     first_complaint = todays_complaints [0]
-    complaint.complaintno = '%s.%06d' % (complaint.created.strftime ('%Y%m%d'),
+    complaint.complaintno = '%s.%03d' % (complaint.created.strftime ('%Y%m%d'),
                                          (complaint.id - first_complaint.id + 1))
     complaint.save ()
 
