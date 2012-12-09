@@ -25,7 +25,7 @@ class TextMessage (models.Model):
     message   = models.CharField (max_length = 500)
     processed = models.BooleanField (default = False)
     created   = models.DateTimeField (auto_now_add = True)
-
+    processed_time = models.DateTimeField(null=True)
     objects = TextMessageManager ()
 
 class ReceivedTextMessage (models.Model):

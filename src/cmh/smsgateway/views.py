@@ -33,7 +33,7 @@ from cmh.common.models import ComplaintType
 
 from cmh.usermgr.utils import get_or_create_citizen
 from cmh.common.utils import debug
-
+from datetime import datetime
 REGEX_SEP = r"[\. ,;\-_:]+"
 
 FORMAT = r"^(?P<block>\d+)" + REGEX_SEP + r"(?P<gramp>\d+)" + REGEX_SEP + r"(?P<villg>\d+)" + REGEX_SEP + r"(?P<name>\w+)" + REGEX_SEP + r"(?P<complaint>.+$)"
@@ -49,6 +49,7 @@ def gateway (request):
             for tm in TextMessage.objects.filter (processed = False):
                 messages.append ({'to' : tm.phone, 'message' : tm.message})
                 tm.processed = True
+                tm.processed_time = datetime.now()
                 tm.save ()
             return HttpResponse (json.dumps ({"payload":
                                               {"task": "send",
