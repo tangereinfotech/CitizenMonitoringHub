@@ -1,0 +1,127 @@
+{% extends "basewithmenu.html" %}
+{%load i18n%}
+{%load my_issues_filter %}
+{% block extra_heads %}
+{% endblock %}
+{% block onload_block %}
+style="width:100%"
+{% endblock %}
+{% block page_content %}
+   <style type="text/css" title="currentStyle">
+            @import "/static/jquery-ui-1.9.2.custom/css/smoothness/jquery-ui-1.9.2.custom.css";
+            .ui-button {
+                padding: 8px;
+            };
+    </style>
+    
+    <script type="text/javascript">
+        function replaceClass(elt, oldClass, newClass) {
+            var oldRE = RegExp('\\b'+oldClass+'\\b');
+            elt.className = elt.className.replace(oldRE, newClass);
+        }
+        function toggle(elt, on, off) {
+            var onRE = RegExp('\\b'+on+'\\b');
+            if (onRE.test(elt.className)) {
+                elt.className = elt.className.replace(onRE, off);
+            } else {
+                replaceClass(elt, off, on);
+            }
+        }
+    </script>
+    <script type="text/javascript" language="javascript" src="/static/jquery/js/jquery.dataTables.js"></script>
+    <script>
+        var asInitVals = new Array();
+        $(document).ready(function() {
+                $('#datatable').dataTable({
+                 "bFilter": true,
+                 "bJQueryUI": true,
+                 "bPaginate": true,
+                 "bSort": true,
+                 "sPaginationType": "full_numbers",
+                 "bProcessing" : true,
+                 "sAjaxSource": "/reports/sms_logs_data",
+                 "bStateSave" : true,
+                 "bServerSide": false,
+                 "bAutoWidth" : false,
+                 "aoColumns" : [
+                     {% for col in cols %} 
+                        {"sType": "{{col|col_type:cols}}", "sName": "{{col|col_code:cols}}", "sClass" : "{{col|col_class:cols}}" ,"bVisible" : "{{col|is_col_visible:cols}}","bSearchable" : "{{col|is_col_searchable:cols}}","bSortable" : "{{col|is_col_sortable:cols}}"},
+                     {% endfor %} 
+                 ]
+                });
+           $(".colsearch").keyup( function () {
+                    /* Filter on the column (the index) of this element */
+	                var oTable = $('#datatable').dataTable();
+                    oTable.fnFilter( this.value, $(".colsearch").index(this));
+            } );
+            $(".colsearch").each( function (i) {
+                    asInitVals[i] = this.value;
+            } );
+            var oTable = $('#datatable').dataTable();
+            var mystr;
+            for (iCol = 0; iCol < {{cols|length}};iCol++){
+                mystr = '#' + (iCol + '_toggle');
+                oTable.fnSetColumnVis( iCol, true );
+                $(mystr).text("Hide");
+            }
+        } );
+        function fnShowHide( iCol )
+        {
+            /* Get the DataTables object again - this is not a recreation, just a get of the object */
+            var oTable = $('#datatable').dataTable();
+            var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+            var mystr = '#' + (iCol + '_toggle');
+            if (bVis == false) {
+                oTable.fnSetColumnVis( iCol, true );
+                $(mystr).text("Hide");
+            } else {
+                oTable.fnSetColumnVis( iCol, false);
+                $(mystr).text("Show");
+            }
+        }
+    </script>
+    <div id="search_table" style="position:relative;left:10%;top:10%;">
+        <table align="center" style="margin:20px 0px 20px 0px;border:solid 2px;border-radius:4px;background-color:#efefef;">
+           <caption style="padding:2px 0px 10px 0px;"> Filters and Column Display </caption>
+            <thead style="border-bottom:solid 1px;">
+                <th class="cellformat">{% trans "Show/Hide" %}</th><th class="cellformat">{% trans "Search" %} </th>
+                <th class="cellformat">{% trans "Show/Hide" %}</th><th class="cellformat">{% trans "Search" %} </th>
+                <th class="cellformat">{% trans "Show/Hide" %}</th><th class="cellformat">{% trans "Search" %} </th>
+            </thead>
+            <tbody>
+                {% for col in cols %}
+                    {% if forloop.first %}
+                        <tr>
+                     {% endif %}
+                            <td class="cellformat"> 
+                                    <a href="javascript:void(0);" onclick="fnShowHide({{col}});"><span id="{{col}}_toggle">Hide</span> {{col|col_name:cols}}<br></a>
+                            </td>
+                            <td>
+                               {% if col|is_col_searchable:cols == "true" %}
+                                    <input class="colsearch" style="width:160px;"type="text"> </input>
+                                {% else %}
+                                    <input class="colsearch" style="width:160px;display:none" type="text"> </input>
+                                {% endif %}
+                            </td> 
+                     {% if forloop.counter|divisibleby:"3" %}
+                       </tr><tr>
+                     {% endif %}
+                     {% if forloop.last %}
+                     </tr>
+                     {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <table id="datatable">
+        <thead>
+            {% for col in cols %} <th>{{col|col_name:cols}}</th> {% endfor %} 
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+{% endblock %}
+{% comment %}
+{% block body_scripts %}
+{% endblock %}
+{% endcomment %}
