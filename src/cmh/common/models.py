@@ -133,7 +133,7 @@ class MenuItem (models.Model):
     url    = models.CharField (max_length = 500)
     role   = models.ForeignKey (AppRole)
     serial = models.IntegerField ()
-
+    parent = models.ForeignKey('MenuItem', blank=True, null = True)
     class Meta:
         unique_together = (('role', 'serial', 'url'),)
 

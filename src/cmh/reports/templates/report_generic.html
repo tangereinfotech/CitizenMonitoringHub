@@ -39,7 +39,7 @@ style="width:100%"
                  "bSort": true,
                  "sPaginationType": "full_numbers",
                  "bProcessing" : true,
-                 "sAjaxSource": "/reports/sms_logs_data",
+                 "sAjaxSource": "{{data_url}}",
                  "bStateSave" : true,
                  "bServerSide": false,
                  "bAutoWidth" : false,
@@ -55,7 +55,8 @@ style="width:100%"
                     oTable.fnFilter( this.value, $(".colsearch").index(this));
             } );
             $(".colsearch").each( function (i) {
-                    asInitVals[i] = this.value;
+	                var oTable = $('#datatable').dataTable();
+                    oTable.fnFilter( '', $(".colsearch").index(this));
             } );
             var oTable = $('#datatable').dataTable();
             var mystr;
@@ -121,7 +122,3 @@ style="width:100%"
         </tbody>
     </table>
 {% endblock %}
-{% comment %}
-{% block body_scripts %}
-{% endblock %}
-{% endcomment %}

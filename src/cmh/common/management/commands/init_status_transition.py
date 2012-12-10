@@ -42,21 +42,22 @@ class Command (NoArgsCommand):
 
         cso_menu = [{'name' : 'Home', 'url' : '/'},
                     {'name' : 'Accept', 'url' : '/complaint/accept/'},
-                    {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
+                    {'name' : 'My Issues', 'url' : '/reports/my_issues_report/'},
                     {'name' : 'Masters', 'url' : '/masters/'},
-                    {'name' : 'All Issues', 'url' : '/complaint/all_issues/'}]
+                    {'name' : 'SMS Logs', 'url' : '/reports/sms_logs_report/'},
+                    {'name' : 'All Issues', 'url' : '/reports/all_issues_report/'}]
 
         delegate_menu = [{'name' : 'Home', 'url' : '/'},
-                         {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
+                         {'name' : 'My Issues', 'url' : '/reports/my_issues_report/'},
                          {'name' : 'Track', 'url' : '/complaint/track/'},]
 
         official_menu = [{'name' : 'Home', 'url' : '/'},
-                         {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
+                         {'name' : 'My Issues', 'url' : '/reports/my_issues_report/'},
                          {'name' : 'Track', 'url' : '/complaint/track/'},]
 
         dm_menu = [{'name' : 'Home', 'url' : '/'},
-                   {'name' : 'My Issues', 'url' : '/complaint/my_issues/'},
-                   {'name' : 'All Issues', 'url' : '/complaint/all_issues/'}]
+                   {'name' : 'My Issues', 'url' : '/reports/my_issues_report/'},
+                   {'name' : 'All Issues', 'url' : '/reports/all_issues_report/'}]
 
         self._ensure_menu (anonymous, anonymous_menu)
         self._ensure_menu (cso, cso_menu)
