@@ -92,7 +92,7 @@ def get_attachments(c,request):
     return evi_str
 
 def get_action(c,request):
-    update_url = "/complaint/track/" + c.complaintno
+    update_url = "/complaint/update/" + c.complaintno
     update_url = '<a href=' + update_url + ' target="_blank">update</a>'
     return update_url
 
