@@ -53,7 +53,6 @@ def is_col_sortable(val, dict):
 
 @register.filter
 def is_type_input(val,dict):
-    print "Hello input"
     if (dict[val]['inputtype'] == 'input'):
         return 'true'
     else:
@@ -61,7 +60,6 @@ def is_type_input(val,dict):
 
 @register.filter
 def is_type_select(val,dict):
-    print "Hello select"
     if (dict[val]['inputtype'] == 'select'):
         return 'true'
     else:
