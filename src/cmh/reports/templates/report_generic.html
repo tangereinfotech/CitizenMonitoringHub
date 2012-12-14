@@ -50,14 +50,24 @@ style="width:100%"
                  ]
                 });
            $(".colsearch").keyup( function () {
+                    var colnum = this.attributes['index'].value
                     /* Filter on the column (the index) of this element */
 	                var oTable = $('#datatable').dataTable();
-                    oTable.fnFilter( this.value, $(".colsearch").index(this));
+                    oTable.fnFilter( this.value, colnum);
             } );
             $(".colsearch").each( function (i) {
 	                var oTable = $('#datatable').dataTable();
                     oTable.fnFilter( '', $(".colsearch").index(this));
             } );
+            $(".colselsearch").change(function(){
+	                var oTable = $('#datatable').dataTable();
+                    var colnum = this.attributes['index'].value
+                    if (this.value == 'all'){
+                        oTable.fnFilter( '', colnum);
+                    } else {
+                        oTable.fnFilter("^"+this.value+"$", colnum,true,false);
+                    }
+            });
             var oTable = $('#datatable').dataTable();
             var mystr;
             for (iCol = 0; iCol < {{cols|length}};iCol++){
@@ -99,7 +109,16 @@ style="width:100%"
                             </td>
                             <td>
                                {% if col|is_col_searchable:cols == "true" %}
-                                    <input class="colsearch" style="width:160px;"type="text"> </input>
+                                    {% if col|is_type_input:cols == 'true' %}
+                                        <input index={{ forloop.counter0 }} class="colsearch" style="width:160px;" placeholder="{{col|col_search_description_name:cols}}" type="text"> </input>
+                                    {% elif col|is_type_select:cols == 'true' %}
+                                        <select index={{forloop.counter0}} class="colselsearch" >
+                                            <option value='all'>All</option>
+                                            {% for name in col|select_option:cols %}
+                                                <option value="{{name}}">{{name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    {% endif %}
                                 {% else %}
                                     <input class="colsearch" style="width:160px;display:none" type="text"> </input>
                                 {% endif %}

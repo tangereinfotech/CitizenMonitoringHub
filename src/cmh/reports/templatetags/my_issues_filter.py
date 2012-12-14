@@ -52,6 +52,26 @@ def is_col_sortable(val, dict):
         return 'false'
 
 @register.filter
+def is_type_input(val,dict):
+    print "Hello input"
+    if (dict[val]['inputtype'] == 'input'):
+        return 'true'
+    else:
+        return 'false'
+
+@register.filter
+def is_type_select(val,dict):
+    print "Hello select"
+    if (dict[val]['inputtype'] == 'select'):
+        return 'true'
+    else:
+        return 'false'
+
+@register.filter
+def select_option(val,dict):
+    return dict[val]['select_option']()
+
+@register.filter
 def is_col_visible(val, dict):
     if (dict[val]['bVisible'] == True):
         return 'true'

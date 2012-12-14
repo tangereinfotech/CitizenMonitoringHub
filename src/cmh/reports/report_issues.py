@@ -5,7 +5,7 @@ from django.utils.simplejson import dumps
 from django.http import HttpResponse,Http404
 from cmh.common.constants import UserRoles
 from django.core.exceptions import ObjectDoesNotExist
-
+from cmh.common.models import ComplaintDepartment, ComplaintStatus
 def get_complaint_no(c,request):
     if (c is not None):
         return c.complaintno
@@ -41,15 +41,11 @@ def get_location(c,request):
         return c.location.search[:-22]
 
 def get_description(c,request):
-    if ((c is not None) and (c.original is not None)):
-        return c.original.description
-    elif (c is not None):
-        return c.description
-    else:
-        return ''
+    c = Complaint.objects.filter(complaintno = c.complaintno).order_by('created')[0]
+    return c.description
 
 def get_latest_update(c,request):
-    if (c is not None):
+    if (c != None):
         return c.description
     else:
         return ''
@@ -92,9 +88,13 @@ def get_attachments(c,request):
     return evi_str
 
 def get_action(c,request):
-    update_url = "/complaint/update/" + c.complaintno
-    update_url = '<a href=' + update_url + ' target="_blank">update</a>'
-    return update_url
+    update_url = ''
+    if (c.curstate.name != 'Closed'):
+        update_url = "/complaint/update/" + c.complaintno
+        update_url = '<a href=' + update_url + ' target="_blank">update</a>'
+    track_url = "/complaint/track/" + c.complaintno
+    track_url = '<a href=' + track_url + ' target="_blank">track</a>'
+    return track_url + '<br/>' + update_url
 
 def get_reminder(c,request):
     try:
@@ -102,6 +102,14 @@ def get_reminder(c,request):
         return reminder.reminderon.strftime("%y.%m.%d")
     except ObjectDoesNotExist:
         return ''
+
+def get_department_select():
+    codes = [d.code for d in ComplaintDepartment.objects.all()]
+    return sorted(codes)
+
+def get_workflow_select():
+    return [s.name for s in ComplaintStatus.objects.all()]
+    return ''
 
 
 all_issues_column_properties = {
@@ -113,6 +121,7 @@ all_issues_column_properties = {
         'search_str': _('Search Complaint Numbers'),
         'bVisible'  : True,
         'sClass'    : 'cellformat',
+        'inputtype': 'input',
         'fnGetData' : get_complaint_no
     },
     1: {'code'      : 'filed_on',
@@ -123,6 +132,7 @@ all_issues_column_properties = {
         'search_str': _('Search Filed On Date'),
         'bVisible'  : True,
         'sClass'    : 'cellformat',
+        'inputtype': 'input',
         'fnGetData' : get_filed_on
 
     },
@@ -134,6 +144,7 @@ all_issues_column_properties = {
         'search_str': _('Search Last Updated'),
         'bVisible'  : True,
         'sClass'    : 'cellformat',
+        'inputtype': 'input',
         'fnGetData' : get_last_updated
     },
     3: {'code'      :'department',
@@ -144,6 +155,8 @@ all_issues_column_properties = {
         'sClass'    : 'cellformat',
         'bVisible'  : False,
         'search_str': _('Search Department'),
+        'inputtype': 'select',
+        'select_option': get_department_select,
         'fnGetData' : get_department
     },
     4: {'code': 'location',
@@ -153,7 +166,8 @@ all_issues_column_properties = {
         'type'      : 'string',
         'sClass'    : 'cellformat',
         'bVisible'  : True,
-        'search_str': _('Search Description'),
+        'search_str': _('Search Locations'),
+        'inputtype': 'input',
         'fnGetData' : get_location
     },
     5: {'code': 'description',
@@ -164,6 +178,7 @@ all_issues_column_properties = {
         'sClass'    : 'cellformat',
         'bVisible'  : True,
         'search_str': _('Search Description'),
+        'inputtype': 'input',
         'fnGetData' : get_description
     },
     6: {'code': 'latest_update',
@@ -174,6 +189,7 @@ all_issues_column_properties = {
         'sClass'    : 'cellformat',
         'bVisible'  : True,
         'search_str': _('Search Latest Update'),
+        'inputtype': 'input',
         'fnGetData' : get_latest_update
     },
     7: {'code': 'filed_by',
@@ -184,6 +200,7 @@ all_issues_column_properties = {
         'sClass'    : 'cellformat',
         'bVisible'  : True,
         'search_str': _('Search Filed By'),
+        'inputtype': 'input',
         'fnGetData' : get_filed_by
     },
     8: {'code': 'accepted_by',
@@ -194,6 +211,7 @@ all_issues_column_properties = {
         'sClass'    : 'cellformat',
         'bVisible'  : True,
         'search_str': _('Search Accepted By'),
+        'inputtype': 'input',
         'fnGetData' : get_accepted_by,
     },
     9: {'code': 'last_updated_by',
@@ -204,6 +222,7 @@ all_issues_column_properties = {
         'sClass'    : 'cellformat',
         'bVisible'  : True,
          'search_str': _('Search Last Updated By'),
+        'inputtype': 'input',
         'fnGetData' : get_last_updated_by,
     },
     10: {'code': 'workflow_state',
@@ -214,6 +233,8 @@ all_issues_column_properties = {
         'sClass'    : 'cellformat',
         'bVisible'  : True,
         'search_str': _('Search Workflow State'),
+        'inputtype': 'select',
+        'select_option': get_workflow_select,
         'fnGetData' : get_workflow_state,
     },
     11: {'code': 'attachments',
@@ -224,6 +245,7 @@ all_issues_column_properties = {
         'sClass'    : 'cellformat',
         'bVisible'  : True,
         'search_str': '',
+        'inputtype': 'input',
         'fnGetData' : get_attachments,
     },
     12 : {'code' : 'action',
@@ -234,16 +256,18 @@ all_issues_column_properties = {
           'sClass'    : 'cellformat',
           'bVisible'  : True,
           'search_str': '',
-        'fnGetData' : get_action,
+          'inputtype': 'input',
+          'fnGetData' : get_action,
     },
     13 : {'code' : 'reminder',
           'searchable': True,
           'sortable'  : True,
           'name'      :_('Reminder'),
+          'search_str': _('Search Reminder Date'),
           'type'      : 'html',
           'sClass'    : 'cellformat',
           'bVisible'  : False,
-          'search_str': '',
+          'inputtype': 'input',
           'fnGetData' : get_reminder,
     }
 }
