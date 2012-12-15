@@ -47,8 +47,8 @@ JOB_CATEGORY= (
     ('Unspecified','Unspecified')
     )
 SHG_STATUS = (
-    ('Yes', 'Belongs to SHG'),
-    ('No',  'Does Not Belong to SHG'),
+    ('Yes', 'SHG'),
+    ('No',  'Non SHG'),
     ('Unspecified','Unspecified')
 )
 
