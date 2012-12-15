@@ -28,6 +28,29 @@ COMMUNITY_CHOICES = (
     ('Others','Others'),
     ('Unspecified','Unspecified')
 )
+CARD_CHOICES = (
+    ('AAY', 'Antyodyaya'),
+    ('BPL',  'BPL'),
+    ('APL',  'APL'),
+    ('Unspecified','Unspecified')
+    )
+LAND_CHOICES = (
+    ('MF', 'Marginal Farmer'),
+    ('SF',  'Small Farmer'),
+    ('F',  'Farmer'),
+    ('NF',  'Not Farmer'),
+    ('Unspecified','Unspecified')
+    )
+JOB_CATEGORY= (
+    ('CAT1', 'Category 1'),
+    ('CAT2',  'Category 2'),
+    ('Unspecified','Unspecified')
+    )
+SHG_STATUS = (
+    ('Yes', 'Belongs to SHG'),
+    ('No',  'Does Not Belong to SHG'),
+    ('Unspecified','Unspecified')
+)
 
 from cmh.usermgr.models import Citizen, Official, Citizen
 from cmh.common.models import ComplaintStatus
@@ -62,6 +85,10 @@ class Complaint(models.Model):
     comment       = models.CharField (max_length = 1000, blank = True, null = True)
     community     = models.CharField(max_length = 20, blank = True, null = True, choices = COMMUNITY_CHOICES, default = 'Unspecified')
     gender        = models.CharField(max_length = 20, choices = GENDER_CHOICES, blank = True, null = True, default = 'Unspecified')
+    cardstatus    = models.CharField(max_length = 20, choices = CARD_CHOICES, blank = True, null = True, default = 'Unspecified')
+    landpossession= models.CharField(max_length = 20, choices = LAND_CHOICES, blank = True, null = True, default = 'Unspecified')
+    jobcategory   = models.CharField(max_length = 20, choices = JOB_CATEGORY, blank = True, null = True, default = 'Unspecified')
+    shgstatus     = models.CharField(max_length = 20, choices = SHG_STATUS, blank = True, null = True, default = 'Unspecified')
     evidences     = models.ManyToManyField ('ComplaintEvidence', blank = True, null = True)
 
     ###################################

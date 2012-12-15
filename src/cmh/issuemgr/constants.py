@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from cmh.common.models import ComplaintStatus
-from cmh.issuemgr.models import GENDER_CHOICES, COMMUNITY_CHOICES
+from cmh.issuemgr.models import GENDER_CHOICES, COMMUNITY_CHOICES, CARD_CHOICES, LAND_CHOICES, SHG_STATUS, JOB_CATEGORY
 
 
 STATUS_NEW      = ComplaintStatus.objects.get (name = 'New')

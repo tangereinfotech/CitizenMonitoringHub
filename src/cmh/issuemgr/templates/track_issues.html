@@ -138,6 +138,34 @@
   </tr>
   {% endif %}
 </table>
+<fieldset>
+<legend>{% trans "Optional" %}</legend>
+<table width = "100%">
+  <caption style="padding-bottom:10px;">{% trans "Personal Details" %} </caption>
+  <tr>
+    <td style="padding:3px 3px 3px 3px;">
+      <div id="id_revcategory_detail"> {% trans "Gender:" %} {{ current.gender }} </div>
+    </td>
+    <td>
+      <div id="id_revcategory_detail"> {% trans "Community:" %} {{ current.community}} </div>
+    </td>
+    <td>
+      <div id="id_revcategory_detail"> {% trans "Card Status:" %} {{ current.cardstatus}} </div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div id="id_revcategory_detail"> {% trans "Land Possession:" %} {{ current.landpossession}} </div>
+    </td>
+    <td>
+      <div id="id_revcategory_detail"> {% trans "Job Category:" %} {{ current.jobcategory}} </div>
+    </td>
+    <td>
+      <div id="id_revcategory_detail"> {% trans "SHG Status:" %} {{ current.shgstatus}} </div>
+    </td>
+  </tr>
+</table>
+</fieldset>
 <div class="complaint-history-banner">
   {% trans "History for Complaint No. " %}{{ base.complaintno }}
   {% if updatable %}
