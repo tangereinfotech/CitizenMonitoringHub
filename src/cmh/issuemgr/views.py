@@ -428,6 +428,8 @@ def my_issues_list (request):
 
     return get_datatables_records (request, querySet, columnIndexNameMap, 'issue_entity_datatable.html')
 
+from django.views.decorators.cache import cache_control
+@cache_control(must_revalidate=True, max_age=1)
 @login_required
 def update (request, complaintno):
     complaints = Complaint.objects.filter (complaintno = complaintno).order_by ('-created')
@@ -499,6 +501,8 @@ def update (request, complaintno):
         else:
             pass
 
+from django.views.decorators.cache import cache_control
+@cache_control(must_revalidate=True, max_age=1)
 def track_issues (request, complaintno):
     complaintno = complaintno.strip ()
     try:
