@@ -19,7 +19,7 @@ import os
 
 CMH_APP_DIR = os.environ ['CMH_APP_DIR']
 
-DEBUG = True
+DEBUG = os.environ['DEBUG']
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
