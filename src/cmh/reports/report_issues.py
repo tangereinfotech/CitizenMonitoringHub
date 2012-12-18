@@ -12,13 +12,13 @@ def get_complaint_no(c,request):
     else:
         return ''
 
-def get_filed_on(c, request, fmt="%y.%m.%d"):
+def get_filed_on(c, request, fmt="%Y.%m.%d"):
     if ((c is not None) and (c.original is not None) and (c.original.logdate is not None)):
         return c.original.logdate.strftime(fmt)
     else:
         return ''
 
-def get_last_updated(c,request,fmt="%y.%m.%d"):
+def get_last_updated(c,request,fmt="%Y.%m.%d"):
     if (c is not None):
         return c.created.strftime(fmt)
     else:
@@ -38,7 +38,10 @@ def get_department(c,request):
 
 def get_location(c,request):
     if ((c is not None) and (c.location is not None)):
-        return c.location.search[:-22]
+        if (c.location.name == c.location.grampanchayat.name):
+            return c.location.name + "<br/>"  + c.location.grampanchayat.block.name
+        else:
+            return c.location.name + "<br/>" + c.location.grampanchayat.name + "<br/>" + c.location.grampanchayat.block.name
 
 def get_description(c,request):
     c = Complaint.objects.filter(complaintno = c.complaintno).order_by('created')[0]
@@ -159,7 +162,18 @@ all_issues_column_properties = {
         'select_option': get_department_select,
         'fnGetData' : get_department
     },
-    4: {'code': 'location',
+    4: {'code': 'filed_by',
+        'searchable': True,
+        'sortable'  : True,
+        'name'      : _('Filed By'),
+        'type'      : 'string',
+        'sClass'    : 'cellformat',
+        'bVisible'  : True,
+        'search_str': _('Search Filed By'),
+        'inputtype': 'input',
+        'fnGetData' : get_filed_by
+    },
+    5: {'code': 'location',
         'searchable': True,
         'sortable'  : True,
         'name'      : _('Location(Vill/Gram Panchayat/Block)'),
@@ -170,7 +184,7 @@ all_issues_column_properties = {
         'inputtype': 'input',
         'fnGetData' : get_location
     },
-    5: {'code': 'description',
+    6: {'code': 'description',
         'searchable': True,
         'sortable'  : True,
         'name'      : _('Description'),
@@ -181,7 +195,7 @@ all_issues_column_properties = {
         'inputtype': 'input',
         'fnGetData' : get_description
     },
-    6: {'code': 'latest_update',
+    7: {'code': 'latest_update',
         'searchable': True,
         'sortable'  : True,
         'name'      : _('Latest Update'),
@@ -191,17 +205,6 @@ all_issues_column_properties = {
         'search_str': _('Search Latest Update'),
         'inputtype': 'input',
         'fnGetData' : get_latest_update
-    },
-    7: {'code': 'filed_by',
-        'searchable': True,
-        'sortable'  : True,
-        'name'      : _('Filed By'),
-        'type'      : 'string',
-        'sClass'    : 'cellformat',
-        'bVisible'  : True,
-        'search_str': _('Search Filed By'),
-        'inputtype': 'input',
-        'fnGetData' : get_filed_by
     },
     8: {'code': 'accepted_by',
         'searchable': True,
@@ -273,10 +276,28 @@ all_issues_column_properties = {
 }
 
 def report_all_issues_data(request):
-    mdata = cache.get('all_issues_column_key')
-    if mdata == None:
+#    mdata = cache.get('all_issues_column_key')
+#    if mdata == None:
+    cdata = []
+    latest_complaints = Complaint.objects.filter(latest = True)
+    for comp in latest_complaints:
+        row = {}
+        for i in range(0,len(all_issues_column_properties)):
+            row[str(i)] = all_issues_column_properties[i]['fnGetData'](comp,request)
+        row["DT_RowID"] = str(comp.complaintno)
+        cdata.append(row)
+    mdata = dumps({'aaData': cdata})
+#   cache.set('all_issues_column_key', mdata,24*60*60)
+    return HttpResponse(mdata)
+
+def report_my_issues_data(request):
+    role = request.user.cmhuser.get_user_role()
+    if (role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE):
+        official = request.user.official
+ #       mdata = cache.get('my_issues_column_key_' + request.user.username)
+ #       if mdata == None:
         cdata = []
-        latest_complaints = Complaint.objects.filter(latest = True)
+        latest_complaints = Complaint.objects.filter(latest = True, department = official.department)
         for comp in latest_complaints:
             row = {}
             for i in range(0,len(all_issues_column_properties)):
@@ -284,25 +305,7 @@ def report_all_issues_data(request):
             row["DT_RowID"] = "row_" + str(i)
             cdata.append(row)
         mdata = dumps({'aaData': cdata})
-        cache.set('all_issues_column_key', mdata,24*60*60)
-    return HttpResponse(mdata)
-
-def report_my_issues_data(request):
-    role = request.user.cmhuser.get_user_role()
-    if (role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE):
-        official = request.user.official
-        mdata = cache.get('my_issues_column_key_' + request.user.username)
-        if mdata == None:
-            cdata = []
-            latest_complaints = Complaint.objects.filter(latest = True, department = official.department)
-            for comp in latest_complaints:
-                row = {}
-                for i in range(0,len(all_issues_column_properties)):
-                    row[str(i)] = all_issues_column_properties[i]['fnGetData'](comp,request)
-                row["DT_RowID"] = "row_" + str(i)
-                cdata.append(row)
-            mdata = dumps({'aaData': cdata})
-            cache.set('my_issues_column_key_' + request.user.username, mdata,24*60*60)
+        #cache.set('my_issues_column_key_' + request.user.username, mdata,24*60*60)
         return HttpResponse(mdata)
     elif (role == UserRoles.ROLE_DM or UserRoles.ROLE_CSO):
         return report_all_issues_data(request)
