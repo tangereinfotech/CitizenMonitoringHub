@@ -731,22 +731,6 @@ class EditDep (forms.Form):
                                                   comp.get_code ())
             comp.save()
 
-
-    code        = SpacedTextField (label=_("Complaint Code"))
-    summary     = SpacedTextField (max_length = 2000, label = _("Summary"))
-    cclass      = SpacedTextField (max_length = 500, label = _("Classification"))
-    defsmsnew   = SpacedTextField (max_length = 2000, label = _("Default SMS New"), required = False)
-    defsmsack   = SpacedTextField (max_length = 2000, label = _("Default SMS Acknowledge"), required = False)
-    defsmsopen  = SpacedTextField (max_length = 2000, label = _("Default SMS Open"), required = False)
-    defsmsres   = SpacedTextField (max_length = 2000, label = _("Default SMS Resolved"), required = False)
-    defsmsclo   = SpacedTextField (max_length = 2000, label = _("Default SMS Closed"), required = False)
-    mdg         = MultiNumberIdField (max_length = 20,   label = _("MDG Goals"), required = False)
-    department  = forms.ModelChoiceField (label = _("Department"),
-                                          queryset = ComplaintDepartment.objects.all(),
-                                          empty_label = "------",
-                                          widget=forms.Select (attrs = {'style' : 'width:100%'}))
-
-
 class EditComp (forms.Form):
     dname       = SpacedROTextField (label = _("Department"))
     objid       = forms.CharField (widget = forms.HiddenInput ())

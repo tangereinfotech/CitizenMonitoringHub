@@ -28,53 +28,12 @@
       </tr>
       {% endif %}
       <tr>
-        <th align="left">{{ trial.sname.label }}</th>
-        <td align="left">{{ trial.sname }}</td>
-      </tr>
-      <tr>
-        <th align="left">{{ trial.scode.label }}</th>
-        <td align="left">{{ trial.scode }}</td>
-      </tr>
-      <tr>
-        <th align="left">{{ trial.dname.label }}</th>
+        <th align="left">{{trial.dname.errors}} {{ trial.dname.label }}</th>
         <td align="left">{{ trial.dname }}</td>
       </tr>
       <tr>
-        <th align="left">{{ trial.dcode.label }}</th>
+        <th align="left">{{trial.dcode.errors}} {{ trial.dcode.label }}</th>
         <td align="left">{{ trial.dcode }}</td>
-      </tr>
-      <tr>
-        <th align="left">{{ trial.bname.label }}</th>
-        <td align="left">{{ trial.bname }}</td>
-      </tr>
-      <tr>
-        <th align="left">{{ trial.bcode.label }}</th>
-        <td align="left">{{ trial.bcode }}</td>
-      </tr>
-      <tr>
-        <th align="left">{{ trial.gpname.label }}</th>
-        <td align="left">{{ trial.gpname }}</td>
-      </tr>
-      <tr>
-        <th align="left">{{ trial.gpcode.label }}</th>
-        <td align="left">
-          {{ trial.gpcode.errors }}
-          {{ trial.gpcode }}
-        </td>
-      </tr>
-      <tr>
-        <th align="left">{{ trial.lattd.label }}</th>
-        <td align="left">
-          {{ trial.lattd.errors }}
-          {{ trial.lattd }}
-        </td>
-      </tr>
-      <tr>
-        <th align="left">{{ trial.longd.label }}</th>
-        <td align="left">
-          {{ trial.longd.errors }}
-          {{ trial.longd }}
-        </td>
       </tr>
       <tr>
         <td></td>
