@@ -79,6 +79,7 @@ sms_logs_column_properties = {
         'search_str': _('Search Generated Time'),
         'bVisible'  : True,
         'sClass'    : 'cellformat',
+        "sWidth"    : None,
         'inputtype' : 'input',
         'fnGetData' : get_generated_time
     },
@@ -91,6 +92,7 @@ sms_logs_column_properties = {
         'bVisible'  : True,
         'sClass'    : 'cellformat',
         'inputtype' : 'input',
+        "sWidth"    : None,
         'fnGetData' : get_processed_time
     },
     2: { 'code'     :'processed',
@@ -102,6 +104,7 @@ sms_logs_column_properties = {
         'bVisible'  : True,
         'sClass'    : 'cellformat',
         'inputtype' : 'select',
+        "sWidth"    : None,
         'select_option' : get_processed_state,
         'fnGetData' : get_processed
     },
@@ -114,6 +117,7 @@ sms_logs_column_properties = {
         'inputtype' : 'select',
         'select_option': get_sms_direction_options,
         'bVisible'  : True,
+        "sWidth"    : None,
         'sClass'    : 'cellformat',
         'fnGetData' : get_sms_direction,
     },
@@ -126,6 +130,7 @@ sms_logs_column_properties = {
         'bVisible'  : True,
         'sClass'    : 'cellformat',
         'inputtype' : 'input',
+        "sWidth"    : None,
         'fnGetData' : get_recepient
     },
     5: { 'code'     :'message',
@@ -137,6 +142,7 @@ sms_logs_column_properties = {
         'bVisible'  : True,
         'sClass'    : 'cellformat',
         'inputtype' : 'input',
+        "sWidth"    : None,
         'fnGetData' : get_message
     },
 }
