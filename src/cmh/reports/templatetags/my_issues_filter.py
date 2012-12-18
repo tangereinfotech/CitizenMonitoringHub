@@ -30,6 +30,10 @@ def col_code(val,dict):
    return dict[val]['code']
 
 @register.filter
+def col_width(val,dict):
+   return dict[val]['sWidth']
+
+@register.filter
 def col_search_description_name(val,dict):
    return dict[val]['search_str']
 
