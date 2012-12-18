@@ -751,13 +751,11 @@ def editgp (request, block, gpcode):
 @login_required
 def editdep (request, depcode):
     if request.method == "POST":
-        print request.POST
         form = EditDep(None, request.POST)
         if form.is_valid() :
             form.save()
             return HttpResponseRedirect (reverse (department))
         else:
-            print form.errors
             return render_to_response ('edit_dep.html',
                                        {'trial' : form,
                                         'menus' : get_user_menus (request.user,process_dm),
