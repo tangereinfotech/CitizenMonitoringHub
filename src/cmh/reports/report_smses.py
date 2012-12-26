@@ -7,7 +7,7 @@ from django.http import HttpResponse
 def get_generated_time(t):
     if (t.__class__.__name__ == 'TextMessage'):
         if (t is not None and t.created):
-            return t.created.strftime("%y.%m.%d")
+            return t.created.strftime("%y.%m.%d %H:%M:%S")
         else:
             return ''
     elif (t.__class__.__name__ == 'ReceivedTextMessage'):
@@ -18,11 +18,11 @@ def get_generated_time(t):
 def get_processed_time(t):
     if (t.__class__.__name__ == 'TextMessage'):
         if (t is not None and t.processed_time is not None):
-            return t.created.strftime("%y.%m.%d")
+            return t.created.strftime("%y.%m.%d %H:%M:%S")
         else:
             return ''
     elif (t.__class__.__name__ == 'ReceivedTextMessage'):
-        return t.created.strftime("%y.%m.%d")
+        return t.created.strftime("%y.%m.%d %H:%M:%S")
     else:
         return ''
 
