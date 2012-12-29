@@ -11,7 +11,7 @@ def get_generated_time(t):
         else:
             return ''
     elif (t.__class__.__name__ == 'ReceivedTextMessage'):
-        return ''
+        return t.created.strftime("%y.%m.%d %H:%M:%S")
     else:
         return ''
 
