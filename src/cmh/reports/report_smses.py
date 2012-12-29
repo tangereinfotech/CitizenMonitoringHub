@@ -148,7 +148,7 @@ sms_logs_column_properties = {
 }
 
 def report_sms_logs_data(request):
-    mdata = cache.get('sms_logs_data')
+    mdata = None
     if mdata == None:
         cdata = []
         sent_messages = TextMessage.objects.all()
@@ -165,5 +165,4 @@ def report_sms_logs_data(request):
                 row.append(sms_logs_column_properties[i]['fnGetData'](msg))
             cdata.append(row)
         mdata = dumps({'aaData': cdata})
-        cache.set('sms_logs_data', mdata,24*60*60)
     return HttpResponse(mdata)
