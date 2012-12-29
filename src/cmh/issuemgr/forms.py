@@ -186,7 +186,7 @@ class AcceptComplaintForm (forms.Form):
         message = None
         ct = cpl.complainttype
         if ct.defsmsack != None and len (ct.defsmsack.strip ()) != 0:
-            message = ct.defsmsnew
+            message = ct.defsmsack
 
         if message == None:
             if ct.defsmsnew != None and len (ct.defsmsnew.strip ()) != 0:
