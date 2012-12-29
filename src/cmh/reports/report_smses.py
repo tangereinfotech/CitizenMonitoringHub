@@ -3,6 +3,7 @@ from django.utils.translation import ugettext as _
 from django.core.cache import cache
 from django.utils.simplejson import dumps
 from django.http import HttpResponse
+from smsgateway.views import is_blacklisted
 
 def get_generated_time(t):
     if (t.__class__.__name__ == 'TextMessage'):
@@ -46,7 +47,10 @@ def get_recepient(t):
             return ''
     else:
         if (t is not None and t.sender is not None):
-            return t.sender
+            if is_blacklisted(t.sender):
+                return t.sender + "(B)"
+            else:
+                return t.sender
         else:
             return ''
 
