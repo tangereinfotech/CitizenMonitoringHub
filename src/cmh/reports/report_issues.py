@@ -293,7 +293,7 @@ all_issues_column_properties = {
 
 from datetime import datetime
 def report_all_issues_data(request):
-    mdata = cache.get('all_issues_column_key')
+    mdata = None
     if mdata == None:
         cdata = []
         latest_complaints = Complaint.objects.filter(latest = True)
@@ -306,7 +306,6 @@ def report_all_issues_data(request):
             row["DT_RowID"] = str(comp.complaintno)
             cdata.append(row)
         mdata = cdata
-        cache.set('all_issues_column_key', mdata,24*60*60)
     return HttpResponse(dumps({'aaData': mdata}))
 
 def report_my_issues_data(request):
@@ -314,7 +313,7 @@ def report_my_issues_data(request):
     role = request.user.cmhuser.get_user_role()
     if (role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE):
         official = request.user.official
-        mdata = cache.get('my_issues_column_key_' + request.user.username)
+        mdata = None
         if mdata == None:
             cdata = []
             latest_complaints = Complaint.objects.filter(latest = True, department = official.department)
@@ -325,7 +324,6 @@ def report_my_issues_data(request):
                 row["DT_RowID"] = str(comp.complaintno)
                 cdata.append(row)
             mdata = dumps({'aaData': cdata})
-        cache.set('my_issues_column_key_' + request.user.username, mdata,24*60*60)
         return HttpResponse(mdata)
     elif (role == UserRoles.ROLE_DM or UserRoles.ROLE_CSO):
         return report_all_issues_data(request)
