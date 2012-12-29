@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 from django.core.cache import cache
 from django.utils.simplejson import dumps
 from django.http import HttpResponse
-from smsgateway.views import is_blacklisted
+from cmh.smsgateway.views import is_blacklisted
 
 def get_generated_time(t):
     if (t.__class__.__name__ == 'TextMessage'):
