@@ -211,7 +211,7 @@ ul.category li.category_item {
 
 .department-name {
    color: #376091;
-   font-weight: bold;
+   font-weight: normal;
 }
 
 #base_map_container {
@@ -877,7 +877,7 @@ ul.app-menu li.menu {
 
 ul.app-menu li.menu a {
    text-decoration : none;
-   font-weight: bold;
+   font-weight: normal;
    color: #376091;
    padding: 2px 0px;
 }
@@ -887,7 +887,7 @@ ul.app-menu li.menu-selected {
 }
 
 ul.app-menu li.menu-selected a {
-   font-weight: bold;
+   font-weight: normal;
    text-decoration: none;
    color: white;
 }
@@ -913,7 +913,7 @@ ul.phone-menu li {
 ul.phone-menu li a {
    text-decoration: none;
    color: white;
-   font-weight: bold;
+   font-weight: normal;
 }
 
 .rotated-90 {

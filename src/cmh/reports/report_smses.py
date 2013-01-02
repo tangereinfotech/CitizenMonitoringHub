@@ -8,22 +8,22 @@ from cmh.smsgateway.views import is_blacklisted
 def get_generated_time(t):
     if (t.__class__.__name__ == 'TextMessage'):
         if (t is not None and t.created):
-            return t.created.strftime("%y.%m.%d %H:%M:%S")
+            return t.created.strftime("%Y.%m.%d::%H:%M:%S")
         else:
             return ''
     elif (t.__class__.__name__ == 'ReceivedTextMessage'):
-        return t.created.strftime("%y.%m.%d %H:%M:%S")
+        return t.created.strftime("%Y.%m.%d::%H:%M:%S")
     else:
         return ''
 
 def get_processed_time(t):
     if (t.__class__.__name__ == 'TextMessage'):
         if (t is not None and t.processed_time is not None):
-            return t.created.strftime("%y.%m.%d %H:%M:%S")
+            return t.created.strftime("%Y.%m.%d::%H:%M:%S")
         else:
             return ''
     elif (t.__class__.__name__ == 'ReceivedTextMessage'):
-        return t.created.strftime("%y.%m.%d %H:%M:%S")
+        return t.created.strftime("%Y.%m.%d::%H:%M:%S")
     else:
         return ''
 

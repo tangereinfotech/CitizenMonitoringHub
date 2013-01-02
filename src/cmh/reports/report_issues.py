@@ -293,37 +293,32 @@ all_issues_column_properties = {
 
 from datetime import datetime
 def report_all_issues_data(request):
-    mdata = None
-    if mdata == None:
-        cdata = []
-        latest_complaints = Complaint.objects.filter(latest = True)
-        num_columns = len(all_issues_column_properties)
-        range_columns = range(0,num_columns)
-        for comp in latest_complaints:
-            row = {}
-            for i in range_columns:
-                row[str(i)] = all_issues_column_properties[i]['fnGetData'](comp,request)
-            row["DT_RowID"] = str(comp.complaintno)
-            cdata.append(row)
-        mdata = cdata
-    return HttpResponse(dumps({'aaData': mdata}))
+    cdata = []
+    latest_complaints = Complaint.objects.filter(latest = True)
+    num_columns = len(all_issues_column_properties)
+    range_columns = range(0,num_columns)
+    for comp in latest_complaints:
+        row = {}
+        for i in range_columns:
+            row[str(i)] = all_issues_column_properties[i]['fnGetData'](comp,request)
+        row["DT_RowID"] = str(comp.complaintno)
+        cdata.append(row)
+    return HttpResponse(dumps({'aaData': cdata}))
 
 def report_my_issues_data(request):
 
     role = request.user.cmhuser.get_user_role()
     if (role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE):
         official = request.user.official
-        mdata = None
-        if mdata == None:
-            cdata = []
-            latest_complaints = Complaint.objects.filter(latest = True, department = official.department)
-            for comp in latest_complaints:
-                row = {}
-                for i in range(0,len(all_issues_column_properties)):
-                    row[str(i)] = all_issues_column_properties[i]['fnGetData'](comp,request)
-                row["DT_RowID"] = str(comp.complaintno)
-                cdata.append(row)
-            mdata = dumps({'aaData': cdata})
+        cdata = []
+        latest_complaints = Complaint.objects.filter(latest = True, department = official.department)
+        for comp in latest_complaints:
+            row = {}
+            for i in range(0,len(all_issues_column_properties)):
+                row[str(i)] = all_issues_column_properties[i]['fnGetData'](comp,request)
+            row["DT_RowID"] = str(comp.complaintno)
+            cdata.append(row)
+        mdata = dumps({'aaData': cdata})
         return HttpResponse(mdata)
     elif (role == UserRoles.ROLE_DM or UserRoles.ROLE_CSO):
         return report_all_issues_data(request)
@@ -334,15 +329,4 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 @receiver(post_save, sender = Complaint)
 def update_cache_data_all_issues_complaint(sender, **kwargs):
-    mdata = cache.get('all_issues_column_key')
-    if (mdata != None):
-        for row_dic in mdata:
-            if row_dic["DT_RowID"] == str(kwargs['instance'].complaintno):
-                comp = kwargs['instance']
-                try:
-                    comp = Complaint.objects.get(complaintno = comp.complaintno, latest = True)
-                    for i in range(0, len(all_issues_column_properties)):
-                        row_dic[str(i)] = all_issues_column_properties[i]['fnGetData'](comp,None)
-                except ObjectDoesNotExist:
-                    pass
-        cache.set('all_issues_column_key',mdata)
+    comp = kwargs['instance']

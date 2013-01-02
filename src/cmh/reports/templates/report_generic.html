@@ -43,12 +43,12 @@ style="width:100%"
                  "bStateSave" : true,
                  "bServerSide": false,
                  "bAutoWidth" : false,
+                 "aaSorting": [[ {{def_sort_column}}, "desc" ]],
                  "aoColumns" : [
-                     {% for col in cols %} 
-                        {"sType": "{{col|col_type:cols}}","sWidth": "{{col|col_width:cols}}","sName": "{{col|col_code:cols}}", "sClass" : "{{col|col_class:cols}}" ,"bVisible" : "{{col|is_col_visible:cols}}","bSearchable" : "{{col|is_col_searchable:cols}}","bSortable" : "{{col|is_col_sortable:cols}}"},
-                     {% endfor %} 
+                  {% for col in cols %} {"sType": "{{col|col_type:cols}}","sWidth": "{{col|col_width:cols}}","sName": "{{col|col_code:cols}}", "sClass" : "{{col|col_class:cols}}" ,"bVisible" : "{{col|is_col_visible:cols}}","bSearchable" : "{{col|is_col_searchable:cols}}","bSortable" : "{{col|is_col_sortable:cols}}"},
+                   {% endfor %} 
                  ]
-                });
+                 });
            $(".colsearch").keyup( function () {
                     var colnum = this.attributes['index'].value
                     /* Filter on the column (the index) of this element */
