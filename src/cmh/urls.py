@@ -30,6 +30,7 @@ urlpatterns = patterns('',
                        (r'^complaint/', include ('cmh.issuemgr.urls')),
                        (r'^smsg/', include ('cmh.smsgateway.urls')),
                        (r'^masters/', include ('cmh.masters.urls')),
+                       (r'^reports/', include ('cmh.reports.urls')),
                        url(r'^captcha/', include('cmh.captcha.urls')),
                        (r'^i18n/', include('django.conf.urls.i18n')),
                        )

@@ -159,19 +159,27 @@
   <fieldset>
     <legend>{% trans "Optional" %}</legend>
     <table width = "100%">
+      <caption style="padding-bottom:10px;">{% trans "Personal Details" %} </caption>
       <tr>
-        <td>{% trans "Personal Details:" %}</td>
-        <td>
-          <div id="id_revcategory_detail">
-            {% trans "Gender        :" %} {{ current.gender }}
-          </div>
+        <td style="padding:3px 3px 3px 3px;">
+          <div id="id_revcategory_detail"> {% trans "Gender:" %} {{ current.gender }} </div>
         </td>
-        <td></td>
-        <td></td>
         <td>
-          <div id="id_revcategory_detail">
-            {% trans "Community     :" %} {{ current.community }}
-          </div>
+          <div id="id_revcategory_detail"> {% trans "Community:" %} {{ current.community}} </div>
+        </td>
+        <td>
+          <div id="id_revcategory_detail"> {% trans "Card Status:" %} {{ current.cardstatus}} </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div id="id_revcategory_detail"> {% trans "Land Possession:" %} {{ current.landpossession}} </div>
+        </td>
+        <td>
+          <div id="id_revcategory_detail"> {% trans "Job Category:" %} {{ current.jobcategory}} </div>
+        </td>
+        <td>
+          <div id="id_revcategory_detail"> {% trans "SHG Status:" %} {{ current.shgstatus}} </div>
         </td>
       </tr>
     </table>

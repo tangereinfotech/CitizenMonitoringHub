@@ -56,7 +56,6 @@ def get_user_menus (user, fnname):
             retmenus.append({'url' : mi.url,
                              'name' : mi.name,
                              'class' : 'menu'})
-
     return retmenus
 
 

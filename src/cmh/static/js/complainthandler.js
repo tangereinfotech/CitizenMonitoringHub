@@ -58,6 +58,16 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                   "#CC9900", "#FFCCFF", "#CCFF33", "#660066", "#FFCC00", "#003300", "#00BFFF", "#8D38C9",
                   "#F778A1", "#FDD017", "#666633", "#FF9933", "#660033", "#FFFF00", "#999999", "#0099FF",
                   "#CCFF00", "#663300", "#CCCCFF", "#FF0000", "#C9BE62", "#2F4F4F", "#000000", "#FFF0F5",
+                  "#CC9900", "#FFCCFF", "#CCFF33", "#660066", "#FFCC00", "#003300", "#00BFFF", "#8D38C9",
+                  "#F778A1", "#FDD017", "#666633", "#FF9933", "#660033", "#FFFF00", "#999999", "#0099FF",
+                  "#CCFF00", "#663300", "#CCCCFF", "#FF0000", "#C9BE62", "#2F4F4F", "#000000", "#FFF0F5",
+                  "#D3D3D3", "#191970", "#EEE8AA", "#8B6508", "#FFDEAD", "#CDB7B5", "#CD1076", "#E066FF",
+                  "#CC9900", "#FFCCFF", "#CCFF33", "#660066", "#FFCC00", "#003300", "#00BFFF", "#8D38C9",
+                  "#F778A1", "#FDD017", "#666633", "#FF9933", "#660033", "#FFFF00", "#999999", "#0099FF",
+                  "#D3D3D3", "#191970", "#EEE8AA", "#8B6508", "#FFDEAD", "#CDB7B5", "#CD1076", "#E066FF",
+                  "#CC9900", "#FFCCFF", "#CCFF33", "#660066", "#FFCC00", "#003300", "#00BFFF", "#8D38C9",
+                  "#F778A1", "#FDD017", "#666633", "#FF9933", "#660033", "#FFFF00", "#999999", "#0099FF",
+                  "#CCFF00", "#663300", "#CCCCFF", "#FF0000", "#C9BE62", "#2F4F4F", "#000000", "#FFF0F5",
                   "#D3D3D3", "#191970", "#EEE8AA", "#8B6508", "#FFDEAD", "#CDB7B5", "#CD1076", "#E066FF",
                   "#F88158", "#87F717", "#333300", "#3399FF", "#C3FDB8"];
 
@@ -76,6 +86,10 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                            });
                    if (chart_id in plots) {
                        $('#' + chart_id).empty ();
+                   }
+                   var nseries = [];
+                   for (var i = 0; i < data.names.length; i++){
+                        nseries.push({'color': ncolors[i], 'label': data.names[i]})
                    }
                    var series = data.datapoints [0];
                    if (series.length !== 0) {
@@ -97,6 +111,7 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                                                                tickOptions: {formatString: '%d'},
                                                            }
                                                        },
+                                                       series: nseries,
                                                        seriesDefaults : {
                                                            showMarker : false,
                                                            pointLabels: {
@@ -104,7 +119,14 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                                                                ypadding: 3,
                                                                edgeTolerance: 4
                                                            }
-                                                       }
+                                                       },
+                                                       highlighter: {
+                                                        show: true,
+                                                        showLabel: true,
+                                                        tooltipAxes: 'x',
+                                                        formatString: '%s',
+                                                        bringSeriesToFront: true,
+                                                       },
                                                    });
                    }
                    $('#comps_new').html (data.vital_stats.newc);

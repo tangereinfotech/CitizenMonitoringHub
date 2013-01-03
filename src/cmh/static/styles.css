@@ -211,7 +211,7 @@ ul.category li.category_item {
 
 .department-name {
    color: #376091;
-   font-weight: bold;
+   font-weight: normal;
 }
 
 #base_map_container {
@@ -333,7 +333,12 @@ ul.errorlist {
    padding: 0px;
    margin: 0px;
 }
-
+.cellformat {
+    font-size: 80%;
+    text-align: justify;
+    padding-left:4px;
+    padding-right:4px;
+}
 ul.errorlist li {
    padding: 0px;
    margin: 0px;
@@ -379,7 +384,7 @@ ul.errorlist li {
 }
 
 .tabularlist th {
-   font-weight: bold;
+   font-weight: normal;
    background-color: #B9C9FE;
    border-top: 4px solid #AABCFE;
    border-bottom: 1px solid white;
@@ -528,6 +533,9 @@ input[readonly="readonly"] {
 .dataTables_filter {
    float: right;
 }
+
+.odd { background-color: #EEF3D9;  border:1px lightgrey;}
+.even{ background-color: white; border:1px lightgrey; }
 
 .dataTables_Wrapper {
    clear: both;
@@ -839,7 +847,7 @@ ul.complaint-updates li {
 
 div.left-right-menu {
    padding:5px 20px 0px 0px;
-   width:1060px;
+   width:98%;
    height:25px;
    background:#99ccff;
    position: relative;
@@ -869,7 +877,7 @@ ul.app-menu li.menu {
 
 ul.app-menu li.menu a {
    text-decoration : none;
-   font-weight: bold;
+   font-weight: normal;
    color: #376091;
    padding: 2px 0px;
 }
@@ -879,7 +887,7 @@ ul.app-menu li.menu-selected {
 }
 
 ul.app-menu li.menu-selected a {
-   font-weight: bold;
+   font-weight: normal;
    text-decoration: none;
    color: white;
 }
@@ -905,7 +913,7 @@ ul.phone-menu li {
 ul.phone-menu li a {
    text-decoration: none;
    color: white;
-   font-weight: bold;
+   font-weight: normal;
 }
 
 .rotated-90 {

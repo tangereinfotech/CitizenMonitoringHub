@@ -39,7 +39,7 @@ from cmh.common.constants import UserRoles
 from cmh.common.fields import MultiNumberIdField, FormattedDateField
 
 from cmh.common.utils import debug
-from cmh.issuemgr.constants import GENDER_CHOICES, COMMUNITY_CHOICES
+from cmh.issuemgr.constants import GENDER_CHOICES, COMMUNITY_CHOICES, CARD_CHOICES, LAND_CHOICES, SHG_STATUS, JOB_CATEGORY
 
 class ComplaintForm (forms.Form):
     logdate     = forms.DateField (input_formats = ('%d/%m/%Y',),
@@ -127,7 +127,10 @@ class AcceptComplaintForm (forms.Form):
     gender          = forms.CharField (widget = forms.RadioSelect (choices = GENDER_CHOICES), required = False, initial = 'Unspecified')
 
     community       = forms.CharField (widget = forms.RadioSelect (choices = COMMUNITY_CHOICES), required = False, initial = 'Unspecified')
-
+    cardstatus     = forms.CharField (widget = forms.Select(choices = CARD_CHOICES), required = False, initial = 'Unspecified')
+    landpossession = forms.CharField (widget = forms.Select(choices = LAND_CHOICES), required = False, initial = 'Unspecified')
+    jobcategory    = forms.CharField (widget = forms.Select(choices = JOB_CATEGORY), required = False, initial = 'Unspecified')
+    shgstatus      = forms.CharField (widget = forms.RadioSelect(choices = SHG_STATUS), required = False, initial = 'Unspecified')
     filename        = forms.FileField (label = _("Upload Evidence:"), required = False)
 
     def clean_locationid (self):
@@ -183,7 +186,7 @@ class AcceptComplaintForm (forms.Form):
         message = None
         ct = cpl.complainttype
         if ct.defsmsack != None and len (ct.defsmsack.strip ()) != 0:
-            message = ct.defsmsnew
+            message = ct.defsmsack
 
         if message == None:
             if ct.defsmsnew != None and len (ct.defsmsnew.strip ()) != 0:

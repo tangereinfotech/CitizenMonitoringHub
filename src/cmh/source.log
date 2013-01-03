@@ -1,0 +1,10 @@
+Fri Nov 23 15:21:51 IST 2012
+1. Refined the all issues list with a new additional column format. Following columns added.
+a. Location
+b. Department code
+c. Original description
+d. Latest updated
+e. Filed By, Filed On, Last updated by
+f. File name in the same display. One extra click not needed for update
+g. Toggle behavior on columns
+

@@ -320,7 +320,8 @@
             // extra data for the point.
             str = hl.tooltipContentEditor(str, neighbor.seriesIndex, neighbor.pointIndex, plot);
         }
-        elem.html(str);
+        str = str.replace(/#seriesLabel#/,series.label);
+        elem.html(series.label);
         var gridpos = {x:neighbor.gridData[0], y:neighbor.gridData[1]};
         var ms = 0;
         var fact = 0.707;

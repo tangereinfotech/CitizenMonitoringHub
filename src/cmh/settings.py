@@ -19,7 +19,7 @@ import os
 
 CMH_APP_DIR = os.environ ['CMH_APP_DIR']
 
-DEBUG = True
+DEBUG = os.environ['DEBUG']
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -33,7 +33,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'tg_srvcmh',                      # Or path to database file if using sqlite3.
         'USER': 'tg_cmhadm',                      # Not used with sqlite3.
-        'PASSWORD': 'tg#CmH9',                  # Not used with sqlite3.
+        'PASSWORD': os.environ['DATABASE_PASSWORD'], #'tg#CmH9',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
@@ -58,6 +58,13 @@ LANGUAGES = (
     ('hi', gettext('Hindi')),
 )
 
+CACHES = {
+    'default' : {
+        'BACKEND' : 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT' : 45*24*60*60
+    }
+}
 
 SITE_ID = 1
 
@@ -94,6 +101,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -101,6 +109,7 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.csrf.CsrfResponseMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'cmh.urls'
@@ -112,6 +121,7 @@ TEMPLATE_DIRS = (
     os.path.join (CMH_APP_DIR, "cmh", "templates"),
     os.path.join (CMH_APP_DIR, "cmh", "usermgr", "templates"),
     os.path.join (CMH_APP_DIR, "cmh", "issuemgr", "templates"),
+    os.path.join (CMH_APP_DIR, "cmh", "reports", "templates"),
 )
 
 EVIDENCE_DIR = os.path.abspath (os.path.join (CMH_APP_DIR, "..", 'evidences'))
@@ -130,6 +140,7 @@ INSTALLED_APPS = (
     'cmh.captcha',
     'cmh.smsgateway',
     'cmh.masters',
+    'cmh.reports',
     'south',
     'django_extensions'
 )
