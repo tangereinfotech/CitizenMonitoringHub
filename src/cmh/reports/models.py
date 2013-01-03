@@ -2,18 +2,18 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class IssuesDataReport(models.Model):
-    complaintno = models.CharField(max_length = 14)
-    filed_on    = models.CharField(max_length = 10)
-    last_updated = models.CharField(max_length = 10)
-    department = models.CharField(max_length = 50)
-    filed_by  = models.CharField(max_length = 50)
-    location  = models.CharField(max_length = 70)
-    description = models.CharField(max_length = 400)
-    latest_update = models.CharField(max_length = 400)
-    accepted_by = models.CharField(max_length = 30)
-    last_updated_by = models.CharField(max_length = 30)
-    complaint_status = models.CharField(max_length = 20)
-    attachments = models.CharField(max_length = 400)
+    complaintno = models.CharField(max_length = 14, null=True)
+    filed_on    = models.CharField(max_length = 10, null= True)
+    last_updated = models.CharField(max_length = 10, null=True)
+    department = models.CharField(max_length = 50, null = True)
+    filed_by  = models.CharField(max_length = 50, null = True)
+    location  = models.CharField(max_length = 70, null = True)
+    description = models.CharField(max_length = 400, null = True)
+    latest_update = models.CharField(max_length = 400,null = True )
+    accepted_by = models.CharField(max_length = 30, null = True)
+    last_updated_by = models.CharField(max_length = 30, null = True)
+    complaint_status = models.CharField(max_length = 20, null = True)
+    attachments = models.CharField(max_length = 400,null = True)
 
 class ReminderReport(models.Model):
     comp_report = models.ForeignKey(IssuesDataReport)
