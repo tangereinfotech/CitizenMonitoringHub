@@ -6,60 +6,68 @@ from django.http import HttpResponse,Http404
 from cmh.common.constants import UserRoles
 from django.core.exceptions import ObjectDoesNotExist
 from cmh.common.models import ComplaintDepartment, ComplaintStatus
-def get_complaint_no(c,request):
+from cmh.reports.models import IssuesDataReport
+
+def get_complaint_no(c,request=None):
     if (c is not None):
         return c.complaintno
     else:
         return ''
 
-def get_filed_on(c, request, fmt="%Y.%m.%d"):
+def get_filed_on(c, request=None, fmt="%Y.%m.%d"):
     if ((c is not None) and (c.original is not None) and (c.original.logdate is not None)):
         return c.original.logdate.strftime(fmt)
     else:
         return ''
 
-def get_last_updated(c,request,fmt="%Y.%m.%d"):
+def get_last_updated(c,request=None,fmt="%Y.%m.%d::%H:%M"):
     if (c is not None):
         return c.created.strftime(fmt)
     else:
         return 'Not available'
 
-def get_filed_on_sort(c,request, fmt="%Y%m%d"):
+def get_filed_on_sort(c,request=None, fmt="%Y%m%d"):
     return get_filed_on(c, fmt)
 
-def get_last_updated_sort(c,request,fmt="%Y%m%d"):
+def get_last_updated_sort(c,request = None,fmt="%Y%m%d"):
     return get_last_updated(c, fmt)
 
-def get_department(c,request):
+def get_department(c,request=None):
+    if ((c is not None) and (c.department is not None) and (c.department.code is not None)):
+        return c.department
+    else:
+        return None
+
+def get_department_name(c,request=None):
     if ((c is not None) and (c.department is not None) and (c.department.code is not None)):
         return c.department.code
     else:
         return ''
 
-def get_location(c,request):
+def get_location(c,request=None):
     if ((c is not None) and (c.location is not None)):
         if (c.location.name == c.location.grampanchayat.name):
             return c.location.name + "<br/>"  + c.location.grampanchayat.block.name
         else:
             return c.location.name + "<br/>" + c.location.grampanchayat.name + "<br/>" + c.location.grampanchayat.block.name
 
-def get_description(c,request):
+def get_description(c,request=None):
     c = Complaint.objects.filter(complaintno = c.complaintno).order_by('created')[0]
     return c.description
 
-def get_latest_update(c,request):
+def get_latest_update(c,request=None):
     if (c != None):
         return c.description
     else:
         return ''
 
-def get_filed_by(c,request):
+def get_filed_by(c,request=None):
     if (c is not None) and (c.filedby is not None):
         return c.filedby.name
     else:
         return ''
 
-def get_accepted_by(c,request):
+def get_accepted_by(c,request=None):
     comps = Complaint.objects.filter(complaintno = c.complaintno)
     ack_comps = comps.filter(curstate__name = 'Acknowledged').order_by('created')
     if len(ack_comps) > 0:
@@ -70,19 +78,19 @@ def get_accepted_by(c,request):
     else:
         return 'Not available'
 
-def get_last_updated_by(c,request):
+def get_last_updated_by(c,request=None):
     if (c.creator != None) and (c.creator != ''):
         return c.creator.username
     else:
         return 'System'
 
-def get_workflow_state(c,request):
+def get_workflow_state(c,request=None):
     if (c is not None):
         return c.curstate.name
     else:
         return ''
 
-def get_attachments(c,request):
+def get_attachments(c,request=None):
     evi_str = ''
     comps = Complaint.objects.filter(complaintno = c.complaintno)
     for c in comps:
@@ -90,7 +98,7 @@ def get_attachments(c,request):
             evi_str = evi_str+  '<a href=' + evi.url + ' target="_blank">' + evi.filename + '</a><br/>'
     return evi_str
 
-def get_action(c,request):
+def get_action(c,request = None):
     update_url = ''
     if (c.curstate.name != 'Closed'):
         update_url = "/complaint/update/" + c.complaintno
@@ -290,18 +298,31 @@ all_issues_column_properties = {
           'fnGetData' : get_reminder,
     }
 }
+def compose_all_data():
+    comps = Complaint.objects.filter(latest = True)
+    for comp in comps:
+        create_or_update_idr(comp)
 
 from datetime import datetime
 def report_all_issues_data(request):
     cdata = []
-    latest_complaints = Complaint.objects.filter(latest = True)
-    num_columns = len(all_issues_column_properties)
-    range_columns = range(0,num_columns)
-    for comp in latest_complaints:
+    for idr in IssuesDataReport.objects.all():
         row = {}
-        for i in range_columns:
-            row[str(i)] = all_issues_column_properties[i]['fnGetData'](comp,request)
-        row["DT_RowID"] = str(comp.complaintno)
+        row['0'] = idr.complaintno
+        row['1'] = idr.filed_on
+        row['2'] = idr.last_updated
+        row['3'] = idr.department_name
+        row['4'] = idr.filed_by
+        row['5'] = idr.location
+        row['6'] = idr.description
+        row['7'] = idr.latest_update
+        row['8'] = idr.accepted_by
+        row['9'] = idr.last_updated_by
+        row['10'] = idr.complaint_status
+        row['11'] = idr.attachments
+        row['12'] = idr.action
+        row['13'] = ''
+        row["DT_RowID"] = str(idr.complaintno)
         cdata.append(row)
     return HttpResponse(dumps({'aaData': cdata}))
 
@@ -325,8 +346,50 @@ def report_my_issues_data(request):
     else:
         raise Http404
 
+def create_or_update_idr(comp):
+    try:
+        idr = IssuesDataReport.objects.get(complaintno = comp.complaintno)
+        idr.complaintno = get_complaint_no(comp)
+        idr.filed_on = get_filed_on(comp)
+        idr.last_updated = get_last_updated(comp)
+        idr.department = get_department(comp)
+        idr.department_name = get_department_name(comp)
+        idr.filed_by = get_filed_by(comp)
+        idr.location= get_location(comp)
+        idr.description = get_description(comp)
+        idr.latest_update = get_latest_update(comp)
+        idr.accepted_by = get_accepted_by(comp)
+        idr.last_updated_by = get_last_updated_by(comp)
+        idr.complaint_status = get_workflow_state(comp)
+        idr.attachments = get_attachments(comp)
+        idr.action = get_action(comp)
+        idr.save()
+    except ObjectDoesNotExist:
+        IssuesDataReport.objects.create(complaintno = get_complaint_no(comp),
+                                        filed_on = get_filed_on(comp),
+                                        last_updated = get_last_updated(comp),
+                                        department = get_department(comp),
+                                        department_name = get_department_name(comp),
+                                        filed_by = get_filed_by(comp),
+                                        location= get_location(comp),
+                                        description = get_description(comp),
+                                        latest_update = get_latest_update(comp),
+                                        accepted_by = get_accepted_by(comp),
+                                        last_updated_by = get_last_updated_by(comp),
+                                        complaint_status = get_workflow_state(comp),
+                                        attachments = get_attachments(comp),
+                                        action = get_action(comp)
+                                        )
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 @receiver(post_save, sender = Complaint)
-def update_cache_data_all_issues_complaint(sender, **kwargs):
+def update_all_issues_complaint_report(sender, **kwargs):
     comp = kwargs['instance']
+    if comp.latest == True:
+        create_or_update_idr(comp)
+
+@receiver(post_save, sender = ComplaintDepartment)
+def update_all_issues_complaint_department(sender, **kwargs):
+    department = kwargs['instance']
+    idrs = IssuesDataReport.objects.filter(department = department).update(department_name = department.code)
