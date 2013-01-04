@@ -11,18 +11,20 @@ class Migration(SchemaMigration):
         # Adding model 'IssuesDataReport'
         db.create_table('reports_issuesdatareport', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('complaintno', self.gf('django.db.models.fields.CharField')(max_length=14)),
-            ('filed_on', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('last_updated', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('department', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('filed_by', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('location', self.gf('django.db.models.fields.CharField')(max_length=70)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=400)),
-            ('latest_update', self.gf('django.db.models.fields.CharField')(max_length=400)),
-            ('accepted_by', self.gf('django.db.models.fields.CharField')(max_length=30)),
-            ('last_updated_by', self.gf('django.db.models.fields.CharField')(max_length=30)),
-            ('complaint_status', self.gf('django.db.models.fields.CharField')(max_length=20)),
-            ('attachments', self.gf('django.db.models.fields.CharField')(max_length=400)),
+            ('complaintno', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
+            ('filed_on', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
+            ('last_updated', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
+            ('department', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['common.ComplaintDepartment'], null=True, blank=True)),
+            ('department_name', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('filed_by', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+            ('location', self.gf('django.db.models.fields.CharField')(max_length=70, null=True, blank=True)),
+            ('description', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+            ('latest_update', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+            ('accepted_by', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('last_updated_by', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('complaint_status', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
+            ('action', self.gf('django.db.models.fields.CharField')(max_length=400, null=True, blank=True)),
+            ('attachments', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
         ))
         db.send_create_signal('reports', ['IssuesDataReport'])
 
@@ -74,6 +76,39 @@ class Migration(SchemaMigration):
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
+        'common.complaintdepartment': {
+            'Meta': {'object_name': 'ComplaintDepartment'},
+            'code': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'district': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.District']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '5000'})
+        },
+        'common.country': {
+            'Meta': {'object_name': 'Country'},
+            'code': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'lattd': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'longd': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '2000'})
+        },
+        'common.district': {
+            'Meta': {'object_name': 'District'},
+            'code': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'lattd': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'longd': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '2000'}),
+            'state': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.State']"})
+        },
+        'common.state': {
+            'Meta': {'object_name': 'State'},
+            'code': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'country': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.Country']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'lattd': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'longd': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '2000'})
+        },
         'contenttypes.contenttype': {
             'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
@@ -83,19 +118,21 @@ class Migration(SchemaMigration):
         },
         'reports.issuesdatareport': {
             'Meta': {'object_name': 'IssuesDataReport'},
-            'accepted_by': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'attachments': ('django.db.models.fields.CharField', [], {'max_length': '400'}),
-            'complaint_status': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
-            'complaintno': ('django.db.models.fields.CharField', [], {'max_length': '14'}),
-            'department': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '400'}),
-            'filed_by': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'filed_on': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
+            'accepted_by': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'action': ('django.db.models.fields.CharField', [], {'max_length': '400', 'null': 'True', 'blank': 'True'}),
+            'attachments': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'complaint_status': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'complaintno': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'department': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.ComplaintDepartment']", 'null': 'True', 'blank': 'True'}),
+            'department_name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'filed_by': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'filed_on': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_updated': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
-            'last_updated_by': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'latest_update': ('django.db.models.fields.CharField', [], {'max_length': '400'}),
-            'location': ('django.db.models.fields.CharField', [], {'max_length': '70'})
+            'last_updated': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'last_updated_by': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'latest_update': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'location': ('django.db.models.fields.CharField', [], {'max_length': '70', 'null': 'True', 'blank': 'True'})
         },
         'reports.reminderreport': {
             'Meta': {'object_name': 'ReminderReport'},
