@@ -100,11 +100,13 @@ def get_attachments(c,request=None):
 
 def get_action(c,request = None):
     update_url = ''
-    if (c.curstate.name != 'Closed'):
-        update_url = "/complaint/update/" + c.complaintno
-        update_url = '<a href=' + update_url + ' target="_blank">update</a>'
-    track_url = "/complaint/track/" + c.complaintno
-    track_url = '<a href=' + track_url + ' target="_blank">track</a>'
+    track_url  = ''
+    if c != None:
+        if (c.curstate.name != 'Closed'):
+            update_url = "/complaint/update/" + c.complaintno
+            update_url = '<a href=' + update_url + ' target="_blank">update</a>'
+        track_url = "/complaint/track/" + c.complaintno
+        track_url = '<a href=' + track_url + ' target="_blank">track</a>'
     return track_url + '<br/>' + update_url
 
 def get_reminder(c,request):

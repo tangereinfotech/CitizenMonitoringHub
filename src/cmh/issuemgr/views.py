@@ -1087,6 +1087,7 @@ def get_evidence (request, filename):
                                    {'error' : _('Unauthorized access to evidence. Will be reported'),
                                     'menus' : get_user_menus (request.user,track_issues),
                                     'user' : request.user})
+from reports.report_issues import create_or_update_idr
 
 def _handle_evidence_upload (complaint, temp_file):
     ufname = temp_file.name
@@ -1101,8 +1102,10 @@ def _handle_evidence_upload (complaint, temp_file):
                                            filename = ufname,
                                            url = get_evidence_url (ufunique))
     complaint.evidences.add (ce)
-    complaint.save ()
 
+    complaint.save ()
+    # preferably done through signals for modularity
+    create_or_update_idr(complaint)
 
 @login_required
 def set_reminder (request, complaintno):
