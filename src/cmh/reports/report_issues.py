@@ -386,8 +386,9 @@ from django.dispatch import receiver
 @receiver(post_save, sender = Complaint)
 def update_all_issues_complaint_report(sender, **kwargs):
     comp = kwargs['instance']
-    if comp.latest == True:
-        create_or_update_idr(comp)
+    if kwargs['created'] == False:
+        if comp.latest == True:
+            create_or_update_idr(comp)
 
 @receiver(post_save, sender = ComplaintDepartment)
 def update_all_issues_complaint_department(sender, **kwargs):
