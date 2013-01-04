@@ -332,7 +332,7 @@ def report_my_issues_data(request):
     if (role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE):
         cdata = []
         official = request.user.official
-        idrs = IssuesDataReport.objects.filter(department = official.department):
+        idrs = IssuesDataReport.objects.filter(department = official.department)
         for idr in idrs:
             row = {}
             row['0'] = idr.complaintno
