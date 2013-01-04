@@ -330,17 +330,28 @@ def report_my_issues_data(request):
 
     role = request.user.cmhuser.get_user_role()
     if (role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE):
-        official = request.user.official
         cdata = []
-        latest_complaints = Complaint.objects.filter(latest = True, department = official.department)
-        for comp in latest_complaints:
+        official = request.user.official
+        idrs = IssuesDataReport.objects.filter(department = official.department):
+        for idr in idrs:
             row = {}
-            for i in range(0,len(all_issues_column_properties)):
-                row[str(i)] = all_issues_column_properties[i]['fnGetData'](comp,request)
-            row["DT_RowID"] = str(comp.complaintno)
+            row['0'] = idr.complaintno
+            row['1'] = idr.filed_on
+            row['2'] = idr.last_updated
+            row['3'] = idr.department_name
+            row['4'] = idr.filed_by
+            row['5'] = idr.location
+            row['6'] = idr.description
+            row['7'] = idr.latest_update
+            row['8'] = idr.accepted_by
+            row['9'] = idr.last_updated_by
+            row['10'] = idr.complaint_status
+            row['11'] = idr.attachments
+            row['12'] = idr.action
+            row['13'] = ''
+            row["DT_RowID"] = str(idr.complaintno)
             cdata.append(row)
-        mdata = dumps({'aaData': cdata})
-        return HttpResponse(mdata)
+            return HttpResponse(dumps({'aaData': cdata}))
     elif (role == UserRoles.ROLE_DM or UserRoles.ROLE_CSO):
         return report_all_issues_data(request)
     else:
