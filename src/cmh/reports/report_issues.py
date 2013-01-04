@@ -328,9 +328,9 @@ def report_all_issues_data(request):
 
 def report_my_issues_data(request):
 
+    cdata = []
     role = request.user.cmhuser.get_user_role()
     if (role == UserRoles.ROLE_OFFICIAL or role == UserRoles.ROLE_DELEGATE):
-        cdata = []
         official = request.user.official
         idrs = IssuesDataReport.objects.filter(department = official.department)
         for idr in idrs:
@@ -351,7 +351,7 @@ def report_my_issues_data(request):
             row['13'] = ''
             row["DT_RowID"] = str(idr.complaintno)
             cdata.append(row)
-            return HttpResponse(dumps({'aaData': cdata}))
+        return HttpResponse(dumps({'aaData': cdata}))
     elif (role == UserRoles.ROLE_DM or UserRoles.ROLE_CSO):
         return report_all_issues_data(request)
     else:
