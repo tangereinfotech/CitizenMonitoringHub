@@ -19,7 +19,7 @@ def get_generated_time(t):
 def get_processed_time(t):
     if (t.__class__.__name__ == 'TextMessage'):
         if (t is not None and t.processed_time is not None):
-            return t.created.strftime("%Y.%m.%d::%H:%M:%S")
+            return t.processed_time.strftime("%Y.%m.%d::%H:%M:%S")
         else:
             return ''
     elif (t.__class__.__name__ == 'ReceivedTextMessage'):
