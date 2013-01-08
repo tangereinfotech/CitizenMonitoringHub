@@ -15,11 +15,14 @@
 
 import os.path
 
-import os
-
+import os, sys
+import importlib
 CMH_APP_DIR = os.environ ['CMH_APP_DIR']
+sys.path.append(os.path.join(CMH_APP_DIR))
+CONFIG_FILE   = os.environ ['CONFIG_FILE']
+site_config = __import__('cmh.configs.' + CONFIG_FILE, globals(), locals(),['DEBUG'])
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -148,6 +151,7 @@ INSTALLED_APPS = (
 LOGIN_URL = '/user/login/'
 LOGIN_REDIRECT_URL = '/'
 
-PHONE = "0756-1051"
-SMS   = "09926202015"
+PHONE = site_config.PHONE
+SMS   = site_config.SMS
+BANNER = site_config.BANNER
 
