@@ -16,7 +16,7 @@
 import os.path
 
 import os, sys
-import importlib
+
 CMH_APP_DIR = os.environ ['CMH_APP_DIR']
 sys.path.append(os.path.join(CMH_APP_DIR))
 CONFIG_FILE   = os.environ ['CONFIG_FILE']
