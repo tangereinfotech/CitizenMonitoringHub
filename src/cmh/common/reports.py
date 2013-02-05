@@ -23,7 +23,7 @@ class Report():
         all_complaints = []
         for cno in complaint_nos:
             same_complaint = complaints.filter(complaintno = cno).order_by('created')
-            base   = same_complaint.filter(original = None)[0]
+            base   = same_complaint[0]
             i = 0
             for c in same_complaint:
                 try:
