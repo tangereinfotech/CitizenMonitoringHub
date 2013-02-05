@@ -15,7 +15,7 @@ class Report():
 
         column_headers = ['Complaint Number:','Filed by [name]','Filed by [mobile number]','Filed on','complaint summary','Location','Complaint type','Department','Gender','SC/ST','Status',    'start date','end date','description of specific status']
 
-        complaints = Complaint.objects.filter(logdate__gte = self.START_DATE).filter(logdate__lte = self.END_DATE)
+        complaints = Complaint.objects.filter(created__gte = self.START_DATE).filter(created__lte = self.END_DATE)
         complaint_nos = set()
         for c in complaints:
             complaint_nos.add(c.complaintno)
