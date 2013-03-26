@@ -114,7 +114,9 @@ var show_hot_complaints = function (chart_id, url, departments, period_start, pe
                                                        series: nseries,
                                                        seriesDefaults : {
                                                            showMarker : false,
-                                                           smooth: true,
+                                                           rendererOptions: {
+                                                                smooth: true,
+                                                           },
                                                            lineWidth: 1.5,
                                                            pointLabels: {
                                                                show:false,
