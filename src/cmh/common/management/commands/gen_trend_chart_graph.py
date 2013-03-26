@@ -38,7 +38,7 @@ def update_trend_chart(sdate = date(2013,01,01), edate=date(2013,01,03)):
 
     for d in all_dates:
         for c in cnos:
-            cs = Complaint.objects.filter(complaintno = c[0], createdate__lte = d, curstate = STATUS_ACK)
+            cs = Complaint.objects.filter(complaintno = c[0], createdate__lte = d).exclude(curstate = STATUS_NEW).order_by('-created')
             if cs.count() > 0 and cs[0].department != None:
                 curstate = cs[0].curstate
                 trend_dep = cs[0].department
