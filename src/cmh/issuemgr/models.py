@@ -156,3 +156,13 @@ class ComplaintReminder (models.Model):
     user        = models.ForeignKey (User)
     complaintno = models.CharField (max_length = 200)
     reminderon  = models.DateField ()
+
+class TrendChartSummary(models.Model):
+    complaint   = models.CharField(max_length = 40) # Complaint No
+    date        = models.DateField()
+    status      = models.BooleanField() #True means  open, False means closed
+    department  = models.ForeignKey(ComplaintDepartment, blank=True, null=True)
+    filed_on    = models.DateField()
+
+    def __unicode__(self):
+        return self.complaint + " " + self.date.strftime("%Y/%m/%d") + " " + self.department.code

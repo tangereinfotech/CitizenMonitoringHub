@@ -80,9 +80,9 @@ class Command (BaseCommand):
         ep.process (bookname, sheetname, True,
                     [EP.CELL_TEXT,
                      EP.CELL_TEXT,
-                     EP.CELL_INT,
-                     EP.CELL_INT,
-                     EP.CELL_INT,
+                     EP.CELL_TEXT,
+                     EP.CELL_TEXT,
+                     EP.CELL_TEXT,
                      EP.CELL_TEXT,
                      EP.CELL_TEXT,
                      EP.CELL_TEXT])
@@ -115,29 +115,29 @@ class Command (BaseCommand):
 
         if skiprow == False:
             try:
-                ct = ComplaintType.objects.get (code = "%s.%03d" % (dept.code, cells [COL_COMP_CODE]))
+                ct = ComplaintType.objects.get (code = "%s.%s" % (dept.code, cells [COL_COMP_CODE]))
             except ComplaintType.DoesNotExist:
                 skiprow = True
-                reason = "Complaint Type not found with department code [%s] and complaint code [%d]" % (dept.code, cells [COL_COMP_CODE])
+                reason = "Complaint Type not found with department code [%s] and complaint code [%s]" % (dept.code, cells [COL_COMP_CODE])
             except ComplaintType.MultipleObjectsReturned:
                 skiprow = True
-                reason = "Multiple Complaint Types found with department code [%s] and complaint code [%d]" % (dept.code, cells [COL_COMP_CODE])
+                reason = "Multiple Complaint Types found with department code [%s] and complaint code [%s]" % (dept.code, cells [COL_COMP_CODE])
 
         if skiprow == False:
             try:
-                gp = GramPanchayat.objects.get (code = DeployDistrict.DISTRICT.code + ".%03d.%03d" % (cells [COL_BLOK_CODE], cells [COL_GRAM_CODE]))
+                gp = GramPanchayat.objects.get (code = DeployDistrict.DISTRICT.code + ".%s.%s" % (cells [COL_BLOK_CODE], cells [COL_GRAM_CODE]))
             except GramPanchayat.DoesNotExist:
                 skiprow = True
-                reason = "Gram Panchayat not found with Block code [%d] and Gram Panchayat code [%d]" % (cells [COL_BLOK_CODE], cells [COL_GRAM_CODE])
+                reason = "Gram Panchayat not found with Block code [%s] and Gram Panchayat code [%s]" % (cells [COL_BLOK_CODE], cells [COL_GRAM_CODE])
             except GramPanchayat.MultipleObjectsReturned:
                 skiprow = True
-                reason = "Multiple Gram Panchayat found with Block code [%d] and Gram Panchayat code [%d]" % (cells [COL_BLOK_CODE], cells [COL_GRAM_CODE])
+                reason = "Multiple Gram Panchayat found with Block code [%s] and Gram Panchayat code [%s]" % (cells [COL_BLOK_CODE], cells [COL_GRAM_CODE])
 
         if skiprow == False:
             village_codes = sorted ([v.code for v in gp.village_set.all ()])
             if len (village_codes) == 0:
                 skiprow = True
-                reason  = "No villages are present in Gram Panchayat with Block code [%d] and Gram Panchayat code [%d]" % (cells [COL_BLOK_CODE], cells [COL_GRAM_CODE])
+                reason  = "No villages are present in Gram Panchayat with Block code [%s] and Gram Panchayat code [%s]" % (cells [COL_BLOK_CODE], cells [COL_GRAM_CODE])
             else:
                 try:
                     village = gp.village_set.all ().get (code = village_codes [0])

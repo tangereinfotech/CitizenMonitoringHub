@@ -643,97 +643,19 @@ def get_vital_stats (deptids, stdate, endate):
 
 
 def get_complaint_data (deptids, stdate, endate):
-    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, department__id__in = deptids, curstate = STATUS_NEW)
-    cnos = [c.complaintno for c in complaints]
-    complaints = Complaint.objects.filter (createdate__gte = stdate, createdate__lte = endate, latest = True, department__id__in = deptids, complaintno__in = cnos)
-    open_complaints = complaints.filter (Q (curstate = STATUS_NEW) | Q (curstate = STATUS_ACK) | Q (curstate = STATUS_REOPEN) | Q (curstate = STATUS_OPEN))
-    clos_complaints = complaints.filter (Q (curstate = STATUS_RESOLVED) | Q (curstate = STATUS_CLOSED))
 
-    open_data = open_complaints.filter (createdate__gt = stdate).values ('department__id', 'department__name', 'createdate').annotate (Count ('createdate'))
-    clos_data = clos_complaints.filter (createdate__gt = stdate).values ('department__id', 'department__name', 'createdate').annotate (Count ('createdate'))
-
-    ds = [d for d in daterange (stdate, endate)]
+    from cmh.issuemgr.models import TrendChartSummary as TCS
     depts = ComplaintDepartment.objects.filter (id__in = deptids).order_by ('id')
-
-    composite_data = ([(od ['department__id'], od ['department__name'], od ['createdate'], od ['createdate__count']) for od in open_data]
-                      + [(cd ['department__id'], cd ['department__name'], cd ['createdate'], - cd ['createdate__count']) for cd in clos_data])
-
-    begn_open_data = open_complaints.filter (createdate__lte = stdate)
-    begn_clos_data = clos_complaints.filter (createdate__lte = stdate)
-
-    for dept in depts:
-        composite_data.append ((dept.id,
-                                dept.name,
-                                stdate,
-                                (begn_open_data.filter (department__id = dept.id).count () - begn_clos_data.filter (department__id = dept.id).count ())))
-
-    composite_data = sorted (composite_data, key = (lambda x: x [0]))
-
-    depts_data = group_by_departments (composite_data, ds)
-
-    return depts_data
-
-
-def group_by_departments (cdata, drange):
-    curdeptid = cdata [0][0]
-    deptdata = {curdeptid : [cdata [0]]}
-    for cd in cdata [1:]:
-        if cd [0] == curdeptid:
-            deptdata [curdeptid].append (cd)
-        else:
-            curdeptid = cd [0]
-            deptdata [curdeptid] = [cd]
-    nd = []
-    for did, cstats in sorted (deptdata.items (), key = (lambda x : x [0])):
-        nd.append (combine_dept_data (cstats, drange))
-
-    return nd
-
-def combine_dept_data (cstats, drange):
-    cstats = sorted (cstats, key = (lambda x: x [2]))
-
-    cstat = cstats [0]
-
-    dinq = cstat [2] # Date In Question
-    dinqdata = {dinq : cstat [3]}
-
-    for cstat in cstats [1:]:
-        if cstat [2] == dinq:
-            dinqdata [dinq] += cstat [3]
-        else:
-            dinq = cstat [2]
-            dinqdata [dinq] = cstat [3]
-
-    dinqdata = sorted (dinqdata.items (), key = (lambda x: x[0]))
-
-    dcounter = 0
-
-    curdate = drange [dcounter]
-    dcounter += 1
-    deptdata = []
-    prevcount = 0
-    for cstat_date, cstat_count in dinqdata:
-        if curdate < cstat_date:
-            while curdate < cstat_date:
-                deptdata.append ([curdate.strftime ('%Y-%m-%d 1:00 AM'), prevcount])
-                curdate = drange [dcounter]
-                dcounter += 1
-            prevcount += cstat_count
-        elif curdate == cstat_date:
-            prevcount += cstat_count
-            deptdata.append ([curdate.strftime ('%Y-%m-%d 1:00 AM'), prevcount])
-            if curdate != drange [-1]:
-                curdate = drange [dcounter]
-                dcounter += 1
-            else:
-                break
-
-
-    while curdate <= drange [-1]:
-        deptdata.append ([curdate.strftime ('%Y-%m-%d 12:01 AM'), prevcount])
-        curdate += timedelta (days = 1)
-
-    return deptdata
+    cdata = []
+    for dep in depts:
+        dep_row = []
+        tcs = dep.trendchartsummary_set.filter(date__gte = stdate, date__lte = endate, filed_on__gte = stdate).values('date').annotate(count = Count('id')).order_by('date')
+        for item in tcs:
+            dep_row.append([item['date'].strftime("%Y-%m-%d 1:00 AM"), item['count']])
+        if len(dep_row) == 0:
+            dep_row = [[stdate.strftime("%Y-%m-%d 1:00 AM"), 0]]
+        cdata.append(dep_row)
+    return cdata
 
 
 from cmh.issuemgr.models import ReportData

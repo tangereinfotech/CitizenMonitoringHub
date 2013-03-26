@@ -63,7 +63,7 @@ class Command (BaseCommand):
         ep.process (bookname, sheetname, True,
                     [EP.CELL_TEXT,
                      EP.CELL_TEXT,
-                     EP.CELL_TEXT,
+                     EP.CELL_INT,
                      EP.CELL_TEXT,
                      EP.CELL_TEXT,
                      EP.CELL_TEXT,
