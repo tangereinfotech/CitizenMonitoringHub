@@ -19,10 +19,10 @@ from django.contrib.auth.models import User
 
 from cmh.common.constants import UserRoles
 from cmh.common.utils import daterange
-from optparse import make_option
+from optparse import make_option, OptionValueError
 from cmh.issuemgr.constants import STATUS_OPEN, STATUS_RESOLVED, STATUS_CLOSED, STATUS_REOPEN, STATUS_ACK, STATUS_NEW
 from cmh.issuemgr.models import Complaint, TrendChartSummary
-from datetime import date
+from datetime import date, datetime
 from django.db.models import Q
 def update_trend_chart(sdate = date(2013,01,01), edate=date(2013,01,03)):
 
@@ -52,15 +52,15 @@ def update_trend_chart(sdate = date(2013,01,01), edate=date(2013,01,03)):
                     if curstate in CLOSED_STATES:
                         pass
                     else:
-                        complaint_log_date = Complaint.objects.filter(complaintno = c[0]).order_by('created')[0].logdate
-                        TrendChartSummary.objects.create(complaint = c[0], date = d, status = True, department = trend_dep, filed_on = complaint_log_date)
+                        created_date = Complaint.objects.filter(complaintno = c[0], curstate = STATUS_ACK).order_by('created')[0].created
+                        TrendChartSummary.objects.create(complaint = c[0], date = d, status = True, department = trend_dep, filed_on = created_date)
 
 class Command (BaseCommand):
     help = "This utility updates the status of complaints on a per day basis as being open or being closed"
 
     option_list = BaseCommand.option_list + (
         make_option('-s', '--start_date', dest = 'sdate', type='string', help = 'start date of the range period in YYYY/MM/DD format'),
-        make_option('-e', '--end_date', dest = 'sdate', type='string', help = 'end date of the range period in YYYY/MM/DD format')
+        make_option('-e', '--end_date', dest = 'edate', type='string', help = 'end date of the range period in YYYY/MM/DD format')
     )
     def handle (self, *args, **options):
         try:
@@ -72,3 +72,4 @@ class Command (BaseCommand):
         except:
             raise OptionValueError("option %s: invalid end date value: %r. Should have a format like 'YYYY/MM/DD'" % ('-e', options['edate']))
         update_trend_chart(sdate, edate)
+
