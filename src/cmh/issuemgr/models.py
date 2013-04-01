@@ -30,7 +30,6 @@ COMMUNITY_CHOICES = (
     ('General','General'),
     ('Unspecified','Unspecified')
 )
-)
 CARD_CHOICES = (
     ('AAY', 'Antyodyaya'),
     ('BPL',  'BPL'),
