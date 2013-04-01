@@ -24,9 +24,12 @@ GENDER_CHOICES = (
     ('Unspecified','Unspecified')
 )
 COMMUNITY_CHOICES = (
-    ('SC/ST', 'SC / ST'),
-    ('Others','Others'),
+    ('SC', 'SC'),
+    ('ST', 'ST'),
+    ('OBC','OBC'),
+    ('General','General'),
     ('Unspecified','Unspecified')
+)
 )
 CARD_CHOICES = (
     ('AAY', 'Antyodyaya'),
