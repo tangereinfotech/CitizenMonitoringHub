@@ -699,10 +699,12 @@ def get_report_stats (stdate, endate,
              'gramps' : gramps,
              'villgs' : villgs}
     # Find all villages in the selected locations for the report
-
     dttm_start = datetime (stdate.year, stdate.month, stdate.day, 0, 0, 0)
     dttm_end   = datetime (endate.year, endate.month, endate.day, 23, 59, 59)
+    base_complaints = Complaint.objects.filter(Q (created__gte = dttm_start, curstate = STATUS_NEW)).values_list('complaintno')
+    base_complaint_nos = [c[0] for c in base_complaints]
     complaints = Complaint.objects.filter (Q (created__gte = dttm_start)
+                                           & Q(complaintno__in = base_complaint_nos)
                                            & Q (created__lte = dttm_end)
                                            & Q (department__in = [dept.id for dept in depts])
                                            & (Q (location__in = villgids)
@@ -782,7 +784,7 @@ def get_report_stats (stdate, endate,
     now_time = datetime.now ()
 
     def get_scheme_times (scheme,dept):
-        new_scheme_complaints = new_complaints.filter (complainttype__cclass = scheme,department = dept)
+        new_scheme_complaints = ack_complaints.filter (complainttype__cclass = scheme,department = dept)
         scheme_ccms = ComplaintClosureMetric.objects.filter (complaintno__in = [c.complaintno for c in new_scheme_complaints])
         scheme_stats = scheme_ccms.exclude (period = None)
         scheme_ccms_open = scheme_ccms.filter (closed = None).order_by ('created')
