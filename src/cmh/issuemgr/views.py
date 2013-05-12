@@ -781,8 +781,8 @@ def get_report_stats (stdate, endate,
     # RESPONSE TIME METRICS
     now_time = datetime.now ()
 
-    def get_scheme_times (scheme):
-        new_scheme_complaints = new_complaints.filter (complainttype__cclass = scheme)
+    def get_scheme_times (scheme,dept):
+        new_scheme_complaints = new_complaints.filter (complainttype__cclass = scheme,department = dept)
         scheme_ccms = ComplaintClosureMetric.objects.filter (complaintno__in = [c.complaintno for c in new_scheme_complaints])
         scheme_stats = scheme_ccms.exclude (period = None)
         scheme_ccms_open = scheme_ccms.filter (closed = None).order_by ('created')
@@ -809,7 +809,7 @@ def get_report_stats (stdate, endate,
     time_stats = {}
     for dept in depts:
         schemes = set ([ct.cclass for ct in dept.complainttype_set.all ()])
-        scheme_times = dict([(s, get_scheme_times (s)) for s in schemes])
+        scheme_times = dict([(s, get_scheme_times (s,dept)) for s in schemes])
 
         time_stats [dept.id] = {'schemes' : schemes,
                                 'dpoints' : [[scheme_times [s]['max'] for s in schemes],
