@@ -7,7 +7,7 @@ class IssuesDataReport(models.Model):
     filed_on    = models.CharField(max_length = 20, null=True, blank=True)
     last_updated = models.CharField(max_length = 20, null=True, blank=True)
     department = models.ForeignKey(ComplaintDepartment, blank=True, null=True)
-    department_name = models.CharField(max_length = 50, blank=True, null=True)
+    department_name = models.CharField(max_length = 200, blank=True, null=True)
     filed_by  = models.TextField(null=True, blank=True)
     location  = models.CharField(max_length = 70, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
