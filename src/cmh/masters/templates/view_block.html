@@ -72,7 +72,7 @@
       'bAutoWidth' : false,
         'sPaginationType': 'full_numbers',
         "bServerSide": true,
-        "sAjaxSource": "{% url cmh.masters.views.blist %}",
+        "sAjaxSource": "{% url "cmh.masters.views.blist" %}",
         "fnRowCallback" : function (nRow, aData, iDisplayIndex) {
           nRow.className = "updateData";
           return nRow;
