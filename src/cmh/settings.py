@@ -154,4 +154,7 @@ LOGIN_REDIRECT_URL = '/'
 PHONE = site_config.PHONE
 SMS   = site_config.SMS
 BANNER = site_config.BANNER
+ABOUTUS = site_config.ABOUTUS
+FORCITIZENS = site_config.FORCITIZENS
+FORGOVERNMENT = site_config.FORGOVERNMENT
 

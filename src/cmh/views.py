@@ -29,6 +29,8 @@ from cmh.issuemgr.models import Complaint
 
 from cmh.issuemgr.forms import DateIndex
 
+from settings import ABOUTUS, FORGOVERNMENT, FORCITIZENS
+
 def index (request):
     if request.method == 'GET':
         deps = set()
@@ -51,12 +53,12 @@ def index (request):
         return HttpResponseRedirect ('/')
 
 def aboutus (request):
-    return render_to_response ('aboutus.html')
+    return render_to_response (ABOUTUS)
 
 
 def for_citizens (request):
-    return render_to_response ('for_citizens.html')
+    return render_to_response (FORCITIZENS)
 
 def for_government (request):
-    return render_to_response ('for_government.html')
+    return render_to_response (FORGOVERNMENT)
 
