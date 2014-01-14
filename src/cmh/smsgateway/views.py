@@ -35,6 +35,9 @@ from cmh.usermgr.utils import get_or_create_citizen
 from cmh.common.utils import debug
 from django.core.exceptions import ObjectDoesNotExist
 from datetime import datetime
+from django.utils.http import http_date
+import time
+from django.views.decorators.cache import never_cache
 
 REGEX_SEP = r"[\. ,;\-_:]+"
 
@@ -43,6 +46,7 @@ FORMAT = r"^(?P<block>\d+)" + REGEX_SEP + r"(?P<gramp>\d+)" + REGEX_SEP + r"(?P<
 class InvalidMessageException (Exception):
     pass
 
+@never_cache
 def gateway (request):
     if request.method == 'GET':
         transferreq = SMSTransferReqFormat (request.GET)
