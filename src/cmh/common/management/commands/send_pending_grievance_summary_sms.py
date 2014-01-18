@@ -18,11 +18,11 @@ from django.core.management.base import NoArgsCommand
 from django.contrib.auth.models import User
 
 from cmh.common.constants import UserRoles
-from cmh.issuemgr.utils import close_resolved
+from cmh.issuemgr.utils import send_update_sms_to_departments
 
 class Command (NoArgsCommand):
     def handle (self, *args, **kwargs):
         try:
-            close_resolved()
+            send_update_sms_to_departments()
         except:
             pass

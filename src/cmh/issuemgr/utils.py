@@ -24,7 +24,7 @@ from cmh.common.models import Village
 from cmh.common.constants import DeployDistrict
 from cmh.issuemgr.models import Complaint
 
-from cmh.issuemgr.constants import STATUS_RESOLVED, STATUS_CLOSED
+from cmh.issuemgr.constants import STATUS_RESOLVED, STATUS_CLOSED, STATUS_OPEN, STATUS_ACK, STATUS_REOPEN
 
 def update_complaint_sequence (complaint):
     from cmh.issuemgr.models import Complaint
@@ -72,4 +72,24 @@ def close_resolved ():
         else:
             debug ("[%s]{%s}: " % (newver.complaintno, str (newver.curstate)) +
                    "Message is empty -- not queueing >> from forms.py: issuemgr")
+
+def send_update_sms_to_departments():
+    now_day = datetime.today ().date ()
+    seven_ago = now_day - timedelta (days = 7)
+    pc = Complaint.objects.filter(latest = True, curstate__in = [STATUS_OPEN, STATUS_REOPEN, STATUS_ACK])
+    dep_split = {}
+    for c in pc:
+        if c.department in dep_split:
+            dep_split[c.department] = dep_split[c.department] + 1
+        else:
+            dep_split[c.department] = 1
+
+    from usermgr.models import Official
+    from smsgateway.utils import queue_sms
+    officers = Official.objects.all()
+    for offr in officers:
+        if offr.department in dep_split:
+            sms = "Total Pending Grievances for %s department is %s. Kindly resolve the same at earliest"%(offr.department.name, dep_split[offr.department])
+            queue_sms(offr.user.cmhuser.phone,sms)
+
 
