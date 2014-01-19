@@ -168,3 +168,5 @@ class TrendChartSummary(models.Model):
 
     def __unicode__(self):
         return self.complaint + " " + self.date.strftime("%Y/%m/%d") + " " + self.department.code
+
+import cmh.signals

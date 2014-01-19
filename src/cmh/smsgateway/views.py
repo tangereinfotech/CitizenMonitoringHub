@@ -49,6 +49,7 @@ class InvalidMessageException (Exception):
 
 @never_cache
 def gateway (request):
+    print "came in gateway"
     if request.method == 'GET':
         transferreq = SMSTransferReqFormat (request.GET)
         if transferreq.is_valid () == True:
@@ -69,10 +70,10 @@ def gateway (request):
                                            }}))
     elif request.method == 'POST':
         receivedform = SMSReceivedFormat (request.POST)
-        debug ("Received from: " + str (receivedform))
+        #debug ("Received from: " + str (receivedform))
         if receivedform.is_valid ():
             try:
-                debug ("Form is valid")
+                #debug ("Form is valid")
                 sender_phone = receivedform.cleaned_data ['from']
                 message      = receivedform.cleaned_data ['message']
                 rtm = ReceivedTextMessage.objects.create (sender = sender_phone,
@@ -107,7 +108,7 @@ def gateway (request):
 
                     # Remove the user from blacklist in case he is there
                     for sbl in SenderBlacklist.objects.filter (sender = rtm.sender):
-                        debug ("Removing sender from blacklist: " + str (rtm.sender))
+                        #debug ("Removing sender from blacklist: " + str (rtm.sender))
                         sbl.delete ()
 
                     text_message = _("Your Grievance number is %s. We would revert in 36 hours to seek more details" % (compl.complaintno))
@@ -126,7 +127,8 @@ def gateway (request):
                         text_message = "Call center would respond in next 36 hrs after looking into your issue"
                         queue_sms (sender_phone, text_message)
                 else:
-                    debug ("Sender is blacklisted. Not sending ack: " + str (rtm.sender))
+                    #debug ("Sender is blacklisted. Not sending ack: " + str (rtm.sender))
+                    pass
                 return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
         else:
             # In this case, we can safely assume that the message is not coming from
@@ -173,7 +175,7 @@ def new_blacklist (sender):
     if (msg0valid == False and msg1valid == False and msg2valid == False):
         # Blacklist the user in case he is not blacklisted yet
         if SenderBlacklist.objects.filter (sender = sender).count () == 0:
-            debug ("Blacklisting sender : " + str (sender))
+            #debug ("Blacklisting sender : " + str (sender))
             SenderBlacklist.objects.create (sender = sender)
         return True
     else:

@@ -38,8 +38,8 @@ def update_complaint_sequence (complaint):
     complaint.complaintno = '%s.%03d' % (complaint.created.strftime ('%Y%m%d'),
                                          (complaint.id - first_complaint.id + 1))
     complaint.save ()
-    #Since this person is being recognized as a valid complainant, remove this phone number from blacklist
 
+    #Since this person is being recognized as a valid complainant, remove this phone number from blacklist if it exists there
     from cmh.smsgateway.views import is_blacklisted, remove_from_blacklist
     if is_blacklisted(complaint.filedby.mobile):
         remove_from_blacklist(complaint.filedby.mobile)

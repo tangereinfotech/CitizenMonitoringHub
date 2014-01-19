@@ -35,7 +35,7 @@ def queue_complaint_update_sms (mobile, complaint_message, complaint):
 
 
 def queue_sms (mobile, message):
-    debug ("Queueing message [[%s]] for mobile [%s]" % (message, str (mobile)))
+    #debug ("Queueing message [[%s]] for mobile [%s]" % (message, str (mobile)))
     TextMessage.objects.queue_text_message (mobile, smart_str(message))
 
 def queue_complaint_ack_official_sms (complaint):
