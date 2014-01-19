@@ -1,0 +1,86 @@
+{# Copyright 2011, Tangere Infotech Pvt Ltd [http://tangere.in]                 #}
+{#                                                                              #}
+{# Licensed under the Apache License, Version 2.0 (the "License");              #}
+{# you may not use this file except in compliance with the License.             #}
+{# You may obtain a copy of the License at                                      #}
+{#                                                                              #}
+{#       http://www.apache.org/licenses/LICENSE-2.0                             #}
+{#                                                                              #}
+{# Unless required by applicable law or agreed to in writing, software          #}
+{# distributed under the License is distributed on an "AS IS" BASIS,            #}
+{# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     #}
+{# See the License for the specific language governing permissions and          #}
+{# limitations under the License.                                               #}
+
+{% load i18n %}
+<html>
+<head>
+<head>
+    <style>
+    td,th
+    {
+        border: 1px solid #ACD9E2;
+        text-align: center;
+    }
+    tr:nth-child(even) {background: #DDD}
+    tr:nth-child(odd) {background: #FFF}
+    </style>
+</head>
+<body>
+{% block base_content %}
+    <div class="page-header" style="text-align:center;width:100%;font-size: 20px">
+      {% trans  "Grievance Resolution Report" %}
+    </div>
+    <table width="100%">
+    <tr>
+      <tr>
+        <td colspan=6 width="100%">
+          {% trans "Current Statistics of Grievance as on" %} {{enddate}}
+        </td>
+      </tr>
+      <tr>
+        <th align="right">
+          <span style="color:#aecf00">{% trans "Department Name" %}</span>
+        </th>
+        <th>
+          <div style="padding-left:30px">{% trans "Acknowledged" %}</div>
+        </th>
+        <th>
+          <div style="padding-left:30px">{% trans "Opened" %}</div>
+        </th>
+        <th>
+          <div style="padding-left:30px">{% trans "Resolved" %}</div>
+        </th>
+        <th>
+          <div style="padding-left:30px">{% trans "Closed" %}</div>
+        </th>
+        <th>
+          <div style="padding-left:30px">{% trans "Re-opened" %}</div>
+        </th>
+      </tr>
+      {% for name, field in dep_stats.items%}
+      <tr>
+        <td >
+          <span style="color:#aecf00">{{ name}}</span>
+        </td>
+        <td>
+          <span style="color:#aecf00">{{ field.ack }}</span>
+        </td>
+        <td>
+          <span style="color:#aecf00">{{ field.ope}}</span>
+        </td>
+        <td>
+          <span style="color:#aecf00">{{ field.res}}</span>
+        </td>
+        <td>
+          <span style="color:#aecf00">{{ field.clo}}</span>
+        </td>
+        <td>
+          <span style="color:#aecf00">{{ field.reo}}</span>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+{% endblock %}
+</body>
+</html>
