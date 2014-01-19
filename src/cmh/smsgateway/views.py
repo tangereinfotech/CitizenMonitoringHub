@@ -38,6 +38,7 @@ from datetime import datetime
 from django.utils.http import http_date
 import time
 from django.views.decorators.cache import never_cache
+from django.utils.translation import ugettext as _
 
 REGEX_SEP = r"[\. ,;\-_:]+"
 
@@ -109,10 +110,8 @@ def gateway (request):
                         debug ("Removing sender from blacklist: " + str (rtm.sender))
                         sbl.delete ()
 
-                    # HACK ALERT - complaint type is not known so just pick any complaint type and pick its defsmsnew
-                    #queue_complaint_update_sms (citizen.mobile,
-                    #                            ComplaintType.objects.all ()[0].defsmsnew,
-                    #                            compl)
+                    text_message = _("Your Grievance number is %s. We would revert in 36 hours to seek more details" % (compl.complaintno))
+                    queue_sms (sender_phone, text_message)
                     return HttpResponse (json.dumps ({'payload' : {'success' : 'true'}}))
                 else:
                     itm = IgnoredTextMessage.objects.create(sender = sender_phone,
@@ -124,7 +123,7 @@ def gateway (request):
                 # check if the user is black listed, keep the sender black listed and don't respond
                 if not is_blacklisted (rtm.sender):
                     if not new_blacklist (rtm.sender):
-                        text_message = "Complaint could not be logged. Please check format."
+                        text_message = "Call center would respond in next 36 hrs after looking into your issue"
                         queue_sms (sender_phone, text_message)
                 else:
                     debug ("Sender is blacklisted. Not sending ack: " + str (rtm.sender))
@@ -138,10 +137,13 @@ def gateway (request):
 
 
 def is_blacklisted (sender):
-    if SenderBlacklist.objects.filter (sender = sender).count () == 0:
+    if SenderBlacklist.objects.filter (sender__contains = sender).count () == 0:
         return False
     else:
         return True
+
+def remove_from_blacklist(sender):
+    SenderBlacklist.objects.filter(sender__contains = sender).delete()
 
 
 

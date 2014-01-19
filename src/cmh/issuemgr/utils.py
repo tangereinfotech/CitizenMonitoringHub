@@ -23,7 +23,6 @@ from cmh.common.utils import debug
 from cmh.common.models import Village
 from cmh.common.constants import DeployDistrict
 from cmh.issuemgr.models import Complaint
-
 from cmh.issuemgr.constants import STATUS_RESOLVED, STATUS_CLOSED, STATUS_OPEN, STATUS_ACK, STATUS_REOPEN
 
 def update_complaint_sequence (complaint):
@@ -39,7 +38,11 @@ def update_complaint_sequence (complaint):
     complaint.complaintno = '%s.%03d' % (complaint.created.strftime ('%Y%m%d'),
                                          (complaint.id - first_complaint.id + 1))
     complaint.save ()
+    #Since this person is being recognized as a valid complainant, remove this phone number from blacklist
 
+    from cmh.smsgateway.views import is_blacklisted, remove_from_blacklist
+    if is_blacklisted(complaint.filedby.mobile):
+        remove_from_blacklist(complaint.filedby.mobile)
 
 
 def get_location_attr (block_no, gp_no, vill_no):
