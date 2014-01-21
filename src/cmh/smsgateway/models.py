@@ -15,6 +15,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from cmh.issuemgr.models import Complaint
 
 class TextMessageManager (models.Manager):
     def queue_text_message (self, phone, message):
@@ -33,6 +34,7 @@ class ReceivedTextMessage (models.Model):
     message = models.CharField (max_length = 500)
     valid   = models.NullBooleanField (default = False)
     created = models.DateTimeField (auto_now_add = True)
+    complaint = models.ForeignKey (Complaint, blank = True, null = True)
 
 class IgnoredTextMessage (models.Model):
     sender  = models.CharField (max_length = 20)

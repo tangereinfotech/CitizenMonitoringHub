@@ -74,6 +74,18 @@ def get_sms_direction(t):
 def get_sms_direction_options():
     return ['Incoming', 'Outgoing']
 
+def get_status(t):
+    if (t.__class__.__name__ == 'TextMessage'):
+       return '-'
+    elif (t.__class__.__name__ == 'ReceivedTextMessage'):
+        if t.valid:
+            if t.complaint:
+                track_url = "/complaint/track/" + t.complaint.complaintno
+                track_url = '<a href=' + track_url + ' target="_blank">'+t.complaint.complaintno+'</a>'
+                return track_url
+        return '-'
+
+
 sms_logs_column_properties = {
     0: { 'code'     :'generated_time',
         'searchable': True,
@@ -148,6 +160,18 @@ sms_logs_column_properties = {
         'inputtype' : 'input',
         "sWidth"    : None,
         'fnGetData' : get_message
+    },
+    6: { 'code'     :'status',
+        'searchable': True,
+        'sortable'  : True,
+        'name'      : _('Status'),
+        'type'      : 'string',
+        'search_str': _('Search Status'),
+        'bVisible'  : True,
+        'sClass'    : 'cellformat',
+        'inputtype' : 'input',
+        "sWidth"    : None,
+        'fnGetData' : get_status
     },
 }
 

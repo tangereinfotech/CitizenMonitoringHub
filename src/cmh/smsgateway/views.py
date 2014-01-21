@@ -104,6 +104,7 @@ def gateway (request):
 
                     # If we reach this point, the message was properly formatted
                     rtm.valid = True
+                    rtm.complaint = compl
                     rtm.save ()
 
                     # Remove the user from blacklist in case he is there
