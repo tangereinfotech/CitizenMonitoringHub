@@ -13,6 +13,33 @@ style="width:100%"
                 padding: 8px;
             };
     </style>
+    <style type="text/css">
+        
+            .tabletop, .dataTables_filter{
+                position: relative;
+                float: right;
+                margin: 4px;
+            };
+            .dataTables_length {
+                float: left;
+                margin-top: 20px;
+            }
+            .dataTable {
+                float:left;
+                position:relative;
+                width: 100%;
+                border-bottom: 2px dashed #ddd;
+            } 
+            .tablebottomleft {
+                float:left;
+                position:relative;
+            }
+            .tablebottomright{
+                float:right;
+                position:relative;
+            }
+            
+    </style>
     
     <script type="text/javascript">
         function replaceClass(elt, oldClass, newClass) {
@@ -29,6 +56,7 @@ style="width:100%"
         }
     </script>
     <script type="text/javascript" language="javascript" src="/static/jquery/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" language="javascript" src="/static/jquery/js/TableTools-2.0.0/media/js/TableTools.min.js"></script>
     <script>
         var asInitVals = new Array();
         $(document).ready(function() {
@@ -42,6 +70,16 @@ style="width:100%"
                  "sAjaxSource": "{{data_url}}",
                  "bStateSave" : true,
                  "bServerSide": false,
+                     "sDom": '<"tabletop"T>flrt<"tablebottomleft"i><"tablebottomright"p>',
+                 "oTableTools": {
+                    "sSwfPath": "/static/jquery/js/TableTools-2.0.0/media/swf/copy_cvs_xls_pdf.swf",
+                    "aButtons":[
+                            "print",
+                            "csv",
+                            "xls",
+                            "pdf",
+                    ]
+                 },
                  "bAutoWidth" : false,
                  "aaSorting": [[ {{def_sort_column}}, "desc" ]],
                  "aoColumns" : [
