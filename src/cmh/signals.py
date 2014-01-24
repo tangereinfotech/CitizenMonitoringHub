@@ -1,13 +1,13 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from cmh.issuemgr.models import Complaint
-from cmh.reports.report_issues import create_or_update_idr
 from cmh.common.models import ComplaintDepartment
 
 
 @receiver(post_save, sender = Complaint, weak=False)
 def update_all_issues_complaint_report(sender, **kwargs):
     comp = kwargs['instance']
+    from cmh.reports.report_issues import create_or_update_idr
     create_or_update_idr(comp)
 
 @receiver(post_save, sender = ComplaintDepartment)
