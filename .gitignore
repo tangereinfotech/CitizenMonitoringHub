@@ -1,2 +1,4 @@
 *.pyc
 evidences/*
+cmh.py
+src/cmh/configs
